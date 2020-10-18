@@ -1,5 +1,4 @@
 ---
-  
 date: 2011-02-02 13:58:56+00:00
 
 slug: wcf-simplified
@@ -36,6 +35,6 @@ WCF has an extensible model.This means that at any place you can plugin your o
 
 Suggested Reading
 
-1. [Programming WCF Services: Mastering WCF and the Azure AppFabric Service Bus](http://www.amazon.com/gp/product/0596805489/ref=as_li_qf_sp_asin_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=0596805489&linkCode=as2&tag=rahulpnath-20)![](http://ir-na.amazon-adsystem.com/e/ir?t=rahulpnath-20&l=as2&o=1&a=0596805489) by Juval Lowy
+1. [Programming WCF Services: Mastering WCF and the Azure AppFabric Service Bus](https://www.amazon.com/gp/product/0596805489/ref=as_li_qf_sp_asin_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=0596805489&linkCode=as2&tag=rahulpnath-20) by Juval Lowy
 
-2. [Inside Windows Communication Foundation (Pro Developer)](http://www.amazon.com/gp/product/0735623066/ref=as_li_qf_sp_asin_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=0735623066&linkCode=as2&tag=rahulpnath-20)![](http://ir-na.amazon-adsystem.com/e/ir?t=rahulpnath-20&l=as2&o=1&a=0735623066) by Justin Smith
+2. [Inside Windows Communication Foundation (Pro Developer)](https://www.amazon.com/gp/product/0735623066/ref=as_li_qf_sp_asin_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=0735623066&linkCode=as2&tag=rahulpnath-20) by Justin Smith
