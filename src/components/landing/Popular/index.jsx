@@ -1,4 +1,10 @@
-import { CardPost, Container, CustomButton, Row, Subtitle } from 'components/common'
+import {
+  CardPost,
+  Container,
+  CustomButton,
+  Row,
+  Subtitle,
+} from 'components/common'
 import { graphql, Link, useStaticQuery } from 'gatsby'
 import React from 'react'
 import { Center, Wrapper } from './styles.js'
@@ -10,14 +16,12 @@ export const Popular = () => {
     query {
       popular: allMdx(
         sort: { order: DESC, fields: [frontmatter___date] }
-        filter: {
-          frontmatter: { popular: { eq: true } }
-        }
+        filter: { frontmatter: { popular: { eq: true } } }
         limit: 5
       ) {
         edges {
           node {
-            description: excerpt(pruneLength: 230)
+            summary: excerpt(pruneLength: 230)
             id
             timeToRead
             fields {
@@ -25,6 +29,7 @@ export const Popular = () => {
             }
             frontmatter {
               title
+              description
               date(formatString: "MMM DD, YYYY")
               tags
               thumbnail {
@@ -47,16 +52,16 @@ export const Popular = () => {
           ({
             node: {
               id,
-              description,
+              summary,
               timeToRead,
-              fields: {slug},
-              frontmatter: { title, date, thumbnail, tags },
+              fields: { slug },
+              frontmatter: { title, description, date, thumbnail, tags },
             },
           }) => (
             <CardPost
               landing
               key={id}
-              description={description}
+              description={description || summary}
               timeToRead={timeToRead}
               title={title}
               date={date}
