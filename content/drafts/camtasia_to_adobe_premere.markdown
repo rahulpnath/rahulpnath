@@ -1,7 +1,6 @@
 ---
 title: 'Camtasia To Adobe Premiere'
 tags:
-  - Productivity
   - Tools
 keywords:
 description: A short recap of the year that is gone by and looking forward!
