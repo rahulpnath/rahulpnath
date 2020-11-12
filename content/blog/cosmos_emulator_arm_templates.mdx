@@ -5,12 +5,13 @@ tags:
 keywords:
 description: Azure Cosmos Emulator does not support ARM templates. Learn how you can automatically create Database and Containers from an ARM Template to support a seamless development experience.
 thumbnail: ../images/build_automation.jpg
-popular: false
-draft: true
+popular: true
+draft: false
 ---
 
-The [Azure Cosmos Emulator](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator?tabs=cli%2Cssl-netstd21&WT.mc_id=AZ-MVP-5003875)provides a local environment that emulates the Cosmos DB service. Having the Emulator running on your local development machine helps to develop and test your application easily. You no longer need to create an Azure subscription or incur any costs for your local development.
+import { Bookmark } from 'components/common'
 
+The [Azure Cosmos Emulator](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator?tabs=cli%2Cssl-netstd21&WT.mc_id=AZ-MVP-5003875)provides a local environment that emulates the Cosmos DB service. Having the Emulator running on your local development machine helps to develop and test your application easily. You no longer need to create an Azure subscription or incur any costs for your local development.
 If you haven't downloaded it before, you can [download the [Azure Cosmos emulator](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator?tabs=cli%2Cssl-netstd21#download-the-emulator&WT.mc_id=AZ-MVP-5003875) here. There are a few differences between the Emulator and the cloud service, and you can [read about it in detail here](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator?tabs=cli%2Cssl-netstd21#differences-between-the-emulator-and-the-cloud-service&WT.mc_id=AZ-MVP-5003875). Currently, the Emulator can run only on Windows. If you are using Linux or Mac, you will have to either use the Azure Cosmos DB or run the Emulator in a [Windows Virtual machine](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator?tabs=cli%2Cssl-netstd21#run-on-linux-macos&WT.mc_id=AZ-MVP-5003875)
 
 ## ARM Templates and Multiple Containers
@@ -20,6 +21,12 @@ I showed you [how to set up Azure ARM templates to deploy Cosmos DB](https://www
 > ARM Template is a JSON file that defines infrastructure using a declarative syntax and helps automate creating Azure resources.
 
 Using the template, we were able to add containers to the Cosmos DB throughout the application development lifecycle. Every time we needed a new Container for the application, we add it to the ARM template parameter file, specifying the container name and the partition key (and any other properties if need be, by extending the template). Deploying the template will automatically add the new Containers to the Azure Cosmos DB instance.
+
+<Bookmark
+  slug="cosmos_arm_template"
+  title="New to using ARM Templates with Cosmos DB?"
+  description="Learn how to create an ARM template to deploy Azure Cosmos DB with dynamic containers. With this template you can keep adding containers as you build the application."
+/>
 
 The above works well when working with Cosmos DB on Azure!
 
