@@ -95,7 +95,7 @@ public static IHostBuilder CreateHostBuilder(string[] args) =>
 The above code uses the _VaultName_ from the configuration file (which is not sensitive information and can be managed as [Release Variables for different environments](https://www.youtube.com/watch?v=OFr6Vkw0mq8)) and creates a KeyVaultClient instance. It uses [DefaultAzureCredential](/blog/defaultazurecredential_from_azure_sdk/) to retieve an Azure AD token, that is used to authenticate with Azure Key Vault. [DefaultAzureCredential](/blog/defaultazurecredential_from_azure_sdk/) unifies the way we retrieve an Azure AD token and works seamlessly on [local development environment as well](/blog/azure_managed_service_identity_and_local_development/).
 
 <Bookmark
-  slug="defaultazurecredential_from_azure_sdk"
+  slug="defaultazurecredential-from-azure-sdk"
   title="Want To Learn More About DefaultAzureCredential?"
   description="In the past, Azure had different ways to authenticate with the various resources. The Azure SDK’s is bringing this all under one roof and providing a more unified approach to developers when connecting to resources on Azure."
 />

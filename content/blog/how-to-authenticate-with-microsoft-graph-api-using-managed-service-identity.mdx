@@ -94,7 +94,7 @@ New-AzureADServiceAppRoleAssignment `
 As we have seen in the previous instances with MSI ([here](https://www.rahulpnath.com/blog/how-to-authenticate-azure-function-with-azure-web-app-using-managed-service-identity/) and [here](https://www.rahulpnath.com/blog/authenticating-with-azure-key-vault-using-managed-service-identity/)) we use the [AzureServiceTokenProvider](https://github.com/Azure/azure-sdk-for-net/blob/ddda7cb74b979f03bb03e240c06c924914ee8bdd/src/SdkCommon/AppAuthentication/Azure.Services.AppAuthentication/AzureServiceTokenProvider.cs) to authenticate with MSI to get the token. The ClientId and secret are no longer required. The AzureServiceTokenProvider class tries to get a token using Managed Service Identity, Visual Studio, Azure CLI, and Integrated Windows Authentication. In our case, when deployed to Azure, the code uses MSI to get the token.
 
 <Bookmark
-  slug="defaultazurecredential_from_azure_sdk"
+  slug="defaultazurecredential-from-azure-sdk"
   title="Check Out DefaultAzureCredential: The New Alternative To AzureServiceTokenProvider"
   description="In the past, Azure had different ways to authenticate with the various resources. The Azure SDK’s is bringing this all under one roof and providing a more unified approach to developers when connecting to resources on Azure."
 />

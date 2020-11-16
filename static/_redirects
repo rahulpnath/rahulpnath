@@ -14,3 +14,40 @@ https://rahulpnath.netlify.com/* https://www.rahulpnath.com/:splat 301!
 /blog/tag/.net  /blog/tag/dotnet 302
 /blog/tag/.NET-Core  /blog/tag/dotnet-core 302
 /blog/tag/.NET  /blog/tag/dotnet 302
+
+# Redirect few underscore URLS
+
+/blog/cosmos_arm_template /blog/cosmos-arm-template 302
+/blog/are_you_using_httpclient_in_the_right_way /blog/are-you-using-httpclient-in-the-right-way 302
+/blog/net_core_pdf /blog/net-core-pdf 302
+/blog/azure_sql_server_managed_identity /blog/azure-sql-server-managed-identity 302
+/blog/azure_webjobs_dotnet_core_build_depoy /blog/azure-webjobs-dotnet-core-build-depoy 302
+/blog/connect_net_core_to_azure_key_vault_in_ten_minutes /blog/connect-net-core-to-azure-key-vault-in-ten-minutes 302
+/blog/why_i_chose_diigo /blog/why-i-chose-diigo 302
+/blog/specflow_and_autofixture /blog/specflow-and-autofixture 302
+/blog/setting_up_windows_terminal /blog/setting-up-windows-terminal 302
+/blog/migrating_blog_from_hugo_to_gatsby /blog/migrating-blog-from-hugo-to-gatsby 302
+/blog/defaultazurecredential_from_azure_sdk /blog/defaultazurecredential-from-azure-sdk 302
+/blog/simulating_different_ui_scenarios_during_fronend_development /blog/simulating-different-ui-scenarios-during-fronend-development 302
+/blog/three_months_to_a_half_marathon /blog/three-months-to-a-half-marathon 302
+/blog/start_new_habits_that_stick /blog/start-new-habits-that-stick 302
+/blog/simulating_different_api_scenarios_using_json_server /blog/simulating-different-api-scenarios-using-json-server 302
+/blog/morning_routine /blog/morning-routine 302
+/blog/data_hotfix /blog/data-hotfix 302
+/blog/youtube_setup_and_workflow /blog/youtube-setup-and-workflow 302
+/blog/typescript_sum_types /blog/typescript-sum-types 302
+/blog/setting_up_a_fake_rest_api_using_json_server /blog/setting-up-a-fake-rest-api-using-json-server 302
+/blog/rename_sql_table /blog/rename-sql-table 302
+/blog/jaybird_run_right_earbud_not_charging /blog/jaybird-run-right-earbud-not-charging 302
+/blog/how_to_zip_multiple_files_in_dotnet /blog/how-to-zip-multiple-files-in-dotnet 302
+/blog/getting_started_with_cypress /blog/getting-started-with-cypress 302
+/blog/dont_let_ef_fool_your_constructors /blog/dont-let-ef-fool-your-constructors 302
+/blog/dynamically_create_powershell_alias /blog/dynamically-create-powershell-alias 302
+/blog/cypress_react_app_json_server_typescript /blog/cypress-react-app-json-server-typescript 302
+/blog/constructor_and_constraints /blog/constructor-and-constraints 302
+/blog/create_react_app_devops /blog/create-react-app-devops 302
+/blog/commuter_cycling_bag /blog/commuter-cycling-bag 302
+/blog/bullet_journaling /blog/bullet-journaling 302
+/blog/azure_managed_service_identity_and_local_development /blog/azure-managed-service-identity-and-local-development 302
+/blog/automatic_deployment_of_future_posts_with_octopress /blog/automatic-deployment-of-future-posts-with-octopress 302
+/blog/cosmos_emulator_arm_templates /blog/cosmos-emulator-arm-templates 302
