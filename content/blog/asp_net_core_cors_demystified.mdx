@@ -1,12 +1,13 @@
 ---
 title: Understand CORS and Learn How to Enable it for Your ASP NET API
+date: 2020-12-01
 tags:
   - ASP.NET
 keywords:
-description: Cross Origin Resource Sharing or CORS in short is a W3C standard that allows a server to relax the same-origin policy. Learn more about it and how to enable it for an ASP NET Web API.
+description: Cross Origin Resource Sharing or CORS in short is a W3C standard that allows a server to relax the same-origin policy. Learn more about CORS, how to enable it for an ASP NET Web API, Preflight requests and more.
 thumbnail: ../images/cors_bridge.jpg
 popular: true
-draft: true
+draft: false
 ---
 
 Browser security prevents a web page from making requests to a different domain than the one that served the web page. This restriction is called the same-origin policy. The same-origin policy prevents a malicious site from reading sensitive data from another site.
@@ -46,7 +47,7 @@ Now when we hit the React application running on `localhost:3000`, it will throw
 
 This is because of CORS. We have an application running on one origin (http://localhost:3000) trying to access an application/API running on another origin (http://localhost:5001). Note in this case, the ports are different, which makes them different origins.
 
-## Configure Server For CORS
+## Configure Web API For CORS
 
 Since the browser security prevents making cross-origin requests by default, we need to add in support for this.
 
@@ -83,7 +84,7 @@ With this code added, the API now asks the browser to relax the Cross-Origin Pol
 
 ![HTTP Request header has the Response Headers 'access-control-allow-origin: http://localhost:3000](../images/cors_request_headers.jpg)
 
-### Make Origins Configurable
+### Configurable Origins
 
 Since we will need to run the API from different environments, it's best not to hardcode the Origin URL in the source code. You can move this to the application settings.
 
