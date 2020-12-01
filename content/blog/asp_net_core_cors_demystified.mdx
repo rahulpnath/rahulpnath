@@ -14,6 +14,8 @@ Browser security prevents a web page from making requests to a different domain 
 
 Sometimes, you might want to allow other sites to make cross-origin requests to your application. This is when you have an API hosted independently to your web applications talking to the API.
 
+`youtube:https://www.youtube.com/embed/vP--GB5ZEMU`
+
 In such scenarios, we need to enable CORS support on the API so that the web application can call it.
 
 ## What is CORS?
@@ -146,6 +148,8 @@ options.AddDefaultPolicy(builder =>
 Inspecting the Network Request from the application running on `localhost:3000` we can see two requests - One `OPTIONS` and one `GET` call.
 
 ![The OPTIONS Network call with the access-control-* headers.](../images/cors_preflight_options_call.jpg)
+
+[![](../images/asp_net_core_banner.png)](https://www.youtube.com/playlist?list=PL59L9XrzUa-nqfCHIKazYMFRKapPNI4sP)
 
 ## CORS ≠ SECURITY
 
