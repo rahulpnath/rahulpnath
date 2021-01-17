@@ -1,11 +1,13 @@
 ---
-title: 'Getting Results the Agile Way by J.D. Meier'
+title: 'Book Summary: Getting Results the Agile Way by J.D. Meier'
+date: 2021-10-18
 tags:
+  - Books
   - Notes
 description: This is a great productivity book on building up a good Personal Productivity System to manage your life - both work and personal. I'd recommend this book for anyone starting to build a productivity system for themselves.
 thumbnail: ../images/getting_results_the_agile_way.jpg
-popular: false
-draft: true
+popular: true
+draft: false
 ---
 
 ## Key Thoughts

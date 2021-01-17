@@ -2,8 +2,9 @@
 author: [Rahul Nath]
 title: 'Language Agnostic Books For Every Developer 2'
 date: 2016-01-02 22:51:03
-  
+
 tags:
+  - Books
   - Programming
   - Thoughts
 keywords:
@@ -28,7 +29,6 @@ Exactly a year back I had [written about the same topic](http://www.rahulpnath.c
 
 **Framework Design Guidelines: Conventions, Idioms, and Patterns for Reusable .NET Libraries** [![XXXXX](../images/books_frameworkdesign.jpg)](http://www.amazon.com/gp/product/0321545613/ref=as_li_tl?ie=UTF8&camp=1789&creative=390957&creativeASIN=0321545613&linkCode=as2&tag=rahulpnath-20&linkId=UZC2I2HABQUNCT2U)
 
-      
 Have a great year ahead and some good reading.
 
-*The links are Amazon Affiliate Links!*
+_The links are Amazon Affiliate Links!_

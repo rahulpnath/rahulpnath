@@ -2,8 +2,9 @@
 author: [Rahul Nath]
 title: 'Language Agnostic Books For Every Developer'
 date: 2015-01-01 18:33:14
-  
+
 tags:
+  - Books
   - Programming
   - Thoughts
 ---
@@ -36,6 +37,4 @@ The books would speak for themselves and I don't think I can do justice writing 
 
 **Patterns of Enterprise Application and Architecture** [![Patterns of Enterprise Application and Architecture](../images/books_poeaa.jpg)](http://www.amazon.com/gp/product/0321127420/ref=as_li_tl?ie=UTF8&camp=1789&creative=390957&creativeASIN=0321127420&linkCode=as2&tag=rahulpnath-20&linkId=UR5IBEFV64BK5FYG)
 
-
-	
 Hope you start of this year off with some nice readings and gift yourself with some these master pieces. I am sure that I have not covered all of them and there are still more to be 'chewed and digested'. Do drop in with a comment on Which books have helped you be better in programming.
