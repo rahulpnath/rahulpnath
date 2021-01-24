@@ -1,6 +1,6 @@
 ---
 title: 'Book Summary: Getting Results the Agile Way by J.D. Meier'
-date: 2021-10-18
+date: 2021-01-18
 tags:
   - Books
   - Notes
