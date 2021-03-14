@@ -1,13 +1,13 @@
 ---
 title: 'Book Summary: Ultralearning by Scott.H. Young'
-date: 2021-01-18
+date: 2021-03-15
 tags:
   - Books
   - Notes
-description: This is a great productivity book on building up a good Personal Productivity System to manage your life - both work and personal. I'd recommend this book for anyone starting to build a productivity system for themselves.
+description: Ultralearning is a book on how to learn anything that is of interest to you. Often we get stuck with the same 'classroom learning methodology' and don't try anything outside of it. If you are invested in yourself and learning, then I do recommend this book. I am sure you will pick up one or two strategies that will help you.
 thumbnail: ../images/ultralearning.jpg
 popular: true
-draft: false
+draft: true
 ---
 
 ## Key Thoughts
@@ -81,8 +81,8 @@ _Fear of feedback often feels more uncomfortable than experiencing the feedback 
 Focus on valuable feedback and not on getting more. Identify the type of feedback you are getting.
 
 - Outcome → Good/Bad, Grades etc.
-- Informational - Tell's what's wrong but not what/how to go about fixing it
-- Corrective - How you can fix what you are doing wrong? This is the best feedback and usually hard to get
+- Informational → Tell's what's wrong but not what/how to go about fixing it
+- Corrective → How you can fix what you are doing wrong? This is the best feedback and usually hard to get
 
 _Feedback is useful only if you remember the lessons from it._
 
@@ -109,4 +109,4 @@ Once past the initial learning barrier, getting better or mastering something re
 
 Ultralearning is not a silver bullet. Pick and choose the strategy that best applies to whatever you are learning.
 
-Take responsibility for your learning - decide what, how, and when to learn!
+*Take responsibility for your learning - decide what, how, and when to learn!*
