@@ -7,7 +7,7 @@ tags:
 description: Ultralearning is a book on how to learn anything that is of interest to you. Often we get stuck with the same 'classroom learning methodology' and don't try anything outside of it. If you are invested in yourself and learning, then I do recommend this book. I am sure you will pick up one or two strategies that will help you.
 thumbnail: ../images/ultralearning.jpg
 popular: true
-draft: true
+draft: false
 ---
 
 ## Key Thoughts
