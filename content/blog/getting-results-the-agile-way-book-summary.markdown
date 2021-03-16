@@ -12,7 +12,7 @@ draft: false
 
 ## Key Thoughts
 
-Getting Results the Agile Way is a great productivity book on building a Personal Productivity System to manage your life - both work and personal. I'd recommend this book for anyone starting to build a productivity system for themselves. If you are familiar with Agile concepts and methodologies, a lot of it might be familiar, but still worth a quick skim if you are looking to pick up a trick or two.
+[Getting Results the Agile Way](https://amzn.to/3lmeWaQ) is a great productivity book on building a Personal Productivity System to manage your life - both work and personal. I'd recommend this book for anyone starting to build a productivity system for themselves. If you are familiar with Agile concepts and methodologies, a lot of it might be familiar, but still worth a quick skim if you are looking to pick up a trick or two.
 
 ## Summary
 

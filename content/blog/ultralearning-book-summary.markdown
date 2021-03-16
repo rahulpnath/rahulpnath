@@ -12,7 +12,7 @@ draft: false
 
 ## Key Thoughts
 
-Ultralearning is a book on how to learn anything that is of interest to you. Often we get stuck with the same 'classroom learning methodology' and don't try anything outside of it. This book introduces different strategies, tips, tricks, and steps to try and test for yourself. If you are invested in yourself and learning, then I do recommend this book. I am sure you will pick up one or two strategies that will help you.
+[Ultralearning](https://amzn.to/2ODCe0b) is a book on how to learn anything that is of interest to you. Often we get stuck with the same 'classroom learning methodology' and don't try anything outside of it. This book introduces different strategies, tips, tricks, and steps to try and test for yourself. If you are invested in yourself and learning, then I do [recommend this book](https://amzn.to/2ODCe0b). I am sure you will pick up one or two strategies that will help you.
 
 ## Summary
 
