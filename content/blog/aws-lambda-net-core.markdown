@@ -1,12 +1,13 @@
 ---
 title: '.NET Core and AWS Lambda: How To Get Started with Serverless'
+date: 2021-03-17
 tags:
   - AWS
   - Dotnet-Core
 description: Learn how to get started with AWS Lambda with .NET Core by building out a simple function and deploying to AWS. We will also see how to set up local development environment using the AWS Toolkit.
 thumbnail: ../images/aws_lambda.jpg
-popular: false
-draft: true
+popular: true
+draft: false
 ---
 
 Early this year, I joined [OFX.com](http://ofx.com/) and have been working with the [Global Currency Account](https://www.ofx.com/en-us/business/global-currency-account/) team. 
