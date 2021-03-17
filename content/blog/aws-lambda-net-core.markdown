@@ -1,5 +1,5 @@
 ---
-title: '.NET Core and AWS Lambda: How To Get Started with Serverless'
+title: 'AWS Lambda For The .NET Developer: How To Easily Get Started'
 date: 2021-03-17
 tags:
   - AWS
