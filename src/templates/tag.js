@@ -38,7 +38,7 @@ export default ({ data: { posts }, pageContext: {tag, slug } }) => (
 export const postQuery = graphql`
   query($tag: String!) {
     posts: allMdx(
-      filter: { frontmatter: { tags: { in: [$tag] } } }
+      filter: { frontmatter: { tags: { in: [$tag] } }, fileAbsolutePath: {regex: "/blog/"}}
       sort: { order: DESC, fields: [frontmatter___date] }
       limit: 200
     ) {

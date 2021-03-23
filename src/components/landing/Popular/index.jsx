@@ -16,7 +16,7 @@ export const Popular = () => {
     query {
       popular: allMdx(
         sort: { order: DESC, fields: [frontmatter___date] }
-        filter: { frontmatter: { popular: { eq: true } } }
+        filter: { frontmatter: { popular: { eq: true }}, fileAbsolutePath: {regex: "/blog/"}}
         limit: 5
       ) {
         edges {
