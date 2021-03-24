@@ -13,6 +13,8 @@ thumbnail: ../images/azure_devops_remaining_build_minutes.png
 
 With [Azure Pipelines](https://azure.microsoft.com/en-us/services/devops/pipelines/) you can continuosly build, test and deploy to any cloud platform. Azure Pipelines has multiple options to start based on your project. Even if you are developing a private application, Pipelines offers you 1 Free parallel job with upto 1800 minutes per month and also 1 Free self hosted with unlimited months (as it's anyway running on your infrastructure).
 
+`youtube:https://www.youtube.com/embed/298qAhQW0ps`
+
 On the Microsoft-hosted CI/CD with 1800 minutes you might need to find the used/remaining time any time during the month. You can find the remaining minutes from the [Azure Devops portal](https://dev.azure.com/) and select the relevant organization.
 
 **Organization settings -> Retention and parallel jobs -> Parallel Jobs**
