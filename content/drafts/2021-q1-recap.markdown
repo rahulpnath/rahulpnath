@@ -1,7 +1,7 @@
 ---
 layout: post
 author: [Rahul Nath]
-title: "2021: First Quarter Review"
+title: "2021: Q1 Review and Goals Looking Forward to Q2"
 comments: true
 date: 2020-12-31
 tags:
@@ -33,7 +33,7 @@ For e.g. with *Run a HM in 2:00 by end of March 2021* even though I was not able
 
 Let's take a closer look at each of the sections above and see how I did in each of these categories and some lessons learned.
 
-### Improve Family Experience
+### Improve Family Experience ●●●●●●○○○○ 60%
 
 Much of the things went as planned for this Area. Except for buying a house (which we are still actively looking) I was able to make good progress on the rest.
 

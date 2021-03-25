@@ -18,6 +18,8 @@ This calls for some [new learning](https://www.rahulpnath.com/blog/ultralearning
 
 [AWS Lambda](https://aws.amazon.com/lambda/) is Amazon's answer to serverless compute services. It allows running code with zero administration of the infrastructure that the code is running on. 
 
+`youtube:https://www.youtube.com/embed/IHIJFVUQyFY`
+
 AWS Lambda allows us to upload the code as a ZIP file or container image, and AWS takes care of allocating the compute execution power required to run the code. 
 
 > *AWS Lambda is a serverless compute service that lets you run code without provisioning or managing servers, creating workload-aware cluster scaling logic, maintaining event integrations, or managing runtimes.*
