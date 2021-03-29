@@ -29,7 +29,7 @@ In this post, let us look at how we can use Manage Service Identity to connect t
 
 ## Using Azure AD Token to Connect to SQL
 
-Using the [DefaultAzureCredential from Azure Identity SDK we can retrieve token from Azure AD](/blog/defaultazurecredential_from_azure_sdk/). SqlConnection uses this token for authentication. Below is a sample code where the AccessToken property of the SqlConnection is the Azure AD token.
+Using the [DefaultAzureCredential from Azure Identity SDK we can retrieve token from Azure AD](/blog/defaultazurecredential-from-azure-sdk/). SqlConnection uses this token for authentication. Below is a sample code where the AccessToken property of the SqlConnection is the Azure AD token.
 
 ```csharp
 var connectionString = Configuration.GetConnectionString("QuotesDatabase");
