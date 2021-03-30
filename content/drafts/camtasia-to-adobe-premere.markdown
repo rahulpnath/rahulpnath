@@ -4,7 +4,7 @@ tags:
   - Tools
 keywords:
 description: A short recap of the year that is gone by and looking forward!
-thumbnail: ../images/happy_new_year.png
+thumbnail: ../images/draft_post.jpg
 popular: false
 draft: true
 ---
