@@ -16,15 +16,14 @@ export default ({ pageContext }) => {
             ({
               node: {
                 id,
-                description,
-                timeToRead,
+                summary,
                 fields : {slug},
-                frontmatter: { title, date, thumbnail, tags },
+                frontmatter: { title, description,  thumbnail },
               },
             }) => (
               <CardPost
                 key={id}
-                description={description}
+                description={description || summary}
                 title={title}
                 path={slug}
                 thumbnail={thumbnail}

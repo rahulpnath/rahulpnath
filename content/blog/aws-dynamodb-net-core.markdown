@@ -6,8 +6,8 @@ tags:
   - Dotnet-Core
 description: Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it's data store. We will learn to do basic Creat, Read, Update and Delete operations from the API.
 thumbnail: ../images/aws_dynamodb.jpg
-popular: false
-draft: true
+popular: true
+draft: false
 ---
 
 DynamoDB is a cloud-hosted NoSQL database provided by Amazon Web Services (AWS). DynamoDB provides *reliable performance,* a *managed experience,* and a convenient *API access* to interact with it.

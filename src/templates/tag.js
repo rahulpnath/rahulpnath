@@ -12,15 +12,15 @@ export default ({ data: { posts }, pageContext: {tag, slug } }) => (
           ({
             node: {
               id,
-              description,
+              summary,
               timeToRead,
               fields: { slug },
-              frontmatter: { title, date, thumbnail, tags },
+              frontmatter: { title, description, date, thumbnail, tags },
             },
           }) => (
             <CardPost
               key={id}
-              description={description}
+              description={description || summary}
               timeToRead={timeToRead}
               title={title}
               date={date}
@@ -44,7 +44,7 @@ export const postQuery = graphql`
     ) {
       edges {
         node {
-          description: excerpt(pruneLength: 260)
+          summary: excerpt(pruneLength: 260)
           id
           timeToRead
           fields {
@@ -52,6 +52,7 @@ export const postQuery = graphql`
           }
           frontmatter {
             title
+            description
             date(formatString: "MMM DD, YYYY")
             tags
             thumbnail {
