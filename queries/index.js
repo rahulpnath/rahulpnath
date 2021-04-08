@@ -6,7 +6,7 @@ module.exports = `
   ) {
     edges {
       node {
-        description: excerpt(pruneLength: 260)
+        summary: excerpt(pruneLength: 260)
         id
         timeToRead
         fields {
@@ -14,6 +14,7 @@ module.exports = `
         }
         frontmatter {
           title
+          description
           date(formatString: "MMM DD, YYYY")
           tags
           thumbnail {
@@ -44,7 +45,7 @@ module.exports = `
   ) {
     edges {
       node {
-        description: excerpt(pruneLength: 260)
+        summary: excerpt(pruneLength: 260)
         id
         timeToRead
         fields {
@@ -52,6 +53,7 @@ module.exports = `
         }
         frontmatter {
           title
+          description
           date(formatString: "MMM DD, YYYY")
           tags
           thumbnail {
