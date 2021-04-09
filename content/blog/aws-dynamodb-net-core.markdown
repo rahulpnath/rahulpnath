@@ -18,6 +18,8 @@ With DynamoDB, you can create database tables that can store and retrieve any am
 
 It also supports automatic expiry of items to reduce storage and associated cost.
 
+`youtube:https://www.youtube.com/embed/BbUmLRaxZG8`
+
 DynamoDB is a fully managed database, which means you don't need to spin up server instances, software installations, or other maintenance tasks.
 
 In this post, let's learn more about DynamoDB and using it from a .NET application. We will learn how to create tables and do basic Create Read, Update and Delete (CRUD) operations from the .NET application using the DynamoDB SDK. 
