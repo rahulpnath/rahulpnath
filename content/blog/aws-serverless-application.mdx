@@ -1,15 +1,16 @@
 ---
 title: 'Going Serverless on AWS For The .NET Developer: How To Easily Get Started'
+date: 2021-04-16
 tags:
   - AWS
   - Serverless
   - Dotnet-Core
-keywords:
-description: How to expose
-thumbnail: ../images/draft_post.jpg
-popular: false
-draft: true
+description: Learn how to get started with AWS Serverless Application using the Serverless Application Model (SAM). The Serverless Application Template available as part of the AWS Toolkit makes it easy to start building Serverless Application.
+thumbnail: ../images/aws_serverless.jpg
+popular: true
+draft: false
 ---
+import { Bookmark } from 'components/common'
 
 [AWS Lambda's](https://www.rahulpnath.com/blog/aws-lambda-net-core/) are the stepping stones to building a Serverless application in AWS.
 
@@ -19,17 +20,19 @@ A Serverless Application in AWS is a combination of Lambda functions, event sour
 
 Now that's a lot of jargon in one line. Let's understand each of them better.
 
+`youtube:https://www.youtube.com/embed/iLo8svHzD_g`
+
 In this post, let's learn how to build an AWS Serverless application using the Serverless Application Template as part of the AWS Toolkit. We will see how we can deploy one or more Lambda functions using the AWS SAM and also use it to deploy a Lambda-driven API Gateway application backed by a DynamoDB database. 
 
 ## Creating an AWS Serverless Application
 
-The AWS Toolkit for Visual Studio comes with a built-in template to create a Serverless Application.
+The [AWS Toolkit for Visual Studio](https://aws.amazon.com/visualstudio/) comes with a built-in template to create a Serverless Application.
 
-To create a new application, choose the 'AWS Serverless Application (.NET Core - C#)' option from the template list when creating a new project.
+To create a new application, choose the '*AWS Serverless Application (.NET Core - C#)*' option from the template list when creating a new project.
 
 ![AWS Serverless templates in Visual Studio create project](../images/aws_serverless_templates.jpg)
 
-Select the 'Empty Serverless Application' blueprint to create a Serverless application with just one function.
+Select the '*Empty Serverless Application*' blueprint to create a Serverless application with just one function.
 
 As shown below, it contains the same set of files as we saw in the [previous post on getting started with AWS Lambda](https://www.rahulpnath.com/blog/aws-lambda-net-core/) with the addition of one new file `serverless.template` ;which is the AWS SAM template file. 
 
@@ -46,21 +49,23 @@ AWS SAM consists of the following components
 
 *AWS SAM templates are an extension of AWS CloudFormation templates*, with some additional components make them easier to work with.
 
-AWS CloudFormation simplifies Infrastructure management, quickly replicate infrastructure and easily control and track infrastructure changes.
+### AWS CloudFormation
+
+[AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) simplifies Infrastructure management, quickly replicate infrastructure and easily control and track infrastructure changes.
 
 > *AWS CloudFormation is a service that helps you model and set up your Amazon Web Services resources so that you can spend less time managing those resources and more time focusing on your applications that run in AWS.*
 
 When using CloudFormation, you normally work with [Templates and Stacks.](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-whatis-concepts.html)
 
-***Templates*** are YAML or JSON files that act as blueprints for building AWS resources. It has a well-defined [structure and schema defined.](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html)
+- ***Templates*** are YAML or JSON files that act as blueprints for building AWS resources. It has a well-defined [structure and schema defined.](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html)
 
-A group of related resources forms a single unit called a ***Stack.*** You manage resources by basically managing stacks.
+- A group of related resources forms a single unit called a ***Stack.*** You manage resources by basically managing stacks.
 
-### Serverless Template File
+### serverless.template File
+
+The *serverless.template* file is used to define the Serverless Application. It can contain different sections of which *Transform* and *Resources* sections are required.
 
 The `Transform` element in the template file indicates this file to contain AWS SAM syntax, which will be [transformed into AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-aws-serverless.html) compliant format.
-
-With the transform specified, we can use `AWS::Serverless::Function` as the type for a resource with the name `Get`. 
 
 ```json
 {
@@ -105,7 +110,9 @@ With the transform specified, we can use `AWS::Serverless::Function` as the type
 
 The [AWS::Serverless::Function](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html) creates an AWS Lambda function, an IAM Role and event source mappings that trigger the function. It supports various properties as used above to configure the AWS Lambda.
 
-The above scenario defines the Lambda with `AWSLambdaBasicExecutionRole` role and triggered by an API Gateway using the HTTP `GET` method.
+The above scenario defines the Lambda with *AWSLambdaBasicExecutionRole* role and triggered by an API Gateway using the **HTTP GET** method.
+
+`youtube:https://www.youtube.com/embed/IHIJFVUQyFY`
 
 The Lambda maps to the `Get` method within the `Functions` class. 
 
@@ -141,7 +148,7 @@ To add another Lambda function, we need to create a new function endpoint in the
 
 The easiest way to publish the AWS Lambda function to AWS infrastructure is to right-click on the project and select the 'Publish To AWS Lambda...' option. It prompts up a dialog to choose the AWS profile, region, and CloudFormation settings.
 
-*In real-life projects, you would set up a build deploy pipeline to automate this, which we will see later.*
+*In real-life projects, I set up a build deploy pipeline to automate this, which we will see in a different post.*
 
 [CloudFormation first uploads the package to deploy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-whatis-howdoesitwork.html) and the template to an S3 bucket and then deploys the application resources from there. The CloudFormation settings take this as a parameter.
 
@@ -151,13 +158,13 @@ It also requires the Stack Name as a parameter, to which all the resources are d
 
 Once complete, it automatically opens the CloudFormation Stack view within Visual Studio. If not, you can manually do this from the *AWS Explorer* (that is part of the AWS Toolkit), available from View → AWS Explorer. Navigate to AWS CloudFormation and select the stack name you just deployed.
 
-The 'AWS Serverless URL' is the API Gateway URL where the Lambda function is exposed. The `ApiURL` in the `Outputs` section of the template file populates this URL.
+The *AWS Serverless URL* is the API Gateway URL where the Lambda function is exposed. The *ApiURL* in the *Outputs* section of the template file populates this URL.
 
 ![Published stack details of AWS Serverless application in Visual Studio](../images/aws_serverless_stack_visual_studio.jpg)
 
 You can also see the Stack's details, the associated resources, and various other information under the [Stacks in AWS Console](https://ap-southeast-2.console.aws.amazon.com/cloudformation/home) under the appropriate region. It lists all the resources part of the Stack and allows navigating to each of them.
 
-![CloudFormation associated S3 bucket](../images/aws_serverless_cloudformation_s3.jpg)
+![AWS Console Resources under Stack](../images/aws_serverless_stack.jpg)
 
 Navigating the API URL, it returns the hardcoded message from the AWS lambda → "*Hello AWS Serverless*".
 
@@ -165,7 +172,7 @@ Navigating the API URL, it returns the hardcoded message from the AWS lambda →
 
 Each time the application is published, the template and the associated published application package are uploaded to the selected S3 bucket.  You can navigate to the S3 bucket to view the files.
 
-![AWS Console Resources under Stack](../images/aws_serverless_stack.jpg)
+![CloudFormation associated S3 bucket](../images/aws_serverless_cloudformation_s3.jpg)
 
 ## Web API using Azure Lambda, API Gateway, and DynamoDB
 
@@ -174,6 +181,12 @@ To create a more complex AWS Serverless applications that use a DynamoDB table t
 ![AWS Serverless Application Template Blueprint, Blog API using DynamoDB](../images/aws_serverless_template_blueprint.jpg)
 
 It scaffolds a template with 4 API endpoints to `GetBlogs`, `GetBlog`, `AddBlog`, and `RemoveBlog` items from a DynamoDB table.
+
+<Bookmark
+  slug="aws-dynamodb-net-core"
+  title="New to AWS DynamoDB?"
+  description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it's data store. We will learn to do basic Creat, Read, Update and Delete operations from the API."
+/>
 
 As with the Empty template we created earlier, this one has a `serverless.template` file which defines all the resources (AWS Lambda, DynamoDB, etc.) required for this application. 
 
