@@ -1,6 +1,6 @@
-- image: '../src/assets/images/youtube/1.png'
+- image: '../src/assets/images/youtube/1.jpg'
   link: https://www.youtube.com/playlist?list=PL59L9XrzUa-nqfCHIKazYMFRKapPNI4sP
-- image: '../src/assets/images/youtube/2.png'
+- image: '../src/assets/images/youtube/2.jpg'
   link: https://www.youtube.com/playlist?list=PL59L9XrzUa-m7AFDgjWuwm6exyCklc03U
 - image: '../src/assets/images/youtube/3.jpg'
-  link: https://www.youtube.com/watch?v=HXZWvobMbo0
+  link: https://www.youtube.com/playlist?list=PL59L9XrzUa-kl89ThijziX03fgTrbZCd7
