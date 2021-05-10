@@ -8,7 +8,7 @@ import {
   ArticleTitle,
   Item,
   Paragraph,
-  Post,
+  Post
 } from './styles'
 
 export const Bookmark = ({ slug, title, description }) => {
@@ -19,12 +19,13 @@ export const Bookmark = ({ slug, title, description }) => {
         edges {
           node {
             id
-            originalDescription: excerpt(pruneLength: 260)
+            summary: excerpt(pruneLength: 260)
             fields {
               slug
             }
             frontmatter {
               originalTitle: title
+              originalDescription: description
               thumbnail {
                 childImageSharp {
                   fluid {
@@ -52,8 +53,8 @@ export const Bookmark = ({ slug, title, description }) => {
   const path = `/blog/${slug}/`
   const {
     node: {
-      originalDescription,
-      frontmatter: { originalTitle, thumbnail },
+      summary,
+      frontmatter: { originalTitle, originalDescription, thumbnail },
     },
   } = posts.edges.find(p => p.node.fields.slug === path)
 
@@ -70,7 +71,7 @@ export const Bookmark = ({ slug, title, description }) => {
           <ArticleContent>
             <ArticleTitle theme={theme}>{title || originalTitle}</ArticleTitle>
             <Paragraph theme={theme} path={linkPath}>
-              {description || originalDescription}
+              {description || originalDescription || summary}
             </Paragraph>
           </ArticleContent>
         </Post>
