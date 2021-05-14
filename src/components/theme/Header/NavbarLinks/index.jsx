@@ -16,9 +16,6 @@ export default ({ desktop }) => {
       <Link to="/blog" activeClassName="current">
         Blog
       </Link>
-      <Link to="/notes" activeClassName="current">
-        Notes
-      </Link>
       <Link to="/archives" activeClassName="current">
         Archives
       </Link>
