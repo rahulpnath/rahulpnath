@@ -11,13 +11,15 @@ popular: true
 draft: false
 ---
 
-One of the patterns that I keep coming back to when building ASP NET Applications is the Command and Query Responsibility Segregation (CQRS) pattern. Fundamentally, the pattern separates the code to read (Query) and the write (Command) to the data store.
+One of the patterns that I keep coming back to when building ASP NET Applications is the Command Query Separation (CQS) pattern. Fundamentally, the pattern separates the code to read (Query) and the write (Command) to the data store.
 
 By separating the Commands and Queries, the code is more focused on the task performed. If you are familiar with the Create-Read-Update-Delete (CRUD) pattern, you can think of Queries as 'R' and Commands for 'CUD.'
 
 ![](../images/cqrs_pattern.jpg)
 
-The [MediatR](https://github.com/jbogard/MediatR) library provides an in-process messaging solution and enables applying CQRS pattern to our application code. The library support Commands, Queries, Notifications, Events, and a lot more make it easy to follow the CQRS pattern.
+The [MediatR](https://github.com/jbogard/MediatR) library provides an in-process messaging solution and enables applying CQS pattern to our application code. The library support Commands, Queries, Notifications, Events, and a lot more make it easy to follow the CQS pattern.
+
+`youtube:https://www.youtube.com/embed/XE1w52pNYr8`
 
 Let's see an example below of a Command handler for creating a new Order in an application.
 
@@ -144,3 +146,5 @@ With the code now decoupled using Events, we can raise an `OrderCreatedEvent` an
 So the next time you are invoking a command from another command handler, take a step back and think. Is there a Domain Event that to be extracted here? Raise that event and let that drive the business process associated with that event!
 
 Avoid calling Commands from other Command Handlers!
+
+_**Update:**_ Updated the pattern rightly to be CQS instead of CQRS as rightly pointed out by [David in the comments](http://disq.us/p/2i1jzgl).
