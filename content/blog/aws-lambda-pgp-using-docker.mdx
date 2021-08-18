@@ -19,6 +19,8 @@ Let's not go into the why PGP question since I don't have an answer.
 
 What I do have is, How I did it. 
 
+`youtube:https://www.youtube.com/embed/WuKbZATHzVE`
+
 My team is primarily on AWS Serverless, running everything on Lambda, and wanted to run this PGP Encrypt/Sign job there. 
 
 There are a lot of libraries out there for PGP encryption ([PgpCore](https://github.com/mattosaurus/PgpCore), [OpenPGP.js](https://github.com/openpgpjs/openpgpjs) etc.). However, these did not integrate with this third-party provider. Their decryption software seems to work only with the files encrypted using [GnuPG](https://gnupg.org/download/).
