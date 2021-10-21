@@ -58,7 +58,7 @@ An Azure Function is defined as a static method within a class library project i
 
 The below function is an Azure Queue Storage triggered Function. It runs anytime a message is dropped in the `add-weatherdata`. The connection string to the queue is specified as part of the environment configuration with the name `WeatherDataQueue`.
 
-"`csharp
+```csharp
 public static class Function1
 {
     [FunctionName("ProcessWeatherData")]
@@ -73,7 +73,7 @@ public static class Function1
 
 The connection string `WeatherDataQueue` can be specified as part of the `local.settings.json` file when running on the local development computer. 
 
-"`csharp
+```csharp
 {
   "IsEncrypted": false,
   "Values": {
@@ -108,7 +108,7 @@ To enable Managed Identities for QueueTrigger we need to update it to the latest
 
 With the updated packages, update the connection string name in `local.settings.json` file with a suffix `__queueServiceUri`.
 
-"`csharp
+```csharp
 {
   "IsEncrypted": false,
   "Values": {
