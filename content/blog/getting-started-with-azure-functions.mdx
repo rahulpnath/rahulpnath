@@ -1,12 +1,12 @@
 ---
-title: ‘Getting Started With Azure Functions ⚡’
+title: 'Azure Functions ⚡ For The .NET Developer: How To Easily Get Started'
 date: 2021-10-21
 tags:
   - Azure
   - Serverless
   - Dotnet-Core
 keywords:
-description: Learn how to set up and run DynamoDB database on your local development machine. We’ll see how to connect using AWS CLI, from .NET application, and using GUI tools like Dynobase and NoSQL Workbench.
+description: Write your first Azure Function to process messages from an Azure Queue Storage. See how to use Managed Identities to setup authentication for Azure Function with other resources.
 thumbnail: ../images/laptop_developer.jpg
 popular: true
 draft: false
@@ -58,7 +58,7 @@ An Azure Function is defined as a static method within a class library project i
 
 The below function is an Azure Queue Storage triggered Function. It runs anytime a message is dropped in the `add-weatherdata`. The connection string to the queue is specified as part of the environment configuration with the name `WeatherDataQueue`.
 
-“`csharp
+"`csharp
 public static class Function1
 {
     [FunctionName("ProcessWeatherData")]
@@ -73,7 +73,7 @@ public static class Function1
 
 The connection string `WeatherDataQueue` can be specified as part of the `local.settings.json` file when running on the local development computer. 
 
-“`csharp
+"`csharp
 {
   "IsEncrypted": false,
   "Values": {
@@ -98,8 +98,8 @@ This means we can avoid having to put in connection strings to connect to other 
 
 <Bookmark
   slug="defaultazurecredential-from-azure-sdk"
-  title= “Want To Learn More About DefaultAzureCredential?”
-  description= “In the past, Azure had different ways to authenticate with the various resources. The Azure SDK’s is bringing this all under one roof and providing a more unified approach to developers when connecting to resources on Azure.”
+  title= "Want To Learn More About DefaultAzureCredential?"
+  description= "In the past, Azure had different ways to authenticate with the various resources. The Azure SDK’s is bringing this all under one roof and providing a more unified approach to developers when connecting to resources on Azure."
 />
 
 In our example, we added in the `WeatherDataQueue` connection string to connect to the Azure Queue Storage. We can replace this to use Managed Identites.
@@ -108,7 +108,7 @@ To enable Managed Identities for QueueTrigger we need to update it to the latest
 
 With the updated packages, update the connection string name in `local.settings.json` file with a suffix `__queueServiceUri`.
 
-“`csharp
+"`csharp
 {
   "IsEncrypted": false,
   "Values": {
