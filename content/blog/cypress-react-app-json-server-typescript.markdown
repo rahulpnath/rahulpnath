@@ -26,7 +26,7 @@ npx create-react-app my-app --template typescript
 
 ## Setting Up JSON Server
 
-In the previous post we looked at [how to set up a Fake REST API using JSON Server](/blog/setting_up_a_fake_rest_api_using_json_server/). Let's move JSON Server and the mock data to TypeScript. It forces us to update the mock data any time the models are updated. I have JSON Server under the _mockApi_ folder.
+In the previous post we looked at [how to set up a Fake REST API using JSON Server](/blog/setting-up-a-fake-rest-api-using-json-server/). Let's move JSON Server and the mock data to TypeScript. It forces us to update the mock data any time the models are updated. I have JSON Server under the _mockApi_ folder.
 
 ``` bash
 npm install json-server @types/json-server typescript
