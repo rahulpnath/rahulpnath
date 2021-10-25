@@ -1,10 +1,11 @@
+import CarbonAd from 'components/CarbonAd'
 import { PageTitle, SocialShare, Tag } from 'components/common'
 import Disqus from 'disqus-react'
 import { MDXRenderer } from 'gatsby-plugin-mdx'
 import { ThemeContext } from 'providers/ThemeProvider'
 import React, { useContext } from 'react'
 import LazyLoad from 'react-lazy-load'
-import { Ad, ArticleDate, ArticleWrapper, Comments, Flex, Tags } from './styles'
+import { ArticleDate, ArticleWrapper, Comments, Flex, Tags } from './styles'
 
 export const Post = ({ body, frontmatter, timeToRead, fields }) => {
   const { theme } = useContext(ThemeContext)
@@ -40,13 +41,7 @@ export const Post = ({ body, frontmatter, timeToRead, fields }) => {
             <i>{timeToRead} min read</i>
           </ArticleDate>
         </div>
-        <Ad
-          theme={theme}
-          dangerouslySetInnerHTML={{
-            __html:
-              "<script async type='text/javascript' src='//cdn.carbonads.com/carbon.js?serve=CE7IVK7J&placement=wwwrahulpnathcom' id='_carbonads_js' />",
-          }}
-        />
+        <CarbonAd />
       </Flex>
       <MDXRenderer>{body}</MDXRenderer>
       <SocialShare title={frontmatter.title} path={fields.slug} />
