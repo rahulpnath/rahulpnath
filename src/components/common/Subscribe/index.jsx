@@ -1,56 +1,71 @@
-import { Container } from 'components/common'
-import { withFormik } from 'formik'
-import addToMailchimp from 'gatsby-plugin-mailchimp'
-import { ThemeContext } from 'providers/ThemeProvider'
-import React, { useContext } from 'react'
-import * as Yup from 'yup'
-import { FormWrapper, Frame, StyledForm } from './styles'
+import { ThemeContext } from "providers/ThemeProvider";
+import React, { useContext } from "react";
 
-const Wrapper = ({
-  errors,
-  isSubmitting,
-  touched,
-  values,
-  handleBlur,
-  handleChange,
-}) => {
-  const { theme } = useContext(ThemeContext)
+export const Subscribe = ({}) => {
+  const { theme } = useContext(ThemeContext);
   return (
-    <FormWrapper as={Container}>
-      <StyledForm theme={theme}>
-        <Frame
-          src="https://rahulpnath.substack.com/embed"
-          frameborder="0"
-          scrolling="no"
-        ></Frame>
-      </StyledForm>
-    </FormWrapper>
-  )
-}
-
-export const Subscribe = withFormik({
-  mapPropsToValues: () => ({ email: '' }),
-  validationSchema: () =>
-    Yup.object().shape({
-      email: Yup.string()
-        .email('Please enter a valid email!')
-        .required('Email is required!'),
-    }),
-  handleSubmit: async ({ email }, { setErrors, setSubmitting, setValues }) => {
-    try {
-      const res = await addToMailchimp(email, {
-        pathname: document.location.pathname,
-      })
-      if (res.result === 'success') {
-        setValues({ status: 'success', msg: res.msg, email })
-        setSubmitting(false)
-      } else {
-        setValues({ status: 'error', msg: res.msg, email })
-        setSubmitting(false)
-      }
-    } catch (err) {
-      setErrors({ message: err, status: 'error' })
-      setSubmitting(false)
-    }
-  },
-})(Wrapper)
+    <div id="revue-embed">
+      <form
+        action="https://www.getrevue.co/profile/rahulpnath/add_subscriber"
+        method="post"
+        id="revue-form"
+        name="revue-form"
+        target="_blank"
+      >
+        <div class="revue-form-group">
+          <label for="member_email">Email address</label>
+          <input
+            class="revue-form-field"
+            placeholder="Your email address..."
+            type="email"
+            name="member[email]"
+            id="member_email"
+          />
+        </div>
+        <div class="revue-form-group">
+          <label for="member_first_name">
+            First name <span class="optional">(Optional)</span>
+          </label>
+          <input
+            class="revue-form-field"
+            placeholder="First name... (Optional)"
+            type="text"
+            name="member[first_name]"
+            id="member_first_name"
+          />
+        </div>
+        <div class="revue-form-group">
+          <label for="member_last_name">
+            Last name <span class="optional">(Optional)</span>
+          </label>
+          <input
+            class="revue-form-field"
+            placeholder="Last name... (Optional)"
+            type="text"
+            name="member[last_name]"
+            id="member_last_name"
+          />
+        </div>
+        <div class="revue-form-actions">
+          <input
+            type="submit"
+            value="Subscribe"
+            name="member[subscribe]"
+            id="member_submit"
+          />
+        </div>
+        <div class="revue-form-footer">
+          By subscribing, you agree with Revue’s{" "}
+          <a target="_blank" href="https://www.getrevue.co/terms">
+            Terms of Service
+          </a>{" "}
+          and{" "}
+          <a target="_blank" href="https://www.getrevue.co/privacy">
+            Privacy Policy
+          </a>
+          .
+        </div>
+      </form>
+    </div>
+  );
+};
