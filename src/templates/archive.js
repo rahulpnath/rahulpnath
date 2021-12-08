@@ -1,4 +1,4 @@
-import { ArchivePost, Container, Layout, PageTitle, Row, SEO } from 'components/common';
+import { ArchivePost, Container, Layout, PageTitle, Row, SEO, Subtitle } from 'components/common';
 import React from 'react';
 
 export default ({ pageContext : { allPosts } }) => {
@@ -23,7 +23,7 @@ export default ({ pageContext : { allPosts } }) => {
               const postsForMonth = postsPerMonth[groupKey]
               return (
                 <div>
-                    <h2>{groupKey}</h2>
+                    <Subtitle>{groupKey}</Subtitle>
                     {postsForMonth.map(({
                   node: {
                     id,
