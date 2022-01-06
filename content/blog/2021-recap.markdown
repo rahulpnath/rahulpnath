@@ -48,7 +48,7 @@ The blog also saw an additional 19 posts, which included a few [book reviews](ht
 As much as the first time, I am excited to be renewed as a [Microsoft Azure MVP](https://mvp.microsoft.com/en-us/PublicProfile/5003875?fullName=Rahul%20Nath). It is mainly for my work as part of my blogs and YouTube channel. Thank you all for making this possible.
 
 
-![Microsoft MVP 2021 - Azure](../images/2021-microsoft-mvp.jpg)
+![Microsoft MVP 2021 - Azure](../images/2021-microsoft-mvp-azure.jpg)
 
 I am equally excited to be part of the [AWS Community Builder Program](https://aws.amazon.com/developer/community/community-builders/) which offers resources, mentorship, networking opportunities, and a lot of swag and AWS credits.
 
