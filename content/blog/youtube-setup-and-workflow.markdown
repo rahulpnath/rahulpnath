@@ -3,7 +3,7 @@ author: [Rahul Nath]
 title: "My YouTube Setup and Workflow"
 tags:
   - Productivity
-thumbnail: ../images/youtube_setup.jpg
+thumbnail: ../images/youtube-setup-2022-may.jpg
 date: 2020-05-01
 ---
 
@@ -13,7 +13,7 @@ It's been three-plus years since I published the [first YouTube video](https://w
 
 In this post, I will walk through my current YouTube setup, the equipment, software, and the recording process.
 
-![](../images/youtube_setup.jpg)
+![](../images/youtube-setup-2022-may.jpg)
 
 ### Equipment Setup
 
