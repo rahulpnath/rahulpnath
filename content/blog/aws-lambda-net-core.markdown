@@ -9,12 +9,20 @@ thumbnail: ../images/aws_lambda.jpg
 popular: true
 draft: false
 ---
+import { ExternalBookmark } from 'components/common'
 
 Early this year, I joined [OFX.com](http://ofx.com/) and have been working with the [Global Currency Account](https://www.ofx.com/en-us/business/global-currency-account/) team. 
 
 The company is entirely on AWS Cloud Service. Much of my experience with Cloud platforms has been with Microsoft Azure (where I am also an [MVP](https://mvp.microsoft.com/en-us/PublicProfile/5003875?fullName=Rahul%20Nath)). 
 
 This calls for some [new learning](https://www.rahulpnath.com/blog/ultralearning-book-summary/), and I am excited about it. In this post, I explore AWS Lambda for anyone just getting started with it.
+
+<ExternalBookmark 
+  url="https://rahulpnath.gumroad.com/l/aws-lambda-dot-net" 
+  title="📹AWS Lambda For The .NET Developer - Video Course"
+  description = "Check out my latest course on building AWS Lambda Functions using .NET."
+  thumbnail="images/aws-lambda-course.jpg"
+/>
 
 [AWS Lambda](https://aws.amazon.com/lambda/) is Amazon's answer to serverless compute services. It allows running code with zero administration of the infrastructure that the code is running on. 
 
