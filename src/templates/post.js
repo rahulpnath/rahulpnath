@@ -22,7 +22,7 @@ export default ({ data: { post } }) => (
           post.frontmatter.thumbnail.childImageSharp.fluid.originalImg
         }
         location={post.fields.slug}
-        description={post.description}
+        description={post.frontmatter.description || post.summary}
         readTime={post.timeToRead}
       />
       <Post {...post} />
@@ -34,13 +34,14 @@ export const postQuery = graphql`
   query($path: String!) {
     post: mdx(fields: { slug: { eq: $path } }) {
       body
-      description: excerpt(pruneLength: 105)
+      summary: excerpt(pruneLength: 155)  
       timeToRead
       fields {
         slug
       }
       frontmatter {
         normalDate: date
+        description
         date(formatString: "MMMM DD, YYYY")
         edited(formatString: "MMMM DD, YYYY")
         title
