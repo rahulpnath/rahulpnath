@@ -46,7 +46,8 @@ export const SEO = ({
     },
 		"author": {
 			"@type": "Person",
-			"name": "${author}"
+			"name": "${author}",
+      "url": "https://www.rahulpnath.com/about"
 		},
 		"description": ${JSON.stringify(description)},
     "url": "${url}${location}",
