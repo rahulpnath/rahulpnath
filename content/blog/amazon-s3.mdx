@@ -125,7 +125,7 @@ Depending on your application and use cases, you can either overwrite the same f
 
 Amazon S3 has a flat data structure. You have a Bucket, and within that, you have Objects with a key. However, you can introduce logical hierarchies by using the ‘/’ delimiter. 
 
-![Folders and files in Amazon S3 is a logical hierarchy using / as a delimiter in Object key names.](../images/amazon-s3-hierarchy-folder-structure.jpg)
+![Folders and files in Amazon S3 is a logical hierarchy using / as a delimiter in Object key names. When creating files from .NET prefix with the appropriate logical grouping.](../images/amazon-s3-hierarchy-folder-structure.jpg)
 
 
 The AWS Console uses the delimiter in Object key names to group them as folders, as shown above. When creating files, make sure to prefix the name with the appropriate logical grouping followed by ‘/’. You can also do multi-level grouping, allowing folders inside folders (e.g., *Projects/Amazon S3/VideoScript.txt*).

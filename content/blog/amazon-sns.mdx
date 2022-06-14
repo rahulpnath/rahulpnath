@@ -35,7 +35,7 @@ Amazon SNS supports two types of Topics
 
 For this article, we will create a Standard SNS Topic, by specifying the name and leaving all other options to default.
 
-![Amazon SNS create new Standard topic ](../images/amazon-sns-create-topic.jpg)
+![Amazon SNS create new Standard topic from the AWS Console](../images/amazon-sns-create-topic.jpg)
 
 ### SNS & .NET
 
@@ -96,7 +96,7 @@ We can add a new subscription under the Topic in the AWS console.
 
 To email, any time we receive a message in the Topic, create a new Subscriber with the Email Protocol. Enter the email address of the recipient in the Endpoint column.
 
-![Use Email Protocol for the subscriber and specify the email to which the messages must be sent. ](../images/amazon-sns-email-subscription.jpg)
+![Use Email Protocol for the subscriber and specify the email to which the messages must be sent. Everytime a message comes in the SNS Topic the subscriber will receive an email.](../images/amazon-sns-email-subscription.jpg)
 
 Once created, a confirmation email is sent with a link. Only after confirming the subscription using the link will messages appear in the email inbox.
 
@@ -139,11 +139,11 @@ Once you publish the Lambda function to AWS, you can set up a new SNS Subscripti
 
 Grant, the IAM Role of Lambda Function has access to the SNS before adding in the subscription. This is required so that the Lambda function can access the SNS Topic.
 
-![AWS Lambda permissions to access SNS - In this case it has full access to the specific SNS Topic.](../images/amazon-sns-lambda-permissions.jpg)
+![AWS Lambda permissions to access Amazon SNS - In this case it has full access to the specific SNS Topic.](../images/amazon-sns-lambda-permissions.jpg)
 
 Under the Lambda → Triggers, you can add a new Trigger and set up the integration with Amazon SNS.
 
-![Setting up a SNS Trigger for Amazon Lambda amazon-sns-lambda-trigger.jpg](../images/amazon-sns-lambda-trigger.jpg)
+![Setting up a SNS Trigger for Amazon Lambda. Every time a message is dropped to the Amazon SNS Topic the .NET lambda function will be triggered](../images/amazon-sns-lambda-trigger.jpg)
 
 Once the Trigger is created, any time a new message is sent to the Amazon SNS, it will trigger the Lambda function as well.
 
@@ -184,7 +184,7 @@ For the Subscriber, where we want to apply the filter policy, we can edit it in 
 
 Specifying the below policy filters out only the messages which have the Month property set to February. It will filter anything else out.
 
-![Subscription Filter policy to filter out messages only for the month of Februrary.](../images/amazon-sns-subscription-filter-policy.jpg)
+![Subscription Filter policy to filter out messages from Amazon SNS Topic only for the month of Februrary.](../images/amazon-sns-subscription-filter-policy.jpg)
 
 Filter Policies JSON structure supports different filtering capabilities
 
@@ -205,7 +205,7 @@ You can see the Delivery protocols and the associated policies [here](https://do
 
 Once the number of retries is exhausted for a delivery protocol, the message is discarded or sent to a dead-letter-queue (DLQ) attached to the subscription.
 
-![Dead letter Queue (DLQ) attached to a SNS Subscription.](../images/amazon-sns-subscription-dlq.jpg)
+![Dead letter Queue (DLQ) attached to a Amazon SNS Subscription.](../images/amazon-sns-subscription-dlq.jpg)
 
 Dead Letter Queue's (DLQ) are attached to a SNS Subscription.
 
