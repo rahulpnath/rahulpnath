@@ -20,6 +20,7 @@ export const CardPost = ({
         <ArticleImg landing={landing}>
           {thumbnail && thumbnail.childImageSharp && (
             <Img
+              imgStyle={{ objectFit: "fill" }}
               fluid={thumbnail.childImageSharp.fluid}
             />
           )}
