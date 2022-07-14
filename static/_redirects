@@ -2,6 +2,7 @@
 http://rahulpnath.netlify.com/* http://www.rahulpnath.com/:splat 301!
 https://rahulpnath.netlify.com/* https://www.rahulpnath.com/:splat 301!
 
+/uses /blog/uses 
 /resume     https://1drv.ms/w/s!AgzDrQdBA6jVyGA3SEDlC-VT3WwJ    301
 /blog/defaultAzureCredential_from_azure_sdk  /defaultazurecredential_from_azure_sdk 301
 /blog/tools-that-I-use  /blog/tools-that-i-use 301
