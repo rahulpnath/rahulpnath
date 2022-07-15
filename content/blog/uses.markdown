@@ -62,7 +62,7 @@ The IKEA Bekant is a perfect desk to house my entire setup. I have the larger si
 Invest in a good chair if you are working on a desk and from home. I got the Aeron back in 2019 and haven't regretted spending that extra money, "just for a chair".
 
 - [**FEZIBO Balance Board**](https://www.fezibo.com/products/fezibo-standing-desk-mat-anti-fatigue-bar)     
-Funny, right? Invest in a good chair, buy a standing desk, and guess what? More things to help you while you are standing. The wobble board is fun and also good for the legs for extended standing. I alternate between sit and stand mode while working.
+Funny, right? Invest in a good chair, buy a standing desk, and guess what? More things to help you while you are standing. The wobble board is fun and also good for the legs for extended standing. I alternate between sit and stand mode while working. I have the Medium sized in the Altostratus Gray color.
 
 - [**IKEA Alex drawer**](https://www.ikea.com/au/en/p/alex-drawer-unit-white-40473549/)      
 This is a no-fail drawer unit. I don't have a lot of things in it, but most of the things that would otherwise clutter the desk go in here. I mostly have a clear desk, except for my water bottle or the coffee mug.
@@ -98,6 +98,11 @@ I currently use DaVinci Resolve for editing videos. I started first with Camtasi
 - [**Auphonic**](https://auphonic.com/)    
 I use Auphonic, a cloud service, to clean out my audio. Currently, I use their free plan, which gives limited hours each month. Once I finish editing the video, I export the audio as MP3 and run that through Auphonic to clean it and then use that in the edited video and process the final video. 
 
+- [**Snagit**](https://www.techsmith.com/store/snagit)     
+My go-to tool for screenshots, image highlighting, and annotation. Use it mainly for my blogs.
+
+- [**Canva**](https://www.canva.com/)     
+I mainly use this for creating YouTube thumbnails and blog header images. I use the [Facetune app](https://www.facetuneapp.com/) to blur out the background for the thumbnails, and import them into Canva for adding in the text. I am currently on their free version.
 
 ## Productivity
 
@@ -113,14 +118,41 @@ I do a lot of reading and research for making videos and blogs. Highlighting the
 - [**iPad Air**](https://support.apple.com/kb/SP828?locale=en_US)
 The iPad Air, along with the Apple pencil, is a great device for brainstorming ideas and rough note capture. I also use this on the go, on the train, etc., when I need to work on my blog posts or script. This device has no social media or login setup and helps stay focused.
 
+- [**Power Toys Utilities**](https://docs.microsoft.com/en-us/windows/powertoys/)    
+Set of utilities from Microsoft that improves Windows experience and improves productivity. My favorite is the [Fancy Zones](https://docs.microsoft.com/en-us/windows/powertoys/fancyzones), which helps organize windows and layouts, especially with multiple monitors.
+
+- [**Grammarly**](https://www.grammarly.com/)  
+Grammarly is my proofreader. I run all articles through it before publishing. I have been a premium member since 2017. I did give ProWriting Aid a trial but liked Grammarly more for it's ease of use.
+
+- [**Todoist**](http://todoist.com/)  
+All my todo's and reminders go here, and it works like a charm across devices. I've been using this for a [very long time](https://www.rahulpnath.com/blog/todoist-manage-your-todo-list/). I love the simplicity and ease with which you can add tasks and reminders.
+
+- [**Flux**](https://justgetflux.com/)   
+Flux is an excellent utility that adapts the computer display's color to the time of day. I have it running all the time.
+
+
+## Editor + Terminal
+
+- [**JetBrains Rider**](https://www.jetbrains.com/rider/)     
+This is my primary .NET development IDE. I like the simplicity, the fonts, and the overall look and feel. Fortunately, I have a free license through the [Microsoft MVP Program.](https://mvp.microsoft.com/en-us/PublicProfile/5003875?fullName=Rahul%20Nath). The one feature I love in Rider is the ability to [debug external code](https://www.jetbrains.com/help/rider/Debugging_External_Code.html). This is very useful when explaining code in my videos.
+
+- [**VS Code**](https://code.visualstudio.com/)    
+VS Code is my go-to text editor. I use this mainly for front-end development, and finalizing blogs (drafts are all in Notion).
+
+- [**Windows Terminal**](https://www.rahulpnath.com/blog/setting-up-windows-terminal/)    
+If you are working on a Windows machine, then I don't see why you want to use any other terminal. The Windows Terminal is the best.
+
+- [**Visual Studio**](https://visualstudio.microsoft.com/)   
+On and off, I use Visual Studio for development and also for recording videos. The latest version of Visual Studio has some great auto-completion intellisense, and I love using it.
+
 
 ## Fitness
 
 - [**Jabra Elite Active 75t**](https://www.jabra.com.au/bluetooth-headsets/jabra-elite-active-75t)   
-I use for my runs and it's a great fit. It's ideal for running and stay fit throughout the run. This is also comfortable for longer runs.
+I use it for my runs, and it's a great fit. It's ideal for running and staying fit throughout the run. This is also comfortable for long runs.
 
 - [**Tacx Neo**](https://www.garmin.com/en-AU/p/701670)     
-I use the Tacx Neo first generation bike trainer paired along with Zwift for cycling. 
+I use the Tacx Neo first-generation bike trainer paired with Zwift for cycling. 
 
 - [**Fenix 3HR**](https://www.garmin.com/en-AU/p/545480)     
-I wear this all the time and is a great watch, especially if you are into running/cycling/swimming. It's great to track runs and other workouts.
+I wear this all the time, and it is a great watch, especially if you are into running/cycling/swimming. It's great to track runs and other workouts.
