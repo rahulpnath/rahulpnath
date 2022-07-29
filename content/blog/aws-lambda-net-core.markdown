@@ -18,11 +18,9 @@ The company is entirely on AWS Cloud Service. Much of my experience with Cloud p
 This calls for some [new learning](https://www.rahulpnath.com/blog/ultralearning-book-summary/), and I am excited about it. In this post, I explore AWS Lambda for anyone just getting started with it.
 
 <ExternalBookmark 
-  url="https://rahulpnath.gumroad.com/l/aws-lambda-dot-net" 
-  title="📹AWS Lambda For The .NET Developer - Video Course"
-  description = "Check out my latest course on building AWS Lambda Functions using .NET."
-  thumbnail="images/aws-lambda-course.jpg"
-/>
+  url="https://bit.ly/aws-lambda-udemy" 
+  title="📹AWS Lambda For The .NET Developer - Udemy Course"
+  description = "Check out my latest course on building AWS Lambda Functions using .NET." />
 
 [AWS Lambda](https://aws.amazon.com/lambda/) is Amazon's answer to serverless compute services. It allows running code with zero administration of the infrastructure that the code is running on. 
 

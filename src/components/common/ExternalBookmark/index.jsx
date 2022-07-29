@@ -15,7 +15,7 @@ export const ExternalBookmark = ({ url, title, description, thumbnail }) => {
   const { theme } = useContext(ThemeContext)
   const { LambdaCourseImage } = useStaticQuery(graphql`
   query LambdaCourseImageQuery {
-    LambdaCourseImage: imageSharp(fluid: { originalName: { eq: "aws-lambda-net-course.png" } }) {
+    LambdaCourseImage: imageSharp(fluid: { originalName: { eq: "aws-lambda-net-course-udemy.jpg" } }) {
       ...imageFields
     }
   }

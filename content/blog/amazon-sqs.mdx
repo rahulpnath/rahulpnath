@@ -12,6 +12,8 @@ popular: true
 draft: false
 ---
 
+import { ExternalBookmark } from 'components/common'
+
 Amazon Simple Queue Service (SQS) is a fully managed message queuing service that decouples applications and helps build distributed software systems.
 
 Using SQS, you can send, store, and receive messages between different applications without losing them or requiring other services to be available/online.
@@ -203,6 +205,11 @@ By default, this is 30 seconds, which means when a message is read from the Queu
 ### Receive Message in Lambda
 
 In cases where you expect a high load of messages and have to process them quickly, Background Tasks might not be a perfect choice. While there are other options, AWS Lambda is an excellent choice.
+
+<ExternalBookmark 
+  url="https://bit.ly/aws-lambda-udemy" 
+  title="📹AWS Lambda For The .NET Developer - Udemy Course"
+  description = "Check out my latest course on building AWS Lambda Functions using .NET." />
 
 *[AWS Lambda](https://aws.amazon.com/lambda/) is a serverless, event-driven compute service that lets you run code for virtually any type of application or backend service without provisioning or managing servers*
 
