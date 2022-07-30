@@ -91,7 +91,7 @@ Since each Stage connects to its own Lambda Function, we need to deploy the same
   url="https://bit.ly/aws-lambda-udemy" 
   title="📹AWS Lambda For The .NET Developer - Udemy Course"
   description = "Check out my latest course on building AWS Lambda Functions using .NET." />
-  
+
 Based on the Stage the Lambda Function is running on, it needs to also connect to different DynamoDB tables. This also applies to other services if you are using any in your applications. 
 
 ### Configure DynamoDB Based on Stage
@@ -170,5 +170,7 @@ It shows the current stage with a checkmark against it. Selecting a different de
 This allows easy rollback to a previous deployment when needed. But note that this only rollbacks the API Gateway part of the code. If your deployment includes related backend resource changes, you will need to roll them back separately.
 
 When using a build deploy pipeline, you can manage this all together from a single place/release pipeline. I will cover this in a separate blog post.
+
+*Full Source code and demo [available here](https://rahulpnath.visualstudio.com/YouTube%20Samples/_git/api-gateway-rest-lambda-proxy-integration).*
 
 I hope this helps you manage and set up multiple Stages and API Gateway deployments.

@@ -196,7 +196,7 @@ Once deployed, you can use the URL for the API to test the end-end integration. 
 
 ![Amazon API Gateway REST API deployed to a Stage.](../images/api-gateway-rest-api-lambda-proxy-stage.jpg)
 
-But with the current setup, if we deploy the API to two stages, it will still be talking to the same backend integrations - Lambda Function and DynamoDB table. We can solve that using Stage variables and integrate with different backend services based on the stage it’s running on. I'll cover this as part of a separate blog post.
+But with the current setup, if we deploy the API to two stages, it will still be talking to the same backend integrations - Lambda Function and DynamoDB table. We can solve that using Stage variables and integrate with different backend services based on the stage it’s running on. Read more on this follow up post here on [How To Manage Multiple Stages in Amazon API Gateway REST API?](/blog/amazon-api-gateway-rest-api-multiple-stages/)
 
 *Full Source code and demo [available here](https://rahulpnath.visualstudio.com/YouTube%20Samples/_git/api-gateway-rest-lambda-proxy-integration).*
 
