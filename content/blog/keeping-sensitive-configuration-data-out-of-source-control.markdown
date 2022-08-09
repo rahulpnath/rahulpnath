@@ -36,7 +36,7 @@ Packaging embeds the configuration value into the configuration file. This makes
 
 ## Azure Key Vault
 
-Azure Key Vault acts as a centralized repository for all sensitive information. Key vault stores cryptographic keys and Secrets and makes them available over a HTTP Api. The objects (keys and secrets) in key vault has unique identifier to retrieve them. Check [Azure Key Vault in real world application](http://www.rahulpnath.com/blog/azure-key-vault-in-a-real-world-application/) for more details on how to achieve this. A client application can [authenticate with Azure Key Vault using a ClientID/secret or ClientID/certificate](http://www.rahulpnath.com/blog/authenticating-a-client-application-with-azure-key-vault/). Using certificate to authenticate is the preferred approach. To get Keys/Secret from key vault all you need is the AD Application Id, the client secret or certificate identifier and the key/secret names. The certificate itself can be deployed separately into the application host.
+Azure Key Vault acts as a centralized repository for all sensitive information. Key vault stores cryptographic keys and Secrets and makes them available over a HTTP Api. The objects (keys and secrets) in key vault has unique identifier to retrieve them. Check [Azure Key Vault in real world application](/blog/azure-key-vault-in-a-real-world-application/) for more details on how to achieve this. A client application can [authenticate with Azure Key Vault using a ClientID/secret or ClientID/certificate](/blog/authenticating-a-client-application-with-azure-key-vault/). Using certificate to authenticate is the preferred approach. To get Keys/Secret from key vault all you need is the AD Application Id, the client secret or certificate identifier and the key/secret names. The certificate itself can be deployed separately into the application host.
 
 ```XML
 <appSettings>
@@ -48,8 +48,8 @@ Azure Key Vault acts as a centralized repository for all sensitive information. 
 </appSettings>
 ```
 
-> **_[Key Vault supports Managed Service Identity](http://www.rahulpnath.com/blog/authenticating-with-azure-key-vault-using-managed-service-identity/) which makes authenticating with it even more easier if your application is deployed in Azure. You no longer have to add any configuration related to key vault to the applications config file._**
+> **_[Key Vault supports Managed Service Identity](/blog/authenticating-with-azure-key-vault-using-managed-service-identity/) which makes authenticating with it even more easier if your application is deployed in Azure. You no longer have to add any configuration related to key vault to the applications config file._**
 
-If you are using the 'client secret' to authenticate then the configuration file will have the Secret. In either cases, you should follow either of the previous approaches to keep the Application Id and authentication information out of configuration. The advantage of using [Key Vault](http://www.rahulpnath.com/blog/category/azure-key-vault/) is that it is a centralized repository for all your sensitive data, across different applications. You can also restrict access permissions per application.
+If you are using the 'client secret' to authenticate then the configuration file will have the Secret. In either cases, you should follow either of the previous approaches to keep the Application Id and authentication information out of configuration. The advantage of using [Key Vault](/blog/category/azure-key-vault/) is that it is a centralized repository for all your sensitive data, across different applications. You can also restrict access permissions per application.
 
 These are some approaches to keep sensitive information out of source control. What approach do you use? Irrespective of the approach you use, make sure that you don’t check them in!

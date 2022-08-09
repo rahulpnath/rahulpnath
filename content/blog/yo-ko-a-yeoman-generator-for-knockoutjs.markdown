@@ -14,7 +14,7 @@ Templates/Scaffolding is something that we are all used to nowadays, given that 
 
 [Yeoman](http://yeoman.io/) is the Web's scaffolding tool for Modern Web Apps. Yeoman is a command line tool that runs over [Node.js](http://nodejs.org/). Setting it up is pretty easy with the instructions [here](http://yeoman.io/learning/index.html). To scaffold web applications, which is the same as creating a new project in Visual Studio from a template, we need to install framework specific generators for Yeoman. There are some `[officially maintained generators](http://yeoman.io/generators/official.html) and also ones that are [maintained by the community](http://yeoman.io/generators/community.html).
 
-KnockoutJs helps you simplify dynamic JavaScript UIs using the Model-View-ViewModel (MVVM) pattern. If you are new to knockout and come from a XAML backgorund, [KnockoutJS For XAML Developers](http://www.rahulpnath.com/blog/knockoutjs-for-xaml-developers/), would help you. For KnockoutJs, there is an awesome generator that is written by [Steve Sanderson](https://twitter.com/stevensanderson), the creator of knockout itself and is available [here](https://www.npmjs.org/package/generator-ko). You can install this as below
+KnockoutJs helps you simplify dynamic JavaScript UIs using the Model-View-ViewModel (MVVM) pattern. If you are new to knockout and come from a XAML backgorund, [KnockoutJS For XAML Developers](/blog/knockoutjs-for-xaml-developers/), would help you. For KnockoutJs, there is an awesome generator that is written by [Steve Sanderson](https://twitter.com/stevensanderson), the creator of knockout itself and is available [here](https://www.npmjs.org/package/generator-ko). You can install this as below
 
 > \$ npm install generator-ko
 
@@ -33,7 +33,7 @@ The generated web app is a simple Single Page Application(SPA), using the compon
 - [Hahser](https://github.com/millermedeiros/hasher/): Browsing History Manager
 - [Jquery](http://jquery.com/): Feature rich library
 - [Js-Signals](http://millermedeiros.github.io/js-signals/): Custom/Event Messaging System
-- [Knockout](http://www.rahulpnath.com/blog/knockoutjs-for-xaml-developers/): Simplifies dynamic Javascript UIs with [MVVM pattern](http://www.rahulpnath.com/blog/tag/mvvm/)
+- [Knockout](/blog/knockoutjs-for-xaml-developers/): Simplifies dynamic Javascript UIs with [MVVM pattern](/blog/tag/mvvm/)
 - [Requirejs](http://requirejs.org/): File and Module Loader
 - [Requirejs-text](https://github.com/requirejs/text): AMD loader plugin for text resources
 

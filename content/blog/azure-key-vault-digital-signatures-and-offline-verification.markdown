@@ -11,7 +11,7 @@ description: Explore using Digital Signatures with Azure Key Vault and how to ve
 thumbnail: ../images/verify_signature.png
 ---
 
-Digital Signature is a mechanism to ensure the validity of a digital document or message. Digital signatures use [asymmetric cryptography](http://www.rahulpnath.com/blog/getting-started-with-azure-key-vault/) - uses a public and private key pair.
+Digital Signature is a mechanism to ensure the validity of a digital document or message. Digital signatures use [asymmetric cryptography](/blog/getting-started-with-azure-key-vault/) - uses a public and private key pair.
 
 > _A valid [digital signature](https://en.wikipedia.org/wiki/Digital_signature) gives a recipient reason to believe that the message was created by a known sender (authentication), that the sender cannot deny having sent the message (non-repudiation), and that the message was not altered in transit (integrity)_
 
@@ -54,7 +54,7 @@ var isVerified = await keyVaultClient
 
 ## Verify Offline
 
-To Verify offline, we need access to the public portion of the key used to sign the data. The client application that needs to verify signatures can connect to the vault and get the key details or use a public key shared out of band. The [AD application used to authenticate](http://www.rahulpnath.com/blog/authenticating-a-client-application-with-azure-key-vault/) with the key vault should have Get access for retrieving the public key from the vault. Get access can be set using the PermissionToKeys switch when registering the AD application with the key vault. Assuming we have access to the public key as a JSON string, we can use the [RSACryptoServiceProvider](https://msdn.microsoft.com/en-us/library/system.security.cryptography.rsacryptoserviceprovider(v=vs.110\).aspx) to verify the signature offline.
+To Verify offline, we need access to the public portion of the key used to sign the data. The client application that needs to verify signatures can connect to the vault and get the key details or use a public key shared out of band. The [AD application used to authenticate](/blog/authenticating-a-client-application-with-azure-key-vault/) with the key vault should have Get access for retrieving the public key from the vault. Get access can be set using the PermissionToKeys switch when registering the AD application with the key vault. Assuming we have access to the public key as a JSON string, we can use the [RSACryptoServiceProvider](https://msdn.microsoft.com/en-us/library/system.security.cryptography.rsacryptoserviceprovider(v=vs.110\).aspx) to verify the signature offline.
 
 ```csharp
 var key = JsonConvert.DeserializeObject<JsonWebKey>(jsonWebKey);

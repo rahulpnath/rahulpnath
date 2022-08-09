@@ -15,11 +15,11 @@ thumbnail: ../images/todoist_templates.png
 
 <img src="../images/todoist_templates.png" alt="Todoist Templates" class="center" />
 
-[Todoist Templates](https://blog.todoist.com/2015/11/19/new-way-to-create-todoist-templates/) is a simple way to create tasks for any of your recurring activities. Be it blogging, cooking, or any of your activities. With Todoist Templates, you can turn any project into a checklist that you can easily duplicate later. I have been using [Todoist](http://www.rahulpnath.com/blog/todoist-manage-your-todo-list/) for a long time and find it useful to keep track of tasks (both personal and at work)
+[Todoist Templates](https://blog.todoist.com/2015/11/19/new-way-to-create-todoist-templates/) is a simple way to create tasks for any of your recurring activities. Be it blogging, cooking, or any of your activities. With Todoist Templates, you can turn any project into a checklist that you can easily duplicate later. I have been using [Todoist](/blog/todoist-manage-your-todo-list/) for a long time and find it useful to keep track of tasks (both personal and at work)
 
 #### **Problem**
 
-I [plan my tasks](http://www.rahulpnath.com/blog/experimenting-with-pomodoro-technique/) for the upcoming week on Sunday morning. I pull in tasks for the upcoming week, and some of these tasks are template based. For e.g. for writing a blog post, I have the below template
+I [plan my tasks](/blog/experimenting-with-pomodoro-technique/) for the upcoming week on Sunday morning. I pull in tasks for the upcoming week, and some of these tasks are template based. For e.g. for writing a blog post, I have the below template
 
 ```text
 TYPE,CONTENT,PRIORITY,INDENT,AUTHOR,RESPONSIBLE,DATE,DATE_LANG,TIMEZONE

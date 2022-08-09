@@ -10,7 +10,7 @@ description:
 thumbnail: ../images/ahk_task_general.png
 ---
 
-A lot of trivial tasks that we do daily on our computer can be automated to make it faster and reduce the number of keystrokes ([as they are limited](http://www.keysleft.com)). [AutoHoykey](https://autohotkey.com/)(AHK) is an excellent tool to automate a lot of these and is [one of my favorite tool](http://www.rahulpnath.com/blog/tools-that-I-use/). I use a very limited set of functionality of AHK, to set up hot strings, launch applications, and mapping caps lock as backspace. The installer to the latest version is available [here](https://autohotkey.com/download/ahk-install.exe).
+A lot of trivial tasks that we do daily on our computer can be automated to make it faster and reduce the number of keystrokes ([as they are limited](http://www.keysleft.com)). [AutoHoykey](https://autohotkey.com/)(AHK) is an excellent tool to automate a lot of these and is [one of my favorite tool](/blog/tools-that-I-use/). I use a very limited set of functionality of AHK, to set up hot strings, launch applications, and mapping caps lock as backspace. The installer to the latest version is available [here](https://autohotkey.com/download/ahk-install.exe).
 
 > "AutoHotkey (AHK) is a free, open-source macro-creation and automation software for Windows that allows users to automate repetitive tasks. It is driven by a scripting language that was initially aimed at providing keyboard shortcuts, otherwise known as hotkeys, that over time evolved into a full-fledged scripting language."
 

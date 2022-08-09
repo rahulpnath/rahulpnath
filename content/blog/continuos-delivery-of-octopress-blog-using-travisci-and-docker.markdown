@@ -11,7 +11,7 @@ description: Setting up the automatic deployment of my blog.
 thumbnail: ../images/blog_ci.png
 ---
 
-It's been a while since I have wanted to deploy my blog automatically whenever there is a new commit pushed into the associated [git repository](https://github.com/rahulpnath/rahulpnath.com). I use Octopress as my blog engine and have been [tweaking it to my blogging workflow](http://www.rahulpnath.com/blog/optimizing-octopress-workflow-for-new-posts/). Octopress is a static blog generator built over Jekyll. So anytime I make any updates to the blog, I need to build the blog with the accompanying rake tasks and push the generated output (HTML, JavaScript, and CSS) to an Azure Web App that hosts my blog. For this I use the [git deployment feature](https://azure.microsoft.com/en-us/documentation/articles/web-sites-deploy/#continuousdeployment) of web apps, so just pushing the built output to a git repo (branch) deploys it to my website. As you see every time, I make a change I have to build the site and push it to the git repository and this can be automated. Since Octopress is in Ruby, I decided to use [Travis CI](https://travis-ci.org/) for the build and deploy.
+It's been a while since I have wanted to deploy my blog automatically whenever there is a new commit pushed into the associated [git repository](https://github.com/rahulpnath/rahulpnath.com). I use Octopress as my blog engine and have been [tweaking it to my blogging workflow](/blog/optimizing-octopress-workflow-for-new-posts/). Octopress is a static blog generator built over Jekyll. So anytime I make any updates to the blog, I need to build the blog with the accompanying rake tasks and push the generated output (HTML, JavaScript, and CSS) to an Azure Web App that hosts my blog. For this I use the [git deployment feature](https://azure.microsoft.com/en-us/documentation/articles/web-sites-deploy/#continuousdeployment) of web apps, so just pushing the built output to a git repo (branch) deploys it to my website. As you see every time, I make a change I have to build the site and push it to the git repository and this can be automated. Since Octopress is in Ruby, I decided to use [Travis CI](https://travis-ci.org/) for the build and deploy.
 
 ## Local Build Environment with Docker
 
@@ -63,10 +63,10 @@ Every time I make a commit to the GitHub master branch, the automated build trig
 
 <img class="center" alt="Continuos Delivery of Octopress Blog" src="../images/blog_ci.png" />
 
-- Write posts on my phone or laptop. ([Using Dropbox to sync posts across devices](http://www.rahulpnath.com/blog/optimizing-octopress-workflow-for-new-posts/))
+- Write posts on my phone or laptop. ([Using Dropbox to sync posts across devices](/blog/optimizing-octopress-workflow-for-new-posts/))
 - Publish and Push to Github from laptop
 - Travis builds triggered by Github webhook
 - Travis pushes back generated site into Github (_[blog branch](https://github.com/rahulpnath/rahulpnath.com/tree/blog)_).
 - Azure Web App triggers automated deployment from Github.
 
-With the automated deployment, I have one less thing to take care of when writing posts. The whole process might feel a bit complicated, but it is not. It is just that I have been tweaking few things to ease blogging. And since I am a programmer, I like hacking things. If you are new to blogging you do not need them and don't get overwhelmed (if at all you are). All you need to make sure is to [have a blog](http://www.rahulpnath.com/blog/get-started-with-your-blog/) and you [own the URL](http://www.rahulpnath.com/blog/own-your-urls/).
+With the automated deployment, I have one less thing to take care of when writing posts. The whole process might feel a bit complicated, but it is not. It is just that I have been tweaking few things to ease blogging. And since I am a programmer, I like hacking things. If you are new to blogging you do not need them and don't get overwhelmed (if at all you are). All you need to make sure is to [have a blog](/blog/get-started-with-your-blog/) and you [own the URL](/blog/own-your-urls/).

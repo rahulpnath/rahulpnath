@@ -68,4 +68,4 @@ Many times I have had to update my Package sources in Visual Studio and break my
 
 <img class="center" alt="Nuget custom package source" src="../images/nuget_package_sources.png" />
 
-Do you still see any reason for not checking in package dependencies into the source control? If not let's go and change that package folder exclude and have them included in the source. (I just updated [CLAL](http://www.rahulpnath.com/blog/clal-command-line-application-launcher/) to [include dependencies.](https://github.com/rahulpnath/clal/commit/736023d9ab4bd285cb077ff54acd1bbaad142a08))
+Do you still see any reason for not checking in package dependencies into the source control? If not let's go and change that package folder exclude and have them included in the source. (I just updated [CLAL](/blog/clal-command-line-application-launcher/) to [include dependencies.](https://github.com/rahulpnath/clal/commit/736023d9ab4bd285cb077ff54acd1bbaad142a08))

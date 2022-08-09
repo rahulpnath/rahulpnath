@@ -85,7 +85,7 @@ public static int MonthsTo(DateTime date1, DateTime date2)
 
 ## Introduce Value Object
 
-Now that we have fixed the bug and have tests covering the different combinations, let's see if this method can live elsewhere and make it reusable. The start date and end date on account always go together and is a domain concept that can be extracted out as an 'Account Term Range'. It can be represented as a DateRange [Value Object](http://www.rahulpnath.com/blog/thinking-beyond-primitive-values-value-objects/). We can then introduce a method in the DateRange Value Object to return the number of months in the range. This makes the function reusable and also [code more readable](http://www.rahulpnath.com/blog/refactoring-to-improve-readability-separating-business-language-and-programming-language-semantics/). I made the original refactored method as an extension method on DateTime and used it from DateRange Value Object.
+Now that we have fixed the bug and have tests covering the different combinations, let's see if this method can live elsewhere and make it reusable. The start date and end date on account always go together and is a domain concept that can be extracted out as an 'Account Term Range'. It can be represented as a DateRange [Value Object](/blog/thinking-beyond-primitive-values-value-objects/). We can then introduce a method in the DateRange Value Object to return the number of months in the range. This makes the function reusable and also [code more readable](/blog/refactoring-to-improve-readability-separating-business-language-and-programming-language-semantics/). I made the original refactored method as an extension method on DateTime and used it from DateRange Value Object.
 
 ```csharp
 public static class DateTimeExtensions
@@ -123,4 +123,4 @@ public class DateRange
 ... // Rest of Value Object Code to override Equals and GetHashCode
 ```
 
-If you are new to TDD or just getting started with tests, introducing tests while fixing bugs is a good place to start. This might also help make code decoupled and readable. Try [covering a fix with tests](http://www.rahulpnath.com/blog/is-code-coverage-a-lie/) the next time you fix a bug!
+If you are new to TDD or just getting started with tests, introducing tests while fixing bugs is a good place to start. This might also help make code decoupled and readable. Try [covering a fix with tests](/blog/is-code-coverage-a-lie/) the next time you fix a bug!

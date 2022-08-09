@@ -11,7 +11,7 @@ description:
 thumbnail: ../images/fiddler_composer.png
 ---
 
-Fiddler is an HTTP debugging proxy server application, that captures HTTP and HTTPS traffic and displays to the user. It also enables modifying HTTP traffic when sent or received. Fiddler is [one of the tools that I use daily](http://www.rahulpnath.com/blog/tools-that-I-use/) and is an indispensable one for any web developer.
+Fiddler is an HTTP debugging proxy server application, that captures HTTP and HTTPS traffic and displays to the user. It also enables modifying HTTP traffic when sent or received. Fiddler is [one of the tools that I use daily](/blog/tools-that-I-use/) and is an indispensable one for any web developer.
 
 This post gives an introduction on how you can use fiddler to help with 'manual testing'. We will see how to use Fiddler to create requests to Web API, modify and replay an existing request. We will also see how to test error scenarios to see how the application functions in those cases. The sample solution is the default Web API project in Visual Studio with a few changes.
 

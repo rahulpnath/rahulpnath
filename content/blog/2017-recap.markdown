@@ -13,17 +13,17 @@ thumbnail: ../images/happy_new_year.png
 
 <img class="center" alt="Posts per month - 2016" src="../images/happy_new_year.png"/>
 
-[A year](http://www.rahulpnath.com/blog/2016-recap/) has gone by so fast, and it is again time to do a year review.
+[A year](/blog/2016-recap/) has gone by so fast, and it is again time to do a year review.
 
 > **TLDR;**
 
-> 2017 was the transformation year. Regular exercise and healthy eating helped [loose around 20 kilos](http://www.rahulpnath.com/blog/how-i-lost-13-kilos-in-one-and-half-months/). Lots of travel and blogging made it an excellent year. Reading, Photography and Open source did not go that great. Looking forward to 2018!
+> 2017 was the transformation year. Regular exercise and healthy eating helped [loose around 20 kilos](/blog/how-i-lost-13-kilos-in-one-and-half-months/). Lots of travel and blogging made it an excellent year. Reading, Photography and Open source did not go that great. Looking forward to 2018!
 
 ## What went well
 
 ### **Blogging**
 
-It has been both good and a bad year as far as this blog. Including the '[Tip of the Week](http://www.rahulpnath.com/blog/category/tipow/)' series I wrote seventy-six posts this year with an average of over six posts per month. This is the good part, as it is well past the goal of a _minimum four posts a month_ goal set last year. But looking at the actual posts per month graph below, it is clear that I have fallen short of it on an actual month by month basis. Up until August, I had a steady stream of posts coming in, from when it started dropping down, with even months (November) with no posts. Mainly it's my laziness to blame, but I can also tell reasons like Vietnam trip, Shifting to Brisbane, etc.
+It has been both good and a bad year as far as this blog. Including the '[Tip of the Week](/blog/category/tipow/)' series I wrote seventy-six posts this year with an average of over six posts per month. This is the good part, as it is well past the goal of a _minimum four posts a month_ goal set last year. But looking at the actual posts per month graph below, it is clear that I have fallen short of it on an actual month by month basis. Up until August, I had a steady stream of posts coming in, from when it started dropping down, with even months (November) with no posts. Mainly it's my laziness to blame, but I can also tell reasons like Vietnam trip, Shifting to Brisbane, etc.
 
 <img src="../images/2017_postpermonth.png" alt="Posts per month in the year 2017" />
 
@@ -35,7 +35,7 @@ I had started running towards the end of December 2016. One of my goals for 2017
 
 ### **Travel**
 
-Did our first international holiday to Vietnam for ten days and was a great experience. Also went around Australia visiting Blue Mountains, Canberra, Port Macquarie, Brisbane and lots of [one-day trips around Sydney](http://www.rahulpnath.com/blog/one-day-trips-around-sydney/). Mandarin Picking, Strawberry picking and Whale watching were some of the top activities for the year.
+Did our first international holiday to Vietnam for ten days and was a great experience. Also went around Australia visiting Blue Mountains, Canberra, Port Macquarie, Brisbane and lots of [one-day trips around Sydney](/blog/one-day-trips-around-sydney/). Mandarin Picking, Strawberry picking and Whale watching were some of the top activities for the year.
 
 <img src="../images/strawberyy_picking.jpg" alt="Strawberry Picking, Ricardoes" />
 
@@ -47,7 +47,7 @@ Did our first international holiday to Vietnam for ten days and was a great expe
   One trip every three months and post photos were one another goal. The travel part went good (see above), but my DSLR always remained in the bag. Except for a few pictures on the phone camera, there was not much photography done.
 
 - **FSharp**
-  FSharp was again on and off this year. Apart from a [small utility that I created for Todoist](http://www.rahulpnath.com/blog/todoist-template-transformer-transform-tasks-to-x-days-from-now/), I did not do much F# work.
+  FSharp was again on and off this year. Apart from a [small utility that I created for Todoist](/blog/todoist-template-transformer-transform-tasks-to-x-days-from-now/), I did not do much F# work.
 
 ## Goals for 2018
 

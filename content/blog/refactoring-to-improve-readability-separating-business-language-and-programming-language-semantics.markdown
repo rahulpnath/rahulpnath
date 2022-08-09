@@ -13,7 +13,7 @@ thumbnail: ../images/readable_code.jpg
 
 Often we write ourselves or come across code that has both business language and the programming language semantics mixed together. This makes it very hard to reason about the code and also fix any issues. It's easier to read code that is composed of different smaller individual functions doing a single thing.
 
-If you follow the _One Level of Abstraction per Function Rule_ or the _Stepdown Rule_ as mentioned in the book [Clean Code](http://www.amazon.com/gp/product/0132350882/ref=as_li_tl?ie=UTF8&camp=1789&creative=390957&creativeASIN=0132350882&linkCode=as2&tag=rahulpnath-20&linkId=CVCVZFAR5SBYVMJW) (I [recommend reading it](http://www.rahulpnath.com/blog/language-agnostic-books-for-every-developer-2/) if you have not already), it is easier to keep the business and programming language semantics separate.
+If you follow the _One Level of Abstraction per Function Rule_ or the _Stepdown Rule_ as mentioned in the book [Clean Code](http://www.amazon.com/gp/product/0132350882/ref=as_li_tl?ie=UTF8&camp=1789&creative=390957&creativeASIN=0132350882&linkCode=as2&tag=rahulpnath-20&linkId=CVCVZFAR5SBYVMJW) (I [recommend reading it](/blog/language-agnostic-books-for-every-developer-2/) if you have not already), it is easier to keep the business and programming language semantics separate.
 
 > _We want the code to read like a top-down narrative. We want every function to be followed by those at the next level of abstraction so that we can read the program, descending one level of abstraction at a time as we read down the list of functions. Making the code read like a top-down set of TO paragraphs is an effective technique for
 > keeping the abstraction level consistent._
@@ -101,7 +101,7 @@ All tests pass, except for those where there were issues in the destination syst
 
 ### Refactoring for Readability
 
-Now that I have some tests to back me up for the changes that I am to make, I feel more confident to do the refactoring. Looking at the original validator code, all I see is **DATETIME** - There is a lot of manipulation of dates that is happening, which strongly indicates there is some abstraction waiting to be pulled out. We had seen in, [Thinking Beyond Primitive Values: Value Objects](http://www.rahulpnath.com/blog/thinking-beyond-primitive-values-value-objects/), that any time we use a primitive type, we should think more about the choice of type. We saw that properties that co-exist (like DateRange) should be pulled apart as Value Objects. The StartDate and EndDate in SubscriptionTerm fall exactly into that category.
+Now that I have some tests to back me up for the changes that I am to make, I feel more confident to do the refactoring. Looking at the original validator code, all I see is **DATETIME** - There is a lot of manipulation of dates that is happening, which strongly indicates there is some abstraction waiting to be pulled out. We had seen in, [Thinking Beyond Primitive Values: Value Objects](/blog/thinking-beyond-primitive-values-value-objects/), that any time we use a primitive type, we should think more about the choice of type. We saw that properties that co-exist (like DateRange) should be pulled apart as Value Objects. The StartDate and EndDate in SubscriptionTerm fall exactly into that category.
 
 ```csharp
 public class DateRange

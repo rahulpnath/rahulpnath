@@ -11,7 +11,7 @@ keywords:
 description:
 ---
 
-Exactly a year back I had [written about the same topic](http://www.rahulpnath.com/blog/language-agnostic-books-for-every-developer/), and over the time I have picked up a few more books, that I am sharing here. Like the earlier post I will let the books do the talking.
+Exactly a year back I had [written about the same topic](/blog/language-agnostic-books-for-every-developer/), and over the time I have picked up a few more books, that I am sharing here. Like the earlier post I will let the books do the talking.
 
 **xUnit Test Patterns : Refactoring Test Code** [![xUnit Test Patterns : Refactoring Test Code](../images/books_xunit.jpg)](http://www.amazon.com/gp/product/0131495054/ref=as_li_tl?ie=UTF8&camp=1789&creative=390957&creativeASIN=0131495054&linkCode=as2&tag=rahulpnath-20&linkId=XR55UAOEPPMVMFK3)
 

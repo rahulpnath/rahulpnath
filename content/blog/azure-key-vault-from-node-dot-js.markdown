@@ -15,7 +15,7 @@ thumbnail: ../images/nodejs_keyvault.png
 
 <img src="../images/nodejs_keyvault.png" alt="Azure Key Vault from Node js" class="center" />
 
-If you develop on Node.js, you can use the [Azure SDK for Node](https://github.com/Azure/azure-sdk-for-node) that makes it easy to consume and manage Microsoft Azure Services. In this post let's explore how to use the node SDK to connect to Azure Key Vault and interact with the vault objects. If you are new to key vault check out my [other posts here to get started](http://www.rahulpnath.com/blog/category/azure-key-vault/).
+If you develop on Node.js, you can use the [Azure SDK for Node](https://github.com/Azure/azure-sdk-for-node) that makes it easy to consume and manage Microsoft Azure Services. In this post let's explore how to use the node SDK to connect to Azure Key Vault and interact with the vault objects. If you are new to key vault check out my [other posts here to get started](/blog/category/azure-key-vault/).
 
 The [azure-keyvault](https://www.npmjs.com/package/azure-keyvault) npm (node package manager) package allows accessing keys, secrets, and certificates on Azure Key Vault. It required Node.js version 6.x.x or higher. You can get the [latest Node.js version here](https://nodejs.org/en/).
 
@@ -31,7 +31,7 @@ The [azure-keyvault](https://www.npmjs.com/package/azure-keyvault) npm (node pac
 
 It is easy to setup a new project and execute code using Node. The ease of setup is one of the things that I liked about node. To try out the Key Vault package, you can start fresh in a new folder and create a javascript file - _main.js_ (you can name it anything you want).
 
-The following packages are _required_ to connect to the vault and authenticate. The _[azure-keyvault](https://www.npmjs.com/package/azure-keyvault)_ package as we saw above provides capabilities to interact with the vault. The [_adal-node_](https://www.npmjs.com/package/adal-node) is the Windows Active Directory Authentication Library for Node. The package makes it easy to authenticate to AAD to access AAD protected web resources. Applications using key vault need to [authenticate using a token from an Azure AD Application](http://www.rahulpnath.com/blog/authenticating-a-client-application-with-azure-key-vault/).
+The following packages are _required_ to connect to the vault and authenticate. The _[azure-keyvault](https://www.npmjs.com/package/azure-keyvault)_ package as we saw above provides capabilities to interact with the vault. The [_adal-node_](https://www.npmjs.com/package/adal-node) is the Windows Active Directory Authentication Library for Node. The package makes it easy to authenticate to AAD to access AAD protected web resources. Applications using key vault need to [authenticate using a token from an Azure AD Application](/blog/authenticating-a-client-application-with-azure-key-vault/).
 
 ```js
 const KeyVault = require('azure-keyvault');
@@ -40,7 +40,7 @@ const { AuthenticationContext } = require('adal-node');
 
 ## **Authenticate Using ClientId and Secret**
 
-Create the Azure AD application and the Secret key as shown in [this post](http://www.rahulpnath.com/blog/authenticating-a-client-application-with-azure-key-vault/). Grab the ClientId and Secret for authentication from the node application.
+Create the Azure AD application and the Secret key as shown in [this post](/blog/authenticating-a-client-application-with-azure-key-vault/). Grab the ClientId and Secret for authentication from the node application.
 
 ```js
 const clientId = 'CLIENT ID';

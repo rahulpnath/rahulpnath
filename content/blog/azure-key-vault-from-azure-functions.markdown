@@ -14,7 +14,7 @@ thumbnail: ../images/azureFunction_createFunction.png
 
 _[Azure Functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-overview) is a solution for easily running small pieces of code, or "functions," in the cloud. You can write just the code you need for the problem at hand, without worrying about a whole application or the infrastructure to run it. Functions can make development even more productive, and you can use your development language of choice, such as C#, F#, Node.js, Python or PHP. Pay only for the time your code runs and trust Azure to scale as needed. Azure Functions lets you develop serverless applications on Microsoft Azure._
 
-Even when developing with Azure Functions you want to keep your sensitive data protected. Like for example if the function needs to connect to a database you might want to get the connection string from [Azure Key Vault](http://www.rahulpnath.com/blog/getting-started-with-azure-key-vault/). If you are new to Azure Key Vault check out [these posts to get started](http://www.rahulpnath.com/blog/category/azure-key-vault/). In this post, we will explore how we can consume objects in Azure Key Vault from an Azure Function.
+Even when developing with Azure Functions you want to keep your sensitive data protected. Like for example if the function needs to connect to a database you might want to get the connection string from [Azure Key Vault](/blog/getting-started-with-azure-key-vault/). If you are new to Azure Key Vault check out [these posts to get started](/blog/category/azure-key-vault/). In this post, we will explore how we can consume objects in Azure Key Vault from an Azure Function.
 
 **Create Azure Function App**: Let's first create an Azure Function App from the Azure portal. Under _New - Compute - Function App_ you can create a new Azure Function.
 
@@ -32,7 +32,7 @@ You can view all Azure Functions Apps in the subscription under _More services -
 
 <img src="../images/azureFunction_createFunction.png" alt="" class="center" />
 
-In the _run.csx_ file add in the code for the function. The below code fetches the secret value from the Key Vault and logs it. You need to provide the [Azure AD Application Id and secret](http://www.rahulpnath.com/blog/authenticating-a-client-application-with-azure-key-vault/) to authenticate with it. Alternatively you can also use [certificate based authentication to authenticate with the Key Vault](http://www.rahulpnath.com/blog/azure-key-vault-from-azure-functions-certificate-based-authentication/). Make sure you add in the relevant _using_ statements for the KeyVault client Azure Active Directory Authentication libraries (ADAL).
+In the _run.csx_ file add in the code for the function. The below code fetches the secret value from the Key Vault and logs it. You need to provide the [Azure AD Application Id and secret](/blog/authenticating-a-client-application-with-azure-key-vault/) to authenticate with it. Alternatively you can also use [certificate based authentication to authenticate with the Key Vault](/blog/azure-key-vault-from-azure-functions-certificate-based-authentication/). Make sure you add in the relevant _using_ statements for the KeyVault client Azure Active Directory Authentication libraries (ADAL).
 
 ```csharp
 using System;

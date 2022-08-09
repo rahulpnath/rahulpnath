@@ -26,7 +26,7 @@ Once new configuration is saved you can launch the application with the specifie
 
 > _Work in progress to support other command line applications and to update the look and feel._
 
-[**Contribute**](https://github.com/rahulpnath/clal/issues) to the development by coding or reporting issues that you find file using the application. [Check out these articles](http://www.rahulpnath.com/blog/category/clal/) for my learnings while building this application.
+[**Contribute**](https://github.com/rahulpnath/clal/issues) to the development by coding or reporting issues that you find file using the application. [Check out these articles](/blog/category/clal/) for my learnings while building this application.
 
 **Credits**
 

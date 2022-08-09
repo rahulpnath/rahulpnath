@@ -64,7 +64,7 @@ using (var cryptoProvider = privateCertificate.PrivateKey as RSACryptoServicePro
 
 ## Creating a Key in Key Vault from PFX file
 
-Now that I am able to use the PFX file (which essentially is a software-protected key) to encrypt/decrypt data, I will upload this to the Azure Key Vault so that it stays secure there. If you are new to Azure Key Vault and want to get started check my [other posts](http://www.rahulpnath.com/blog/category/azure-key-vault/).
+Now that I am able to use the PFX file (which essentially is a software-protected key) to encrypt/decrypt data, I will upload this to the Azure Key Vault so that it stays secure there. If you are new to Azure Key Vault and want to get started check my [other posts](/blog/category/azure-key-vault/).
 
 To upload the PFX to Key Vault, you can use the _[Add-AzureKeyVaultKey](https://msdn.microsoft.com/en-us/library/dn868048.aspx)_ PowerShell cmdlet and specify the PFX file path and password.
 

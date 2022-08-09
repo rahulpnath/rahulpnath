@@ -13,7 +13,7 @@ thumbnail: ../images/pocket.jpg
 
 <img src="../images/pocket.jpg" alt="Pocket" class="center" />
 
-I try to stay offline for fixed times during the day and often [prepare myself up for it](http://www.rahulpnath.com/blog/staying-productive-offline/). Having things to read is one of the important things to it. [Feedly](http://www.rahulpnath.com/blog/feedly-one-stop-reading-place/) allows to keep track of all the reading sources that I have, while I am online. Some articles need more time and focus to be well understood, and I often end up 'Saving them for Later.'
+I try to stay offline for fixed times during the day and often [prepare myself up for it](/blog/staying-productive-offline/). Having things to read is one of the important things to it. [Feedly](/blog/feedly-one-stop-reading-place/) allows to keep track of all the reading sources that I have, while I am online. Some articles need more time and focus to be well understood, and I often end up 'Saving them for Later.'
 
 [Pocket](https://getpocket.com) is an app that helps manage articles that you wish to read later. You can save articles, videos or pretty much anything into Pocket and view them later. The best thing about Pocket is that on mobile devices, it allows offline reading - i.e., without the need for an internet connection.
 

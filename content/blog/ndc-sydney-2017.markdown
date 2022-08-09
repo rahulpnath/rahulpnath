@@ -11,7 +11,7 @@ description:
 thumbnail: ../images/ndc_sydney_2017.png
 ---
 
-Last week was a busy one at [NDC Sydney](http://ndcsydney.com/) and was happy to be back there [for the second time](http://www.rahulpnath.com/blog/ndc-sydney/).The conference was three days long with 117 speakers, 37 technologies, and 151 talks. Some of the popular speakers were [Scott Wlaschin](https://fsharpforfunandprofit.com/), [Scott Allen](http://odetocode.com/about/scott-allen),[Troy Hunt](https://www.troyhunt.com/), [Damian Edwards](https://twitter.com/DamianEdwards), [Steve Sanderson](http://blog.stevensanderson.com/) and [a lot more](http://ndcsydney.com/speakers/).
+Last week was a busy one at [NDC Sydney](http://ndcsydney.com/) and was happy to be back there [for the second time](/blog/ndc-sydney/).The conference was three days long with 117 speakers, 37 technologies, and 151 talks. Some of the popular speakers were [Scott Wlaschin](https://fsharpforfunandprofit.com/), [Scott Allen](http://odetocode.com/about/scott-allen),[Troy Hunt](https://www.troyhunt.com/), [Damian Edwards](https://twitter.com/DamianEdwards), [Steve Sanderson](http://blog.stevensanderson.com/) and [a lot more](http://ndcsydney.com/speakers/).
 
 <img class="center" alt="NDC Sydney" src="../images/ndc_sydney_2017.png" />
 
@@ -38,6 +38,6 @@ Each talk is one hour long and [eight talks happen at the same time](http://ndcs
 - [Logic vs. side effects: functional goodness you don't hear about](http://ndcsydney.com/talk/logic-vs-side-effects-functional-goodness-you-dont-hear-about/)
 - [How one team built their first microservice](http://ndcsydney.com/talk/how-one-team-built-their-first-microservice/)
 
-All sessions are recorded and are [available here](https://vimeo.com/ndcconferences). The Sydney 2017 ones will soon be there. Overall it was a good event but did not match the one last year. Last year there were more of the popular speakers and the talk content was also more interesting. But still, I am glad that NDC Sydney is still happening, and it gives a good exposure and networking possibilities for developers. Thanks to Readify for sponsoring my tickets and it’s one of the [good things about working with Readify](http://www.rahulpnath.com/blog/finding-a-job-abroad/).
+All sessions are recorded and are [available here](https://vimeo.com/ndcconferences). The Sydney 2017 ones will soon be there. Overall it was a good event but did not match the one last year. Last year there were more of the popular speakers and the talk content was also more interesting. But still, I am glad that NDC Sydney is still happening, and it gives a good exposure and networking possibilities for developers. Thanks to Readify for sponsoring my tickets and it’s one of the [good things about working with Readify](/blog/finding-a-job-abroad/).
 
 Hope to see you next year as well!

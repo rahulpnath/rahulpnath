@@ -35,7 +35,7 @@ All Rules are stored in a database. New rules can be added and existing ones upd
 
 Because of my past good experiences with [HangFire](https://www.hangfire.io/) I initially set off using that only to discover soon that it can schedule jobs only to the minute level. Even though this is a [feature that has been discussed for a long time](https://github.com/HangfireIO/Hangfire/issues/167), it's yet to be implemented. Since some of the rules are critical to the business, they want to be notified as soon as possible. This means having a polling interval in seconds for those rules.
 
-After reaching out to my [friends at Readify](http://www.rahulpnath.com/blog/finding-a-job-abroad/), I decided to use [Quartz.net](https://www.quartz-scheduler.net/). Many had good experiences using it in the past and recommended it highly. One another option that came up was [FluentScheduler](https://github.com/fluentscheduler/FluentScheduler). There was no particular reason to go with Quartz.net.
+After reaching out to my [friends at Readify](/blog/finding-a-job-abroad/), I decided to use [Quartz.net](https://www.quartz-scheduler.net/). Many had good experiences using it in the past and recommended it highly. One another option that came up was [FluentScheduler](https://github.com/fluentscheduler/FluentScheduler). There was no particular reason to go with Quartz.net.
 
 > _Quartz.NET is a full-featured, open source job scheduling system that can be used from smallest apps to large-scale enterprise systems._
 

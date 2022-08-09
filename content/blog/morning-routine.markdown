@@ -72,7 +72,7 @@ The idea behind keeping it so small is just to start. It's very rare that I have
 
 There are days when [Resistance](https://en.wikipedia.org/wiki/Resistance_(creativity\)) beats me to it, and I don't get up to the routine. But I feel low on those days for not able to progress on my goals. So I try hard to have less of such days.
 
-- **Alarm Phone Inside Pillow:** I use [Timely](http://www.bitspin.ch/) on a spare phone to set alarms. Till a while back I used to keep the phone at the bedside while sleeping. But I noticed that I often ended up snoozing the alarm, at times even without full consciousness. So to make I [wake up to the alarm](http://www.rahulpnath.com/blog/waking-up-early-is-all-about-waking-up-to-an-alarm/), I now keep the phone buried inside my pillow with just the vibration. The vibration forces me to wake up and also removes the need for any alarm sound - my kid and wife does not get disturbed.
+- **Alarm Phone Inside Pillow:** I use [Timely](http://www.bitspin.ch/) on a spare phone to set alarms. Till a while back I used to keep the phone at the bedside while sleeping. But I noticed that I often ended up snoozing the alarm, at times even without full consciousness. So to make I [wake up to the alarm](/blog/waking-up-early-is-all-about-waking-up-to-an-alarm/), I now keep the phone buried inside my pillow with just the vibration. The vibration forces me to wake up and also removes the need for any alarm sound - my kid and wife does not get disturbed.
 
 - **Wear a Sweater:** During winter, at times the cold beat me to it. It's hard to leave all the blankets and wake up to the cold. I started sleeping with the sweater, and I don't feel that cold when I wake up.
 

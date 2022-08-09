@@ -13,7 +13,7 @@ description: Listen to tests and act on it to improve the code you are writing.
 thumbnail: ../images/test_feedback.png
 ---
 
-A unit test suite provides immediate feedback when you make a change. A passing test suite gives the confidence on the changes made. It's the confidence that the team has on the tests suite that matters more than the [code coverage number](http://www.rahulpnath.com/blog/is-code-coverage-a-lie/). Tests also provide feedback about the code. It suggests how easy or difficult it is to use the code just written since tests are the first consumers of the code. Different kinds of [Test Smells](http://xunitpatterns.com/Test%20Smells.html) indicates a problem with the code that is getting tested or the test code itself and provides feedback to improve it.
+A unit test suite provides immediate feedback when you make a change. A passing test suite gives the confidence on the changes made. It's the confidence that the team has on the tests suite that matters more than the [code coverage number](/blog/is-code-coverage-a-lie/). Tests also provide feedback about the code. It suggests how easy or difficult it is to use the code just written since tests are the first consumers of the code. Different kinds of [Test Smells](http://xunitpatterns.com/Test%20Smells.html) indicates a problem with the code that is getting tested or the test code itself and provides feedback to improve it.
 
 <img alt = "Test Feedback" src="../images/test_feedback.png" class = "center" />
 
@@ -99,7 +99,7 @@ public void MonthsFromDateReturnsExpectedUsingSemanticComparison(
 }
 ```
 
-In this particular case looking closely at the [system under test (SUT)](http://xunitpatterns.com/SUT.html), the DateRange class, we understand that it can be a [Value Object](http://www.rahulpnath.com/blog/thinking-beyond-primitive-values-value-objects/). Any two instances of DateRange with the same start and end date can be considered equal. Equality is based on the value contained and not on any other identity. Though in all cases that you observe this behavior it might not be possible for you to convert it into a value object. In those case use the approach mentioned below. But in cases where you have control over it, override [Equals and GetHashCode](http://www.rahulpnath.com/blog/thinking-beyond-primitive-values-value-objects/) to implement value equality. The test is much simpler and had less code
+In this particular case looking closely at the [system under test (SUT)](http://xunitpatterns.com/SUT.html), the DateRange class, we understand that it can be a [Value Object](/blog/thinking-beyond-primitive-values-value-objects/). Any two instances of DateRange with the same start and end date can be considered equal. Equality is based on the value contained and not on any other identity. Though in all cases that you observe this behavior it might not be possible for you to convert it into a value object. In those case use the approach mentioned below. But in cases where you have control over it, override [Equals and GetHashCode](/blog/thinking-beyond-primitive-values-value-objects/) to implement value equality. The test is much simpler and had less code
 
 ```csharp
 // Refactor DateRange to ValueObject
@@ -132,7 +132,7 @@ From my experience, I have seen this happen more for the test setup phase. The t
 
 #### **Violating Single Responsibility Principle (SRP)**
 
-The test setup can get complicated when the sut violates Single Responsibility Principle (SRP). When there are too many things that are getting affected by the sut, the setup and the verification phases become complex. In these cases extracting the responsibilities as injected dependencies help reduce complexity. The tests can then use mocks to test the sut in isolation. The post, [Refactoring to Improve Testability: Extracting Dependencies](http://www.rahulpnath.com/blog/refactoring-to-improve-testability-extracting-dependencies/) looks into an end to end scenario of this case and how it can be improved.
+The test setup can get complicated when the sut violates Single Responsibility Principle (SRP). When there are too many things that are getting affected by the sut, the setup and the verification phases become complex. In these cases extracting the responsibilities as injected dependencies help reduce complexity. The tests can then use mocks to test the sut in isolation. The post, [Refactoring to Improve Testability: Extracting Dependencies](/blog/refactoring-to-improve-testability-extracting-dependencies/) looks into an end to end scenario of this case and how it can be improved.
 
 Violating SRP also leads to test code duplication as multiple aspects need testing and the setup looks almost similar. Refactoring the sut and the test code are ways that test code can be made more robust in these cases.
 
@@ -226,4 +226,4 @@ Tests should be through public API of the class. If it gets difficult to test th
 
 Consider refactoring your code so that it is easier to test. Tests are the first consumers of code, and it helps shape the public API and the way it gets consumed. It is fine to have tests affect the way you write code. What is not fine is to have explicit loops within the production code, just for test code. The problem with having such code is that the other code loop never gets tested.
 
-Tests act as a feedback tool and it is important that you listen to it. If you decide to bear the pain of writing tests ignoring the feedback just to meet some [code coverage numbers](http://www.rahulpnath.com/blog/is-code-coverage-a-lie/) then you are doing it wrong. Most of the cases you will end up with hard to maintain code and fragile tests. Listen to the feedback and incorporate it into the code you write.
+Tests act as a feedback tool and it is important that you listen to it. If you decide to bear the pain of writing tests ignoring the feedback just to meet some [code coverage numbers](/blog/is-code-coverage-a-lie/) then you are doing it wrong. Most of the cases you will end up with hard to maintain code and fragile tests. Listen to the feedback and incorporate it into the code you write.

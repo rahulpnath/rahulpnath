@@ -7,7 +7,7 @@ tags:
   - Blogging
 ---
 
-Wordpress is what that has been powering my blog for sometime and it definitely is a blogging engine to [get started with](http://www.rahulpnath.com/blog/get-started-with-your-blog/) ease. But with time, I have been noticing that the load time is very high and there are a lot of plugins in the processing pipeline, even to do very small things. This definitely is not that great for a simple blog, where users(including me) expect fast page load times.
+Wordpress is what that has been powering my blog for sometime and it definitely is a blogging engine to [get started with](/blog/get-started-with-your-blog/) ease. But with time, I have been noticing that the load time is very high and there are a lot of plugins in the processing pipeline, even to do very small things. This definitely is not that great for a simple blog, where users(including me) expect fast page load times.
 
 > For blogging, Wordpress is just extra baggage that you keep along that never gets used. Except for discussions, a blog is just static content and that is all it requires.
 

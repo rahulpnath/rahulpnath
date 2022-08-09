@@ -18,7 +18,7 @@ To be successful with any of these books you need to draw ideas into your daily 
 
 > _Reading without action is just another way to procrastinate and is a waste of time._
 
-Take notes from the books, see how it can be incorporated into your daily life and improve one at a time. Revisit the notes often. I prefer reading this genre of books on the Kindle ([technical books I prefer physical copy](http://www.rahulpnath.com/blog/ebook-or-hard-copy/)), as it requires little flipping back and forth. On Kindle, you can [add or remove bookmarks, highlights, and notes at any location](https://www.amazon.com/gp/help/customer/display.html?nodeId=201241990) and revisit this at a later point in time.
+Take notes from the books, see how it can be incorporated into your daily life and improve one at a time. Revisit the notes often. I prefer reading this genre of books on the Kindle ([technical books I prefer physical copy](/blog/ebook-or-hard-copy/)), as it requires little flipping back and forth. On Kindle, you can [add or remove bookmarks, highlights, and notes at any location](https://www.amazon.com/gp/help/customer/display.html?nodeId=201241990) and revisit this at a later point in time.
 
 **A Million Thoughts** [![A Million Thoughts](../images/books_amillionthougts.jpg)](http://amzn.to/2hm8vDJ)
 

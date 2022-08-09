@@ -14,7 +14,7 @@ thumbnail: ../images/powershell_azurermcontext.png
 
 <img class="center" alt="Azure Powershell Get-AzureRmContext" src="../images/powershell_azurermcontext.png" />
 
-When accessing Key Vault using Powershell it can be a bit tricky when you have multiple subscriptions under the same account. The Key Vault cmdlets being under the [Resource Manager (RM) mode](http://www.rahulpnath.com/blog/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/) depends on the current RM Subscription. The Key Vault cmdlets enable you to manage only the key vaults under the selected subscription. To access the key vaults in other subscriptions, you need to switch the selected RM subscription.
+When accessing Key Vault using Powershell it can be a bit tricky when you have multiple subscriptions under the same account. The Key Vault cmdlets being under the [Resource Manager (RM) mode](/blog/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/) depends on the current RM Subscription. The Key Vault cmdlets enable you to manage only the key vaults under the selected subscription. To access the key vaults in other subscriptions, you need to switch the selected RM subscription.
 
 > _Use **Select-AzureRmSubscription** to switch the selected RM subscription_
 

@@ -13,7 +13,7 @@ description: Use the power of git even with TFVC source control.
 thumbnail: ../images/tfvc_local_git.png
 ---
 
-The project that I am currently working on using [Team Foundation Version Control](https://www.visualstudio.com/en-us/docs/tfvc/overview)(TFVC) as it's source control. After [using Git](http://www.rahulpnath.com/blog/git-checkout-tfs/) for a long time it felt hard to move back to TFVC. One of the biggest pain for me is losing the short commits that I do when working. Short commits help keep track of the work and also quickly revert unwanted changes. Branching is also much easier with Git and allows to switch between work without much hassle of '_shelving -> undoing -> pulling back the latest as with TFS._'
+The project that I am currently working on using [Team Foundation Version Control](https://www.visualstudio.com/en-us/docs/tfvc/overview)(TFVC) as it's source control. After [using Git](/blog/git-checkout-tfs/) for a long time it felt hard to move back to TFVC. One of the biggest pain for me is losing the short commits that I do when working. Short commits help keep track of the work and also quickly revert unwanted changes. Branching is also much easier with Git and allows to switch between work without much hassle of '_shelving -> undoing -> pulling back the latest as with TFS._'
 
 <img src="../images/tfvc_local_git.png" alt="Use Git Locally in a TFVC Repository" class="center" />
 

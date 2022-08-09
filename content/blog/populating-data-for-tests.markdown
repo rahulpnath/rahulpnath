@@ -61,9 +61,9 @@ public void CustomerFullNameReturnsExpected(string firstName, string lastName, s
 
 > _Tests help refine the public API as they are the first consumers_
 
-The tests above acts as a clue indicating that the three properties - FirstName, LastName, FullName are related and go hand-in-hand. These tests are a strong indication that these properties can be grouped together into a class and possibly tested separately. We can extract these properties into a [Value Object](http://www.rahulpnath.com/blog/thinking-beyond-primitive-values-value-objects/) for e.g. Name. I will not go into the implementation details of that, and I hope you can do that you own.
+The tests above acts as a clue indicating that the three properties - FirstName, LastName, FullName are related and go hand-in-hand. These tests are a strong indication that these properties can be grouped together into a class and possibly tested separately. We can extract these properties into a [Value Object](/blog/thinking-beyond-primitive-values-value-objects/) for e.g. Name. I will not go into the implementation details of that, and I hope you can do that you own.
 
-The above tests still have a high dependency on the code that it is testing - **_the constructor_**. Imagine if we had a lot of such tests that constructs the Consumer class inline in the setup phase. All tests will break if the class constructor changes. We saw in the [refactoring to remove constructor dependency](http://www.rahulpnath.com/blog/refactoring-test-code-removing-constructor-dependency/) how to remove such dependencies and make the tests independent of the constructor dependencies. We can introduce Object Mother or Test Data Builder pattern as mentioned in the article. Optimizing further we can also use [AutoFixture](https://github.com/AutoFixture/AutoFixture) to generate test data. Moving into these patterns or AutoFixture brings in an added benefit as well; the rest of properties on the Customer class also gets populated by default.
+The above tests still have a high dependency on the code that it is testing - **_the constructor_**. Imagine if we had a lot of such tests that constructs the Consumer class inline in the setup phase. All tests will break if the class constructor changes. We saw in the [refactoring to remove constructor dependency](/blog/refactoring-test-code-removing-constructor-dependency/) how to remove such dependencies and make the tests independent of the constructor dependencies. We can introduce Object Mother or Test Data Builder pattern as mentioned in the article. Optimizing further we can also use [AutoFixture](https://github.com/AutoFixture/AutoFixture) to generate test data. Moving into these patterns or AutoFixture brings in an added benefit as well; the rest of properties on the Customer class also gets populated by default.
 
 ### Explicitly Setting Properties
 
@@ -120,7 +120,7 @@ When using immutable types or properties with private setters, we cannot set the
 
 > -_[Mark Seemann](http://stackoverflow.com/a/20816487/1948745) (creator of AutoFixture)_
 
-In these cases, the suggested approach is something closer to the manual [Test Data Builder](http://www.natpryce.com/articles/000714.html) we saw in the [refactoring example](http://www.rahulpnath.com/blog/refactoring-test-code-removing-constructor-dependency/). We can either have an explicit test data builder class or define extension methods on the immutable type such that it changes just the specified property and returns all other values same, as shown below.
+In these cases, the suggested approach is something closer to the manual [Test Data Builder](http://www.natpryce.com/articles/000714.html) we saw in the [refactoring example](/blog/refactoring-test-code-removing-constructor-dependency/). We can either have an explicit test data builder class or define extension methods on the immutable type such that it changes just the specified property and returns all other values same, as shown below.
 
 ```csharp
 public class Name

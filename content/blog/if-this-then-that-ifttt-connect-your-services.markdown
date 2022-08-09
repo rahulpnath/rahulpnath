@@ -18,7 +18,7 @@ IFTTT helps you connect the services in your life. Most of the things that you u
 
 <img alt="IFTTT" src="../images/ifttt_recipe.png" class="center" />
 
-There are a lot of [pre-created applets](https://ifttt.com/discover) available for immediate use. You can also create custom applets that wire up the triggers and actions of services of your choice. For e.g. Whenever a new item is available on my blog [RSS feed](https://ifttt.com/feed) I [send an email](https://ifttt.com/gmail) to [Buffer](http://www.rahulpnath.com/blog/buffer-smarter-social-sharing/). The email to Buffer triggers it to share the post to all my connected social media accounts.
+There are a lot of [pre-created applets](https://ifttt.com/discover) available for immediate use. You can also create custom applets that wire up the triggers and actions of services of your choice. For e.g. Whenever a new item is available on my blog [RSS feed](https://ifttt.com/feed) I [send an email](https://ifttt.com/gmail) to [Buffer](/blog/buffer-smarter-social-sharing/). The email to Buffer triggers it to share the post to all my connected social media accounts.
 
 <img alt="IFTTT Recommended" src="../images/ifttt_popular.png" class="center" />
 

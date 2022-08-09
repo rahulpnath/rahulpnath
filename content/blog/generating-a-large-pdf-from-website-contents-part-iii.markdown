@@ -17,7 +17,7 @@ thumbnail: ../images/pdf_generation_flow.png
 - [ HTML to PDF, Bookmarks and Handling Empty Pages](/blog/generating-a-large-pdf-from-website-contents-part-ii/)
 - [Merging PDF Files](/blog/generating-a-large-pdf-from-website-contents-part-iii/)
 
-In the previous post, [Generating a Large PDF from Website Contents - HTML to PDF, Bookmarks and Handling Empty Pages](http://www.rahulpnath.com/blog/generating-a-large-pdf-from-website-contents-part-ii/), we saw how to generate a PDF from HTML and add bookmarks to the generated PDF files. The PDF file generated is for an individual section which now needs to be merged to form a single PDF file. The individual PDF files contain the relevant content for the section and related bookmarks, which needs to be combined into a single PDF file.
+In the previous post, [Generating a Large PDF from Website Contents - HTML to PDF, Bookmarks and Handling Empty Pages](/blog/generating-a-large-pdf-from-website-contents-part-ii/), we saw how to generate a PDF from HTML and add bookmarks to the generated PDF files. The PDF file generated is for an individual section which now needs to be merged to form a single PDF file. The individual PDF files contain the relevant content for the section and related bookmarks, which needs to be combined into a single PDF file.
 
 One of the important things to keep intact when merging is the document hierarchy. The Sections, Sub-Categories, and Categories should align correctly so that the final bookmark tree and the Table of Contents appear correctly. It is best to maintain the list of individual PDF document streams in the same hierarchy as required. Since we know the required structure right from the UI, this can be easily achieved by using a data structure similar as shown below
 

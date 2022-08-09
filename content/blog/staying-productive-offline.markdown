@@ -12,7 +12,7 @@ description: Setting up my smartphone to stay productive without an internet con
 thumbnail: ../images/offlinelife.png
 ---
 
-Last month I was in Trivandrum (Kerala, India) for a month's vacation. This was also my first trip back to India after [moving to Sydney](http://www.rahulpnath.com/blog/finding-a-job-abroad/). While in India I chose not to have a mobile connection and be offline on the go (at home I had a broadband connection). So while traveling places or moving around I had [my mobile](http://www.rahulpnath.com/blog/review-two-months-and-counting-android-and-nexus-5/) in [airplane mode](https://en.wikipedia.org/wiki/Airplane_mode). But even then there was time that I resorted to my mobile to spend time. When traveling by bus/train, afternoons in hotels (when everyone rests) etc, I had a lot of 'me time'.
+Last month I was in Trivandrum (Kerala, India) for a month's vacation. This was also my first trip back to India after [moving to Sydney](/blog/finding-a-job-abroad/). While in India I chose not to have a mobile connection and be offline on the go (at home I had a broadband connection). So while traveling places or moving around I had [my mobile](/blog/review-two-months-and-counting-android-and-nexus-5/) in [airplane mode](https://en.wikipedia.org/wiki/Airplane_mode). But even then there was time that I resorted to my mobile to spend time. When traveling by bus/train, afternoons in hotels (when everyone rests) etc, I had a lot of 'me time'.
 
 <img  alt="Living an offline Life" src="../images/offlinelife.png"/>
 
@@ -20,7 +20,7 @@ Below are some of the things that I have my phone geared up for offline mode.
 
 ### Blogging
 
-Blogging is one of the things that I enjoy doing most these days. To keep up with [my routine](http://www.rahulpnath.com/blog/morning_routine/), I try to blog every day to keep up with [my schedule](/blog/blogging-schedule/). I have modified [my blogging workflow](/blog/optimizing-octopress-workflow-for-new-posts/) to give the flexibility to blog from any of my devices. Currently, I am writing this blog while on a train and '[disconnected](https://en.wikipedia.org/wiki/Online_and_offline)'. When back home and connected, all the offline content synchronizes through Dropbox. The content written while offline is now available for [publishing from my laptop](/blog/continuos-delivery-of-octopress-blog-using-travisci-and-docker/). Making writing accessible from everywhere helps me to stick with my [mini habits](http://www.rahulpnath.com/blog/morning_routine/).
+Blogging is one of the things that I enjoy doing most these days. To keep up with [my routine](/blog/morning_routine/), I try to blog every day to keep up with [my schedule](/blog/blogging-schedule/). I have modified [my blogging workflow](/blog/optimizing-octopress-workflow-for-new-posts/) to give the flexibility to blog from any of my devices. Currently, I am writing this blog while on a train and '[disconnected](https://en.wikipedia.org/wiki/Online_and_offline)'. When back home and connected, all the offline content synchronizes through Dropbox. The content written while offline is now available for [publishing from my laptop](/blog/continuos-delivery-of-octopress-blog-using-travisci-and-docker/). Making writing accessible from everywhere helps me to stick with my [mini habits](/blog/morning_routine/).
 
 ### Reading
 
@@ -36,7 +36,7 @@ I usually do not have many games on my mobile. But in case I feel bored I play t
 
 ### To-Do List
 
-Offline time is good to manage your To-Do lists and [do a brain dump](http://www.rahulpnath.com/blog/morning_routine/). I use Todoist to manage my tasks and activities. The [Todoist mobile application](https://support.todoist.com/hc/en-us/articles/205383721-Apps) stores all tasks offline. It allows adding tasks when disconnected and synchronizes it to the server when connected. I also use OneNote for capturing notes which also has an offline mode.
+Offline time is good to manage your To-Do lists and [do a brain dump](/blog/morning_routine/). I use Todoist to manage my tasks and activities. The [Todoist mobile application](https://support.todoist.com/hc/en-us/articles/205383721-Apps) stores all tasks offline. It allows adding tasks when disconnected and synchronizes it to the server when connected. I also use OneNote for capturing notes which also has an offline mode.
 
 ### Trip Planner
 

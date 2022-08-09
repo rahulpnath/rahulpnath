@@ -11,18 +11,18 @@ description: Looking to stay overnight for a short vacation. Here are a list of 
 thumbnail: ../images/port_macquarie.jpg
 ---
 
-A while back I had written about various [one-day trip options around Sydney](http://www.rahulpnath.com/blog/one-day-trips-around-sydney/). Here is a list of places that we traveled around Sydney during long weekend breaks with a day or two overnight stays.
+A while back I had written about various [one-day trip options around Sydney](/blog/one-day-trips-around-sydney/). Here is a list of places that we traveled around Sydney during long weekend breaks with a day or two overnight stays.
 
 > [**TLDR;**](https://en.wikipedia.org/wiki/Wikipedia:Too_long;_didn%27t_read)             
-> - [Coffs Harbour](http://www.rahulpnath.com/blog/three-day-trip-to-coffs-harbour-from-sydney/)
+> - [Coffs Harbour](/blog/three-day-trip-to-coffs-harbour-from-sydney/)
 > - [Port Macquarie](https://www.portmacquarieinfo.com.au/)
 > - [Grand Pacific Drive](http://www.grandpacificdrive.com.au/)
 > - [Blue Mountains](https://www.visitnsw.com/destinations/blue-mountains?nst=0)
 > - [Canberra](https://visitcanberra.com.au/)
 
-### [Coffs Harbour](http://www.rahulpnath.com/blog/three-day-trip-to-coffs-harbour-from-sydney/)
+### [Coffs Harbour](/blog/three-day-trip-to-coffs-harbour-from-sydney/)
 
-[Coffs Harbour](http://www.rahulpnath.com/blog/three-day-trip-to-coffs-harbour-from-sydney/) is one of the places that I liked the most of all my trips. It's been almost a year since I made my trip and the memories are still fresh. The beaches are great, especially the Jetty Beach. The rainforest walk in Dorrigo was the best I have had to date, especially because of the rain the night before. Coffs Harbour is perfect for a 3-4 days trip and there are a lot of places to visit around.
+[Coffs Harbour](/blog/three-day-trip-to-coffs-harbour-from-sydney/) is one of the places that I liked the most of all my trips. It's been almost a year since I made my trip and the memories are still fresh. The beaches are great, especially the Jetty Beach. The rainforest walk in Dorrigo was the best I have had to date, especially because of the rain the night before. Coffs Harbour is perfect for a 3-4 days trip and there are a lot of places to visit around.
 
 <img alt="Jetty Beach, Coffs Harbour" src="../images/coffs_harbour_jetty_beach_toys.jpg" />
 

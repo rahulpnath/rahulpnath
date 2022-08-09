@@ -125,7 +125,7 @@ end
 
 ### **Dropbox integration**
 
-At times, I have started to draft blog posts while commuting to work from my mobile device, so I wanted to sync my draft posts to [Dropbox](https://db.tt/bvYw3pL6), so that I can edit it from my [mobile phone](http://www.rahulpnath.com/blog/review-two-months-and-counting-android-and-nexus-5/). Apps like [MarkDrop](https://play.google.com/store/apps/details?id=net.keepzero.markdrop&hl=en)/[JotterPad](https://play.google.com/store/apps/details?id=net.keepzero.markdrop&hl=en) integrates with Dropbox and supports Markdown editing. I set up a drafts folder on my Dropbox folder on laptop, which is automatically synced using the [Dropbox application](https://www.dropbox.com/install). I then used [Mklink](https://technet.microsoft.com/en-us/library/cc753194.aspx) to create a symbolic link from the folder on Dropbox to my drafts folder in my blog repository. Whenever a new draft post is added, it gets automatically inserted into the Dropbox folder, which will then be synced to cloud and available for edit on my mobile phone too. (Part of this post is written from my mobile!)
+At times, I have started to draft blog posts while commuting to work from my mobile device, so I wanted to sync my draft posts to [Dropbox](https://db.tt/bvYw3pL6), so that I can edit it from my [mobile phone](/blog/review-two-months-and-counting-android-and-nexus-5/). Apps like [MarkDrop](https://play.google.com/store/apps/details?id=net.keepzero.markdrop&hl=en)/[JotterPad](https://play.google.com/store/apps/details?id=net.keepzero.markdrop&hl=en) integrates with Dropbox and supports Markdown editing. I set up a drafts folder on my Dropbox folder on laptop, which is automatically synced using the [Dropbox application](https://www.dropbox.com/install). I then used [Mklink](https://technet.microsoft.com/en-us/library/cc753194.aspx) to create a symbolic link from the folder on Dropbox to my drafts folder in my blog repository. Whenever a new draft post is added, it gets automatically inserted into the Dropbox folder, which will then be synced to cloud and available for edit on my mobile phone too. (Part of this post is written from my mobile!)
 
 ```text
 mklink /D "C:\blog\_drafts" "C:\dropbox\_drafts"
@@ -133,7 +133,7 @@ mklink /D "C:\blog\_drafts" "C:\dropbox\_drafts"
 
 ### **Cmder integration**
 
-[Cmder](http://cmder.net/) is a portable console emulator for Windows and provides a good nice looking feature rich console experience on Windows and is one of my [favourite tools](http://www.rahulpnath.com/blog/tools-that-I-use/). Creating alias for commands is one of the features, that allows to create a short key combination for an otherwise long command. You can use this to create commands for the task in Octopress like below
+[Cmder](http://cmder.net/) is a portable console emulator for Windows and provides a good nice looking feature rich console experience on Windows and is one of my [favourite tools](/blog/tools-that-I-use/). Creating alias for commands is one of the features, that allows to create a short key combination for an otherwise long command. You can use this to create commands for the task in Octopress like below
 
 ```text
 alias rp=rake previewdrafts

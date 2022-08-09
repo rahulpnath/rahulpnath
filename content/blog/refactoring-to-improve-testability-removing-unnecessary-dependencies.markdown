@@ -16,7 +16,7 @@ thumbnail: ../images\refactoring.jpg
 
 Nowadays I am trying to stick to [TDD](http://butunclebob.com/ArticleS.UncleBob.TheThreeRulesOfTdd) (with the test first approach) and have found it to be of great help. One of the biggest reward doing TDD is that it helps me to [stay in the flow](https://vimeo.com/97419151) and regain speed faster after a distraction. This post explains how to refactor code to remove unnecessary dependencies, which is easily found when writing tests.
 
-Unnecessary dependencies are those components which a [SUT](http://xunitpatterns.com/SUT.html) depends on, but does not directly affect any of its functionalities. Some of the common tests smell (from XUnit Test Patterns by Gerard Meszaros, [a recommended read](http://www.rahulpnath.com/blog/language-agnostic-books-for-every-developer-2/)) that helps me to find these dependencies are [Test Code Duplication](http://xunitpatterns.com/Test%20Code%20Duplication.html) and [Fragile Tests](http://xunitpatterns.com/Fragile%20Test.html).
+Unnecessary dependencies are those components which a [SUT](http://xunitpatterns.com/SUT.html) depends on, but does not directly affect any of its functionalities. Some of the common tests smell (from XUnit Test Patterns by Gerard Meszaros, [a recommended read](/blog/language-agnostic-books-for-every-developer-2/)) that helps me to find these dependencies are [Test Code Duplication](http://xunitpatterns.com/Test%20Code%20Duplication.html) and [Fragile Tests](http://xunitpatterns.com/Fragile%20Test.html).
 
 > _Cut-and-Paste code reuse for fixture setup happens often when there is an unnecessary dependency._
 

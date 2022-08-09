@@ -19,6 +19,6 @@ Merging conflicts can be a pain when working in large teams and code bases chang
 
 The [Text Compare](http://www.scootersoftware.com/features.php?zz=features_multifaceted) viewer is the one that I use most frequently to compare or merge different versions of code. Beyond Compare makes it easy to spot the code differences and gives the capability to copy the code from one version to another. One can also copy portions of changes and merge just that instead of all the changes. The 3-Way Text Merge feature is also useful, especially when you are using Git.
 
-Beyond Compare has a Standard and a Pro Edition with a lot of [features](http://www.scootersoftware.com/features.php?zz=features_list). I have the Pro Edition license for Beyond Compare, thanks to [Readify](http://www.rahulpnath.com/blog/finding-a-job-abroad/) for the Software allowance that you get every year.
+Beyond Compare has a Standard and a Pro Edition with a lot of [features](http://www.scootersoftware.com/features.php?zz=features_list). I have the Pro Edition license for Beyond Compare, thanks to [Readify](/blog/finding-a-job-abroad/) for the Software allowance that you get every year.
 
-Beyond Compare is one of the [tools that I use almost daily](http://www.rahulpnath.com/blog/tools-that-I-use/). Check it out if you have not already.
+Beyond Compare is one of the [tools that I use almost daily](/blog/tools-that-I-use/). Check it out if you have not already.

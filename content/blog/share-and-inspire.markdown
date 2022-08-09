@@ -12,7 +12,7 @@ description: Share whatever you are doing, no matter how small it is. It might i
 thumbnail: ../images/share_and_inspire.jpg
 ---
 
-When I started this blog around nine years back, my only intention was to share technical posts. But over period of time I started writing about a variety of things including [productivity tips](http://www.rahulpnath.com/blog/category/productivity/) that I found useful, [travelogues](http://www.rahulpnath.com/blog/category/travelogue/), [random thoughts](http://www.rahulpnath.com/blog/category/thoughts/), [personal goals](http://www.rahulpnath.com/blog/2017-recap/), [blogging](http://www.rahulpnath.com/blog/category/blogging/) etc. One of the things that I have noticed is that a lot of people have been inspired by these various posts and photos that I post online and have triggered them to do similar things.
+When I started this blog around nine years back, my only intention was to share technical posts. But over period of time I started writing about a variety of things including [productivity tips](/blog/category/productivity/) that I found useful, [travelogues](/blog/category/travelogue/), [random thoughts](/blog/category/thoughts/), [personal goals](/blog/2017-recap/), [blogging](/blog/category/blogging/) etc. One of the things that I have noticed is that a lot of people have been inspired by these various posts and photos that I post online and have triggered them to do similar things.
 
 [![Share and Inspire](../images/share_and_inspire.jpg)](https://www.saylor.org/2015/04/blog-saylor-student-stories/)
 

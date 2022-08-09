@@ -12,7 +12,7 @@ description: Navigate the code faster!
 thumbnail: ../images/visualstudio_goto.png
 ---
 
-Visual Studio (VS) 2017 improves a lot on Code Navigation features. If at all anything ever attracted me to ReSharper it was code navigation (though I have not been using it for a [couple of years now](http://www.rahulpnath.com/blog/tools-that-I-use/)). Visual Studio lacked behind in this aspect but not anymore. The new features help improve developer productivity and here are few I found worth looking.
+Visual Studio (VS) 2017 improves a lot on Code Navigation features. If at all anything ever attracted me to ReSharper it was code navigation (though I have not been using it for a [couple of years now](/blog/tools-that-I-use/)). Visual Studio lacked behind in this aspect but not anymore. The new features help improve developer productivity and here are few I found worth looking.
 
 In earlier versions, the navigation features are all over the menu. In VS2017 all the navigation features are available under **_Edit -> Go To_**. Though I usually prefer using the keyboard shortcut for opening the navigate dialogs, it's good to have all under the same menu.
 

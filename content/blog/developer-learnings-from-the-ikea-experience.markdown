@@ -54,7 +54,7 @@ Code comments used for communicating intent mostly gets out of sync with what th
 
 The [FIXA 17-piece tool kit](http://www.ikea.com/us/en/catalog/products/00169254/), is all that you need for fitting all the furniture. Some products have an [Allen Key](https://en.wikipedia.org/wiki/Hex_key) packaged along with them, but otherwise, most of the time the FIXA toolkit is all that one needs.
 
-Having the [right set of tools](http://www.rahulpnath.com/blog/tools-that-I-use/) for assisting in the development and being familiar with it is important. It's not just about having the best/costliest tools, but about knowing them well. Taking some time out to understand the tools that you use daily is important. By tools, I include keyboard, mouse, programming languages, IDE's and other support software that you use daily.
+Having the [right set of tools](/blog/tools-that-I-use/) for assisting in the development and being familiar with it is important. It's not just about having the best/costliest tools, but about knowing them well. Taking some time out to understand the tools that you use daily is important. By tools, I include keyboard, mouse, programming languages, IDE's and other support software that you use daily.
 
 <div style="clear: both;"></div>
 
@@ -82,7 +82,7 @@ Interfaces should be well-defined and not [leak abstractions](https://en.wikiped
     <figcaption><em>King size bed frame with storage, extendable dining table and four chairs!</em></figcaption>
 </figure>
 
-Deployment in software development is a key part and having the entire pipeline automated is essential for a smooth delivery. [Setting up a build server, automated building, running tests](http://www.rahulpnath.com/blog/automated-clickonce-deployment-of-a-wpf-application-using-appveyor/) etc are some of the starting points to move towards [Continuous Delivery](http://martinfowler.com/bliki/ContinuousDelivery.html). Deployment needs to be scripted and be possible to deploy to any environment at the click of a button. If it is a distributable software then easily accessible delivery mechanisms should be available and preferably offer multiple options (like distributable media, server hosted images etc like Windows)
+Deployment in software development is a key part and having the entire pipeline automated is essential for a smooth delivery. [Setting up a build server, automated building, running tests](/blog/automated-clickonce-deployment-of-a-wpf-application-using-appveyor/) etc are some of the starting points to move towards [Continuous Delivery](http://martinfowler.com/bliki/ContinuousDelivery.html). Deployment needs to be scripted and be possible to deploy to any environment at the click of a button. If it is a distributable software then easily accessible delivery mechanisms should be available and preferably offer multiple options (like distributable media, server hosted images etc like Windows)
 
 > _The package has just the right number of screws, nails and other assembly accessories - not one less, not one more!_
 

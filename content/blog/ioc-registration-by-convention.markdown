@@ -9,7 +9,7 @@ tags:
 thumbnail: ../images/ioc_usefulness.png
 ---
 
-Sometime back we had seen, how to [configure the unity container using code/config file](http://www.rahulpnath.com/blog/configuring-unity-container-comparing-code-and-xml-configuration-side-by-side/) and I was using a mix of this in one of my projects. This approach soon became an overhead, as the manual wiring up of registrations is really cumbersome and also error prone. Mostly there were missing registrations only to be found out, when doing test runs or deployments. We soon were forced to move out of the manual registration and find a new way to register dependencies.
+Sometime back we had seen, how to [configure the unity container using code/config file](/blog/configuring-unity-container-comparing-code-and-xml-configuration-side-by-side/) and I was using a mix of this in one of my projects. This approach soon became an overhead, as the manual wiring up of registrations is really cumbersome and also error prone. Mostly there were missing registrations only to be found out, when doing test runs or deployments. We soon were forced to move out of the manual registration and find a new way to register dependencies.
 
 The below image by [Mark Seemann](https://twitter.com/ploeh) sums it all up on when and how to use a Dependency Injection(DI) container and we were right at the bottom, where the whole purpose of a DI becomes pointless.
 

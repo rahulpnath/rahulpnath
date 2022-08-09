@@ -89,7 +89,7 @@ public void AllowanceToDomainModelMapsAllProperties(
 
 ## Semantic Comparison Library
 
-[Semantic Comparison](https://www.nuget.org/packages/SemanticComparison/) is a library that allows deep comparison of similar looking objects. Originally part of [AutoFixture](http://www.rahulpnath.com/blog/autofixture-make-your-unit-tests-robust/) library, it is also available as a separate [Nuget package](https://www.nuget.org/packages/SemanticComparison/).
+[Semantic Comparison](https://www.nuget.org/packages/SemanticComparison/) is a library that allows deep comparison of similar looking objects. Originally part of [AutoFixture](/blog/autofixture-make-your-unit-tests-robust/) library, it is also available as a separate [Nuget package](https://www.nuget.org/packages/SemanticComparison/).
 
 > _SemanticComparison makes it easier to compare instances of various objects to each other. Instead of performing a normal equality comparison, SemanticComparison compares objects that look semantically similar - even if they are of different types_
 
@@ -97,7 +97,7 @@ Using SemanticComparison, we can compare two objects and compare their propertie
 
 ### Refactoring Tests
 
-**Example 1:** The _Name_ is a perfect case for being a [Value Object](http://www.rahulpnath.com/blog/thinking-beyond-primitive-values-value-objects/). In this case, the class will override Equals, and it will be easier for us to write the tests. Converting to a Value Object is one of the cases where we [use tests as a feedback to improve code](http://www.rahulpnath.com/blog/tests-as-a-feedback-tool/). But in cases where you do not have the control over the class or do not want to make it a value object, we can use SemanticComparison to help check for equality as shown below.
+**Example 1:** The _Name_ is a perfect case for being a [Value Object](/blog/thinking-beyond-primitive-values-value-objects/). In this case, the class will override Equals, and it will be easier for us to write the tests. Converting to a Value Object is one of the cases where we [use tests as a feedback to improve code](/blog/tests-as-a-feedback-tool/). But in cases where you do not have the control over the class or do not want to make it a value object, we can use SemanticComparison to help check for equality as shown below.
 
 ```csharp
 [Theory]

@@ -12,7 +12,7 @@ description: Tips and tricks for blogging regularly.
 thumbnail: ../images/bloggingSchedule_writedaily.jpg
 ---
 
-Consistency is important in blogging. It does not matter if you are bad at writing, have nothing to write or nobody reads your blog. What matters is whether you write on a predictable schedule - once a month, once a week, once a year, one per day etc. If you do not have a schedule you are more likely to fall off from sticking to blogging. I had [written before](http://www.rahulpnath.com/blog/own-your-urls/), I always struggled to write regularly. But since the start of this year, I have been blogging to a schedule (once a week) and have been successful with that. This post looks into some of the challenges that I faced and things that I have incorporated to stick to a schedule.
+Consistency is important in blogging. It does not matter if you are bad at writing, have nothing to write or nobody reads your blog. What matters is whether you write on a predictable schedule - once a month, once a week, once a year, one per day etc. If you do not have a schedule you are more likely to fall off from sticking to blogging. I had [written before](/blog/own-your-urls/), I always struggled to write regularly. But since the start of this year, I have been blogging to a schedule (once a week) and have been successful with that. This post looks into some of the challenges that I faced and things that I have incorporated to stick to a schedule.
 
 [![Make writing a habit - write daily](../images/bloggingSchedule_writedaily.jpg)](https://www.flickr.com/photos/12389767@N04/3097124543/")
 
@@ -37,7 +37,7 @@ Though I did not get a reply from John, it kept me thinking. Late last year I st
 
 ### **Write Everyday**
 
-This is one of the most important things that I found to be able to write posts regularly - **Write Everyday**. Yes every day, no matter what happens, I write at least one line towards a post. Since the goal is to _Write just one line for a blog post_, I hardly miss this goal. [Keeping the goal small and simple](http://www.rahulpnath.com/blog/morning_routine/) is a trick that I picked from the book Mini Habits and find it useful. You can follow this for anything that you want to make a habit.
+This is one of the most important things that I found to be able to write posts regularly - **Write Everyday**. Yes every day, no matter what happens, I write at least one line towards a post. Since the goal is to _Write just one line for a blog post_, I hardly miss this goal. [Keeping the goal small and simple](/blog/morning_routine/) is a trick that I picked from the book Mini Habits and find it useful. You can follow this for anything that you want to make a habit.
 
 ### **Make it Visible**
 
@@ -59,4 +59,4 @@ Having posts ready to be published is helpful as it gives the flexibility to sla
 
 You never know when you have that free time and want to blog. Maybe it's while traveling, or waiting in a queue or at your work desk. You might be [offline or connected](/blog/staying-productive-offline) Making it possible to write from irrespective of the kind of device (laptop, mobile, tablet) and connectivity was key for me. I have my draft posts synchronized through Dropbox and available on all my devices. This helps use all the pockets of time that I get for myself.
 
-These are the things that have helped me pick a schedule and follow it. I have been successful in publishing one post per week for the past 10 months and want to keep at it going forward. Now that I am able to publish regularly, I want to improve the speed at which I write posts. Though I reduced the time from over a week to days, I still find this too long and want to reduce it to a day. Modifying the way images are added, optimized and served is also something that I am trying to optimize currently. Do you [have a blog](http://www.rahulpnath.com/blog/own-your-urls/)? If not start one and stick to a schedule that works for you!
+These are the things that have helped me pick a schedule and follow it. I have been successful in publishing one post per week for the past 10 months and want to keep at it going forward. Now that I am able to publish regularly, I want to improve the speed at which I write posts. Though I reduced the time from over a week to days, I still find this too long and want to reduce it to a day. Modifying the way images are added, optimized and served is also something that I am trying to optimize currently. Do you [have a blog](/blog/own-your-urls/)? If not start one and stick to a schedule that works for you!

@@ -52,6 +52,6 @@ Most of the [event sponsors](http://ndcsydney.com/page/partnership/) had they st
 
 ![Won a Raspberry Pi3. Ravendb raffle @ NDCSydney](../images/ndc_raspberrypi.jpg)
 
-It's confirmed that [NDC Sydney is coming back next year](https://twitter.com/samnewman/status/761402917798555648). If you are in town during that time, make sure you reserve a seat.  Look out for the early bird tickets, those are cheap, and the conference is worth it. Thanks to Readify for sponsoring my tickets and it's [one of the good things about working with Readify](http://www.rahulpnath.com/blog/finding-a-job-abroad/).
+It's confirmed that [NDC Sydney is coming back next year](https://twitter.com/samnewman/status/761402917798555648). If you are in town during that time, make sure you reserve a seat.  Look out for the early bird tickets, those are cheap, and the conference is worth it. Thanks to Readify for sponsoring my tickets and it's [one of the good things about working with Readify](/blog/finding-a-job-abroad/).
 
 See you at NDC Sydney next year!

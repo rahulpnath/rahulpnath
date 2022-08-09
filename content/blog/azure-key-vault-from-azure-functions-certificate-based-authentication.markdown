@@ -12,7 +12,7 @@ description: Authenticate with Azure Key Vault from Azure Function using Certifi
 thumbnail: ../images/azureFunction_newFunctionApp.png
 ---
 
-In the previous post we saw how to connect to [Azure Key Vault from Azure Functions](/blog/azure-key-vault-from-azure-functions/). We used the [Application Id and Secret to authenticate with the Azure AD Application](http://www.rahulpnath.com/blog/authenticating-a-client-application-with-azure-key-vault/). Since the general recommendation is to use certificate-based authentication, in this post, we will see how we can use certificates to authenticate from within an Azure Function.
+In the previous post we saw how to connect to [Azure Key Vault from Azure Functions](/blog/azure-key-vault-from-azure-functions/). We used the [Application Id and Secret to authenticate with the Azure AD Application](/blog/authenticating-a-client-application-with-azure-key-vault/). Since the general recommendation is to use certificate-based authentication, in this post, we will see how we can use certificates to authenticate from within an Azure Function.
 
 First, we need to create an Azure AD application and set it up to use certificate-based authentication. Create a new service principal for the AD application and associate that with the Azure Key Vault. Authorize the AD application with the permissions required. In this case, I am providing all access to keys and secrets.
 
@@ -47,7 +47,7 @@ For the certificate to be available for use in the Azure Functions an entry shou
 
 <img src="../images/azureFunction_AppSetting.png" alt="Azure Function Certificates App Settings" class="center" />
 
-Using a certificate to authenticate with the Key Vault is the same as we have [seen before](http://www.rahulpnath.com/blog/authenticating-a-client-application-with-azure-key-vault/).
+Using a certificate to authenticate with the Key Vault is the same as we have [seen before](/blog/authenticating-a-client-application-with-azure-key-vault/).
 
 ```csharp
 using System;

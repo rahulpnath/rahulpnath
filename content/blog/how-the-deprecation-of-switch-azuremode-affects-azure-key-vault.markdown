@@ -9,7 +9,7 @@ keywords:
 description:
 ---
 
-It's been a while that the 'Switch AzureMode' is [deprecated in the Azure PowerShell](https://github.com/Azure/azure-powershell/wiki/Deprecation-of-Switch-AzureMode-in-Azure-PowerShell) and has left breaking changes in all the scripts that were using it. [I had come across this mode switch first](http://www.rahulpnath.com/blog/azure-key-vault-and-powershell-module-version/), when starting off with Azure Key Vault, as the then existing cmdlets depended on it. Now that it is deprecated we have updated versions of the PowerShell cmdlets to manage [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/). This post revisits all the scripts used in the [previous Key Vault posts](http://www.rahulpnath.com/blog/category/azure-key-vault/) and provides the updated scripts.
+It's been a while that the 'Switch AzureMode' is [deprecated in the Azure PowerShell](https://github.com/Azure/azure-powershell/wiki/Deprecation-of-Switch-AzureMode-in-Azure-PowerShell) and has left breaking changes in all the scripts that were using it. [I had come across this mode switch first](/blog/azure-key-vault-and-powershell-module-version/), when starting off with Azure Key Vault, as the then existing cmdlets depended on it. Now that it is deprecated we have updated versions of the PowerShell cmdlets to manage [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/). This post revisits all the scripts used in the [previous Key Vault posts](/blog/category/azure-key-vault/) and provides the updated scripts.
 
 Most of the scripts have the only change of having an extra 'Rm' indicating that those were off the Resource Manager.
 

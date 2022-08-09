@@ -18,7 +18,7 @@ Posts on this blog are published automatically on preset dates. I have created a
 
 <img src="../images/buffer_share.png" alt="Buffer Share" class="center" />
 
-For automatic updates from my blog, I use [Buffer via Email](https://buffer.com/guides/email). With every buffer account, there is an associated email address. A post can be buffered by sending an email to this address in a specific format. So every time a new blog is published I send an email to my buffer account to publish immediately (@postnow). Automatic sharing posts also helps me reduce the time I spend on social networks; [learning to disconnect](http://www.rahulpnath.com/blog/life-learnings-after-being-a-parent/)
+For automatic updates from my blog, I use [Buffer via Email](https://buffer.com/guides/email). With every buffer account, there is an associated email address. A post can be buffered by sending an email to this address in a specific format. So every time a new blog is published I send an email to my buffer account to publish immediately (@postnow). Automatic sharing posts also helps me reduce the time I spend on social networks; [learning to disconnect](/blog/life-learnings-after-being-a-parent/)
 
 I am on their [Free plan](https://buffer.com/pricing) at present. I have only less than ten posts scheduled at any point in time, and the plan provides all the features I need.
 

@@ -12,7 +12,7 @@ description: Optimize images for the web.
 thumbnail: ../images/pnggauntlet.png
 ---
 
-When I upload images to my blog, I try to keep the file size as small as possible. Reducing image size helps improve the site load time. To grab screenshots I use [Snagit](http://www.rahulpnath.com/blog/screenshots-with-snagit/) and use [Paint.net](http://www.rahulpnath.com/blog/paint-dot-net/) for any editing and resizing the images.
+When I upload images to my blog, I try to keep the file size as small as possible. Reducing image size helps improve the site load time. To grab screenshots I use [Snagit](/blog/screenshots-with-snagit/) and use [Paint.net](/blog/paint-dot-net/) for any editing and resizing the images.
 
 To further optimize images and compress them I use [PNGGauntlet]()https://pnggauntlet.com/. PNGGauntlet combines [PNGOUT](http://advsys.net/ken/util/pngout.htm), [OptiPNG](http://optipng.sourceforge.net/) and DeflOpt and helps smash PNG's to the smallest size.
 

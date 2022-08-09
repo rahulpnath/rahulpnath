@@ -9,7 +9,7 @@ keywords:
 description:
 ---
 
-_If you have decided on [Checking in Package Dependencies into Source Control](http://www.rahulpnath.com/blog/checking-in-package-dependencies-into-source-control/) for an existing project that uses Nuget Packages then this post is for you_
+_If you have decided on [Checking in Package Dependencies into Source Control](/blog/checking-in-package-dependencies-into-source-control/) for an existing project that uses Nuget Packages then this post is for you_
 
 When using NuGet package references that are not included in the source control, these packages gets restored during build time. There are [multiple ways that NuGet supports restore these dependencies at build time](https://docs.nuget.org/consume/package-restore)
 

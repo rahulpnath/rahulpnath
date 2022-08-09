@@ -21,7 +21,7 @@ It's about three months since I started running. I just completed my first half 
 
 ### Tracking
 
-I started running using the [Runtastic](https://play.google.com/store/apps/details?id=com.runtastic.android&hl=en) application on my [android phone](http://www.rahulpnath.com/blog/review-two-months-and-counting-android-and-nexus-5/). The free version app offers most of the required features to start running. I upgraded to their [Premium version](https://www.runtastic.com/en/premium-membership) primarily for [Runtastic Results](https://www.runtastic.com/en/results)(more on it below).
+I started running using the [Runtastic](https://play.google.com/store/apps/details?id=com.runtastic.android&hl=en) application on my [android phone](/blog/review-two-months-and-counting-android-and-nexus-5/). The free version app offers most of the required features to start running. I upgraded to their [Premium version](https://www.runtastic.com/en/premium-membership) primarily for [Runtastic Results](https://www.runtastic.com/en/results)(more on it below).
 
 Once I got regular with my runs I wanted better tracking, mainly to monitor heart rate. I was unsure of what a heart rate monitor would provide and if at all there is any value in getting one. I reached out to my runner friends, and all of them had one. Most of them had a Garmin, and a few had Fitbit. Until then I was planning to get the [Fitbit Charge 2](https://www.fitbit.com/au/charge2) which comes with [optical heart rate monitoring](http://www.digitaltrends.com/wearables/whats-inside-fitness-tracker-anyway/#ixzz4cBARwI9q). It primarily uses an optical sensor and senses the heart rate from the wrist. The Garmin's make watches that are more [specific for runners](https://buy.garmin.com/en-AU/AU/cIntoSports-cRunning-p1.html), and since the majority of my friends owned Garmin, I decided on to get one of the Garmin Forerunner series.
 
@@ -37,12 +37,12 @@ The Garmin Forerunner 630 is a GPS SmartWatch with Advanced Running Metrics. It 
 
 <img alt="Runtastic Results" class="center" src="../images/running_runtastic_results.png" />
 
-I am following a diet to lose weight, and I weigh now 78 (±1) kilos and has been on that for around one month. I was around 95 when I started out with the [running and diet](http://www.rahulpnath.com/blog/how-i-lost-13-kilos-in-one-and-half-months/).
+I am following a diet to lose weight, and I weigh now 78 (±1) kilos and has been on that for around one month. I was around 95 when I started out with the [running and diet](/blog/how-i-lost-13-kilos-in-one-and-half-months/).
 
 ### Training
 
 During the first few weeks of running, I was mostly doing free runs and trying to cover the maximum distance possible. The tracked information was useful in isolation to a specific run, and I did not do anything to improve. I then started on a beginner training plan with Runtastic
-to [Run 50 min after 6 weeks](https://www.runtastic.com/en/users/4b76cfab-734e-1658-b5e4-600759a3b066/training-plans/747577). This put me into the mode to compare my runs with the previous and work to improve on them. Now and then I wanted to stop the plan and continue with my normal run as I felt the plan wasn't working. But I decided to [stick to the process](http://www.rahulpnath.com/blog/psm-learnings/) until the end. On completion of the training, I was able to run continuously for fifty minutes, and that was a measurable improvement for me.
+to [Run 50 min after 6 weeks](https://www.runtastic.com/en/users/4b76cfab-734e-1658-b5e4-600759a3b066/training-plans/747577). This put me into the mode to compare my runs with the previous and work to improve on them. Now and then I wanted to stop the plan and continue with my normal run as I felt the plan wasn't working. But I decided to [stick to the process](/blog/psm-learnings/) until the end. On completion of the training, I was able to run continuously for fifty minutes, and that was a measurable improvement for me.
 
 <img alt="Runtastic Training Plan Certificate" src="../images/running_runtastic_certificate.png" />
 

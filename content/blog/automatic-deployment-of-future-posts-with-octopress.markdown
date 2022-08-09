@@ -22,7 +22,7 @@ Having published nine posts, also made me realize that I could write faster if r
 
 ## Jekyll Future flag
 
-[Octopress](http://octopress.org/docs/) is over [Jekyll](https://jekyllrb.com/) and it provides all the capabilities that Jekyll provides. The [_future_ flag](https://jekyllrb.com/docs/configuration/) in Jekyll indicates **_whether or not to publish posts or collection documents with a future date._** With the flag set to false, Jekyll will not generate posts that have a date in the future. It works perfectly for me as all I need to do is to publish posts into the _\_posts_ directory once it's ready, with a date in the future. I have a [draft workflow](http://www.rahulpnath.com/blog/optimizing-octopress-workflow-for-new-posts/), which puts posts into a _\_drafts_ folder and move them into the _\_posts_ folder once ready. I updated the rake script that publishes drafts as posts, to take in a publish date and use that to update the post date.
+[Octopress](http://octopress.org/docs/) is over [Jekyll](https://jekyllrb.com/) and it provides all the capabilities that Jekyll provides. The [_future_ flag](https://jekyllrb.com/docs/configuration/) in Jekyll indicates **_whether or not to publish posts or collection documents with a future date._** With the flag set to false, Jekyll will not generate posts that have a date in the future. It works perfectly for me as all I need to do is to publish posts into the _\_posts_ directory once it's ready, with a date in the future. I have a [draft workflow](/blog/optimizing-octopress-workflow-for-new-posts/), which puts posts into a _\_drafts_ folder and move them into the _\_posts_ folder once ready. I updated the rake script that publishes drafts as posts, to take in a publish date and use that to update the post date.
 
 ```Ruby
 task :publish_draft do
@@ -81,4 +81,4 @@ With the posts getting deployed automatically, I want to update all my social ne
 
 With the Automated publishing of posts and ability to schedule them, I can concentrate more on just the writing part. I no longer have to push out posts manually. I had never thought that I would be scheduling posts in the future. But now that it is happening it's a great feeling when there are posts for a few weeks ahead all ready to go.
 
-_[My Morning Routine](http://www.rahulpnath.com/blog/morning_routine/) was the first posts to be deployed using the schedule._
+_[My Morning Routine](/blog/morning_routine/) was the first posts to be deployed using the schedule._

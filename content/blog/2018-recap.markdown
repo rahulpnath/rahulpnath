@@ -13,10 +13,10 @@ thumbnail: ../images/happy_new_year.png
 
 ![Happy New Year - 2016](../images/happy_new_year.png)
 
-[Another year](http://www.rahulpnath.com/blog/2017-recap/) has gone by so fast, and it is again time to do a year review.
+[Another year](/blog/2017-recap/) has gone by so fast, and it is again time to do a year review.
 
 > **TLDR;**  
-> 2018 saw most of my time in running, cycling and learning to swim. Regular exercise and healthy eating helped [maintain my weight](http://www.rahulpnath.com/blog/how-i-lost-13-kilos-in-one-and-half-months/). Lots of travel added to the excitement. Blogging, Reading, Photography and Open source took the back seat and did not go as planned.
+> 2018 saw most of my time in running, cycling and learning to swim. Regular exercise and healthy eating helped [maintain my weight](/blog/how-i-lost-13-kilos-in-one-and-half-months/). Lots of travel added to the excitement. Blogging, Reading, Photography and Open source took the back seat and did not go as planned.
 > Looking forward to 2019!
 
 ## What went well

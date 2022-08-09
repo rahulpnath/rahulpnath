@@ -25,4 +25,4 @@ f.lux adjusts the screen to the room you are in and the time of the day. You can
 
 <img class="center" alt="Flux Settings" src="../images//flux_settings.png" />
 
-I have been using f.lux for a couple of years and had it always on(except occasionally when [processing photos](http://www.rahulpnath.com/blog/photography-learning-to-click/)). [f.luxometer](https://fluxometer.com/) tells how much blue light f.lux removes if you are interested.
+I have been using f.lux for a couple of years and had it always on(except occasionally when [processing photos](/blog/photography-learning-to-click/)). [f.luxometer](https://fluxometer.com/) tells how much blue light f.lux removes if you are interested.

@@ -28,7 +28,7 @@ export default () => {
     {
       id: 4,
       name: 'Linkedin',
-      link: 'https://linkedin.com/in/rahulpnath',
+      link: 'https://www.linkedin.com/in/rahulpnath/',
       icon: Linkedin,
       last: false,
     },

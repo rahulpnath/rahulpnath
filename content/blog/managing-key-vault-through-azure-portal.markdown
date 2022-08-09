@@ -11,7 +11,7 @@ description: Walkthrough Key Vault features available in Azure Portal.
 thumbnail: ../images/keyvaultportal_create_key_vault.png
 ---
 
-You can now manage Key Vault through the Azure portal. Prior to this the Key Vault's were managed either using [Powershell](http://www.rahulpnath.com/blog/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/), [ARM Templates](http://www.rahulpnath.com/blog/managing-azure-key-vault-using-azure-resource-manager-arm-templates/) or [REST API](http://www.rahulpnath.com/blog/managing-azure-key-vault-over-the-rest-api/). Managing key Vault is now easy and user-friendly for the nontechnical people. In this post, I will walk through the new features in Azure Portal to manage key vault.
+You can now manage Key Vault through the Azure portal. Prior to this the Key Vault's were managed either using [Powershell](/blog/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/), [ARM Templates](/blog/managing-azure-key-vault-using-azure-resource-manager-arm-templates/) or [REST API](/blog/managing-azure-key-vault-over-the-rest-api/). Managing key Vault is now easy and user-friendly for the nontechnical people. In this post, I will walk through the new features in Azure Portal to manage key vault.
 
 > _If you find any difference between what you see in the portal versus those in the screenshots below, it's likely that the portal is updated_
 

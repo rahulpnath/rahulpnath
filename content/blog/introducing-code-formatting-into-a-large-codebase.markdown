@@ -54,7 +54,7 @@ var person = new Person()
 
 ### **Horizontal Formatting**
 
-_You should never have to scroll to the right_ - I caught on with this recommendation from the book Clean Code ([a recommended read](http://www.rahulpnath.com/blog/language-agnostic-books-for-every-developer-2/)). It is also recommended that a function should fit on the screen, without needing to scroll up or down. This encourages to keep functions short and specific.
+_You should never have to scroll to the right_ - I caught on with this recommendation from the book Clean Code ([a recommended read](/blog/language-agnostic-books-for-every-developer-2/)). It is also recommended that a function should fit on the screen, without needing to scroll up or down. This encourages to keep functions short and specific.
 
 > _We should strive to keep our lines short. The old Hollerith limit of 80 is a bit arbitrary, and I’m not opposed to lines edging out to 100 or even 120. But beyond that is probably just careless_
 

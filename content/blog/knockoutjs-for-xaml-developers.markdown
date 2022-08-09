@@ -12,7 +12,7 @@ tags:
 thumbnail: ../images/MVVM_Knockoutjs.jpg
 ---
 
-After a very long time since I have actually wanted to move out to web development, recently I have started developing a website as part of my personal project, along with a friend of mine. I have been into desktop/mobile development on Microsoft technologies, using XAML for a very long time. [Model-View-View Model (MVVM)](http://www.rahulpnath.com/blog/tag/mvvm/) is a pattern that got popular because of the powerful binding engine in XAML. It is always comforting to see familiar patterns while moving into unexplored technology areas. Same is the reason I chose to explore [KnockoutJS](http://knockoutjs.com/index.html)(KO), which simplifies dynamic JavaScript UIs with the MVVM pattern.
+After a very long time since I have actually wanted to move out to web development, recently I have started developing a website as part of my personal project, along with a friend of mine. I have been into desktop/mobile development on Microsoft technologies, using XAML for a very long time. [Model-View-View Model (MVVM)](/blog/tag/mvvm/) is a pattern that got popular because of the powerful binding engine in XAML. It is always comforting to see familiar patterns while moving into unexplored technology areas. Same is the reason I chose to explore [KnockoutJS](http://knockoutjs.com/index.html)(KO), which simplifies dynamic JavaScript UIs with the MVVM pattern.
 
 ![MVVM Knockout](../images/MVVM_Knockoutjs.jpg)
 

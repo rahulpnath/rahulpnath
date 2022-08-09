@@ -11,11 +11,11 @@ description: Sign PDF files without needing to print and scan them back again.
 thumbnail: ../images/pdf_sign.png
 ---
 
-Very often I need to sign forms, receipts, invoices in PDF format and send them across to someone else. Printing the PDF, signing them physically and scanning them back (of course using [Office Lens](http://www.rahulpnath.com/blog/office-lens-scan-documents-with-your-phone/)) is how I used to do this until a while back. Since I don't have a printer at home, I always had to wait till I reach office. Also, I did not like wasting paper and ink just to put a signature.
+Very often I need to sign forms, receipts, invoices in PDF format and send them across to someone else. Printing the PDF, signing them physically and scanning them back (of course using [Office Lens](/blog/office-lens-scan-documents-with-your-phone/)) is how I used to do this until a while back. Since I don't have a printer at home, I always had to wait till I reach office. Also, I did not like wasting paper and ink just to put a signature.
 
 Adobe PDF reader allows us to 'Fill and Sign' documents. Using this option we can add signatures without needing to print them. Follow the below steps to set up your Adobe Reader to sign any document.
 
-**1.** Sign on a white paper and take a picture. Upload the picture onto your computer and crop the image using your favorite [image editor](http://www.rahulpnath.com/blog/paint-dot-net/). You should have something similar as shown below.
+**1.** Sign on a white paper and take a picture. Upload the picture onto your computer and crop the image using your favorite [image editor](/blog/paint-dot-net/). You should have something similar as shown below.
 
 <img src="../images/pdf_signature.png" alt="Your Signature" class="center" />
 

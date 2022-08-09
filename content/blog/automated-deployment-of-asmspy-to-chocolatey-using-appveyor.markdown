@@ -26,7 +26,7 @@ AsmSpy is currently distributed as a [zip package](http://static.mikehadlow.com/
 
 ## Automating Chocolatey Releases
 
-Now that I have to manage the AsmSpy Chocolatey package installations, I decided to automate the process of Chocolatey package creation and upload. Since I had used AppVeyor for [automating Click-Once deployment](http://www.rahulpnath.com/blog/automated-clickonce-deployment-of-a-wpf-application-using-appveyor/) of [CLAL](https://github.com/rahulpnath/clal), I decided to use AppVeyor for this.
+Now that I have to manage the AsmSpy Chocolatey package installations, I decided to automate the process of Chocolatey package creation and upload. Since I had used AppVeyor for [automating Click-Once deployment](/blog/automated-clickonce-deployment-of-a-wpf-application-using-appveyor/) of [CLAL](https://github.com/rahulpnath/clal), I decided to use AppVeyor for this.
 
 ### **The Goal**
 

@@ -50,7 +50,7 @@ private static void SignPdf(X509Certificate2 certificate, IExternalSignature ext
 
 ## Certificates in Azure Key Vault
 
-You can [manage certificates in Azure Key Vault](http://www.rahulpnath.com/blog/manage-certificates-in-azure-key-vault/) as a first class citizen. Azure Key Vault supports creating new or uploading existing certificates into the vault. Key Vault provides an option to specify whether the private portion of the certificate is exportable or not. Let us see how we can use the certificate from the vault in both these scenarios.
+You can [manage certificates in Azure Key Vault](/blog/manage-certificates-in-azure-key-vault/) as a first class citizen. Azure Key Vault supports creating new or uploading existing certificates into the vault. Key Vault provides an option to specify whether the private portion of the certificate is exportable or not. Let us see how we can use the certificate from the vault in both these scenarios.
 
 ### Exportable Certificate
 
@@ -63,7 +63,7 @@ Add-AzureKeyVaultCertificate -VaultName "VaultFromCode" -Name "TestCertificate" 
 
 <img src="../images/keyvault_getazurekeyvaultcertificate.png" class="center" alt="Key Vault Certificate" />
 
-Creating a certificate, in turn, creates three objects in the vault - Certificate, Key, and Secret. The certificate represents the certificate just created, the Key represents the private part of the certificate, and the Secret has the certificate in PFX format (just as if you had uploaded a [PFX as a Secret](http://www.rahulpnath.com/blog/pfx-certificate-in-azure-key-vault/)). Since the certificate created above is exportable, the Secret contains the Private portion of the key as well. To recreate the certificate locally in memory, we use the below code
+Creating a certificate, in turn, creates three objects in the vault - Certificate, Key, and Secret. The certificate represents the certificate just created, the Key represents the private part of the certificate, and the Secret has the certificate in PFX format (just as if you had uploaded a [PFX as a Secret](/blog/pfx-certificate-in-azure-key-vault/)). Since the certificate created above is exportable, the Secret contains the Private portion of the key as well. To recreate the certificate locally in memory, we use the below code
 
 ```csharp
 public static async Task<X509Certificate2> GetCertificateKeyVault(string secretIdentifier)
@@ -149,4 +149,4 @@ Once you install and trust the public portion of the certificates, you can see t
 
 <img src="../images/pdf_signed.png" alt="Signed PDF" />
 
-The sample code for all three scenarios is available [here](https://github.com/rahulpnath/Blog/tree/master/PDFSign). I have used ClientId/Secret to authenticate with Key Vault for the sample code. If you are using this in a production environment, I will recommend using [certificate to authenticate with Key Vault](http://www.rahulpnath.com/blog/authenticating-a-client-application-with-azure-key-vault/). iText supports creating PDF stamps and more features in the signing process, which is well documented. Hope this helps you to secure your PDF files.
+The sample code for all three scenarios is available [here](https://github.com/rahulpnath/Blog/tree/master/PDFSign). I have used ClientId/Secret to authenticate with Key Vault for the sample code. If you are using this in a production environment, I will recommend using [certificate to authenticate with Key Vault](/blog/authenticating-a-client-application-with-azure-key-vault/). iText supports creating PDF stamps and more features in the signing process, which is well documented. Hope this helps you to secure your PDF files.

@@ -99,7 +99,7 @@ If you now manually copy over the HTML file into the _dest_ folder and open it f
 
 ### Automating Build and More
 
-I definitely did not want to keep running the above command and copy the HTML(/CSS) files, every time I make a change, to see the output - so automating it was very much required. What I would essentially like to have is every time I make a change on any of the files in the project, the build to trigger and output the updated application into the _dest_ folder and automatically refreshing the browser so that I can see the changes (near) real-time. I chose to use [Gulp](http://gulpjs.com/) as this is popular and I have had some [experience using it before](http://www.rahulpnath.com/blog/organizing-tests-into-test-suites-for-visual-studio/).
+I definitely did not want to keep running the above command and copy the HTML(/CSS) files, every time I make a change, to see the output - so automating it was very much required. What I would essentially like to have is every time I make a change on any of the files in the project, the build to trigger and output the updated application into the _dest_ folder and automatically refreshing the browser so that I can see the changes (near) real-time. I chose to use [Gulp](http://gulpjs.com/) as this is popular and I have had some [experience using it before](/blog/organizing-tests-into-test-suites-for-visual-studio/).
 
 ### **[gulpfile.js](https://github.com/rahulpnath/Blog/blob/master/React_Template/gulpfile.js)**
 
@@ -167,6 +167,6 @@ With the default gulp task running, either using [VSCode Task Runner](https://co
 
 _If you find any package details missing see the [package.json](https://github.com/rahulpnath/Blog/blob/master/React_Template/package.json) file._
 
-You can find the hello world project template [here](https://github.com/rahulpnath/Blog/tree/master/React_Template). The repository size is a bit high as I have [included the npm packages](http://www.rahulpnath.com/blog/checking-in-package-dependencies-into-source-control/) (_node_modules_) in the repository, which you would have anyways downloaded when doing a '[npm install](https://docs.npmjs.com/cli/install)'.
+You can find the hello world project template [here](https://github.com/rahulpnath/Blog/tree/master/React_Template). The repository size is a bit high as I have [included the npm packages](/blog/checking-in-package-dependencies-into-source-control/) (_node_modules_) in the repository, which you would have anyways downloaded when doing a '[npm install](https://docs.npmjs.com/cli/install)'.
 
 Hope this helps you to get started with React!

@@ -10,9 +10,9 @@ description: This post describes on how user permissions can be managed for a ke
 thumbnail: ../images/rbac_assignment_scopes.png
 ---
 
-> Please check [here](http://www.rahulpnath.com/blog/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/) for scripts using the latest PowerShell cmdlets.
+> Please check [here](/blog/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/) for scripts using the latest PowerShell cmdlets.
 
-Granting access to different users to manage the key vault would be a typical scenario in an organization. This could either be to create new vaults or manage keys and secrets within an existing key vault. One way to do that would be to create an [AD application and use that to manage the vault](http://www.rahulpnath.com/blog/authenticating-a-client-application-with-azure-key-vault/). Alternatively you would also want to add users to your azure subscription and grant them access for this (which was exactly what one of my readers wanted to achieve and reached out to me for).
+Granting access to different users to manage the key vault would be a typical scenario in an organization. This could either be to create new vaults or manage keys and secrets within an existing key vault. One way to do that would be to create an [AD application and use that to manage the vault](/blog/authenticating-a-client-application-with-azure-key-vault/). Alternatively you would also want to add users to your azure subscription and grant them access for this (which was exactly what one of my readers wanted to achieve and reached out to me for).
 
 In this post we will see how we can add a new user and grant him the required permissions. The permissions to be provided would differ based on your requirement, so you would want to modify them as required.
 
@@ -22,7 +22,7 @@ In this post we will see how we can add a new user and grant him the required pe
 
 > Every Azure subscription is associated with an Azure Active Directory (AD) and needs to be authenticated with, before any of its resources can be used.
 
-Azure Key Vault gets created in the default AD associated with the subscription, so we need to add the new user to that. (If you are not sure on how to find the default AD [this post](http://www.rahulpnath.com/blog/authenticating-a-client-application-with-azure-key-vault/) describes it in the beginning). In the portal under the _Azure Directory_ option, select the default directory and on the _Users_ tab, we can add a new user.
+Azure Key Vault gets created in the default AD associated with the subscription, so we need to add the new user to that. (If you are not sure on how to find the default AD [this post](/blog/authenticating-a-client-application-with-azure-key-vault/) describes it in the beginning). In the portal under the _Azure Directory_ option, select the default directory and on the _Users_ tab, we can add a new user.
 
 <img src="../images/ad_add_user.png" class="center"></img>
 
@@ -30,7 +30,7 @@ When creating the user, you can [assign the role required](https://azure.microso
 
 ## Creating the key vault
 
-To create a key vault that we want to give permissions for the user, the below powershell scripts can be used. If you are new to key vault, then check out the [Getting Started with Azure Key Vault](http://www.rahulpnath.com/blog/getting-started-with-azure-key-vault/) or [other related articles](http://www.rahulpnath.com/blog/category/azure-key-vault/).
+To create a key vault that we want to give permissions for the user, the below powershell scripts can be used. If you are new to key vault, then check out the [Getting Started with Azure Key Vault](/blog/getting-started-with-azure-key-vault/) or [other related articles](/blog/category/azure-key-vault/).
 
 ```powershell
 Switch-AzureMode AzureResourceManager

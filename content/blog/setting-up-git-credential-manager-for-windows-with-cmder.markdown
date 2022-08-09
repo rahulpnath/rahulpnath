@@ -17,7 +17,7 @@ If you are wondering what Git Credential Manager (GCM) is, then possibly you see
 
 On Windows, you can use [Git Credential Manager for Windows](https://github.com/Microsoft/Git-Credential-Manager-for-Windows) which integrates with git and provides the credentials whenever required. GCM removes the need for you to enter the credentials when using the git repositories.
 
-[Cmder](http://www.rahulpnath.com/blog/cmder-portable-console-emulator-for-windows/) is a portable console emulator for Windows. I prefer to use git from the command line and find the cmder experience good. Check out the [youtube video](https://www.youtube.com/watch?v=fpxx8hlNTzc) for more details.
+[Cmder](/blog/cmder-portable-console-emulator-for-windows/) is a portable console emulator for Windows. I prefer to use git from the command line and find the cmder experience good. Check out the [youtube video](https://www.youtube.com/watch?v=fpxx8hlNTzc) for more details.
 
 To set up GCM with Cmder download the [latest release of GCM](https://github.com/Microsoft/Git-Credential-Manager-for-Windows/releases) in the zip format. Unzip the package under the _vendor_ folder in cmder. Run the _install.cmd_ from within the unzipped GCM package.
 

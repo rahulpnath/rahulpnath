@@ -12,7 +12,7 @@ description:
 thumbnail: ../images/fiddler.png
 ---
 
-[Fiddler](http://www.telerik.com/fiddler) is an HTTP debugging proxy server application and captures HTTP and HTTPS traffic. It is one of the tools in my [essential toolkit list](http://www.rahulpnath.com/blog/tools-that-I-use/). Fiddler allows debugging traffic from PC, MAC, Linux and mobile systems. It helps inspect the raw requests and responses between the client and the server.
+[Fiddler](http://www.telerik.com/fiddler) is an HTTP debugging proxy server application and captures HTTP and HTTPS traffic. It is one of the tools in my [essential toolkit list](/blog/tools-that-I-use/). Fiddler allows debugging traffic from PC, MAC, Linux and mobile systems. It helps inspect the raw requests and responses between the client and the server.
 
 <img src="../images/fiddler_inspectors.png" alt="Fiddler" class="center" />
 
@@ -21,10 +21,10 @@ Some of the key features that I often use in Fiddler are
 - [Inspect Request/Response](http://docs.telerik.com/fiddler/Observe-Traffic/Tasks/ViewSessionContent)
   Look into the request and response data to see if all the required headers/attributes are set, and the data is sent as expected
 
-- [Compose Web Requests](http://www.rahulpnath.com/blog/using-fiddler-to-help-in-manual-testing/)
+- [Compose Web Requests](/blog/using-fiddler-to-help-in-manual-testing/)
   Manually compose requests to send to server and test endpoints.
 
-- [AutoRespond to Requests](http://www.rahulpnath.com/blog/simulating-delays-in-http-calls-for-manual-tests/)
+- [AutoRespond to Requests](/blog/simulating-delays-in-http-calls-for-manual-tests/)
   Intercept requests from the browser and send back a pre-defined response or create a delay in response to the actual client.
 
 - [Statistics](http://docs.telerik.com/fiddler/Observe-Traffic/Tasks/ViewSessionStatistics)

@@ -30,4 +30,4 @@ I have noticed that it's not that waking up in the morning that is a problem. Wa
 
 8. **Smart Alarms:** There are mobile applications today that come up with puzzle based alarms, you would have to solve the puzzle to turn of the alarm. You could try one of those if needed(I had not used any though).
 
-These tips have really helped me to wake up to an alarm and be an early riser too. The feeling of starting the day as you wished for is great and stays throughout the day, helping you to do more and [staying organized](http://www.rahulpnath.com/blog/staying-organized-finding-a-system-to-manage-it-all/). Hope you find this useful and do let know if any other tricks has helped you to wake up to an alarm.
+These tips have really helped me to wake up to an alarm and be an early riser too. The feeling of starting the day as you wished for is great and stays throughout the day, helping you to do more and [staying organized](/blog/staying-organized-finding-a-system-to-manage-it-all/). Hope you find this useful and do let know if any other tricks has helped you to wake up to an alarm.

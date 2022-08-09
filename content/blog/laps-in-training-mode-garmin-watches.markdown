@@ -11,7 +11,7 @@ description: Auto Lap not working under training mode in some Garmin watches. He
 thumbnail: ../images/garmin_fenix_3hr.jpg
 ---
 
-I recently upgraded to a Garmin Fenix 3 HR from my [Forerunner 630](http://www.rahulpnath.com/blog/three_months_to_a_half_marathon/). After a few runs with the Fenix 3, I realized that in [Training Mode it does not do auto lap](https://twitter.com/rahulpnath/status/928145529606873088). I have a custom training workout for a 10k with no repeat modes in it. This workout was what I used on my FR630, and it used to auto lap at 1km. That no longer happens in the Fenix 3 HR.
+I recently upgraded to a Garmin Fenix 3 HR from my [Forerunner 630](/blog/three_months_to_a_half_marathon/). After a few runs with the Fenix 3, I realized that in [Training Mode it does not do auto lap](https://twitter.com/rahulpnath/status/928145529606873088). I have a custom training workout for a 10k with no repeat modes in it. This workout was what I used on my FR630, and it used to auto lap at 1km. That no longer happens in the Fenix 3 HR.
 
 > **Software Details**
 

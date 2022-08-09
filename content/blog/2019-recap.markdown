@@ -11,7 +11,7 @@ description: A short recap of the year that is gone by and looking forward!
 thumbnail: ../images/happy_new_year.png
 ---
 
-[Another year](http://www.rahulpnath.com/blog/2018-recap/) has gone by so fast, and it is again time to do a year review.
+[Another year](/blog/2018-recap/) has gone by so fast, and it is again time to do a year review.
 
 > **TLDR;**
 
