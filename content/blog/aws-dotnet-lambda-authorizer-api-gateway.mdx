@@ -35,13 +35,13 @@ You will learn:
 
 For this post, I will use the API Gateway REST API built in the above article.
 
-## Authorizer Lambda Function
+## .NET Core Lambda Function
 
 To set up an Authorizer for API Gateway, we first need to build a Lambda Function. With the AWS Toolkit installed for Visual Studio, use the Lambda Function and the Empty template to build a Lambda Authorizer function. Install the `Amazon.Lambda.APIGatewayEvents` [NuGet package](https://www.nuget.org/packages/Amazon.Lambda.APIGatewayEvents) to get the API Gateway custom authorizer request/response classes - `APIGatewayCustomAuthorizerRequest` and `APIGatewayCustomAuthorizerResponse`.
 
 The `Type` and `MethodArn` property on the `APIGatewayCustomAuthorizerRequest` object is populated for all request types. `Type` indicates the type of Authorizer, and the `MethodArn` indicates the method for which the Lambda Authorizer was invoked.
 
-### Types of Authorizer
+### Types of Lambda Authorizer
 
 There are two types of Lambda Authorizers.
 
@@ -52,7 +52,7 @@ The type of Authorizer is decided based on how it’s set up in the API Gateway 
 
 Based on the type of the Authorizer, the request parameters that come into the Lambda Authorizer Function are different. When using the Token Authorizer, the `AuthorizationToken` property is populated with the bearer token from the incoming request. API Gateway does this automatically. When using Request Authorizer, the `AuthorizationToken` property is null, and all other properties, `Headers`, `QueryStringParameters`, `PathParameters`, `StageVariables` etc., are populated.
 
-#### Sample Token Validation
+#### Sample Token Validation using .NET
 
 The validation mechanisms change based on the type of token and how it’s generated. If you have an Identity server setup for your organization, use that to validate tokens and retrieve associated details. This might involve an additional HTTP call to the Identity Server.
 
@@ -108,7 +108,7 @@ Use the appropriate key names to retrieve the claims from the `ClaimsPrincipal`.
 
 `var userId = claimsPricipal.FindFirst("UserId")?.Value;`
 
-### Authorizer Response
+### .NET Lambda Response
 
 Lambda Authorizer returns the same response object, `APIGatewayCustomAuthorizerResponse`, for both authorized and unauthorized responses. 
 
@@ -211,7 +211,7 @@ return new APIGatewayCustomAuthorizerResponse()
 
 For other users, you can explicitly return the method ARNs that the user can access based on their role. The application can use conventions or will need to keep a map of roles vs. methods to return this information. 
 
-## Pass Data From Authorizer to Function Code
+## Pass Data From Lambda Authorizer to Function Code
 
 Often we need information about the User accessing the function to make business decisions. We might also need this to save user details as part of the data stored or for logging/auditing. 
 
