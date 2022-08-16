@@ -1,12 +1,12 @@
 ---
-title: 'How To Protect API Gateway REST API With Lambda Authorizers in .NET?'
+title: 'Using .NET AWS Lambda Authorizer To Secure API Gateway REST API'
 date: 2022-08-03
 tags:
   - AWS
   - Serverless
   - Dotnet-Core
 keywords:
-description: Lambda Authorizers are a feature provided by API Gateway that helps us separate the authentication logic from our business logic in our function code. Let's explore all about Lambda Authorizers in Amazon API Gateway using .NET Core.
+description: Lambda Authorizer is a feature provided by API Gateway that helps us separate the authentication logic from our business logic in our function code. Let's learn how to build a Lambda Authorizer in .NET Core and use it to secure an API Gateway REST API.
 thumbnail: ../images/protect-bird.jpg
 popular: true
 draft: false
@@ -141,7 +141,7 @@ Under the Authorizers section for the REST API in Amazon API Gateway, select ‘
 
 Below I create a Token based authorizer, *user-service-authorizer,* which uses the HTTP header *authorizationToken* to get the Bearer Token.
 
-![Create a new Lambda Authorizer in API Gateway REST API by providing the name, Lambda function used as the authorizer, and the token type to use. Also, enable token caching if required.](../images/api-gateway-lambda-authorizer-create.jpg)
+![Create a new .NET Lambda Authorizer in API Gateway REST API by providing the name, Lambda function used as the authorizer, and the token type to use. Also, enable token caching if required.](../images/api-gateway-lambda-authorizer-create.jpg)
 
 
 You can create multiple Authorizers if required for the same REST API. Creating an Authorizer here does not apply it to the API automatically.
@@ -150,7 +150,7 @@ We need to set the Authorizer explicitly for each Method endpoint for the API. T
 
 E.g., Below for the `GET` method on the *Users* resource, set the Authorization to the new *user-service-authorizer*
 
-![Set Lambda Authorizer on REST API Method Request](../images/api-gateway-lambda-authorizer-set-authorizer-for-method.jpg)
+![Set the .NET Lambda Authorizer on REST API Method Request](../images/api-gateway-lambda-authorizer-set-authorizer-for-method.jpg)
 
 For each method on the REST API, the Authorizer needs to be selected explicitly. 
 
@@ -164,7 +164,7 @@ To test our new Custom Lambda Authorizer, deploy the API to a Stage.
 
 Once deployed, make a `GET` or `POST` request to the API endpoint from [Postman](https://www.postman.com/). Pass the token in the *authorizationToken* HTTP header value. 
 
-![Sample API gateway REST API request with the token in HTTP Header for Lambda Authorizer. ](../images/api-gateway-lambda-authorizer-sample-api-request-postman.jpg)
+![Sample API gateway REST API request with the token in HTTP Header for .NET Lambda Authorizer. ](../images/api-gateway-lambda-authorizer-sample-api-request-postman.jpg)
 
 ## Caching Authorizer Responses
 

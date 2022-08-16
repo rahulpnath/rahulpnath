@@ -52,3 +52,4 @@ https://rahulpnath.netlify.com/* https://www.rahulpnath.com/:splat 301!
 /blog/azure_managed_service_identity_and_local_development/ /blog/azure-managed-service-identity-and-local-development/ 301
 /blog/automatic_deployment_of_future_posts_with_octopress/ /blog/automatic-deployment-of-future-posts-with-octopress/ 301
 /blog/cosmos_emulator_arm_templates/ /blog/cosmos-emulator-arm-templates/ 301
+/blog/amazon-api-gateway-rest-api-lambda-authorizer/ /blog/aws-dotnet-lambda-authorizer-api-gateway/ 301
