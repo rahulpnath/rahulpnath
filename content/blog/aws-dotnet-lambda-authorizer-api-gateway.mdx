@@ -108,7 +108,7 @@ Use the appropriate key names to retrieve the claims from the `ClaimsPrincipal`.
 
 `var userId = claimsPricipal.FindFirst("UserId")?.Value;`
 
-### .NET Lambda Response
+### API Gateway Authorized and Unauthorized Responses
 
 Lambda Authorizer returns the same response object, `APIGatewayCustomAuthorizerResponse`, for both authorized and unauthorized responses. 
 
@@ -133,7 +133,7 @@ return new APIGatewayCustomAuthorizerResponse()
 
 If authorized, it specifies `Resource`, a list of ARNs it provides access for, and also the list of Action allowed. In our example, since the authorizer is for accessing an API endpoint, we return the `MethodArn` and provide the appropriate permissions. In this case, `execute-api:Invoke` permission to invoke the Lambda function.
 
-## Set Up Authorizer in API Gateway
+## Setting Up Authorizer in API Gateway
 
 Now that we have the Authorizer Lambda function up and running in our AWS account let’s set it up as an Authorizer in API Gateway. 
 
@@ -166,7 +166,7 @@ Once deployed, make a `GET` or `POST` request to the API endpoint from [Postman]
 
 ![Sample API gateway REST API request with the token in HTTP Header for .NET Lambda Authorizer. ](../images/api-gateway-lambda-authorizer-sample-api-request-postman.jpg)
 
-## Caching Authorizer Responses
+## Caching API Gateway Authorizer Responses
 
 Every time we make a call to the Resource endpoint, it now has to make two round-trip calls.
 
@@ -211,7 +211,7 @@ return new APIGatewayCustomAuthorizerResponse()
 
 For other users, you can explicitly return the method ARNs that the user can access based on their role. The application can use conventions or will need to keep a map of roles vs. methods to return this information. 
 
-## Pass Data From Lambda Authorizer to Function Code
+## Pass Custom Data From Authorizer to Lambda Function Code
 
 Often we need information about the User accessing the function to make business decisions. We might also need this to save user details as part of the data stored or for logging/auditing. 
 
