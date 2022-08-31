@@ -239,6 +239,8 @@ But what happens when there is an error in processing a Stream Record inside our
 
 By default, the DynamoDB stream retries these messages until they are processed successfully. Since DynamoDB Streams ensures a time-ordered delivery, any updates made to items in the DynamoDB Table queue up behind the error stream record. Only once this is processed will the Function continue to receive the new records.
 
-The Lambda Trigger configuration provides options to process and handles these error records so that it does not block the processing of new records. In another blog post, I will cover the different configurations specific to Error Handling and how to use this. I also cover different integration patterns you can use to process Stream Record events successfully.
+The Lambda Trigger configuration provides options to process and handles these error records so that it does not block the processing of new records. In [another blog post](/blog/aws-dynamodb-streams-lambda-triggers-exception-handling-dotnet/), I will cover the different configurations specific to Error Handling and how to use this. I also cover different integration patterns you can use to process Stream Record events successfully.
+
+<Bookmark slug ='aws-dynamodb-streams-lambda-triggers-exception-handling-dotnet' />
 
 I hope this helped you get started with DynamoDB Streams from a .NET application.

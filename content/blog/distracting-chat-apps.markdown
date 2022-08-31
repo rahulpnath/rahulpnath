@@ -1,5 +1,5 @@
 ---
-title: "Is Instance Messaging At Work Distracting You?"
+title: "Is Instant Messaging At Work Distracting You?"
 tags:
   - Essays
 date: 2021-10-30
