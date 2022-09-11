@@ -54,3 +54,4 @@ https://rahulpnath.netlify.com/* https://www.rahulpnath.com/:splat 301!
 /blog/cosmos_emulator_arm_templates/ /blog/cosmos-emulator-arm-templates/ 301
 /blog/amazon-api-gateway-rest-api-lambda-authorizer/ /blog/aws-dotnet-lambda-authorizer-api-gateway/ 301
 /blog/amazon-cloudwatch-logs /blog/amazon-cloudwatch-logs-dotnet 301
+/blog/amazon-s3 /blog/amazon-s3-dotnet 301
