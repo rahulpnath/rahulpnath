@@ -38,8 +38,8 @@ Amazon S3 supports notifications for different types and destinations to publish
 Below are the [Notification Types](https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-how-to-event-types-and-destinations.html#supported-notification-event-types) supported by Amazon S3.
 
 - **s3:TestEvent →** Test notification event created when notification is enabled on S3
-- **s3:ObjectCreated:* →** Object created or updated events. The * can also be replaced by *PUT*, *POST*, or *COPY* if you want to listen to specific operations on S3.
-- **s3:ObjectRemoved:* →** Objects are removed from S3. The * can be replaced by *Delete* or *DeleteMarkerCreated.*
+- **s3:ObjectCreated: →** Object created or updated events. The * can also be replaced by *PUT*, *POST*, or *COPY* if you want to listen to specific operations on S3.
+- **s3:ObjectRemoved: →** Objects are removed from S3. The * can be replaced by *Delete* or *DeleteMarkerCreated.*
 
 ### Event Destinations
 
