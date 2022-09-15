@@ -1,4 +1,3 @@
-import CarbonAd from 'components/CarbonAd'
 import { PageTitle, SocialShare, Tag } from 'components/common'
 import Disqus from 'disqus-react'
 import { MDXRenderer } from 'gatsby-plugin-mdx'
@@ -41,7 +40,7 @@ export const Post = ({ body, frontmatter, timeToRead, fields }) => {
             <i>{timeToRead} min read</i>
           </ArticleDate>
         </div>
-        <CarbonAd />
+        {/* <CarbonAd /> */}
       </Flex>
       <MDXRenderer>{body}</MDXRenderer>
       <SocialShare title={frontmatter.title} path={fields.slug} />
