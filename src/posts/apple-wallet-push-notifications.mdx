@@ -1,0 +1,237 @@
+---
+title: "Enhancing User Experience: Push Notifications in .NET for Apple Wallet Pass Updates"
+slug: "apple-wallet-push-notifications"
+date: "2023-10-23T04:24:49.000Z"
+feature_image: "/images/Apple-Wallet-Push-Notifications.png"
+tags: []
+---
+
+Apple Wallet Passes Passes are dynamic and they reflect real-world state. Information in Apple Wallet passes can be dynamically updated.
+
+Updating a Pass is easily done by distributing a new version of the Pass with the same identifier and serial number.
+
+Alternatively, you can add an `webServiceURL` and authentication Token keys in the initial Wallet Pass added to the device. The device then uses the service endpoint to communicate with the server about the changes to passes and to fetch the latest version of the Pass as it changes.
+
+In this blog post, let's learn how to set up Push Notification updates to Apple Wallet Passes from a .NET application.
+
+The high-level flow remains the same regardless of whichever programming language you use to build the application.
+
+I will use the Lambda Annotations Framework to build these API endpoints. However, you can use your existing application hosting mechanism for this.
+
+_This article is sponsored by AWS and is part of my [_AWS Series_](__GHOST_URL__/tag/aws/)._
+
+Updating a Wallet Pass
+----------------------
+
+The Device the Pass is added and the Pass Provider's web server works together to keep the Wallet Pass updated.
+
+Below are the key communication steps between the device and the server to keep the Wallet Pass updated.
+
+1.  The device registers for Pass Updates to the `webServiceURL` provided in the pass, as soon as the Pass is added.
+2.  On changes to the Pass on the Web server, it uses the device information obtained in the registration request to send a push notification for the Pass Type
+3.  On receiving the Push Notification, the user device reaches out to the `webServiceURL` to get a list of passes that has changed
+4.  For each Pass that has been updated, it asks the server for the latest version of the Pass.
+
+[![Request/Response flow involved in updating a Apple Wallet Pass using a Web Service Url (source - apple developer documentation page)](/images/client_server_interaction_2x.png)](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/PassKit_PG/Updating.html#//apple_ref/doc/uid/TP40012195-CH5-SW1)
+
+Request/Response flow involved in updating a Apple Wallet Pass using a Web Service Url (source - apple developer documentation page)
+
+The above diagram summarizes the high-level request/response flow between the user device and the web server delivering the Apple Wallet Pass updates.
+
+Implementing the Web Service Endpoint
+-------------------------------------
+
+[The Apple PassKit Web Service Reference](https://developer.apple.com/library/archive/documentation/PassKit/Reference/PassKit_WebService/WebService.html#//apple_ref/doc/uid/TP40011988) provides the API Endpoint specifications required to support Wallet Pass updates.
+
+When creating a Pass file, we can set the `WebServiceUrl` property to set the callback service endpoint.
+
+     var request = new PassGeneratorRequest
+     {
+         ...
+         WebServiceUrl = "https://my-apple-wallet-pass-web-service-url.com/",
+         AuthenticationToken = "authentication-token-used-to-authenticate-calls-to-service"
+         ...
+      }
+
+You can set an `AuthenticationToken` on the pass request, that will be passed back to the Web Service Url when the device calls it to get the pass updates. You can use this to authenticate requests coming to your endpoint.
+
+Check out the post below on details on how to create an Apple Wallet Pass from a .NET application.
+
+[
+
+Add to Apple Wallet from Your .NET Application: A Step-by-Step Guide
+
+The iOS Wallet app allows users to manage payment cards, boarding passes, tickets, gift cards, and other passes. Let’s learn how to set up, build, and distribute Apple Wallet passes from a .NET application.
+
+![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
+
+![](/images/Add-To-Apple-Wallet.png)
+
+](__GHOST_URL__/blog/add-to-apple-wallet-dotnet/)
+
+Below are the 5 different endpoint capabilities that the Apple PassKit Web Service Reference expects from the server implementing the web service.
+
+### Register Device
+
+The Register Device endpoint is `POST` method with the URL format as _`webServiceURL``/version``/devices/deviceLibraryIdentifier``/registrations/passTypeIdentifier``/serialNumber`_
+
+Below is an API Endpoint using the Lambda Annotations framework
+
+    [LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
+    [HttpApi(LambdaHttpMethod.Post, "/v1/devices/{deviceLibraryIdentifier}/registrations/{passTypeIdentifier}/{serialNumber}")]
+    public async Task RegisterDeviceForPushNotificationForAPass(
+        string deviceLibraryIdentifier, string passTypeIdentifier, string serialNumber,
+        [FromBody] RegisterRequest pushToken)
+    {
+       // Save Device Registration Info to data store
+    }
+
+### Get Passes For Device
+
+The Get Serial Numbers for Passes associated with a device is a `GET` request to _`webServiceURL``/version``/devices/deviceLibraryIdentifier``/registrations/passTypeIdentifier``?passesUpdatedSince=tag`_
+
+The `GetPassesForDevice` method uses the deviceLibraryIdentifier and the `passesUpdatesSince` (from query parameters) to fetch the Passes that has been updated since the specified date.
+
+It returns an array of SerialNumber strings that the Apple device then uses to enumerate and call the `GetLatestPass` method on.
+
+    [LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
+    [HttpApi(LambdaHttpMethod.Get, "/v1/devices/{deviceLibraryIdentifier}/registrations/{passTypeIdentifier}")]
+    public async Task<GetPassesForDeviceResponse> GetPassesForDevice(
+        string deviceLibraryIdentifier, string passTypeIdentifier, [FromQuery] string passesUpdatedSince, ILambdaContext context)
+    {
+        var updatedSerialNumbers = await GetPassesUpdatedForDeviceSince(
+                   deviceLibraryIdentifier, passesUpdatedSince);
+    
+        return new GetPassesForDeviceResponse()
+        {
+            SerialNumbers = updatedSerialNumbers,
+            LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString(),
+        };
+    }
+    
+    public class GetPassesForDeviceResponse
+    {
+        public string LastUpdated { get; set; }
+        public string[] SerialNumbers { get; set; }
+    }
+
+We can use any value for the `LastUpdated` property when returning the result. In the example here I am using the UnixTimeMilliseconds as the value returned.
+
+The very first time the Apple Device calls this endpoint it will pass in a numm value for the query parameter. Once we return back a valid response with the `LastUpdated` property specified, the Apple Device sends that in the subsequent request.
+
+### Get Latest Pass
+
+The Get Latest Pass is a `GET` request to _`webServiceURL``/version``/passes/passTypeIdentifier``/serialNumber`_
+
+The `Getpass` endpoint method returns the latest pass information if it has been updated. The endpoint uses the header 'If-Modified-Since' value to determine if the server content is modified or not.
+
+    [LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
+    [HttpApi(LambdaHttpMethod.Get, "/v1/passes/{passTypeIdentifier}/{serialNumber}")]
+    public async Task<APIGatewayHttpApiV2ProxyResponse> GetPass(
+        string passTypeIdentifier, string serialNumber,
+        [FromHeader(Name = "If-Modified-Since")] string ifModifiedSince, ILambdaContext context)
+    {
+        var pass = await GetPass(serialNumber, passTypeIdentifier);
+    
+        if (DateTimeOffset.TryParse(ifModifiedSince, out var lastUpdated) && lastUpdated < pass.LastUpdated)
+            return new APIGatewayHttpApiV2ProxyResponse()
+            {
+                Body = Convert.ToBase64String(pass.PassContent),
+                IsBase64Encoded = true,
+                StatusCode = (int)HttpStatusCode.OK,
+                Headers = new Dictionary<string, string>
+                {
+                    { "Content-Type", "application/vnd.apple.pkpass" },
+                    { "Last-Modified", pass.LastUpdated.ToString("o") },
+                    { "Content-Disposition", "attachment; filename=ticket.pkpass; filename*=UTF-8''ticket.pkpass" }
+                }
+            };
+        else
+            return new APIGatewayHttpApiV2ProxyResponse()
+            {
+                StatusCode = (int)HttpStatusCode.NotModified
+            };
+    }
+
+If the pass content is updated it returns the new pass information along with the `Last-Modified` header value, which the Apple Device will send in as the 'If-Modified-Since' header value in the subsequent request.
+
+For unmodified passes we just return a HttpResponse of `NotModified`.
+
+### Unregister Device
+
+The Unregister Device for Pass updates is a `DELETE` request to _`webServiceURL``/version``/devices/deviceLibraryIdentifier``/registrations/passTypeIdentifier``/serialNumber`_
+
+The Unregister Device endpoint is very similar to the Register endpoint, only that it uses the `Delete` Http verb.
+
+    [LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
+    [HttpApi(LambdaHttpMethod.Delete, "/v1/devices/{deviceLibraryIdentifier}/registrations/{passTypeIdentifier}/{serialNumber}")]
+    public async Task UnRegisterDeviceForPushNotificationForAPass(
+        string deviceLibraryIdentifier, string passTypeIdentifier, string serialNumber,
+        [FromBody] RegisterRequest pushToken)
+    {
+        // Remove Device from the registered list of devices for the Serial Number
+    }
+    
+
+This is usually called when the pass is manually removed from the device and it no longer requires an update to be sent for that particular serial number.
+
+In cases where the Pass is added to multiple devices, even if the Pass is removed from one device, there can still be other devices that are still interested in the pass updates.
+
+### Logging Errors
+
+The Log endpoint to catch any errors in the other endpoints is a `POST` request to _`webServiceURL/version/log`_
+
+The Log endpoint is intended to help you debug your web service implementation. Any errors happening in the other Endpoints are sent to this generic endpoint so that we can debug and fix the issues in the endpoint.
+
+    [LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
+    [HttpApi(LambdaHttpMethod.Post, "/v1/log")]
+    public async Task Log([FromBody] LogRequest logRequest)
+    {
+        // Log to standard logging
+    }
+
+You can log this to your standard logging console or endpoint and track it from there for errors in the API Endpoint.
+
+Apple Push Notification on Pass Updates
+---------------------------------------
+
+Any time the information associated with Wallet Pass changes on our server side, we need to notify the Devices that have the Passes added to their Wallet.
+
+To notify devices we will use the Apple Push Notification Service (APNS).
+
+[dotAPNS](https://github.com/alexalok/dotAPNS) is a NuGet library used to send pushes to Apple devices via the [HTTP/2 APNs API](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server), which is an officially recommended way of interacting with APNs (_Apple Push Notification service_).
+
+The same Pass can be added to multiple devices - if the user decides to share the passes or has multiple devices of their own.
+
+For any Pass update, we need to push notify all the devices that have that pass added, to update it in all of them.
+
+Using the `IApnsService` instance from the dotAPNS NuGet library and the PushToken received as part of the Register Device API endpoint, we can notify all the devices that have the updated pass added to the wallet.
+
+    [LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
+    [HttpApi(LambdaHttpMethod.Post, "/apple-wallet/push-updates/{serialNumber}")]
+    public async Task PushUpdatesForPass(string serialNumber)
+    {
+        var deviceRegistrations = GetDeviceRegistrationForSerialNumber(serialNumber);
+        var applePushes = deviceRegistrations
+            .Select(device => 
+                new ApplePush(ApplePushType.Background)
+                    .AddToken(device.PushToken)
+                    .AddContentAvailable());
+    
+        var apnsResponses = await applePushes
+            .Select(ap => _apnsService.SendPushes(ap.ToArray(), 
+                            _appleWalletConfiguration.PassbookCertificate()))
+            .WhenAll();
+    }
+
+We use the Certificate-based authentication with APNS in this case.
+
+Note that no serial number or other information is passed along in the Push Notification to the devices.
+
+Since the certificate has the information on the Wallet Pass Type, it passes that on to the devices automatically when delivering the Push Notification.
+
+The Push Notification triggers the device to call back to the `WebServiceUrl` configured for the Pass to get a list of updated Passes and the individual Pass.
+
+Using push notifications we can notify the devices any time a Pass changes in the background (on our server) and have the device call back to our server endpoint to get the latest Pass details.
+
+Most of the data exchange happens directly between the user device and our Web Server.

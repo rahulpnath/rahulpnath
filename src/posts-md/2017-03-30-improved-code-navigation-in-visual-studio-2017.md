@@ -1,0 +1,18 @@
+---
+title: "Tip of the Week: Improved Code Navigation in Visual Studio 2017"
+slug: improved-code-navigation-in-visual-studio-2017
+date_published: 2017-03-30T00:00:00.000Z
+date_updated: 2024-11-28T03:44:44.000Z
+tags: Productivity, Programming
+excerpt: Navigate the code faster!
+---
+
+Visual Studio (VS) 2017 improves a lot on Code Navigation features. If at all anything ever attracted me to ReSharper it was code navigation (though I have not been using it for a [couple of years now](__GHOST_URL__/blog/tools-that-I-use/)). Visual Studio lacked behind in this aspect but not anymore. The new features help improve developer productivity and here are few I found worth looking.
+
+In earlier versions, the navigation features are all over the menu. In VS2017 all the navigation features are available under ***Edit -> Go To***. Though I usually prefer using the keyboard shortcut for opening the navigate dialogs, it's good to have all under the same menu.
+![Visual Studio 2017 Code Navigation](__GHOST_URL__/content/images/visualstudio_code_navigation.png)
+***Control + T*** brings up the Go To Dialog box which now has a lot more icons and options compared to the previous VS versions. Typing in '*?*' lists the different filtering criteria available when querying. It also allows searching across all the criteria by just not specifying the filtering criteria. To search for a file, type in '*f FileName*'. These filters also have direct shortcuts as shown in the image above.
+![Visual Studio 2017 Go To Shortcuts](__GHOST_URL__/content/images/visualstudio_goto.png)
+CamelCase search is the one that attracts me the most. By entering just the capital letters of the name it quickly filters out the particular class. As shown below by just typing *CSG* it brings up the class **C**har**S**equence**G**enerator. Typing in the full class name is no longer required and makes navigation faster.
+![Visual Studio 2017 Go To Camel Case Matching](__GHOST_URL__/content/images/visualstudio_camelcasematching.png)
+Check out the [video](https://www.youtube.com/watch?v=p6NVTASKa1A) to see these features and more in action. Hope it helps!

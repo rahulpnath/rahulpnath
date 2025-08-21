@@ -1,0 +1,67 @@
+---
+title: "AWS Serverless Refactoring Series: How to Move to Clean Architecture?"
+slug: aws-serverless-refactoring-series-clean-architecture
+date_published: 2021-05-03T14:10:00.000Z
+date_updated: 2024-11-28T02:34:32.000Z
+tags: AWS
+excerpt: Learn how to refactor the AWS Serverless Application Template to use Clean Architecture. Following the Dependency Inversion Principle, we will create diferent projects to separate concerns.
+---
+
+*This is Part 1 of the [AWS Serverless Refactoring Series](__GHOST_URL__/blog/aws-serverless-refactoring-series/), where I refactor the default AWS Serverless Application template to a more maintainable and easy to extend architecture.*
+
+Separate projects help separate concerns.
+
+[Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) is a popular way to organize code and separate projects. It has different names like Onion Architecture, Hexagonal Architecture, Ports and Adapters, etc.
+
+They all have the same goal! Separating the software into layers and thereby separating concerns.
+![Clean Architecture](__GHOST_URL__/content/images/clean_architecture.jpg)
+**Dependencies** in Clean Architecture all **point inwards**. The outer layer code can know (or reference) the inner layer code (or DLL). The code in the inner layer cannot know anything about the outer layer code.
+
+The default `Functions.cs` class currently handles mixed concerns. It interacts with the AWS Infrastructure, Creates Domain Objects, and saves them to an external DynamoDB database.
+
+## Adding Projects
+
+To refactor the project template into the Clean Architecture, let’s first add two projects.
+
+- MyApplication.Domain → Holds all Domain-related logic
+- MyApplication.Infrastructure → Holds Infrastructure-related logic. e.g. DynamoDB
+
+Following the diagram above, the Domain project is at the core of everything. Hence it does not have any other dependencies.
+
+The `MyApplication.Infrastructure` project has a dependency on the Domain project. The Domain project defines the interfaces to interact with the Infrastructure. It is an example of **Dependency Inversion Principle.**
+
+> *Dependency Inversion Principle states that Higher Level Modules should not depend on Lower Level Modules*
+
+Whenever the Dependency Inversion Principle is applied, the interface ownership also gets reversed. The client owns the interface when this happens.
+
+Implementations for these interfaces are in the Infrastructure project. Hence it takes in a dependency of the Domain.
+![Project Dependency Graph of all the projects in the solution.](__GHOST_URL__/content/images/aws_serverless_refactor_project_graph.jpg)
+The `[MyApplication.Host](http://myapplication.Host)` project depends on both the Infrastructure and Domain projects. It is the **Composition Root.**
+
+> [*A Composition Root](https://blog.ploeh.dk/2011/07/28/CompositionRoot) is the unique location in the application, where the modules are composed together.*
+
+The Composition Root is the appropriate place to set up Dependency Injection Container. It needs references to all projects to set up the dependencies.
+
+## Rearranging Files
+
+The `Blog.cs` currently acts as a Data Transfer Object (DTO).It only has data properties and does not have any behavior.
+
+Since this application is about Blogs, let's move this class into the Domain Project.
+Let's add it to the Entities folder.
+
+*Delete the `Blog.cs` under the Host project and update the namespaces across the solution.*
+![Move Blog to Entities folder under Domain project](__GHOST_URL__/content/images/aws_serverless_refactor_entities.jpg)
+This being a Refactoring example, I will not change any existing functionality of the application. However, as you find functionality realted to Blog, move them to this class.
+[
+
+AWS Lambda For The .NET Developer
+
+Learn to build Serverless Applications on AWS
+
+![](https://www.udemy.com/staticx/udemy/images/v7/apple-touch-icon.png)Udemy
+
+![](https://img-c.udemycdn.com/course/480x270/4689888_b522_4.jpg)
+](https://www.udemy.com/course/aws-lambda-dotnet/?referralCode&#x3D;981481B991C2890BD448)
+We have the basic structure required for our AWS Serverless application.
+
+In the next post, we will start extracting the functionality from `Functions.cs` class and moving it across to these new projects.

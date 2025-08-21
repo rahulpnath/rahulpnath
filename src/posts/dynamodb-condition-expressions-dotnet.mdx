@@ -1,0 +1,214 @@
+---
+title: "How to Ensure Data Consistency with DynamoDB Condition Expressions From .NET Applications"
+slug: "dynamodb-condition-expressions-dotnet"
+date: "2023-04-26T18:43:02.000Z"
+feature_image: "/images/DynamoDB-Condition-Expressions.png"
+tags: []
+---
+
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](__GHOST_URL__/tag/aws/)_._
+
+Condition Expressions allow specifying constraints when writing data to an Amazon DynamoDB table.
+
+It allows you to specify a Boolean expression that must be true for the operation to proceed. For example, you can use a condition expression to ensure that an item is only updated if a particular attribute has a specific value or that an item is only deleted if it meets particular criteria.
+
+ConditionExpressions are used with an update, delete, or put operations in DynamoDB.
+
+<iframe src="https://www.youtube.com/embed/-H5ATRh5n0E?feature=oembed" />
+
+In this blog post, let’s learn
+
+*   How to use ConditionExpressions
+*   Different comparison, function, and logical operators in Condition Expressions
+*   Common use cases for Condition Expressions
+*   Examples of Condition Expressions
+
+DynamoDB Condition Expression and .NET
+--------------------------------------
+
+To specify ConditionExpressions from .NET, we need to use the Lower-Level `AmazonDynamoDBClient` model.
+
+At the time of writing, the High-Level API `DynamoDBContext` does not support specifying Condition Expressions.
+
+When making a Put, Update, or Delete operation on a DynamoDB table, you can pass the `ConditionExpression` as a string expression, which is evaluated at the server.
+
+> The `ConditionExpression` is a string that contains one of more logical expressions that are evaluated at runtime on DynamoDB server side. If the condition is true, the operation is performed; otherwise an error is returned.
+
+Below is an example ConditionExpression, which evaluates to true if the Category property is 'Gadgets' and the Price property is between 20 and 100.
+
+    ConditionExpression = "Category = :cat and (Price between :low and :high)",
+    ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
+    {
+        {":cat", new AttributeValue("Gadgets") },
+        {":low", new AttributeValue(){ N = "20" } },
+        {":high", new AttributeValue(){ N = "100" } },
+    }
+
+If the condition expression evaluates to true when performing the write operation in the DynamoDB server, the process completes successfully. If not, it throws an Exception.
+
+### Built-in Functions and Operators for ConditionExpression
+
+When writing DynamoDB conditional expressions, there are several built-in functions and operators that you can use to define your conditions.
+
+**Comparison Operators:** `=`, `<`,`<=`, `>`, `>=`, `BETWEEN`, `IN`, `<>`  
+  
+**Logical Operators:** `AND`, `OR`, `NOT`  
+  
+**Built-in Functions:**
+
+*   `attribute_exists(attribute_name)` : true if the attribute exists in the item.
+*   `attribute_not_exists(attribute_name)` : true if the attribute does not exist.
+*   `attribute_type(attribute_name, type)` : true if the attribute is of the specified type (e.g., 'S' for string).
+*   `begins_with(attribute_name, substring)` : true if the attribute begins with the specified substring.
+*   `contains(attribute_name, operand)` : true if the attribute contains the specified operand.
+*   `size(attribute_name)` : Returns the size of the attribute value
+
+Use Cases for DynamoDB ConditionExpression
+------------------------------------------
+
+`ConditionExpressions` are used to enforce data consistency and prevent race conditions when performing various operations on items in a table.
+
+1.  **Preventing Overwrites:** Condition Expressions can avoid overwriting an existing item with a new item with the same primary key. For example, you can specify a `ConditionExpression` that checks whether an item with the same primary key already exists in the table before performing a `PutItem` operation.
+2.  **Enforcing Business Rules:** You can use Condition Expressions to enforce business rules and ensure that only valid data is written to the table. For example, you can specify a `ConditionExpression` that checks whether a value falls within a specific range or meets specific criteria before writing it to the table.
+3.  **Preventing Concurrent Updates:** You can use Condition Expressions to prevent concurrent updates to an item from multiple users. For example, you can specify a `ConditionExpression` that checks whether the item being updated has not been modified by another client since it was last read.
+4.  **Conditional Deletion:** You can conditionally delete an item from a table using Condition Expressions. For example, you can specify a `ConditionExpression` that checks whether an item meets certain criteria before deleting it.
+
+DynamoDB ConditionExpression Examples in .NET
+---------------------------------------------
+
+To use `ConditionExpressions` from .NET applications, we need to use the Low-level API - `AmazonDynamoDbClient` instance.
+
+The High-level API, `DynamoDBContext` does not support specifying condition expressions.
+
+`ConditionExpresion` is a property on the request object to DynamoDB based on the type of operation we perform.
+
+To pass parameters as part of the `CondtionExpression` we can use the `ExpressionAttributeValues` and to pass reserve keywords, we can use the `ExpressionAttributeNames` property.
+
+We saw this earlier when exploring the [different ways to query data from Amazon DynamoDB using .NET](__GHOST_URL__/blog/dynamodb-querying-dotnet/).
+
+[
+
+5 Ways To Query Data From Amazon DynamoDB using .NET
+
+Querying is an essential operation in DynamoDB. It allows you to filter and select items in your database based on your application and user needs. When moving over to DynamoDB from more traditional relational databases like SQL Server, you must understand the different ways you can retrieve data…
+
+![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
+
+![](/images/DynamoDB-Querying-new.png)
+
+](__GHOST_URL__/blog/dynamodb-querying-dotnet/)
+
+Let's see a few examples using`ConditionExpression` from .NET applications.
+
+### Conditional PUT
+
+The below example shows an example of `PutItemRequest` using Condition Expressions.
+
+When updating items, to avoid overwriting stale data, we can check the `LastUpdated` date time property is greater than what's currently in the database item.
+
+    [HttpPost("add-if-latest")]
+    public async Task PostIfLatest(WeatherForecast data)
+    {
+        data.LastUpdated = data.Date;
+        data.Date = data.Date.Date;
+    
+    
+        var item = Document.FromJson(JsonSerializer.Serialize(data));
+        await _amazonDynamoDbClient.PutItemAsync(new PutItemRequest()
+        {
+            TableName = nameof(WeatherForecast),
+            Item = item.ToAttributeMap(),
+            ConditionExpression = "LastUpdated < :LastUpdated",
+            ExpressionAttributeValues = new Dictionary<string, AttributeValue> {
+                {
+                    ":LastUpdated", new AttributeValue(data.LastUpdated.ToString(AWSSDKUtils.ISO8601DateFormat))
+                } }
+        });
+    }
+
+If we try to update the object with old data, with the date time less than what's in the database item, it will throw an error.
+
+Using the built-in functions in the ConditionExpression is also very similar.
+
+The below PUT request adds a new item only if no existing item has the same primary key (CityName and Date).
+
+    [HttpPost("add-if-not-exists")]
+    public async Task PostIfNotExists(WeatherForecast data)
+    {
+        data.Date = data.Date.Date;
+        var item = Document.FromJson(JsonSerializer.Serialize(data));
+        await _amazonDynamoDbClient.PutItemAsync(new PutItemRequest()
+        {
+            TableName = nameof(WeatherForecast),
+            Item = item.ToAttributeMap(),
+            ConditionExpression = "attribute_not_exists(CityName) AND attribute_not_exists(#Date)",
+            ExpressionAttributeNames = new Dictionary<string, string>()
+            {
+                {"#Date", "Date"}
+            }
+        });
+    }
+
+It uses the `attribute_not_exists` function on both `CityName` and `Date` to make sure an item does not exist already.
+
+Since `Date` is a reserved keyword used in the `ConditionExpression` we specify placeholder attribute Name ( `#Date` ) and pass the actual name as part of`ExpressionAttributeNames`.
+
+### Conditional DELETE
+
+`ConditionExpressions` can also be used when Deleting items from the database.
+
+In the below example, we check if the item we are deleting has a temperature greater than a specific limit - in this case, 20.
+
+    [HttpDelete("delete-if-gt-20")]
+    public async Task DeleteIfGreaterThan20(string cityName, string dateTime)
+    {
+        await _amazonDynamoDbClient.DeleteItemAsync(new DeleteItemRequest()
+        {
+            TableName = nameof(WeatherForecast),
+    
+            Key = new Dictionary<string, AttributeValue>()
+            {
+                {nameof(WeatherForecast.CityName), new AttributeValue(cityName) },
+                {nameof(WeatherForecast.Date), new AttributeValue(dateTime) }
+            },
+            ConditionExpression = "TemperatureC > :limit",
+            ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
+            {
+                {":limit", new AttributeValue(){ N = "20" } }
+            }
+        });
+    }
+
+The item with the specified `CityName` and `Date` is deleted only if the `TemperatureC` is greater than 20.
+
+### Conditional UPDATE
+
+Updating items also benefit from using Condition expressions.
+
+I want to update the Summary text on `WeatherForecastData` only if a Summary is empty or does not exist and if the Temperature is greater than a specific limit.
+
+    [HttpPost("update-summary-if-gt")]
+    public async Task UpdateIfLatest(string cityName, string dateTime, int limit, string summary)
+    {
+        await _amazonDynamoDbClient.UpdateItemAsync(new UpdateItemRequest()
+        {
+            TableName = nameof(WeatherForecast),
+            Key = new Dictionary<string, AttributeValue>()
+            {
+                {nameof(WeatherForecast.CityName), new AttributeValue(cityName) },
+                {nameof(WeatherForecast.Date), new AttributeValue (dateTime)}
+            },
+    
+            UpdateExpression = "SET Summary = :summary",
+            ConditionExpression = "attribute_exists(Summary) AND Summary = :emptyString AND TemperatureC >= :limit",
+            ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+            {
+                { ":limit", new AttributeValue { N = limit.ToString() } },
+                { ":summary", new AttributeValue(summary) },
+                { ":emptyString", new AttributeValue("") }
+            }
+        });
+    }
+    
+
+The above code updates just the `Summary` property using the update expression in conjunction with the condition expression. This ensures that the update happens only if the specified condition is passed.

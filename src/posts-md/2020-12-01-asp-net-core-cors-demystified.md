@@ -1,0 +1,155 @@
+---
+title: Understand CORS and Learn How to Enable it for Your ASP NET API
+slug: asp-net-core-cors-demystified
+date_published: 2020-12-01T00:00:00.000Z
+date_updated: 2024-11-28T03:18:21.000Z
+tags: Dotnet, Programming
+excerpt: Cross Origin Resource Sharing or CORS in short is a W3C standard that allows a server to relax the same-origin policy. Learn more about CORS, how to enable it for an ASP NET Web API, Preflight requests and more.
+---
+
+Browser security prevents a web page from making requests to a different domain than the one that served the web page. This restriction is called the same-origin policy. The same-origin policy prevents a malicious site from reading sensitive data from another site.
+
+Sometimes, you might want to allow other sites to make cross-origin requests to your application. This is when you have an API hosted independently to your web applications talking to the API.
+
+In such scenarios, we need to enable CORS support on the API so that the web application can call it.
+
+## What is CORS?
+
+[Cross Origin Resource Sharing](https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1) or CORS, in short, is a W3C standard that allows a server to relax this same-origin policy.
+
+Two URLs have the same origin if they have the same Scheme, Host, and Port. For the URL `https://example.com:9000/foo.html`,
+
+- Scheme `https`
+- Host `example.com`
+- Port `9000`.
+
+![URL Structure of https://example.com:9000/foo.html](__GHOST_URL__/content/images/cors_url_structure.jpg)
+So if any one of them (Scheme, Host, or Port) is different, it's treated as a different origin.
+
+## CORS In Action In ASP Net Application
+
+To understand CORS better, let’s first simulate an error to see it in action. Let's use the ASP NET Single Page Application template (SPA).
+
+- Create a new ASP NET SPA application using `dotnet new react`. This will create an ASP NET SPA React app
+- By default, the application is set to host the react application and the ASP NET API on the same server or origin.
+- To change this, open the client app folder and run `npm start`. This starts the react app on `localhost:3000`
+- Run the API, which by default runs it on port `localhost:5001`
+- The default SPA template talks to the weather forecast controller and renders the data on the page
+- Since now we have changed the ports the application are running on, let’s update the `fetchdata` class to use the API running on the different server/origin.
+
+Now when we hit the React application running on `localhost:3000`, it will throw an error in the Console as below.
+![](__GHOST_URL__/content/images/cors_browser_console_error.jpg)
+This is because of CORS. We have an application running on one origin (http://localhost:3000) trying to access an application/API running on another origin (http://localhost:5001). Note in this case, the ports are different, which makes them different origins.
+
+## Configure Web API For CORS
+
+Since the browser security prevents making cross-origin requests by default, we need to add in support for this.
+
+This support needs to be added to the API server. The server then adds appropriate response headers/
+
+To configure our ASP Net API for CORS, we need to add the below code to the `Startup.cs` class.
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+        ...
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(builder =>
+            {
+                builder.WithOrigins("http://localhost:3000");
+            });
+        });
+    }
+    
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        ...
+        app.UseRouting();
+        app.UseCors();
+    }
+    
+
+The `AddCors` method in the `ConfigureServices` of Startup.cs class registers a CORS Policy in the ASP NET Middleware. CORS is enabled in the Request pipeline via the ASP NET Middleware by calling the `UseCors` method in the `Configure` method. The `AddCors` call must be after the `UseRouting` call for this to work as expected.
+
+*The Origins URL specified must not have a trailing slash.*
+
+With this code added, the API now asks the browser to relax the Cross-Origin Policy. If we make another request again from the application and inspect the request headers, we can see the `access-control-allow-origin` headers added to the response. It
+![HTTP Request header has the Response Headers 'access-control-allow-origin: http://localhost:3000](__GHOST_URL__/content/images/cors_request_headers.jpg)
+### Configurable Origins
+
+Since we will need to run the API from different environments, it's best not to hardcode the Origin URL in the source code. You can move this to the application settings.
+
+    {
+      ...
+      "AllowedOrigins": [
+        "http://localhost:3000",
+        "http://localhost:4000"
+      ],
+    }
+    
+
+When registering the CORS policy, we can use the Origin URLs from the configuration.
+
+    options.AddDefaultPolicy(builder =>
+    {
+        builder
+            .WithOrigins(Configuration.GetSection("AllowedOrigins").Get<string[]>());
+    }
+    
+
+Since the `WithOrigins` method accepts an array of URL's, we can pass the URL values from the Configuration object as above. In this case, the API is registered for Cross-Origin Request both from `[localhost:3000](http://localhost:3000)` and `localhost:4000`.
+
+## CORS And Pre-Flight Requests
+
+Often you would have seen an additional request go to the API with the OPTIONS Method, called a Preflight request.
+
+> A Preflight request is a CORS request that checks for CORS support on the server. It is automatically issued by the browser and can be [skipped under certain conditions](https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1#preflight-requests).
+
+The default code setup above meets those conditions and skips the Preflight request. To force a Preflight request, let's update the `FetchData.js` file where the server request is made.
+
+Add a dummy `Authorization` header to the API request. This forces the bowser to make a Preflight request to the API server before making an actual request.
+
+    async populateWeatherData() {
+      const response = await fetch("https://localhost:5001/weatherforecast", {
+        headers: {
+          Authorization: "Bearer MYTOKEN",
+        },
+      });
+      const data = await response.json();
+      this.setState({ forecasts: data, loading: false });
+    }
+    
+
+For the Preflight request to be successful, we also need to update the server to indicate that the `Authorization` header is now supported. Use the `WithHeaders` method on the Policy Builder, as shown below.
+
+    options.AddDefaultPolicy(builder =>
+    {
+        builder
+            .WithOrigins(Configuration.GetSection("AllowedOrigins").Get<string[]>())
+            .WithHeaders("Authorization");
+    });
+    
+
+Inspecting the Network Request from the application running on `localhost:3000` we can see two requests - One `OPTIONS` and one `GET` call.
+![The OPTIONS Network call with the access-control-* headers.](__GHOST_URL__/content/images/cors_preflight_options_call.jpg)[![](__GHOST_URL__/content/images/asp_net_core_banner.png)](https://www.youtube.com/playlist?list=PL59L9XrzUa-nqfCHIKazYMFRKapPNI4sP)
+## CORS ≠ SECURITY
+
+One of CORS's main misconceptions is that it is a security feature - But let's get this straight.
+
+> CORS Is **NOT A SECURITY** Feature.
+
+If anything it does, it relaxes security, it allows requests from one origin to be made to another. An API is not safer by allowing or adding CORS support. It's up to the browsers to enforce CORS. Even with CORS enabled, it only restricts browsers from making Cross-Origin Requests. Nothing is stopping us from making a direct Request to the API or using tools like [Fiddler](__GHOST_URL__/blog/fiddler-free-web-debugging-proxy/) or [Postman](__GHOST_URL__/blog/postman-chaining-requests-to-speed-up-manual-api-tests/)
+
+However, if misconfigured, CORS can cause security vulnerabilities. One of the common mistakes is allowing all Origins to access your API. This is fine for API's serving all public content. For most scenarios, it is better to be explicit about the Origins and the methods that it can access on the API.
+
+There are different ways you can enable CORS. What we have seen above is using the [Default Policy and middleware](https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1&amp;WT.mc_id=AZ-MVP-5003875#dp).
+
+You can also enable using,
+
+- [Named Policy and Middleware](https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1&amp;WT.mc_id=AZ-MVP-5003875#np)
+- [Endpoint Routing](https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1&amp;WT.mc_id=AZ-MVP-5003875#enable-cors-with-endpoint-routing)
+- [Using CORS Attributes](https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1&amp;WT.mc_id=AZ-MVP-5003875#enable-cors-with-attributes)
+
+Similar to how we specified the `Authentication` header support on the CORS policy, we can also specify other [Policy Options](https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1&amp;WT.mc_id=AZ-MVP-5003875#cors-policy-options). This enables to handle different scenarios that we might run into. For example, if our API exposes DELETE functionality, this method support needs to be explicitly added by calling the `WithMethods` function.
+
+I hope this gives you a good overview of what CORS is, and how you can configure your ASP NET API to support Cross-Origin Requests.

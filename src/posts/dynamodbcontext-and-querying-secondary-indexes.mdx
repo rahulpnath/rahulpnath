@@ -1,0 +1,84 @@
+---
+title: "How to Query Secondary Indexes Using DynamoDBContext From the .NET SDK?"
+slug: "dynamodbcontext-and-querying-secondary-indexes"
+date: "2023-07-20T04:46:10.000Z"
+feature_image: "/images/DynamoDBContext-Indexes.png"
+tags: []
+---
+
+DynamoDB supports two types of Secondary indexes
+
+*   [Global Secondary Index (GSI)](__GHOST_URL__/blog/dynamodb-global-secondary-index-gsi/)
+*   [Local Secondary Index (LSI)](__GHOST_URL__/blog/local-secondary-index-dynamodb/)
+
+In the earlier posts, we explored how to query the Indexes using the Low-Level API `IAmazonDynamoDB`.
+
+<iframe src="https://www.youtube.com/embed/tVTMiaXTudc?feature=oembed" />
+
+In this blog let's learn how we can query the Index using the High-Level API, `IDynamoDBContext`.
+
+_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+
+The High-Level API does have limitations with the way it can interact with the Index and often for more advanced level functionalities, you will need to switch down to the Low-Level API for querying.
+
+Check out the blog post below to learn how you can query data from DynamoDB using the .NET SDK.
+
+[
+
+5 Ways To Query Data From Amazon DynamoDB using .NET
+
+Querying is an essential operation in DynamoDB. It allows you to filter and select items in your database based on your application and user needs. When moving over to DynamoDB from more traditional relational databases like SQL Server, you must understand the different ways you can retrieve data…
+
+![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
+
+![](/images/DynamoDB-Querying-new.png)
+
+](__GHOST_URL__/blog/dynamodb-querying-dotnet/)
+
+DynamoDBContext QueryAsync and Indexes
+--------------------------------------
+
+The `IDynamoDBContext` has the `QueryAsync` method, which is used to query objects from DynamoDB.
+
+It supports passing in additional configuration via the optional`DynamoDBOperationConfig` object.
+
+The `DynamoDBOperationConfig` has a property `IndexName`, to specify the name of the Index to run the query on. This is an optional field, and if not specified the query operation is performed on the base table.
+
+Querying any of the Indexes, Global Secondary Index, or Local Secondary Index, using the High-Level API works the same, as shown below.
+
+    [HttpGet("dynamodbcontext-query-index")]
+    public async Task<IEnumerable<WeatherForecastListItem>> QueryGSIIndexUsingDynamoDBContext(DateTime dateTime)
+    {
+        return await _dynamoDbContext
+            .QueryAsync<WeatherForecastListItem>(
+                dateTime.Date,
+                new DynamoDBOperationConfig()
+                {
+                    IndexName = "Date-CityName-with-Temp-index",
+                    OverrideTableName = nameof(WeatherForecast)
+                })
+            .GetRemainingAsync();
+    }
+
+All you need to do is to specify the `IndexName` as part of the `DynamoDBOperationConfig`.
+
+You can specify the table name via the `OverriderTableName` property or use the `DynamoDBTable` attribute. Check out the [.NET DynamoDB SDK: Understanding Table Name Conventions and DynamoDBTable Attribute](__GHOST_URL__/blog/dynamodb-net-table/) to learn more.
+
+DynamoDBContext LoadAsync and Indexes
+-------------------------------------
+
+The `DynamoDBContext` has the `LoadAsync` method that is used to load a specific item from the DynamoDB table.
+
+Even though the method syntax supports passing in the same `DynamoDBOperationConfig`, it does not work for the `LoadAsync` method.
+
+The primary key values must be unique on a DynamoDB table. However, within an Index, the key values can be duplicated.
+
+💡
+
+_In a DynamoDB table, each key value must be unique. However, the key values in a Global Secondary Index do not need to be unique_
+
+Trying to load a specific item given a set of keys, does not make sense on an Index for this same reason. Since you can get back more than one item
+
+Because of the same reason the `LoadAsync` method, even though it supports the same `DynamoDBOperatrionConfig` object, it ignores the `IndexName` property. The query runs on the base table using its primary keys.
+
+This is a bad design from the SDK side, supporting the same operation configuration for both `Load` and `Query` methods. There is an existing issue for this and you can [track it here for more details.](https://github.com/aws/aws-sdk-net/issues/1748)

@@ -1,0 +1,114 @@
+---
+title: "Deploying a .NET Web API on Amazon EC2: A Step-by-Step Guide"
+slug: amazon-ec2-dotnet-api-hosting
+date_published: 2024-07-24T07:05:54.000Z
+date_updated: 2024-11-28T02:59:55.000Z
+tags: AWS, EC2
+excerpt: Let's learn how to leverage Amazon EC2 to host your .NET applications. In this post, we will learn how to create an EC2 instance, set it up with .NET runtime, upload your .NET  application, and run it from there.
+---
+
+Amazon EC2, or Elastic Compute Cloud, provides on-demand, scalable computing capacity in the cloud. 
+
+It's essentially a virtual server in Amazon's data centers, allowing you to run applications without physical hardware.
+
+In this post, we will dive into
+
+1. Creating a new EC2 instance
+2. Connecting to it and setting up .NET runtime
+3. Uploading a simple .NET Web API application
+4. Running the application on the EC2 instance
+
+By the end of this blog post, you'll understand how to leverage AWS EC2 to host your .NET 8 Web API application.
+
+Thank you AWS for sponsoring this post in the [AWS Series](__GHOST_URL__/blog/tag/aws/).
+
+## Creating An EC2 Instance
+
+To get started, we first need an AWS EC2 instance. 
+
+💡
+
+*Check out the *[*AWS Free Tier*](https://aws.amazon.com/free/)* options if you want to play around and create some EC2 instances.*
+
+You can create an EC2 instance in multiple ways. I'll use the AWS Console to create this post.
+
+You need to provide it with a name, the OS Image and associated configuration.
+![](__GHOST_URL__/content/images/2024/07/image-4.png)Creating an AWS EC2 instance from the AWS Console - specify name and OS image.
+Amazon EC2 provides a[ wide selection of instance types](https://aws.amazon.com/ec2/instance-types/). optimized to fit different use cases. It allows you to choose the CPU, memory, networking resources, etc. 
+![](__GHOST_URL__/content/images/2024/07/image-5.png)EC2 instance type allows to choose CPU, memory, networking resources for your instance.
+You can restrict access to your EC2 instances based on your application requirements and company policies.
+
+Since this is a throw-away instance I'm creating, I'm enabling access from anywhere for now. Ideally, you would limit this to specific IPs or other policies based on your organization's setup.
+![](__GHOST_URL__/content/images/2024/07/image-6.png)Configure the network settings for your EC2 instance to control who/where your instances can be accessed.
+If you want to connect to the EC2 instance remotely, you can create a key pair and assign it to the EC2 instance. 
+![](__GHOST_URL__/content/images/2024/07/image-7.png)Create and assign a key pair to connect to your EC2 instances.
+The above option to 'create new key pair' automatically creates one and prompts us to save the file for future use. Keep this handy, as we will use it to upload our application to the EC2 instance.
+
+Click on 'Launch instance' once you have all the information, and it will create a new EC2 instance with the specified configuration.
+![](__GHOST_URL__/content/images/2024/07/image-8.png)
+## Connecting to EC2 and Setting Up .NET Runtime
+
+Now that we have our EC2 instance running let's connect and set up .NET to run our application. 
+
+Head over to the 'Connect' button to find details on different ways to connect to your EC2 instance. 
+![](__GHOST_URL__/content/images/2024/07/image-10.png)
+We will use the SSH client and connect from our local development machine using the key pair we created earlier.
+
+The Connect page has the relevant details for connecting successfully. 
+
+As you can see in the description, you need to ensure the key is not publicly viewable. You can run the `chmod 400` command or equivalent Powershell scripts on Windows.
+
+On Windows, you can also go to the file's properties and update the Security to ensure that only you/the current user can access the file. You can do this by disabling inheritance and removing all other permissions.
+![](__GHOST_URL__/content/images/2024/07/image-11.png)
+Once the permissions are updated, you can connect to the  EC2 machine successfully using ssh.
+![](__GHOST_URL__/content/images/2024/07/image-14.png)Connecting to EC2 instance using ssh from your terminal
+## Uploading .NET Application to EC2 Instance
+
+Only the ASP.NET Core Runtime is required to run a .NET application, in this case, a Web API. Navigate to the [dotnet downloads page](https://dotnet.microsoft.com/en-us/download/dotnet) and find the required version. 
+
+You can use `wget` to get the installable and set up the dotnet version. I used the code below to download, extract the runtime into a folder, and set up the dotnet environment variables.
+
+    wget https://download.visualstudio.microsoft.com/download/pr/06cbb934-ef54-4627-8848-a24a879f2130/52d4247944cee754ec8f4fd617d502a6/aspnetcore-runtime-8.0.7-linux-x64.tar.gz
+    
+    mkdir -p $HOME/dotnet && tar zxf aspnetcore-runtime-8.0.7-linux-x64.tar.gz -C $HOME/dotnet
+    export DOTNET_ROOT=$HOME/dotnet
+    export PATH=$PATH:$HOME/dotnet
+
+If you want the environment variables to persist through multiple sessions, write it to the bash_profile as shown below.
+
+    echo 'export DOTNET_ROOT=$HOME/dotnet' >> .bash_profile
+    echo 'export PATH=$PATH:$HOME/dotnet' >> .bash_profile
+
+Run `dotnet --list-runtimes` to see the installed runtimes on the EC2 machine.
+
+## Running .NET API on EC2 Instance
+
+With the .NET runtime setup, let's get our application onto the EC2 machine. 
+
+Being a lazy dev (for now), I will copy the app directly from my local development machine. 
+
+⚠️
+
+*Use build/deploy pipelines to deploy code to your EC2 instances in real-world apps. *
+
+Deployment should be done using a build/deploy pipeline in a real-world scenario. I will do a separate post to show you how.
+
+Publish your dotnet application (for the target OS, in this case, Linux since the EC2 instance runs that), navigate to the folder, and use the `scp` command to copy files to the EC2 instance over SSH.
+
+    dotnet new webapi --name hello-world-ec2  
+    dotnet publish -o publish -os linux
+    
+    scp -i .\myec2key.pem -r .\hello-world-ec2\publish\* \\ 
+         ec2-user@ec2-18-234-182-37.compute-1.amazonaws.com:~/hello-world-ec2
+
+To run the application, connect to your EC2 instance again and navigate to the 'hello-world-ec2' folder, where we copied and run the dotnet application.
+
+    dotnet hello-world-ec2.dll --urls "http://:5000;https://:5001"
+
+The above command runs our .NET Web API on ports 5000 and 5001. 
+
+You need to ensure that these ports are exposed to the outside world so that you can access them on the public address of the EC2 instance.
+
+Head over to the EC2 instance in AWS Console and edit the Inbound rules to enable this.
+![](__GHOST_URL__/content/images/2024/07/image-12.png)Add inbound rules to open the required ports for your application so that it can be accessed using the public URL of the EC2 machine.
+Once enabled, you can successfully navigate to your ASP NET Web API application running on the EC2 instance. 

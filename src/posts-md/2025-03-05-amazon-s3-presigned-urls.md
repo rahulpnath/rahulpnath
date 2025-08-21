@@ -1,0 +1,147 @@
+---
+title: Amazon S3 Presigned URLs
+slug: amazon-s3-presigned-urls
+date_published: 2025-03-05T06:32:46.000Z
+date_updated: 2025-03-05T06:32:46.000Z
+tags: AWS
+excerpt: Amazon S3 presigned URLs allow you to grant temporary, secure access to specific objects in your S3 bucket without exposing your credentials. Let's learn how to use this from a .NET application.
+---
+
+Amazon S3 presigned URLs allow you to grant temporary, secure access to specific objects in your S3 bucket without exposing your credentials.
+
+A presigned URL is generated using AWS credentials and includes an expiration time, after which it becomes invalid. These URLs are useful for scenarios like allowing users to upload or download files without needing direct AWS permissions.
+
+Anyone with valid security credentials can create a presigned URL.
+
+In this post, let's
+
+- Explore Amazon S3 Presigned URLs
+- Learn how to enable S3 Presigned URLs
+- Discover use cases to improve application performance
+
+Thanks to AWS for sponsoring this article in my [.NET on AWS Series](__GHOST_URL__/blog/tag/aws/).
+
+## Generate Presigned URL From AWS Console
+
+To generate a presigned URL for an existing object in Amazon S3, navigate to the file in S3. 
+
+Under Object Actions → Share with a presigned URL you can generate a URL to share.
+![](__GHOST_URL__/content/images/2025/03/image.png)Navigate to the file in Amazon S3 Console, and under Object actions → Share with a presigned URL, you can generate a URL to share the file with anyone
+It prompts a dialog to specify the time interval until the presigned URL expires. You can select the time in either minutes or hours.
+![](__GHOST_URL__/content/images/2025/03/image-1.png)Time interval until the presigned URL expires when creating a presigned URL from AWS Console.
+Once created, the presigned URL is copied to your clipboard. You can use/share the link to anyone to access the shared file.
+
+## Generate *GET *Presigned URL From Code
+
+You can also generate a presigned URL from code. Let's use the `AmazonS3Client` from the [AWSSDK.S3](https://www.nuget.org/packages/AWSSDK.S3) NuGet package for this. 
+[
+
+Amazon S3 For the .NET Developer: How to Easily Get Started
+
+Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3.
+
+![](__GHOST_URL__/content/images/icon/logo-512x512-19.png)Rahul NathRahul Pulikkot Nath
+
+![](__GHOST_URL__/content/images/thumbnail/storage-box-2.jpg)
+](__GHOST_URL__/blog/amazon-s3-dotnet/)
+Below is a minimal API endpoint that takes in a S3 object key name as string and generates a presigned URL to view the file.
+
+the `GetPresignedURLAsync` method takes in an S3 object key, the bucket name, the HTTP action associated (in this case `GET`), and also an expiry duration.
+
+    app.MapGet("/get-presigned-url", async (
+            [FromQuery] string key,
+            IAmazonS3 s3Client,
+            CancellationToken cancellationToken) =>
+        {
+            var presignedUrl = await s3Client.GetPreSignedURLAsync(new GetPreSignedUrlRequest()
+            {
+                BucketName = "<your-bucket-name>",
+                Key = key,
+                Verb = HttpVerb.GET,
+                Expires = DateTime.UtcNow.AddMinutes(1)
+            });
+    
+            return new {url = presignedUrl};
+        })
+        .WithName("GetPreSignedUrl")
+        .DisableAntiforgery()
+        .WithOpenApi();
+
+It generates a presigned URL to view the specified file from the bucket, very similar to the one we created from the AWS Console. 
+[
+
+Learn How To Manage Credentials When Building .NET Application on AWS
+
+Learn different ways to set up and manage credentials and sensitive information when building .NET applications on AWS. We will also touch upon some of the tools and utilities that I have set up on my local development machine to make working with AWS easier.
+
+![](__GHOST_URL__/content/images/icon/logo-512x512-20.png)Rahul NathRahul Pulikkot Nath
+
+![](__GHOST_URL__/content/images/thumbnail/secure-key-2.jpg)
+](__GHOST_URL__/blog/amazon-credentials-dotnet/)
+To generate the pre-signed URL, the application must have access to the specified bucket and file.
+
+## Generate *PUT* Presigned URL From Code
+
+We can also upload files into an S3 bucket using PreSigned URLs, like viewing a file.
+
+However, uploading a file to S3 is split into two steps. 
+
+- Generate a presigned URL to upload
+- Upload the file using presigned URL
+
+Generating a presigned URL is very similar to the code previously, except that we use the HTTP `PUT` verb.
+
+    app.MapGet("/get-presigned-url-for-upload", async (
+            [FromQuery] string key,
+            IAmazonS3 s3Client,
+            CancellationToken cancellationToken) =>
+        {
+            var presignedUrl = await s3Client.GetPreSignedURLAsync(new GetPreSignedUrlRequest()
+            {
+                BucketName = "<your-bucket-name>",
+                Key = key,
+                Verb = HttpVerb.PUT,
+                Expires = DateTime.UtcNow.AddMinutes(1)
+            });
+    
+            return new {url = presignedUrl};
+        })
+        .WithName("GetPreSignedUrlForUpload")
+        .DisableAntiforgery()
+        .WithOpenApi();
+
+Like before, we need to specify a key to upload the file, which becomes the object key in Amazon S3 once uploaded. 
+
+The above code will return a presigned URL that you can use to upload a file.
+
+### Amazon S3 Bucket and CORS
+
+If you are using the `PUT` presigned URL to upload a file from a web page directly, you must ensure that CORS is enabled on the S3 bucket. 
+
+This is because the webpage is running under a different host and is trying to access the URL on a different host (*.amazonaws.com) to upload a file.
+[
+
+Understand CORS and Learn How to Enable it for Your ASP NET API
+
+Cross Origin Resource Sharing or CORS in short is a W3C standard that allows a server to relax the same-origin policy. Learn more about CORS, how to enable it for an ASP NET Web API, Preflight requests and more.
+
+![](__GHOST_URL__/content/images/icon/logo-512x512-21.png)Rahul NathRahul Pulikkot Nath
+
+![](__GHOST_URL__/content/images/thumbnail/cors_bridge.jpg)
+](__GHOST_URL__/blog/asp-net-core-cors-demystified/)
+You can update the CORS policy by navigating to the Amazon S3 bucket in the AWS Console and clicking on Permissions → Cross-origin resource sharing (CORS).
+![](__GHOST_URL__/content/images/2025/03/image-2.png)
+For now I have enabled all origins by using the `*` wildcard operator. 
+
+### Uploading Files Directly To S3 from Client/Browser
+
+With the CORS policy configured, you can upload files directly to Amazon S3 using the presigned URLs from your web applications.
+
+In the sample repository code shared below, I have two HTML files (generated by ChatGPT) to upload files to S3 using presigned URLs
+
+- `Index.html` → Upload to S3 given a Presigned URL
+- `Index - Generate PreSigned.html` → Hit an API endpoint to generate a presigned URL for a given key and then upload the actual file directly to S3. 
+
+Depending on how you want to let users upload files to S3 you can use either of those patterns.
+
+The complete source code and the HTML files are available [here.](https://github.com/rahulpnath/youtube-samples/tree/main/s3-presigned-urls)

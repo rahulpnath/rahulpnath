@@ -1,0 +1,205 @@
+---
+title: Improving Queries Using Local Secondary Index in DynamoDB with .NET
+slug: local-secondary-index-dynamodb
+date_published: 2023-06-27T04:48:19.000Z
+date_updated: 2025-01-09T19:18:32.000Z
+tags: AWS, DynamoDB
+excerpt: Learn how to create, set up and use a Local Secondary Index (GSI) in DynamoDB for more efficient data access and optimizing cost.
+---
+
+Amazon DynamoDB provides fast access to items in a table by specifying primary key values.
+
+However, applications often require accessing data using alternate keys as well. In these cases, defining a second set of keys, a Secondary Index, is advantageous and beneficial for data access.
+
+A Local Secondary Index  (LSI) is an index that has the same partition key as the base table, but a different sort key. It is referred to as "local" in the sense that every partition of a local secondary index is scoped to a base table partition with the same partition key value.
+
+*This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/).*
+
+In this post, I’ll show you how to
+
+- Create a Local Secondary Index
+- Query data using the Index
+
+*The sample code below is on the `WeatherForecast` table, which has `CityName` and `Date` as the hash and range key, respectively.*
+
+If you are new to DynamoDB, I highly recommend checking out my Getting Started with AWS DynamoDB For the .NET Developer blog post below, where I also show you how to set up the table used in this blog post.
+[
+
+AWS DynamoDB For The .NET Developer: How To Easily Get Started
+
+Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API.
+
+![](__GHOST_URL__/content/images/size/w256h256/2022/10/logo-512x512.png)Rahul NathRahul Pulikkot Nath
+
+![](__GHOST_URL__/content/images/aws_dynamodb.jpg)
+](__GHOST_URL__/blog/aws-dynamodb-net-core/)
+## DynamoDB Local Secondary Index (LSI)
+
+Some applications need to query data using the base table's primary key. 
+
+However, there might be situations where the data needs to be sorted differently. In these scenarios, to give your application a choice of sort keys, you can create one or more [local secondary indexes ](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/LSI.html)on an Amazon DynamoDB table. 
+
+You can use these Indexes to issue Query or Scan requests as required by the application.
+
+> Since an LSI maintains the same Hash key as the base (underlying) table, you can only add a local secondary index on tables with composite primary keys.
+
+Every local secondary index must meet the following conditions:
+
+- The partition key is the same as that of its base table.
+- The sort key is exactly one scalar attribute.
+- The sort key of the base table is projected into the Index (as a non-key attribute).
+
+### Creating a DynamoDB LSI
+
+Local Secondary Indexes are created when the DynamoDB is created and deleted when the table is deleted.
+
+You cannot create an LSI on an existing DynamoDB table. There is also a 10GB size limit per partition key value, for tables with local secondary index. The total size of any one partition key value must not exceed 10 GB.
+
+When creating a new DynamoDB table in the AWS Console, choose the `Customize settings` options. This allows configuring advanced features on the DynamoDB table, including creating LSI.
+![You can create a LSI only along with creating the table. You cannot create a LSI on an existing table.](__GHOST_URL__/content/images/2023/06/image-11.png)
+Selecting the `Customize settings` option, enable the Secondary Indexes dialog as you scroll down in the advanced setting options.
+
+You can create both Global and Local indexes on the table.
+
+The `Create local index` button opens a popup with the details for the LSI.
+
+The important properties required when creating an LSI on a DynamoDB Table, are the SoryKey, the Index name, and the attribute projections.
+![LSI creation dialog prompts for the Sort Key, the Index name and also the type of attributes to be projected to the Index.](__GHOST_URL__/content/images/2023/06/image-10.png)
+
+❌
+
+*Once a Secondary Index is created, you cannot modify it. You need to delete and recreate it.*
+
+#### Attribute Projections
+
+A projection is the set of attributes that are copied from the base table into the secondary index. The partition and sort key of the base table is always projected into the index. 
+
+Similar to the global secondary index, you can specify the Attribute projections at the time of creating the Index (as shown in the image above). It supports three different options
+
+- *KEYS_ONLY* –  Only the index and the primary keys are projected.
+- *INCLUDE* – All attributes from `KEYS_ONLY` and attributes you specify additionally.
+- *ALL* – All attributes are projected.
+
+#### Fetches
+
+However, with Local Secondary Index, since the data is living in the same partition as that of the base table, you can retrieve additional attributes that are not projected onto the Index. 
+
+DynamoDB performs additional read operations against the base table, also called fetches to populate any missing attributes from the Index.
+
+Even though this happens automatically and is transparent to the calling application, it reduces the advantage of using a secondary index. 
+
+Consider projecting the attributes for a read-heavy index. If you query the index infrequently you could consider using fetching as an option to populate data.
+
+## Querying Data Using LSI Index
+
+Once the DynamoDB table is created and the Index is ready, you can use it to query data using the alternate set of keys.
+
+💡
+
+*You can query or scan the GSI just like you would query or scan a table.*
+
+### Querying using AWS Console
+
+The AWS Console supports using LSI to query or scan for data. 
+
+As shown in the screenshot, choose the Index you want to query/scan on and specify the key conditions on the index.
+![AWS Console Query DynamoDB table UI allows to choose the Index on the table to query/scan on.](__GHOST_URL__/content/images/2023/06/image-12.png)
+When querying you can select the attributes to be projected into the result.
+
+If the attributes are missing from the LSI, they are fetched from the base table. This does incur additional costs and impacts performance.
+
+In the below screenshot, I have selected the Index which has only the keys projected but selected 'All attributes' to be projected. The query result does show all the attributes on the DynamoDB items.
+![DynamoDB Query projecting 'All attributes' from an Index that has Only_Keys projected. It does additional 'fetches' to the base table to populate the missing attributes.](__GHOST_URL__/content/images/2023/06/image-14.png)
+### Querying DynamoDB LSI Using .NET
+
+You can use the LSI when querying data from .NET applications. 
+
+To use Index based querying, you need to use the Low-Level API provided in the .NET SDK. We learned more about this in the 5 Ways To Query Data From Amazon DynamoDB using .NET blog post.
+[
+
+5 Ways To Query Data From Amazon DynamoDB using .NET
+
+Querying is an essential operation in DynamoDB. It allows you to filter and select items in your database based on your application and user needs. When moving over to DynamoDB from more traditional relational databases like SQL Server, you must understand the different ways you can retrieve data…
+
+![](__GHOST_URL__/content/images/size/w256h256/2022/10/logo-512x512.png)Rahul NathRahul Pulikkot Nath
+
+![](__GHOST_URL__/content/images/2023/02/DynamoDB-Querying-new.png)
+](__GHOST_URL__/blog/dynamodb-querying-dotnet/)
+Querying using Local Secondary Index, is very similar to using a Global Secondary Index, which we have seen before when [Exploring Global Secondary Index: Advanced Querying in DynamoDB From .NET](__GHOST_URL__/blog/dynamodb-global-secondary-index-gsi/)
+
+Using the `IAmazonDynamoDB` and the `QueryAsync` method you can specify the `IndexName` on the `QueryRequest` class.
+
+With that specified the rest of the properties are exactly as you would query a normal DynamoDB table.
+
+    [HttpGet("lsi-query")]
+    public async Task<IEnumerable<WeatherForecastTable>> GetUsingLSIQuery(string cityName, int minTemperature)
+    {
+        var request = new QueryRequest()
+        {
+            TableName = nameof(WeatherForecastTable),
+            IndexName = "TemperatureC-index-onlykeys",
+            KeyConditionExpression = "CityName = :cityName and TemperatureC >= :minTemperature",
+            ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
+            {
+                {":cityName", new AttributeValue(cityName)},
+                {":minTemperature", new AttributeValue() { N = minTemperature.ToString()} }
+            },
+        };
+    
+        var response = await _amazonDynamoDbClient.QueryAsync(request);
+    
+        return response.Items
+            .Select(Document.FromAttributeMap)
+            .Select(_dynamoDbContext.FromDocument<WeatherForecastTable>);
+    }
+
+The above code specifies the `TemperatureC-index-onlykeys` index (which as the name suggests uses the *KEYS_ONLY *attributes projection selected at Index creation).
+
+Running the query returns only the attributes that are available on the Index, which includes the keys from the base table (CityName, Date) and the range key on the index (TemperatureC).
+
+To fetch additional attributes, that are not specified on the Index, you can use `ProjectionExpressions`. 
+
+If you want to learn more about using ProjectionExpressions, check out the below post on that topic, which covers it in detail.
+[
+
+How to Optimize Your DynamoDB Queries With Projection Expressions in .NET
+
+When reading data from a DynamoDB table, by default, it returns all of the attributes of the items. However, in some application scenarios, you might only require a subset of the attributes of the items. In these scenarios, you can use a ProjectionExpression to limit the item attributes returned a…
+
+![](__GHOST_URL__/content/images/size/w256h256/2022/10/logo-512x512.png)Rahul NathRahul Pulikkot Nath
+
+![](__GHOST_URL__/content/images/2023/03/DynamoDB-Projection-Expressions.png)
+](__GHOST_URL__/blog/dynamodb-projection-expressions/)
+By specifying the `ProjectionExpression` property in the `QueryRequest` you can specify the specific attributes to be returned in the query result. 
+
+Below I have selected additional properties that are not available on the Index. 
+
+However, since I am querying a Local Secondary Index, it will automatically fill in the missing attributes by fetching the missing data from the base table.  
+
+    [HttpGet("lsi-query")]
+    public async Task<IEnumerable<WeatherForecastTable>> GetUsingLSIQuery(string cityName, int minTemperature)
+    {
+        var request = new QueryRequest()
+        {
+            TableName = nameof(WeatherForecastTable),
+            IndexName = "TemperatureC-index-onlykeys",
+            KeyConditionExpression = "CityName = :cityName and TemperatureC >= :minTemperature",
+            ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
+            {
+                {":cityName", new AttributeValue(cityName)},
+                {":minTemperature", new AttributeValue() { N = minTemperature.ToString()} }
+            },
+            ExpressionAttributeNames = new Dictionary<string, string> { { "#Date", "Date" } },
+            ProjectionExpression = "CityName,TemperatureC,#Date,LastUpdated",
+        };
+    
+        var response = await _amazonDynamoDbClient.QueryAsync(request);
+    
+        return response.Items
+            .Select(Document.FromAttributeMap)
+            .Select(_dynamoDbContext.FromDocument<WeatherForecastTable>);
+    }
+
+Even though this works seamlessly from the application side, you should be careful when using this feature. 
+
+Under the hood, DynamoDB is making additional calls to the base table to populate the data. This can soon be costly, and impact the performance of the application.

@@ -1,0 +1,175 @@
+---
+title: A Step-by-Step Guide to AWS Message Processing with Amazon SQS in .NET
+slug: aws-message-processing-framework
+date_published: 2024-11-08T06:35:29.000Z
+date_updated: 2024-11-08T07:00:07.000Z
+tags: AWS
+excerpt: The AWS Message Processing Framework for .NET is an AWS-native toolkit for building .NET applications with messaging services like SQS and EventBridge.  Let's learn how to start using it when creating .NET applications on AWS.
+---
+
+The AWS Message Processing Framework for .NET is an AWS-native toolkit for building .NET applications with messaging services like SQS and EventBridge. 
+
+It reduces boilerplate code and lets you focus on business logic, making it easy to work with AWS Services. 
+
+ This framework makes publishing and processing messages simpler and faster. 
+
+Let's explore how to get started using the AWS Message Processing Framework for .NET by using it to send and receive messages from Amazon SQS.
+
+⚠️
+
+*This framework is currently in pre-release, and some of its functionalities may change.*
+
+Thanks to AWS for sponsoring this post in my [.NET on AWS Series](__GHOST_URL__/blog/tag/aws/)
+
+## Setting Up AWS Message Processing Framework in a .NET App
+
+We will use a default ASP NET Core Web API application to send and receive messages to Amazon SQS with the AWS Message Processing Framework.
+
+As with everything, we first need to add a NuGet package to use the framework -*AWS.Messaging *[*🔗*](https://github.com/awslabs/aws-dotnet-messaging)
+
+💡
+
+*While there are powerful libraries like MassTransit, NServiceBus etc, for building Message Driven Applications, the AWS Message Processing Framework aims to provide a lighter abstraction over existing low-level APIs and takes a hard dependency on AWS Services.*
+
+Once installed, we can send and receive messages using the library from SQS. 
+
+If you are completely new to Amazon SQS, read the article below to learn some of the key concepts and usage.
+[
+
+Amazon SQS For the .NET Developer: How to Easily Get Started
+
+Learn how to get started with Amazon SQS and use it from a .NET Application. We will learn how to send and receive messages, important properties,and concepts that you need to know when using SQS.
+
+![](__GHOST_URL__/content/images/icon/logo-512x512-4.png)Rahul NathRahul Pulikkot Nath
+
+![](__GHOST_URL__/content/images/thumbnail/queue.jpg)
+](__GHOST_URL__/blog/amazon-sqs/)
+For a quick recap, below is how you send messages using the default .NET Client for Amazon SQS.
+
+    public async Task Post(WeatherForecast data)
+    {
+        var client = new AmazonSQSClient();
+        var request = new SendMessageRequest()
+        {
+            MessageBody = JsonSerializer.Serialize(data),
+            QueueUrl = "SQS QUEUE URL"
+        };
+    
+        var result = await client.SendMessageAsync(request);
+    }
+
+Sending message to Amazon SQS using .NET client library.
+
+We need to create a `SendMesageRequest` object, set up the MessageBody, serialize the message contents into JSON format (or any other preferred string format), and set up Queue URL to publish the message. 
+
+That's a lot of boilerplate code to send the message.
+
+The same is true when you need to handle the messages on the receiver side.
+
+## Send Messages using AWS Message Processing Framework
+
+The AWS Messaging NuGet package provides the `ISQSPublisher` interface to make it easier to send messages to SQS, removing all the boilerplate code seen above,
+
+    app.MapPost("/weatherforecast", 
+          (WeatherForecast forecast, ISQSPublisher publisher) =>
+      {
+          publisher.SendAsync(new WeatherForecastAddedEvent()
+          {
+              DateTime = forecast.Date,
+              TemperatureC = forecast.TemperatureC,
+              Summary = forecast.Summary,
+          });
+      }).WithName("PostWeatherForecast")
+      .DisableAntiforgery()
+      .WithOpenApi();
+
+Send messages to SQS using the ISQSPublisher instance for the AWS.Messaging NuGet package.
+
+You can use the `SendAsync` method on the `ISQSPublisher` and directly send the message object to it.
+
+No more setting up the request, specifying the Queue, or serializing content.
+
+It's just that simple!
+
+### How to get an ISQSPublisher?
+
+Ok, so how do I get an instance of ISQSPublisher?
+
+Of course, we will use Dependency Injection to set it up when the application starts. 
+
+    builder.Services.AddAWSMessageBus((builder) =>
+      {
+          var weatherDataQueue = "<SQS QUEUE URL>";
+          builder.AddSQSPublisher<WeatherForecastAddedEvent>(
+              weatherDataQueue, nameof(WeatherForecastAddedEvent));
+      });
+
+Setting up Dependency Injection of ISQSPublisher from the AWS.Messaging library.
+
+The `AddAWSMessageBus` extension method on the ServiceCollection type, allows us to register the `ISQSPublisher` instance. 
+
+You must specify the QueueURL and the message type that will be published to the Queue.
+
+Run the application, and you can send messages to SQS.
+
+## Receiving Messages using AWS Message Processing Framework
+
+Now that we have messaging in our Amazon SQS Queue, let's see how we can process them.
+
+The AWS.Messaging framework provides a `IMessageHandler<>` generic interface to create message handlers. 
+
+Below is an example message handler that handles  `WeatherForecastAddedEvent` what we sent earlier.
+
+    class WeatherForecastAddedEventHandler: IMessageHandler<WeatherForecastAddedEvent>
+    {
+        public Task<MessageProcessStatus> HandleAsync(
+            MessageEnvelope<WeatherForecastAddedEvent> messageEnvelope, 
+            CancellationToken token = new CancellationToken())
+        {
+            if(messageEnvelope.Message.Summary.Contains("Exception"))
+                throw new Exception(messageEnvelope.Message.Summary);
+            
+            Console.WriteLine($"Received WeatherForecastAddedEvent with " +
+                              $"{messageEnvelope.Message.DateTime} " +
+                              $"{messageEnvelope.Message.TemperatureC} ");
+            return Task.FromResult(MessageProcessStatus.Success());
+        }
+    }
+
+The `HandleAsync` method provides the typed message (in this case, a message of type `WeatherForecastAddedEvent`), that you can process in the handler.
+
+Again, there is no boilerplate code to retrieve messages from SQS and deserialize them inside our handler or anything. 
+
+We can entirely focus on our core business logic.
+
+### Registering Message Handlers to Process Message
+
+Message handlers must be wired up in the Service Collection on application startup. 
+
+We also need to set up the Message Poller that automatically polls for messages from Amazon SQS.
+
+This is again done using the same `AddAWSMessageBus` extension method we used to set up the `ISQSPublisher`.
+
+    builder.Services.AddAWSMessageBus((builder) =>
+    {
+        var weatherDataQueue = "<YOUR QUEUE URL>";
+        builder.AddMessageHandler<WeatherForecastAddedEventHandler, WeatherForecastAddedEvent>(
+            nameof(WeatherForecastAddedEvent));
+        builder.AddSQSPoller(weatherDataQueue);
+    });
+
+Run the application, and the existing messages in your Amazon SQS will be automatically picked up and processed by our `WeatherForecastAddedEventHandler`.
+
+### Exceptions in Processing Messages in the Handler
+
+If an exception is thrown when processing messages, the message is put back into the SQS queue after the Visibility timeout.
+
+By default, for AWS SQS, this is 30 seconds. However, you can adjust this at the queue or subscriber level.
+
+    builder.AddSQSPoller(weatherDataQueue, options =>
+    {
+        options.VisibilityTimeout = 5;
+        options.VisibilityTimeoutExtensionThreshold = 2;
+    });
+
+For transient errors, message processing can succeed in subsequent retries. You can also set up a [Dead Letter Queue](__GHOST_URL__/blog/amazon-sqs/#dead-letter-queue) to hold messages that fail to be processed for code/business-level errors or exceptions.

@@ -1,0 +1,26 @@
+---
+title: "AWS Serverless Refactoring Series: How to Improve the Maintainability of Project"
+slug: aws-serverless-refactoring-series
+date_published: 2021-05-03T12:10:00.000Z
+date_updated: 2024-11-28T02:34:25.000Z
+tags: AWS
+excerpt: Let's look at different design patterns and principles we can apply to make the default AWS Serverless Application Template cleaner and easier to maintain.
+---
+
+The AWS Serverless Application Template that comes with the AWS Toolkit is poorly structured.
+
+Serverless Applications. The `Functions.cs` file in the template has the whole application in it; interacts with AWS infrastructure, has domain logic, and interacts with DynamoDB. For a template, it is ok; but for your real-world applications, you can do better.
+
+In the [Going Serverless on AWS For the .NET Developer](__GHOST_URL__/blog/aws-serverless-application/), I showed how to get started with building Serverless Application in AWS. If you are new to AWS Serverless, I recommend reading that and coming back to this post.
+
+Ok, now that you have seen how the AWS Serverless Application Template is structured and works end to end, let's see how we can structure the application for easier maintainability.
+
+This is a series of posts that I will be linking here as and when I publish them.
+
+1. [How to Move to Clean Architecture?](__GHOST_URL__/blog/aws-serverless-refactoring-series-clean-architecture/)
+2. Refactor to 1 of the Most Popular Patterns
+3. AWS Serverless Refactoring Series: How to Create and Move to Base Handlers?
+
+If you like to watch instead of reading, I've got you covered. Check out the full video here.
+
+I hope you enjoy them!

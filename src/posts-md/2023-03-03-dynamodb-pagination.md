@@ -1,0 +1,231 @@
+---
+title: 3 Different Ways To Do Data Pagination from Amazon DynamoDB Using .NET
+slug: dynamodb-pagination
+date_published: 2023-03-02T20:39:25.000Z
+date_updated: 2024-01-12T00:28:15.000Z
+tags: AWS, DynamoDB
+excerpt: Learn how to use Dynamodb pagination to retrieve large amounts of data stored in the table.s.
+---
+
+DynamoDB charges for reading, writing, and storing data in your DynamoDB tables.
+
+As a rule of thumb, when querying data, you can consider that each record that you retrieve from the database has a direct cost attached to it. Limiting the items you retrieve has a direct impact on saving cost and also performance.
+
+Pagination helps with breaking down the items into smaller groups and loading them as required. 
+
+In this post, let’s learn how to implement pagination when querying and retrieving data from DynamoDB.
+
+We will look at the code examples using .NET, but the concepts apply to other programming languages as well. 
+
+We will learn how to use the LastEvaluatedKey, ExclusiveStartKey, Limit, and ScanIndexForward properties to page data, when querying from DynamoDB.
+
+## Introduction to DynamoDB Pagination
+
+Pagination, in general, is a process by which a large dataset is divided into smaller groups or chunks so that you can load them as required. 
+
+Most commonly, you would have come across this in UI where there is a list of items displayed, and it has Next and Previous buttons with also specific numbers so that you can jump to the appropriate page.
+
+Now with DynamoDB, which is designed as a distributed system to store large amounts of data, tables, and data is stored in multiple partitions, very likely to be in multiple servers. 
+
+This means you cannot implement the typical page number style of pagination with DynamoDB (unless you are willing to incur significant cost and performance issues).
+
+When using pagination over DynamoDB, it’s easier to have an infinite scroll or continuous scroll kind of paging data UI style. When using this style, as you scroll to the end of the list that is currently displayed, the next set of items is automatically loaded. 
+[
+
+AWS DynamoDB For The .NET Developer: How To Easily Get Started
+
+Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API.
+
+![](__GHOST_URL__/content/images/size/w256h256/2022/10/logo-512x512.png)Rahul NathRahul Pulikkot Nath
+
+![](__GHOST_URL__/content/images/aws_dynamodb.jpg)
+](__GHOST_URL__/blog/aws-dynamodb-net-core/)
+## When Does DynamoDB Start Paginating?
+
+A DynamoDB Query has a 1MB limit for the result set returned. 
+
+So if the query fetches data of more than 1MB, the results are paged. This means you will have to make multiple requests, to get all the data matching the query.
+
+When using the `GetReaminingAsync` method in the .NET SDK, it automatically loops through and makes multiple requests to DynamoDB until the full result set is retrieved. 
+
+This default behavior works fine only until your database grows in size. Once you have a large number of items, these queries can be time-consuming and also costly. With time you will see a degradation in your application performance and an increase in DynamoDB costs.
+
+With the Low-level APIs in .NET SDK, you can also be explicit on the number of items that you need to retrieve per query. This is done using the `Limit` property on the Query request.
+
+The `Limit` property specifies the **maximum number** of items to limit when executing a query. However, if the 1MB limit reaches before the limit, DynamoDB returns just those items and will be lesser than the specified count.
+
+## Different Ways To Page Data from DynamoDB
+
+With the DynamoDB .NET SDK, there are different ways you can page data from the table. 
+
+However, with all the different methods, it uses the Partition and the Range Key combination to indicate the starting position to read the requested page data.
+
+> If there are 100 items in a DynamoDB table, and if we have read till the 10th item, we need to specify the partition and range key for that 10th item in the subsequent request, and we can use that to retrieve the next set of records starting at that point.
+
+So to achieve this and pass the next key back and forth from the UI to the API, let's define a new generic class `PagedResult` as below.
+
+    public class PagedResult<T> where T: class
+    {
+        public List<T> Items { get; set; }
+        public string NextPageKey { get; set; }
+    }
+
+The `PagedResult` class has two properties - one, a list of Items that are returned in the current query and the `NextPageKey` to use to retrieve the next set of items. 
+
+The value for the `NextPageKey` is based on the method we use to implement paging. 
+
+The `NextPageKey` can be used in subsequent Query requests to DynamoDB to explicitly set the start key from where it should fetch the results. The `ExclusiveStartKey` property is used for this on the Query requests.
+
+So let's get to see the different methods and the associated values of `NextPageKey`.
+
+*The DynamoDB table that I use in this case is a table `WeatherForecast` with the Partition Key  `City` and the Range Key as `Date`. It stores weather data for the given city on a date.*
+
+### ExclusiveStartKey Using LastEvaluatedKey
+
+The DynamoDB Query response returns a property `LastEvaluatedKey` that contains the Partition and Range Key of the last read item. We can use this as is and serialize it to a `base64` string that can be returned to the caller.
+
+The below code uses the `JsonSerializer` and the `Convert` class to convert the `LastEvalutedKey` to a base64 string.
+
+    var nextPageKey = response.LastEvaluatedKey.Count == 0
+        ? null
+        : Convert.ToBase64String(JsonSerializer.SerializeToUtf8Bytes(
+            response.LastEvaluatedKey,
+            new JsonSerializerOptions()
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+            }));
+            
+    return new PagedResult<WeatherForecast>()
+    {
+        Items = items,
+        NextPageKey = nextPageKey
+    };
+
+**Note**: *We need to use the special `JsonSerializerOptions` to ensure that the DynamoDB types are serialized and deserialized as expected.*
+
+Before making a request to DynamoDB, we can check if a pageKey is passed to the API.If a pageKey exists, use that to set the `ExlusiveStartKey` property. We can convert it back from base64 and deserialize to `Dictionary<string,AttributeValue>` and set it as the `ExclusiveStartKey`.
+
+    var exclusiveStartKey= string.IsNullOrEmpty(pageKey)
+            ? null
+            : JsonSerializer.Deserialize<Dictionary<string, AttributeValue>>(Convert.FromBase64String(pageKey));
+            
+        var queryRequest = new QueryRequest()
+        {
+            ...
+            ExclusiveStartKey = exclusiveStartKey,
+            Limit = 5,
+        }
+
+With the `ExclusiveStartKey` set, DynamoDB reads items only from that item and returns the next set of items. It fetches up to a maximum items as specified by the `Limit` property (5 in this case), or 1MB is reached.
+
+As the calling application needs more data, it can call the API again with the new pageKey it's received as part of the latest request.
+
+### ExclusiveStartKey Using Last Known Range Key
+
+The `LastEvaluatedKey` is nothing but the Partition and Range key pair. 
+
+Since our API endpoint already knows the partition key it's querying against, all we need is the last read Range Key.
+
+So instead of passing back and forth `LastEvaluatedKey` as a base64 string, we can pass the last read range key value and construct the `ExclusiveStartKey` ourselves.
+
+To do this, I use the .NET SDKs Document model, which has helper methods to easily create `Dictionary<string,AttributeValue>` type.
+
+    [HttpGet("city-paged")]
+    public async Task<PagedResult<WeatherForecast>> GetPagedWeatherData(
+    string cityName, DateTime? lastReadItem)
+    {
+        Dictionary<string,AttributeValue> startKey = null;
+        if (lastReadItem != null)
+        {
+            var doc = new Document();
+            doc[nameof(WeatherForecast.CityName)] = cityName;
+            doc[nameof(WeatherForecast.Date)] = lastReadItem.Value.ToString(AWSSDKUtils.ISO8601DateFormat);
+            startKey = doc.ToAttributeMap();
+        }
+        
+        var queryRequest = new QueryRequest()
+        {
+            TableName = nameof(WeatherForecast),
+            ExclusiveStartKey = startKey,
+            KeyConditionExpression = "CityName = :cityName",
+            ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
+            {
+                {":cityName", new AttributeValue(cityName)},
+            }
+        };
+        var response = await _dynamoDbClient.QueryAsync(queryRequest);
+        var data = response.Items.Select(a =>
+        {
+            var doc = Document.FromAttributeMap(a);
+            return _dynamoDbContext.FromDocument<WeatherForecast>(doc);
+        });
+        return new PagedResult<WeatherForecast>(data,  data.MaxBy(a => a.Date)?.Date.ToString(AWSSDKUtils.ISO8601DateFormat));
+    }
+
+In the above code, given the last read/known DateTime (Range Key), we construct the `ExclusiveStartKey` and pass that to the DynamoDB request. 
+
+Using this method, we can start requesting data from any arbitrary range key we need.  So if I need data from the first of Feb 2023, I can start passing in that as the `lastReadItem` and get data from that date.
+
+### KeyConditionExpression
+
+When specifying the `ExclusiveStartKey`, all DynamoDB is doing is start reading from that key and evaluate the query results starting there.
+
+The same can also be achieved by using  `KeyConditionExpression` and specifying the condition on the Range Key.
+
+The below code specifies the greater than condition on the Date property (Range Key) to read items that are greater than the specified date.
+
+    [HttpGet("city-name-paged-range-key-condition")]
+    public async Task<PagedResult<WeatherForecast>> GetAllForCityPagedWithKeyCondition(
+        string cityName, DateTime? fromDateTime)
+    {
+        var queryRequest = new QueryRequest()
+        {
+            TableName = nameof(WeatherForecast),
+            KeyConditionExpression = "CityName = :cityName and #date > :fromDateTime",
+            Limit = 5,
+            ExpressionAttributeNames = new Dictionary<string, string>()
+            {
+                {"#date", "Date"}
+            },
+            ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
+            {
+                {":cityName", new AttributeValue(cityName)},
+                {":fromDateTime", new AttributeValue(fromDateTime.Value.ToString(AWSSDKUtils.ISO8601DateFormat))},
+            }
+        };
+        var response = await _dynamoDbClient.QueryAsync(queryRequest);
+        var items = response.Items.Select(a =>
+        {
+            var doc = Document.FromAttributeMap(a);
+            return _dynamoDbContext.FromDocument<WeatherForecast>(doc);
+        }).ToList();
+        var nextPageKey = !response.LastEvaluatedKey.Any()
+            ? null
+            : items.MaxBy(a => a.Date)?.Date.ToString(AWSSDKUtils.ISO8601DateFormat);
+        return new PagedResult<WeatherForecast>()
+        {
+            Items = items,
+            NextPageKey = nextPageKey
+        };
+
+In this case, since Date is a [reserved keyword](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ReservedWords.html) in DynamoDB, so I use a placeholder property to specify the property name (*#date*). The actual property name is passed as part of the `ExpressionAttributeNames` property, which specifies a map for the placeholder property.
+
+This also enables us to achieve the same effect as using  `ExclusiveStartKey` and fetching only items that are after the last seen date.
+
+### Paging Backwards Using ScanIndexForward
+
+Until now, we were paging the data forwards in the table.
+
+Similarly, we can also page the data backward using the `ScanIndexForward`property. By default, this property is set to `true`, which is why it pages the data forward.
+
+To go backward in the results, we need to set `ScanIndexForward` as false.
+![Based on the ScanIndexForward property, DynamoDB starts reading from the start of the items or from the end. This property is useful to page forward/backwards as required.](__GHOST_URL__/content/images/2023/03/image.png)
+DynamoDB orders the sort key in ascending order. 
+
+With the `ScanIndexForward` set to true, it starts wit the lowest value and moves forward as it reads items. When the `ScanIndexForward` is set to false, it starts with the max value and goes backward as items are read.
+
+You can include additional properties on your  API or have different endpoints to page forward and backward the data.
+
+With all the methods the caller of the API, passes in the starting point of the next item set to be read. Based on the application requirement, it can start from an empty value or a specific point (based on a known range key) and keeping passing in the last read items keys to fetch more data.
+
+Make sure your APIs are only loading the required data and continues to do as your applications grows.

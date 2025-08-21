@@ -1,0 +1,221 @@
+---
+title: "AWS Parameter Store For The .NET Developer: How to Easily Get Started"
+slug: "aws-parameter-store"
+date: "2022-02-15T00:00:00.000Z"
+feature_image: "/images/security_lock.jpg"
+tags: []
+---
+
+_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+
+AWS Parameter Store is a centralized, secure store for your application configuration.
+
+Parameter Store, a part of AWS Systems Manager, provides secure storage for application configuration and secret data. You can store passwords, database strings, Amazon Machine Image (AMI) IDs, API Keys, etc., as parameter values.
+
+Parameter store makes it easy to decouple your code from configuration and acts as version control for your configuration data.
+
+<iframe src="https://www.youtube.com/embed/eRtBIAx7sJc" />
+
+In this post, let's learn how to use AWS Parameter Store when building .NET applications. We will explore some of the common features that are useful when creating .NET applications.
+
+Getting Started With Parameter Store
+------------------------------------
+
+To start exploring the Parameter Store features, you need access to an AWS account. I use the [AWS Free Tier](https://aws.amazon.com/free/) to learn and play around with different services.
+
+### Adding Parameter
+
+To add a new parameter in Parameter Store, navigate to _AWS Systems Manager → Parameter Store → Create Parameter._
+
+It prompts a new dialog to enter the parameter name, description, type, and value. You can also configure Advanced properties, which we will skip for now.
+
+![Create a new parameter in Parameter Store](/images/aws-parameter-store-create-parameter.jpg)
+
+We can use this new parameter from our .NET application.
+
+### Using Parameter
+
+To use the parameter from a .NET application, we need to add the [AWSSDK.SimpleSystemsManagement](https://www.nuget.org/packages/AWSSDK.SimpleSystemsManagement/) Nuget package. The `AmazonSimpleSystemsManagementClient` from the package connects to the Parameter Store.
+
+The below code uses `BasicCredentials` to connect and authenticate with the AWS account.
+
+    var credentials = new BasicAWSCredentials("<ACCESS_KEY>", "<SECRET>");
+    var client = new AmazonSimpleSystemsManagementClient(
+                credentials, RegionEndpoint.APSoutheast2);
+    
+    var request = new GetParameterRequest()
+    {
+        Name = "weather-forecast-count"
+    };
+    var result = await client.GetParameterAsync(request);
+    
+
+The `GetParameterAsync` method retrieves the parameter from the store.
+
+### IAM Policies
+
+The credentials (Access Key and Secret) must have access to the Parameter store. We can create a new user under IAM and assign it the relevant policies.
+
+The [below policy](https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-paramstore-access.html) provides access to all parameters that start with ‘_weather-_’ under the specified account number.
+
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "ssm:PutParameter",
+                    "ssm:DeleteParameter",
+                    "ssm:GetParameterHistory",
+                    "ssm:GetParametersByPath",
+                    "ssm:GetParameters",
+                    "ssm:GetParameter",
+                    "ssm:DeleteParameters"
+                ],
+                "Resource": "arn:aws:ssm:ap-southeast-2:<ACCOUNT NUMBER>:parameter/weather-*"
+            },
+            {
+                "Effect": "Allow",
+                "Action": "",
+                "Resource": "*"
+            }
+        ]
+    }
+    
+
+Use the _AccessKey_ and _Secret_ for the new user account to connect to the Parameter Store. If you run the code, you can get back the parameter value of 5 and use it from the application.
+
+Parameter Types
+---------------
+
+Parameter Store supports three types of parameters.
+
+*   **String →** Any block of text
+*   **StringList →** comma-separated list of values (e.g., Cities → _Brisbane, Trivandrum, Sydney_)
+*   **SecureString →** any sensitive data that needs to be stored. The value is automatically encrypted using an [AWS KMS Key](https://aws.amazon.com/kms/). You can select a specific KMS key or use the default auto-created one.
+
+![SecureString Parameter Store Type uses KMS to encrypt the value](/images/aws-parameter-store-parameter-types.jpg)
+
+When using a parameter store variable of type SecureString, make sure to set the `WithDecryption` property on the `GetParameterRequest` instance to true to decrypt the parameter value automatically.
+
+    var request = new GetParameterRequest()
+    {
+        Name = "weather-forecast-apiKey",
+        WithDecryption = true,
+    };
+    
+
+Versions & Labels & Hierarchies
+-------------------------------
+
+Parameter Store supports versioning, assigning specific labels (friendly name identifiers) to parameters. It also helps organizing the values in hierarchies instead of a flat list. Let’s explore each one of these.
+
+**Versions**
+
+Every time a parameter value is updated, it creates a new version and saves the old one as part of the history. By default, when asking for the value by specifying only the name, it will return the latest version.
+
+Below are 3 version histories of the `weather-forecast-count` property.
+
+![A new version is created any time a parameter is updated.](/images/aws-parameter-store-parameter-version.jpg)
+
+To get a specific version from the parameter store, we need to append “:version number” along with the parameter name. The below will return the first version of the parameter, where the value is 5 in this case.
+
+    var request = new GetParameterRequest()
+    {
+        Name = $"weather-forecast-count:1",
+        WithDecryption = true,
+    };
+    
+
+**Labels**
+
+Working with version numbers can be confusing if you want to tag versions to specific environments, regions or other groups of your choice. Labels solve this problem since they give a user-defined alias for the different versions. Labels make it easier to manage different versions of the parameter.
+
+![Assign label to a version of the store varaible](/images/aws-parameter-store-parameter-labels.jpg)
+
+Version 3 of the variable `weather-forecast-count` is assigned the label _prod._ Very similar to versions, use the label name instead of the version number as part of the request to retrieve the value.
+
+    var request = new GetParameterRequest()
+    {
+        Name = $"weather-forecast-count:prod",
+        WithDecryption = true,
+    };
+    
+
+**Hierarchies**
+
+Using parameter hierarchies helps better manage parameters. It enables to quickly group parameters based on different hierarchies like _Environment, Application, Server Type_, etc.
+
+_A hierarchy is a parameter name that includes the path separated by forward slashes (/)._
+
+For e.g. If we want to separate out the parameters for _weather-forecast_ app for different environments we could use - _/test/weather-forecast/count_ and _/prod/weather-forecast/count._ The two parameters can hold different values as required for the environment.
+
+To see all the values for a specific hierarchy, you can use the `GetParametersByPathAsync` and pass it `GetParametersByPathRequest`.
+
+    var allParameters = await client.GetParametersByPathAsync(new GetParametersByPathRequest()
+    {
+        Path = "/test/weather-forecast"
+    });
+    
+
+For this to work, make sure the User has the appropriate IAM policies to access all the parameters in that hierarchy. Typically you would have different users for each environment and give access only to relevant parameters in that environment.
+
+Don’t Reinvent Configuration!
+-----------------------------
+
+We’ve been using the `AmazonSimpleSystemsManagementClient` class to retrieve the configuration values from the Parameter Store. We could inject this in, wrap around another layer or interface, etc., but our application is still tightly coupled with Parameter Store for its configuration.
+
+To run the application in any environment (local dev, test, prod) needs a Parameter Store set up and populated with the appropriate keys. It also becomes a problem when we have to run tests and control some of these configuration values.
+
+.NET has built-in Configuration capabilities, which most likely you would have used already - If you have used app settings file, environment variables, etc.
+
+<iframe src="https://www.youtube.com/embed/5GlgHV\_12-k" />
+
+AWS Parameter Store can be added as a [Configuration Provider](https://docs.microsoft.com/en-us/dotnet/core/extensions/configuration-providers?WT.mc_id=AZ-MVP-5003875) at application Startup. We need to add the Nuget package, [Amazon.Extensions.Configuration.SystemsManager](https://www.nuget.org/packages/Amazon.Extensions.Configuration.SystemsManager/). Using this package, add a new Configuration Provider as below.
+
+    builder.Configuration.AddSystemsManager(source =>
+    {
+        source.Path = "/test";
+        source.Optional = true;
+        source.ReloadAfter = TimeSpan.FromSeconds(30);
+        source.AwsOptions = new Amazon.Extensions.NETCore.Setup.AWSOptions()
+        {
+            Credentials = new BasicAWSCredentials("", ""),
+            Region = RegionEndpoint.APSoutheast2,
+    
+        };
+    });
+    
+
+The above code looks for all the parameter keys under the ‘_/test_’ hierarchy and makes them available as part of the Configuration object. Since the source is marked optional, it will continue application startup even if it cannot connect to the Parameter Store.
+
+The code also sets the configuration to be automatically reloaded every 30 seconds. (choose a more extensive duration based on your application needs and avoid too many calls to Parameter Store).
+
+<iframe src="https://www.youtube.com/embed/SizJCLcjbOA" />
+
+Using Options Pattern, we can inject the configuration values into our controllers. The below code registers the `WeatherForecastOptions` and injects it into the controller using `IOptionsSnapshot`.
+
+    builder.Services
+         .Configure<WeatherForecastOptions>(
+            builder.Configuration.GetSection(WeatherForecastOptions.SectionName));
+    
+    // Options class to hold the configuration
+    public class WeatherForecastOptions
+    {
+        public static string SectionName = "weather-forecast";
+        public int Count { get; set; }
+        public string Cities { get; set; }
+    }
+    
+    public WeatherForecastController(
+                IOptionsSnapshot<WeatherForecastOptions> weatherOptions,
+                ILogger<WeatherForecastController> logger) { ... }
+    
+
+Since the configuration is now bound to the .NET Configuration, its values can come from any of the registered sources - including appsetting.json, environment variables, [Secret Manager](https://www.youtube.com/watch?v=PkLLP2tcd28), etc.
+
+For local development environments, tests where you don’t require the parameters in AWS Parameter Store, you can keep it in your app settings file or other locally available sources.
+
+Have a great day!
+
+_Photo by [Towfiqu barbhuiya](https://unsplash.com/@towfiqu999999?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/security?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)_

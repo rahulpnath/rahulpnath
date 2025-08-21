@@ -1,0 +1,119 @@
+---
+title: "Step By Step Guide: Deploying ASP NET API To AWS Elastic Beanstalk Using Visual Studio Toolkit"
+slug: aws-elastic-beanstalk-dotnet-api-toolkit
+date_published: 2024-08-15T06:18:21.000Z
+date_updated: 2024-08-17T06:28:42.000Z
+tags: AWS, Dotnet
+excerpt: In this post let's explore step-by-step how to deploy an ASP NET Web API application to AWS Elastic Beanstalk. We will use the Visual Studio Toolkit to deploy the application and create multiple environments.
+---
+
+With the variety of services offered by AWS, choosing one to deploy your application can be confusing.
+
+EC2 is the lowest level of do-it-yourself compute service that AWS provides.
+
+This might be attractive to some teams, while others might just want their apps deployed without needing too much control over the underlying infrastructure.
+
+[AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) was introduced to solve this problem.
+
+If you are not quite ready to deal with containers or go serverless but want to deploy and run your applications quickly on AWS cloud, Beanstalk is your friend.
+
+In this post, let’s look at how to quickly get started using AWS Elastic Beanstalk to deploy a .NET Web API application.
+
+We will deploy our application using [AWS Toolkit](https://www.youtube.com/watch?v=jwRs45mA568)
+
+This post is sponsored by AWS and is part of my [.NET on AWS Series](__GHOST_URL__/blog/tag/aws/)
+
+## Deploy .NET API to AWS Elastic Beanstalk
+
+With AWS Toolkit installed and setup, right click on your project and choose the 'Publish to AWS...' from the menu.
+![](__GHOST_URL__/content/images/2024/08/image-15.png)Publish to AWS from Visual Studio using AWS Toolkit .NET
+Ignore the options in the menu that says (Legacy) - mmm they are, legacy.
+
+From the dialog that opens up you can choose one of the two options to deploy to Beanstalk. 
+
+One deploys to Linux based EC2 and the other Windows based. 
+![](__GHOST_URL__/content/images/2024/08/image-17.png)Visual Studio AWS Toolkit options to deploy .NET applications to Elastic Beanstalk.
+Yes AWS Elastic Beanstalk uses [EC2 instances](__GHOST_URL__/blog/amazon-ec2-dotnet-api-hosting/) to deploy the applications. 
+
+Only that you don't have to manage them, AWS does this automatically for you.
+
+I will choose a Linux instance.
+
+The toolkit comes with default settings for the deployment, which we can modify as required using the 'Edit Settings' button under the Target Configuration section.
+
+It opens up the settings for modification.
+
+### Elastic Beanstalk Core Concepts
+
+Here's a concise overview of the core concepts in AWS Elastic Beanstalk:
+
+1. **Application**: A logical collection of Elastic Beanstalk components, including environments, versions, and environment configurations.
+2. **Environment**: A version of your application that is running on AWS resources, typically including an EC2 instance and other services like load balancers and databases. You can think of trhese as you development, test, production environments etc.
+3. **Environment Configuration**: A collection of parameters and settings that define how an environment and its associated resources behave.
+4. **Application Version**: A specific, labeled iteration of deployable code for an application.
+
+Now that we understand some of the core concepts, lets have a look at hte configuration that the AWS Toolkit sets for our Beanstalk deployment.
+
+The General section, allows you to specify the application and environment name. 
+
+You can also specify the Environment Type, which controls whether it's a Single instance or  Multiple instance (load balanced) that gets deployed for your application. 
+![](__GHOST_URL__/content/images/2024/08/image-18.png)Visual Studio AWS Toolkit configuration options to deploy ASP NET API application to Elastic Beanstalk.
+If you select Load Balanced, it also provides configuration for the Load Balancer. Setting up a load balanced is recommended for your production workloads. 
+
+I will continue with a Single Instance.
+
+The Hosting section provides the option to specify the server setup for your application, in this case an ASP NET Web API application. 
+
+We can choose between the default Kestrel webserver, or use a nginx reverse proxy to host your applications. 
+![](__GHOST_URL__/content/images/2024/08/image-19.png)Visual Studio AWS Toolkit configuration hosting options to deploy ASP NET API application to Elastic Beanstalk.
+Once deployed, Beanstalk forwards traffic by default to port 5000. 
+
+⚠️
+
+*If you are using the Kestrel based option, you should make sure that the API starts up on port 5000 by using one of the different methods that ASP NET provides to configure application URLs.*
+
+The configuraion also allows to specify the EC2 instance size, the memory, permissions, Environment Variables, VPC details etc. I am leaving everything as default.
+
+Review the configuraiton and hit Publish!
+![](__GHOST_URL__/content/images/2024/08/image-20.png)Visual Studio AWS Toolkit deploy ASP NET application to AWS Elastic Beanstalk
+If you don't have an AWS account I recommend setting one up using the [AWS Free Tier option](https://aws.amazon.com/free/), which will give you enough credits to try things out.
+
+## AWS Elastic Beanstalk Deployed Resources For ASP NET API
+
+Navigate to your AWS console → Elastic Beanstalk once the deployment is complete.
+
+You can find the new application and the environment we created from Visual Studio under Elastic Beanstalk as shown below.
+![](__GHOST_URL__/content/images/2024/08/image-21.png)
+Navigating into the application shows the environments specific for that application. If you have multiple environments you can see all of them listed.
+
+Currently we have one application and one environment that we just deployed from Visual Studio AWS Toolkit.
+![](__GHOST_URL__/content/images/2024/08/image-22.png)
+Navigating further into the specific environment you can see the details for the environment. 
+
+The Domain URL is where your application is available. You can navigate to that to try out the application.
+
+In this case since it's a default ASP NET Web API application you need to naviage to `/weatherforecast` which is where the default endpoint exists for the app. 
+![](__GHOST_URL__/content/images/2024/08/image-23.png)
+You can also find a list of Events that has happened for the specific environment. Currently it shows all the deployment related events that has just happend when we created this environment.
+
+You can navigate to the Configuration section on the left hand navigation menu, to view the configuration set for the environment.
+![](__GHOST_URL__/content/images/2024/08/image-24.png)
+If you want to edit any of the configuration related to the environment you can do that under the Configuration section.
+
+The Health section shows the EC2 instances that's running your application.
+![](__GHOST_URL__/content/images/2024/08/image-25.png)
+In this case we only have a single instance deployed for our application.
+
+## Deploy Multiple Environments to AWS Elastic Beanstalk from Visual Studio AWS Toolkit
+
+You can deploy multiple environments to the same AWS Elastic Beanstalk application from Visual Studio AWS Toolkit. 
+
+For this you need to select the 'Publish to AWS...' option from the Project context menu, choose 'Publish to New Target' and choose the option Linux (windows if that is where you want )
+
+Edit the Settings.
+![](__GHOST_URL__/content/images/2024/08/image-26.png)Visual Studio AWS Elastic Beanstalk publish a new environment to an existing Beanstalk spplication.
+In the follow dialog, uncheck the 'Create new Elastic Beanstalk application' option under the General settings.
+
+This makes the application name section a drop-down box, where you can select existing Beanhstalk applications to deploy to. 
+
+Provide an environment name and configurations specific for that environment and hit Publish!

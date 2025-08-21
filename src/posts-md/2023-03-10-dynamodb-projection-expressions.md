@@ -1,0 +1,119 @@
+---
+title: How to Optimize Your DynamoDB Queries With Projection Expressions in .NET
+slug: dynamodb-projection-expressions
+date_published: 2023-03-10T09:13:05.000Z
+date_updated: 2025-01-09T19:21:11.000Z
+tags:
+  - AWS
+  - DynamoDB
+---
+
+When reading data from a DynamoDB table, by default, it returns all of the attributes of the items.
+
+However, in some application scenarios, you might only require a subset of the attributes of the items.
+
+In these scenarios, you can use a ProjectionExpression to limit the item attributes returned as part of a read operation.
+
+In this article, let’s learn about ProjectionExpressions in DynamoDB and how to use them when building applications.
+
+*This article is sponsored by AWS and is part of my [.NET on AWS Series](__GHOST_URL__/blog/tag/aws/).*
+
+💡
+
+*Projection Expression is mainly used to reduce the amount of data sent over the wire when querying DynamoDB.*
+
+## .NET DynamoDBContext and Projection Expressions
+
+When using the `DynamoDBContext` class to query data from DynamoDB, the SDK reads all the matching properties on the .NET class passed it, which exists on the DynamoDB item.
+
+For e.g., if the DynamoDB item has ten properties (including the partition and hash key), and if the .NET class has all the ten properties specified, it will read all those properties.
+
+But if you specify only a subset of properties along with the Partition and hash key, it will read only those many properties.
+
+> *When using `DynamoDBContext`, use .NET classes with just the right properties that you require for the specific scenario, when querying large amounts of data.*
+
+The .NET SDK using the High-Level API (`DynamoDBContext`), under the covers, uses reflection on the .NET Type to determine the attributes to be read from the DynamoDB table when querying. 
+
+## .NET AmazonDynamoDBClient and Projection Expressions
+
+When using the `AmazonDynamoDBClient`, the Low-Level API,  to query the data; since we do not specify the .NET types to perform the query, we need to pass in the attributes to be read explicitly.
+
+By default, it reads all the properties on the DynamoDB item.
+
+To limit the properties read, you can use the `ProjectionExpression` property on the `QueryRequest` class as a comma-separated list of values.
+
+    [HttpGet("city-date-advanced-filter-projection")]
+    public async Task<IEnumerable<WeatherForecastListItem>> GetLowLevelAdvancedProjectionAsync(
+        string cityName, DateTime startDate, int minTemp, int maxTemp)
+    {
+        var request = new QueryRequest()
+        {
+            ...
+            ProjectionExpression = "CityName,Summary,TemperatureC"
+        };
+    }
+
+### Reserved Keyword in ProjectionExpression
+
+If any of the properties you want to read is a Reserved Keyword in DynamoDB, then we can use a placeholder property and then pass the actual name as part of the `ExpressionAttributeNames` property in the `QueryRequest`.
+
+In the example below, `Date` is a reserved keyword, and you can see how to use that as part of ProjectionExpression in .NET.
+
+    [HttpGet("city-date-advanced-filter-projection")]
+    public async Task<IEnumerable<WeatherForecastListItem>> GetLowLevelAdvancedProjectionAsync(
+        string cityName, DateTime startDate, int minTemp, int maxTemp)
+    {
+        var request = new QueryRequest()
+        {
+            ...
+            ProjectionExpression = "CityName,#Date,TemperatureC",
+            ExpressionAttributeNames = new Dictionary<string, string>()
+            {
+                {"#Date", "Date"}
+            },
+        };
+    }
+    
+
+We saw this same pattern of passing reserved keywords as placeholders when exploring different ways to query in DynamoDB.
+[
+
+5 Ways To Query Data From Amazon DynamoDB using .NET
+
+Querying is an essential operation in DynamoDB. It allows you to filter and select items in your database based on your application and user needs. When moving over to DynamoDB from more traditional relational databases like SQL Server, you must understand the different ways you can retrieve data…
+
+![](__GHOST_URL__/content/images/size/w256h256/2022/10/logo-512x512.png)Rahul NathRahul Pulikkot Nath
+
+![](__GHOST_URL__/content/images/2023/02/DynamoDB-Querying-new.png)
+](__GHOST_URL__/blog/dynamodb-querying-dotnet/)
+### Projection Expression with List Index
+
+DynamoDB also supports projecting specific items from a list object.
+
+For example, we have a property `WeatherDetails`, which is a list property, and we only want to read the first item of that list.
+
+We can use the ‘[n]’ to indicate specific item positions in the list, where n is the zero-based list index.
+
+The below expression returns the second item in the list when we query.
+
+`ProjectionExpression = "CityName,#Date,TemperatureC,WeatherDetails[1]"`
+
+If no items are in the specified index position, it returns an empty list.
+
+We can also specify multiple index positions to be returned as part of the same query. We need to specify multiple index properties just like we would provide multiple property names.
+
+The below expression returns the first and the second item in the `WeatherDetails` list if they exist.
+
+`ProjectionExpression = "CityName,#Date,WeatherDetails[0], WeatherDetails[1]"`
+
+### Projection Expression and Large Items
+
+Projection Expressions are evaluated in DynamoDB after the items are read and the 1MB limit has been reached.
+
+So you cannot use projection expressions to ignore large attributes on items and get more results in a query.
+
+> *ProjectionExpressions are evaluated after the 1MB read limit has reached. So it cannot be used to ignore large attributes on items, to get more results when querying.*
+
+It would be best to create a secondary index for those scenarios where you want to ignore large attributes and read more data when querying DynamoDB.
+
+I hope this helps you understand Projection Expressions and how you can use that when querying data from DynamoDB using .NET.
