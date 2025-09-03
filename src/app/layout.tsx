@@ -1,4 +1,13 @@
 import './globals.css';
+import localFont from "next/font/local";
+
+const clashGrotesk = localFont({
+  src: "../fonts/ClashGrotesk-Variable.woff2", // path is from /public
+  variable: "--font-clash",
+  weight: "100 700", // variable range
+  display: "swap",
+});
+
 
 export const metadata = {
   title: 'My Blog',
@@ -11,7 +20,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en">
+    <html lang="en" className={clashGrotesk.variable}>
       <body>
         {children}
       </body>
