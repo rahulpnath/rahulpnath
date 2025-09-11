@@ -3,10 +3,12 @@ title: "SNS→Lambda Or SNS→SQS→Lambda"
 slug: "amazon-sns-to-lambda-or-sns-sqs-lambda-dotnet"
 date: "2022-09-28T00:00:00.000Z"
 feature_image: "/images/amazon-sns-to-lambda-or-sns-sqs-lambda-dotnet.jpg"
-tags: []
+tags: ["AWS","Lambda"]
+excerpt: "Should you be processing messages directly from SNS to Lambda or via an SQS Queue? Learn the disadvantages of directly processing messages from SNS and how you can solve those by introducing an SQS Queue in the middle."
+
 ---
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 Amazon Simple Notification Service (SNS) is a publish-subscribe service managed by AWS.
 
@@ -16,15 +18,17 @@ It enables asynchronous communication between the publishers and subscribers usi
 <iframe src="https://www.youtube.com/embed/pBo2YLuPvCk" />
 </div>
 
-In an earlier blog post, we learned [how to use AWS Lambda Functions to process messages coming into SNS](__GHOST_URL__/blog/amazon-sns-lambda-trigger-dotnet/). I highly recommend checking out if you are new to SNS and Lambda Triggers.
+In an earlier blog post, we learned [how to use AWS Lambda Functions to process messages coming into SNS](/posts/amazon-sns-lambda-trigger-dotnet/). I highly recommend checking out if you are new to SNS and Lambda Triggers.
 
 In this post, we will see some of the disadvantages of processing messages directly from an SNS and learn how introducing an SQS in the middle solves some of them.
 
 We will learn,
 
+```sql
 *   Disadvantages of directly processing messages from SNS → Lambda
 *   Connecting SNS → SQS → Lambda
 *   Advantages of Processing Messages From SNS → SQS → Lambda
+```
 
 Disadvantages of directly processing messages from SNS → Lambda
 ---------------------------------------------------------------
@@ -43,17 +47,19 @@ Learn how to process SNS messages from AWS Lambda Function. We will learn how to
 
 ![](/images/amazon-sns-lambda-triggers-dotnet.jpg)
 
-](__GHOST_URL__/blog/amazon-sns-lambda-trigger-dotnet)
+](/posts/amazon-sns-lambda-trigger-dotnet)
 
 Not everything below is a disadvantage for all scenarios, but they can be if not handled in your application scenario. So, evaluate the pros and cons of subscribing directly from an SNS Topic.
 
 Here are the main disadvantages when processing messages directly from SNS.
 
+```sql
 *   SNS Delivers messages asynchronously, and Lambda is responsible for handling errors/retries.
 *   For stale SNS subscriptions, SNS retries are lost after a few retries.
 *   Lambda DLQ needs to be handled separately.
 *   No Batching is available when processing messages from SNS.
 *   No control on Lambda Concurrency, messages are processed one by one as soon as they arrive.
+```
 
 In cases of exceptions in processing, the messages get retried depending on the Asynchronous configuration set on the Lambda Function. By default, it retries two times and is discarded. If a DLQ is setup, it needs to be monitored and processed separately to the SNS.
 
@@ -74,7 +80,7 @@ Based on your application scenario, you can enable this option. For this post, I
 
 Additionally, you can specify a Filter Policy if you want to filter the messages sent to the Queue. You can also set up a DLQ in case this SQS subscription becomes stale (if someone accidentally deletes the original SQS queue).
 
-I cover these configuration details in detail in my post on [Amazon SNS and AWS Lambda Triggers](__GHOST_URL__/blog/amazon-sns-lambda-trigger-dotnet/).
+I cover these configuration details in detail in my post on [Amazon SNS and AWS Lambda Triggers](/posts/amazon-sns-lambda-trigger-dotnet/).
 
 Once you have created the Subscription, we need to update the Access Policy for the SQS to allow SQS to send messages to the Queue.
 
@@ -84,20 +90,22 @@ For this, navigate to the SQS → Access policy and click Edit.
 
 Add the access policy statement, as shown below, to allow SNS the _sqs:SendMessage_ Action to send messages to the SQS. Make sure to replace the Resource with the SQS ARN details and specify the SNS ARN to allow only one specific SNS to send messages.
 
-    {
-       "Effect":"Allow",
-       "Principal":{
-          "Service":"sns.amazonaws.com"
-       },
-       "Action":"sqs:SendMessage",
-       "Resource":"<SQS ARN>",
-       "Condition":{
-          "ArnEquals":{
-             "aws:SourceArn":"<SNS ARN>"
-          }
-       }
-    }
-    
+
+```html
+{
+   "Effect":"Allow",
+   "Principal":{
+      "Service":"sns.amazonaws.com"
+   },
+   "Action":"sqs:SendMessage",
+   "Resource":"<SQS ARN>",
+   "Condition":{
+      "ArnEquals":{
+         "aws:SourceArn":"<SNS ARN>"
+      }
+   }
+}
+```
 
 Once added, our subscription is all ready to go. You can test by publishing a new message to the SNS Topic, and it will automatically be sent to the SQS Queue.
 
@@ -113,18 +121,20 @@ Learn how to process SQS messages from AWS Lambda Function. We will learn how to
 
 ![](/images/amazon-sqs-lambda-triggers-dotnet.jpg)
 
-](__GHOST_URL__/blog/amazon-sqs-lambda-trigger-dotnet)
+](/posts/amazon-sqs-lambda-trigger-dotnet)
 
 Advantages of Processing Messages From SNS → SQS → Lambda
 ---------------------------------------------------------
 
 Amazon SQS invokes the Lambda Function synchronously. This means it waits for a response from the Lambda Function. Only if it’s a successful response is the message removed from the Queue. Otherwise, the message reappears in the Queue based on the `VisiblityTimeout,` and the Maximum receives setting value.
 
-*   On errors in processing, the message is replaced into the Queue. [You can move these messages to a DLQ and Re-drive these messages](__GHOST_URL__/blog/amazon-sqs-lambda-trigger-exception-handling-dotnet/) back into the original queue for reprocessing.
-*   SQS allows Batch delivery of messages, so you can save on the cost of the number of Lambda functions to run. Along with batch delivery, you can also [enable batch error processing](__GHOST_URL__/blog/amazon-sqs-lambda-trigger-exception-handling-dotnet/) so that only messages that error out in a batch is retried.
+```bash
+*   On errors in processing, the message is replaced into the Queue. [You can move these messages to a DLQ and Re-drive these messages](/posts/amazon-sqs-lambda-trigger-exception-handling-dotnet/) back into the original queue for reprocessing.
+*   SQS allows Batch delivery of messages, so you can save on the cost of the number of Lambda functions to run. Along with batch delivery, you can also [enable batch error processing](/posts/amazon-sqs-lambda-trigger-exception-handling-dotnet/) so that only messages that error out in a batch is retried.
 *   You can control the Lambda concurrency, and you run fewer Lambda instances with batching.
-*   SQS supports `BatchWindow`, so you can [wait for messages to queue up](__GHOST_URL__/blog/amazon-sqs-lambda-trigger-dotnet/) before starting to processing.
+*   SQS supports `BatchWindow`, so you can [wait for messages to queue up](/posts/amazon-sqs-lambda-trigger-dotnet/) before starting to processing.
 *   Messages stay in the Queue if there are no consumers (for a max of 2 weeks).
+```
 
 If the messages are critical for the application, then processing them through an SQS is more reliable than processing messages directly from SNS. With SQS, you can also have a single flow for processing and error monitoring. You can also optimize the cost of Lambda functions by batching and processing more records at a time.
 
@@ -132,7 +142,9 @@ I hope this helps you understand and choose between different options when proce
 
 ### Additional Reading
 
+```bash
 *   [AWS SNS Events: SNS to Lambda vs SNS to SQS to Lambda](https://aws.plainenglish.io/aws-sns-to-lambda-vs-sns-to-sqs-to-lambda-788d4cc96f34)
-*   [Amazon SNS and AWS Lambda Triggers in .NET](__GHOST_URL__/blog/amazon-sns-lambda-trigger-dotnet/)
-*   [Amazon SQS and AWS Lambda Triggers in .NET](__GHOST_URL__/blog/amazon-sqs-lambda-trigger-dotnet/)
-*   [How to Handle Exceptions When Processing SQS Messages in .NET Lambda Function](__GHOST_URL__/blog/amazon-sqs-lambda-trigger-exception-handling-dotnet/)
+*   [Amazon SNS and AWS Lambda Triggers in .NET](/posts/amazon-sns-lambda-trigger-dotnet/)
+*   [Amazon SQS and AWS Lambda Triggers in .NET](/posts/amazon-sqs-lambda-trigger-dotnet/)
+*   [How to Handle Exceptions When Processing SQS Messages in .NET Lambda Function](/posts/amazon-sqs-lambda-trigger-exception-handling-dotnet/)
+```

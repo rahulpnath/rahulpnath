@@ -3,11 +3,11 @@ title: "HTTP Content Security Policy (CSP)"
 slug: "http-content-security-policy-csp"
 date: "2018-07-24T00:00:00.000Z"
 feature_image: "/images/content-security-policy.png"
-tags: []
+tags: ["Programming"]
 excerpt: "Learn about HTTP Content Security Policy (CSP), how it protects your site from XSS and data injection attacks, and how to set up CSP headers for improved web security."
 ---
 
-_This article is part of a series of articles - [Ok I have got HTTPS! What Next?](__GHOST_URL__/blog/ok-i-have-got-https-what-next/). In this post, we explore how to use HSTS security header and the issues it solves._
+_This article is part of a series of articles - [Ok I have got HTTPS! What Next?](/posts/ok-i-have-got-https-what-next/). In this post, we explore how to use HSTS security header and the issues it solves._
 
 Content Security Policy (CSP) is a security response header or a `<meta>` element that instructs the browser, sources of information that it should trust for our website. A browser that supports CSP's then treats this list specified as a whitelist and only allows resources to be loaded only for those sources. CSP's allow you to specify source locations for a variety of resource types which are referred to as [fetch directives](https://developer.mozilla.org/en-US/docs/Glossary/Fetch_directive)(e.g. \_script-src, img-src,style-src\* etc).
 
@@ -23,9 +23,11 @@ Setting CSP Headers
 
 ### Web Server Configuration
 
-CSP's can be set via the configuration file of your web server host if you want to specify it as part of the header. In my case I use Azure Web App, so all I need to do is add in a web.config file to my root with the header values. Below is an example which specified CSP headers (including Report Only) and [STS headers](__GHOST_URL__/blog/http-strict-transport-security-sts-or-hsts/).
+CSP's can be set via the configuration file of your web server host if you want to specify it as part of the header. In my case I use Azure Web App, so all I need to do is add in a web.config file to my root with the header values. Below is an example which specified CSP headers (including Report Only) and [STS headers](/posts/http-strict-transport-security-sts-or-hsts/).
 
-    <configuration>
+```xml
+<configuration>
+```
       <system.webServer>
         <httpProtocol>
           <customHeaders>
@@ -39,7 +41,7 @@ CSP's can be set via the configuration file of your web server host if you want 
 
 ### Using Fiddler
 
-However if all you want is to play around with the CSP header and don't have access to your Web server or the configuration file, you can still test these headers. You can inject in the headers into the response using a [Web Proxy like Fiddler](__GHOST_URL__/blog/fiddler-free-web-debugging-proxy/)
+However if all you want is to play around with the CSP header and don't have access to your Web server or the configuration file, you can still test these headers. You can inject in the headers into the response using a [Web Proxy like Fiddler](/posts/fiddler-free-web-debugging-proxy/)
 
 To modify the request/response in-flight you can use one of the most powerful feature in Fiddler - [Fiddler Script](https://www.telerik.com/blogs/understanding-fiddlerscript)
 
@@ -49,8 +51,10 @@ Using the below script, we can inject 'Content-Security-Policy' header whenever 
 
 ![Fiddler Script to update CSP](/images/https_csp_fiddler_script.png)
 
-    // Fiddler Script - Inject CSP Header
-    if (oSession.HostnameIs('rahulpnath.com')) {
+```csharp
+// Fiddler Script - Inject CSP Header
+if (oSession.HostnameIs('rahulpnath.com')) {
+```
       oSession.oResponse.headers['Content-Security-Policy'] =
         "default-src 'none'; img-src 'self';script-src 'self';style-src 'self'";
     }
@@ -65,8 +69,10 @@ The _Content-Security-Policy\_Report-Only_ header allows to test the header sett
 
 Below is an example of a CSP violation POST request send from the browser to the report URL that I had specified for this blog. I am using an endpoint from the [Report URI](https://report-uri.com/) service (more on this later)
 
-    POST https://rahulpnath.report-uri.com/r/d/csp/reportOnly HTTP/1.1
-    {
+```css
+POST https://rahulpnath.report-uri.com/r/d/csp/reportOnly HTTP/1.1
+{
+```
         "csp-report": {
             "document-uri": "https://www.rahulpnath.com/",
             "referrer": "",
@@ -121,11 +127,15 @@ Once you have the CSP's set you can check out if your site does the Harlem Shake
 
 _That said do give the below script a try! I did go through the code pasted below and it is not malicious. All it does modify your dom elements and plays a music. The original source is available below but I do not control it and it could have change since the time of writing._
 
-    // Harlem Shake - F12 on Browser tab and
-    // run below script (Check your Volume)
+```text
+// Harlem Shake - F12 on Browser tab and
+// run below script (Check your Volume)
+```
     
-    //Source: http://pastebin.com/aJna4paJ
-    javascript: (function () {
+```yaml
+//Source: http://pastebin.com/aJna4paJ
+javascript: (function () {
+```
       function c() {
         var e = document.createElement('link');
         e.setAttribute('type', 'text/css');

@@ -3,7 +3,7 @@ title: "Back To Basics: Constructors and Enforcing Invariants"
 slug: "constructor-and-constraints"
 date: "2020-03-16T00:00:00.000Z"
 feature_image: "/images/strong_code_contracts.jpg"
-tags: []
+tags: ["Programming"]
 ---
 
 In C# or any class-based object-oriented language, a Constructor is used to create an object. The constructor is responsible for initializing the object's data members and establishing the class invariants. A constructor fails and throws an exception when the class invariants are not met. An invariant is an assertion that is always held true.
@@ -17,8 +17,10 @@ Simple Invariants
 
 E.g. If a constructor takes in a string and checks it to be not null before assigning it to its property, the invariant is that the string _Value_ can never be null.
 
-    public class Name
-    {
+```csharp
+public class Name
+{
+```
         public string Value { get; set; }
     
         public Name(string name)
@@ -30,14 +32,18 @@ E.g. If a constructor takes in a string and checks it to be not null before assi
 
 However, in the above case, one can easily break the invariant on an instance by setting the _Value_ property to null after creating the object.
 
-    var name = new Name("Rahul");
-    name.Value = null;
+```csharp
+var name = new Name("Rahul");
+name.Value = null;
+```
     
 
 Make the set on the Value property private to stop this. The Value property cannot be set directly on the object instance.
 
-    public class Name
-    {
+```csharp
+public class Name
+{
+```
       public string Value { get; private set; }
       ...
     }
@@ -45,8 +51,10 @@ Make the set on the Value property private to stop this. The Value property cann
 
 However, we can add a new method on Name class as below, which breaks the invariant.
 
-    public class Name
-    {
+```csharp
+public class Name
+{
+```
       ...
       public void PrintName()
         {
@@ -58,8 +66,10 @@ However, we can add a new method on Name class as below, which breaks the invari
 
 To enforce the invariant, we can either make sure that we never do something like above inside of a class or mark the property as read-only. By marking it read-only, we ensure that it is set only inside the constructor and nowhere else (even within the class). Remember that _an invariant must hold to be true after the constructor is finished and at the entry and exit of all public member functions._
 
-    public class Name
-    {
+```csharp
+public class Name
+{
+```
       public readonly string Value;
       ...
     }
@@ -74,16 +84,20 @@ The NotNull constraint is something we see often and are used to writing. Howeve
 
     var leapYear = new DateTime(2020, 02, 29);
     
-    // Throws exception
-    // Year, Month, and Day parameters describe an un-representable DateTime
-    var invalid_NotLeapYear = new DateTime(2019, 02, 29);
-    var invalid =  new DateTime(2020, 02, 30);
+```csharp
+// Throws exception
+// Year, Month, and Day parameters describe an un-representable DateTime
+var invalid_NotLeapYear = new DateTime(2019, 02, 29);
+var invalid =  new DateTime(2020, 02, 30);
+```
     
 
 Similar checks are possible for custom classes that we write. E.g., let's take a DateRange class. In addition to StartDate and EndDate not being null, we have an additional invariant here that the end date cannot be less than the start date.
 
-    public class DateRange
-    {
+```csharp
+public class DateRange
+{
+```
         public readonly DateTime StartDate;
         public readonly DateTime EndDate;
     
@@ -110,8 +124,10 @@ Taking this to the next level, we can add business invariants as well. Let's tak
 
 > Adding business constraints to constructors makes illegal states unrepresentable. If you are on .Net 3.0 [turn on Nullable Reference Types](https://devblogs.microsoft.com/dotnet/try-out-nullable-reference-types/#turn-on-nullable-reference-types) and you can get these advantages at compile time as well.
 
-    public class Quote
-    {
+```csharp
+public class Quote
+{
+```
         public int Id { get; private set; }
         public QuoteStatus Status { get; private set; }
         public Customer Customer { get; private set; }
@@ -150,7 +166,7 @@ Let's look at the different constraints that the Quote class enforces
 *   Quote with id and customer parameter forces the Quote to be in Draft status.
 *   All the other constructors use the constructor with all the properties. A Quote instance cannot exist without a customer. When a quote is not in the draft state, it must have an associated MobilePhone.
 
-With these checks in place, we can be sure that some of the business constraints are enforced, and the objects cannot be created in an invalid state. We don't have to make any more assumptions about the Quote object in our code. We can be sure about some of the above-enforced constraints every time we use the Quote class. It helps [make the code contracts stronger](__GHOST_URL__/blog/stronger-code-contracts/).
+With these checks in place, we can be sure that some of the business constraints are enforced, and the objects cannot be created in an invalid state. We don't have to make any more assumptions about the Quote object in our code. We can be sure about some of the above-enforced constraints every time we use the Quote class. It helps [make the code contracts stronger](/posts/stronger-code-contracts/).
 
 Constructors are the entry points to the instances. Make them fail fast if the state is illegal. It helps remove a lot of unnecessary defensive checks in other areas of our code.
 

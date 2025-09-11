@@ -3,14 +3,14 @@ title: "Refactoring to Improve Testability: Removing Unnecessary Dependencies"
 slug: "refactoring-to-improve-testability-removing-unnecessary-dependencies"
 date: "2016-03-28T04:27:03.000Z"
 feature_image: "/images/refactoring.jpg"
-tags: []
+tags: ["Testing","Programming"]
 ---
 
 [![Refactoring](/images/refactoring.jpg)](https://unsplash.com/photos/5Ntkpxqt54Y)
 
 Nowadays I am trying to stick to [TDD](http://butunclebob.com/ArticleS.UncleBob.TheThreeRulesOfTdd) (with the test first approach) and have found it to be of great help. One of the biggest reward doing TDD is that it helps me to [stay in the flow](https://vimeo.com/97419151) and regain speed faster after a distraction. This post explains how to refactor code to remove unnecessary dependencies, which is easily found when writing tests.
 
-Unnecessary dependencies are those components which a [SUT](http://xunitpatterns.com/SUT.html) depends on, but does not directly affect any of its functionalities. Some of the common tests smell (from XUnit Test Patterns by Gerard Meszaros, [a recommended read](__GHOST_URL__/blog/language-agnostic-books-for-every-developer-2/)) that helps me to find these dependencies are [Test Code Duplication](http://xunitpatterns.com/Test%20Code%20Duplication.html) and [Fragile Tests](http://xunitpatterns.com/Fragile%20Test.html).
+Unnecessary dependencies are those components which a [SUT](http://xunitpatterns.com/SUT.html) depends on, but does not directly affect any of its functionalities. Some of the common tests smell (from XUnit Test Patterns by Gerard Meszaros, [a recommended read](/posts/language-agnostic-books-for-every-developer-2/)) that helps me to find these dependencies are [Test Code Duplication](http://xunitpatterns.com/Test%20Code%20Duplication.html) and [Fragile Tests](http://xunitpatterns.com/Fragile%20Test.html).
 
 > _Cut-and-Paste code reuse for fixture setup happens often when there is an unnecessary dependency._
 
@@ -26,9 +26,11 @@ While abstracting the Configuration Manager by using an interface is a good idea
 
 As you see below, the test case from the original post has to set up the Configuration provider mock to return values before testing the class. MyService (assuming that it is not a Factory class, which I confirmed from Bappi) is unnecessarily depending on IAppSettings and coupling itself with the configuration name, which really is not its concern. This leads to brittle code and tests!
 
-    [Subject(typeof(MyService))]
-    public class MyServiceTests
-    {
+```csharp
+[Subject(typeof(MyService))]
+public class MyServiceTests
+{
+```
         Establish context = () =>
             {
                 otherDependency = Substitute.For<IMyOtherDependency>();
@@ -50,9 +52,11 @@ As you see below, the test case from the original post has to set up the Configu
 
 Refactoring such code is as easy as removing the dependency on IAppSettings and taking in the value of 'app.name' as the dependency. This removes the interface dependency and requires only the string value to be passed in. Here I am passing in [an anonymous Name](https://blogs.msdn.microsoft.com/ploeh/2008/11/17/anonymous-variables/), as the value is not of concern for this test.
 
-    [Subject(typeof(MyService))]
-    public class MyServiceTests
-    {
+```csharp
+[Subject(typeof(MyService))]
+public class MyServiceTests
+{
+```
         Establish context = () =>
             {
                 otherDependency = Substitute.For<IMyOtherDependency>();

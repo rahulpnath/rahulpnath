@@ -3,18 +3,20 @@ title: "Don't Let Entity Framework Fool Your Constructors!"
 slug: "dont-let-ef-fool-your-constructors"
 date: "2020-04-01T00:00:00.000Z"
 feature_image: "/images/coding.jpg"
-tags: []
+tags: ["Programming"]
 ---
 
-In the previous post, [Back To Basics: Constructors and Enforcing Invariants](__GHOST_URL__/blog/constructor-and-constraints/), we saw the importance of having well-defined constructors and how they help us maintain invariants. Most projects I work on use Entity Framework for the database interactions. We usually have the same Domain Model mapped to the database structure using the [Fluent API Configuration](https://www.learnentityframeworkcore.com/configuration/fluent-api). The configurations help keep the Domain Model agnostic of the database dependencies and mappings. The fluent configurations "act as a DTO class without needing to define one explicitly" and keeps the Domain classes 'clean'.
+In the previous post, [Back To Basics: Constructors and Enforcing Invariants](/posts/constructor-and-constraints/), we saw the importance of having well-defined constructors and how they help us maintain invariants. Most projects I work on use Entity Framework for the database interactions. We usually have the same Domain Model mapped to the database structure using the [Fluent API Configuration](https://www.learnentityframeworkcore.com/configuration/fluent-api). The configurations help keep the Domain Model agnostic of the database dependencies and mappings. The fluent configurations "act as a DTO class without needing to define one explicitly" and keeps the Domain classes 'clean'.
 
-One thing I notice across projects is the class Constructors do not represent all the states that an object can take. It is not possible to create all states that an object can be in using the constructor. Let us look into the Quote class below for an example. It has the following [invariants enforced by the constructor](__GHOST_URL__/blog/constructor-and-constraints/).
+One thing I notice across projects is the class Constructors do not represent all the states that an object can take. It is not possible to create all states that an object can be in using the constructor. Let us look into the Quote class below for an example. It has the following [invariants enforced by the constructor](/posts/constructor-and-constraints/).
 
 *   A Quote must have a Customer
 *   A newly created quote always starts in Draft Status
 
-    public class Quote
-    {
+```csharp
+public class Quote
+{
+```
         public Guid Id { get; private set; }
         public QuoteStatus Status { get; private set; }
         public Customer Customer { get;}
@@ -52,17 +54,21 @@ You can add a phone to a Quote, open the Quote, and many more such actions (you 
 
 Below is a sample usage of this class to create and open a Quote within a console application. A new context mimics a new Controller endpoint, in case of a Web application. The below works as expected and allows us to create, add a phone to the Quote.
 
-    var quoteId = Guid.NewGuid();
-    using (var context = new QuoteContext(optionsBuilder.Options))
-    { // Create a New Draft Quote
+```csharp
+var quoteId = Guid.NewGuid();
+using (var context = new QuoteContext(optionsBuilder.Options))
+{ // Create a New Draft Quote
+```
         var customer = new Customer("Rahul", "rahul@rahul.com", "123 Fake Address");
         var quote = new Quote(quoteId, customer);
         context.Quotes.Add(quote);
         context.SaveChanges();
     }
     
-    using (var context = new QuoteContext(optionsBuilder.Options))
-    { // Add Phone to the Quote
+```csharp
+using (var context = new QuoteContext(optionsBuilder.Options))
+{ // Add Phone to the Quote
+```
         var quote = context.Quotes.First(a => a.Id == quoteId);
         var phone = new MobilePhone("IPhone", "X", 1000.00m);
         quote.UpdatePhone(phone);
@@ -75,8 +81,10 @@ EF Core and its Reflection Magic
 
 With a phone attached to the Quote, we can now Open the Quote as shown below.
 
-    using (var context = new QuoteContext(optionsBuilder.Options))
-    { // Open quote
+```csharp
+using (var context = new QuoteContext(optionsBuilder.Options))
+{ // Open quote
+```
         var quote = context.Quotes.First(a => a.Id == quoteId);
         quote.OpenQuote();
         context.SaveChanges();
@@ -96,9 +104,11 @@ EF Magic Makes Tests Fragile
 
 Below is a test to verify that calling _OpenQuote_, sets the Quote to Open Status. However, note that we have to call the _UpdatePhone_ method to update the Quote object before calling _OpenQuote_.
 
-    [Fact]
-    public void OpenQuoteSetsStatusToOpen()
-    {
+```json
+[Fact]
+public void OpenQuoteSetsStatusToOpen()
+{
+```
         var customer = new Customer(
             "Rahul", "rahul@rahul.com", "123 Fake Address");
         var quote = new Quote(Guid.NewGuid(), customer);
@@ -120,8 +130,10 @@ To fix this, we need to add more constructors to Quote class that allows us to c
     public Quote(Guid id, Customer customer)
         : this(id, customer, MobilePhone.Empty, QuoteStatus.Draft) { }
     
-    public Quote(Guid id, Customer customer, MobilePhone phone, QuoteStatus status)
-    {
+```csharp
+public Quote(Guid id, Customer customer, MobilePhone phone, QuoteStatus status)
+{
+```
         Id = id;
         Customer = customer ?? throw new ArgumentNullException(nameof(customer));
         Phone = phone ?? throw new ArgumentNullException(nameof(phone));
@@ -135,9 +147,11 @@ To fix this, we need to add more constructors to Quote class that allows us to c
 
 We can now rewrite the test to use the new constructor. We don't need to call the _UpdatePhone_ method here to get the Quote in the correct state.
 
-    [Fact]
-    public void OpenQuoteSetsStatusToOpen()
-    {
+```json
+[Fact]
+public void OpenQuoteSetsStatusToOpen()
+{
+```
         var customer = new Customer(
             "Rahul", "rahul@rahul.com", "123 Fake Address");
         var phone = new MobilePhone("IPhone", "X", 1000.00m);

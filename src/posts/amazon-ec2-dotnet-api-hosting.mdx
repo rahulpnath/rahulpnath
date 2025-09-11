@@ -3,7 +3,9 @@ title: "Deploying a .NET Web API on Amazon EC2: A Step-by-Step Guide"
 slug: "amazon-ec2-dotnet-api-hosting"
 date: "2024-07-24T07:05:54.000Z"
 feature_image: "/images/EC2-ASP-NET.png"
-tags: []
+tags: ["AWS","EC2"]
+excerpt: "Let's learn how to leverage Amazon EC2 to host your .NET applications. In this post, we will learn how to create an EC2 instance, set it up with .NET runtime, upload your .NET  application, and run it from there."
+
 ---
 
 Amazon EC2, or Elastic Compute Cloud, provides on-demand, scalable computing capacity in the cloud.
@@ -23,7 +25,7 @@ In this post, we will dive into
 
 By the end of this blog post, you'll understand how to leverage AWS EC2 to host your .NET 8 Web API application.
 
-Thank you AWS for sponsoring this post in the [AWS Series](__GHOST_URL__/blog/tag/aws/).
+Thank you AWS for sponsoring this post in the [AWS Series](/posts/tag/aws/).
 
 Creating An EC2 Instance
 ------------------------
@@ -100,16 +102,20 @@ Only the ASP.NET Core Runtime is required to run a .NET application, in this cas
 
 You can use `wget` to get the installable and set up the dotnet version. I used the code below to download, extract the runtime into a folder, and set up the dotnet environment variables.
 
-    wget https://download.visualstudio.microsoft.com/download/pr/06cbb934-ef54-4627-8848-a24a879f2130/52d4247944cee754ec8f4fd617d502a6/aspnetcore-runtime-8.0.7-linux-x64.tar.gz
-    
-    mkdir -p $HOME/dotnet && tar zxf aspnetcore-runtime-8.0.7-linux-x64.tar.gz -C $HOME/dotnet
-    export DOTNET_ROOT=$HOME/dotnet
-    export PATH=$PATH:$HOME/dotnet
+
+```bash
+wget https://download.visualstudio.microsoft.com/download/pr/06cbb934-ef54-4627-8848-a24a879f2130/52d4247944cee754ec8f4fd617d502a6/aspnetcore-runtime-8.0.7-linux-x64.tar.gz
+mkdir -p $HOME/dotnet && tar zxf aspnetcore-runtime-8.0.7-linux-x64.tar.gz -C $HOME/dotnet
+export DOTNET_ROOT=$HOME/dotnet
+export PATH=$PATH:$HOME/dotnet
+```
 
 If you want the environment variables to persist through multiple sessions, write it to the bash\_profile as shown below.
 
-    echo 'export DOTNET_ROOT=$HOME/dotnet' >> .bash_profile
-    echo 'export PATH=$PATH:$HOME/dotnet' >> .bash_profile
+```bash
+echo 'export DOTNET_ROOT=$HOME/dotnet' >> .bash_profile
+echo 'export PATH=$PATH:$HOME/dotnet' >> .bash_profile
+```
 
 Run `dotnet --list-runtimes` to see the installed runtimes on the EC2 machine.
 
@@ -128,15 +134,20 @@ Deployment should be done using a build/deploy pipeline in a real-world scenario
 
 Publish your dotnet application (for the target OS, in this case, Linux since the EC2 instance runs that), navigate to the folder, and use the `scp` command to copy files to the EC2 instance over SSH.
 
-    dotnet new webapi --name hello-world-ec2  
-    dotnet publish -o publish -os linux
-    
-    scp -i .\myec2key.pem -r .\hello-world-ec2\publish\* \\ 
-         ec2-user@ec2-18-234-182-37.compute-1.amazonaws.com:~/hello-world-ec2
+```powershell
+dotnet new webapi --name hello-world-ec2  
+dotnet publish -o publish -os linux
+
+scp -i .\myec2key.pem -r .\hello-world-ec2\publish\* \\ 
+     ec2-user@ec2-18-234-182-37.compute-1.amazonaws.com:~/hello-world-ec2
+```
 
 To run the application, connect to your EC2 instance again and navigate to the 'hello-world-ec2' folder, where we copied and run the dotnet application.
 
-    dotnet hello-world-ec2.dll --urls "http://:5000;https://:5001"
+
+```powershell
+dotnet hello-world-ec2.dll --urls "http://:5000;https://:5001"
+```
 
 The above command runs our .NET Web API on ports 5000 and 5001.
 

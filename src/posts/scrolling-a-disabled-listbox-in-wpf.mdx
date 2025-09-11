@@ -3,7 +3,7 @@ title: "Scrolling a Disabled Listbox in WPF"
 slug: "scrolling-a-disabled-listbox-in-wpf"
 date: "2009-08-06T04:33:00.000Z"
 feature_image: ""
-tags: []
+tags: ["Dotnet"]
 ---
 
 Recently I had a requirement when developing an application,where i needed a listbox which was to be disabled but yet can be scrolled,so that all the contents in it was visible.Applying the property,IsEnabled=False makes the whole listbox disabled even disabling the scroll. I just found out a way around this.I created a custom listbox(MyScrollableListbox) with a property IsItemsEnabled.Setting this property to true,gives the normal listbox behaviour.When set to false only the ItemsPresenter of the listbox is disabled,so that scrolling is possible

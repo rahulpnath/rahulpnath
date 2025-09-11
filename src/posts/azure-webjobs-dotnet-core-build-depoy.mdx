@@ -3,7 +3,7 @@ title: "How To Continuously Deploy Your .NET Core Azure WebJobs"
 slug: "azure-webjobs-dotnet-core-build-depoy"
 date: "2020-06-29T00:00:00.000Z"
 feature_image: "/images/devops_webjob.jpg"
-tags: []
+tags: ["DevOps","Azure"]
 excerpt: "A step-by-step guide to continuously deploying .NET Core Azure WebJobs, including setup, SDK usage, and integration with Azure App Service for automated deployments."
 ---
 
@@ -18,8 +18,10 @@ Set Up Azure WebJob
 
 All you need to do is create a .NET Core Console application (from the Visual Studio templates), add the _[Microsoft.Azure.WebJobs](https://www.nuget.org/packages/Microsoft.Azure.WebJobs)_ and _[Microsoft.Azure.WebJobs.Extensions](https://www.nuget.org/packages/Microsoft.Azure.WebJobs.Extensions/)_ NuGet packages. Update the Program.cs file in the .NET Console Application to use the HostBuilder as shown. If you want to log to the console, also add the _[Microsoft.Extensions.Logging.Console](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Console/)_ NuGet package.
 
-    static async Task Main()
-    {
+```csharp
+static async Task Main()
+{
+```
         var builder = new HostBuilder();
     #if DEBUG
         builder.UseEnvironment("development");
@@ -54,8 +56,10 @@ Triggers define how a function is invoked, and a function must have exactly one 
 
 > [Check this article](https://docs.microsoft.com/en-us/azure/azure-functions/functions-compare-logic-apps-ms-flow-webjobs#compare-functions-and-webjobs) for the full differences between Azure WebJobs and Azure Functions.
 
-    public class ProcessMessageFunction
-    {
+```csharp
+public class ProcessMessageFunction
+{
+```
         private QueueClient _queueClient;
         public ProcessMessageFunction(IConfiguration configuration)
         {

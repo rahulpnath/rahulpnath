@@ -3,7 +3,7 @@ title: "How to Effectively Manage Data Lifetime with DynamoDB Time to Live"
 slug: "dynamodb-time-to-live-dotnet"
 date: "2023-12-05T10:27:38.000Z"
 feature_image: "/images/DynamoDB-TTL.png"
-tags: []
+tags: ["AWS","DynamoDB"]
 ---
 
 Amazon DynamoDB Time to Live (TTL) is a feature that allows you to manage the expiration of items in a DynamoDB table automatically. It simplifies removing outdated or stale data by enabling you to specify a timestamp attribute in your items, indicating when the items should expire.
@@ -16,7 +16,7 @@ In this blog post, let’s learn how you can enable DynamoDB Time To Live on you
 
 We will be using .NET for the application code. However, the concepts still apply to other programming languages.
 
-_This article is sponsored by AWS and is part of my_ [_AWS Series_](__GHOST_URL__/tag/aws/)_._
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
 
 Enable Time to LIve on DynamoDB Table
 -------------------------------------
@@ -49,16 +49,20 @@ Below, I have the property `Ttl` on the `WeatherForecastTable` item. For backwar
 
 To map to the appropriate casing as specified in the TTL settings for the Table, I am using the `DynamoDBProperty` attribute to explicitly specify the column name to map to in the DynamoDB table item.
 
-    [HttpPost("post-weather-forecast-table-ttl")]
-    public async Task PostWeatherForecastWithTTL(WeatherForecastTable data)
-    {
+```csharp
+[HttpPost("post-weather-forecast-table-ttl")]
+public async Task PostWeatherForecastWithTTL(WeatherForecastTable data)
+{
+```
         data.Date = data.Date.Date;
         data.Ttl = DateTimeOffset.UtcNow.AddMinutes(1).ToUnixTimeSeconds();
         await _dynamoDbContext.SaveAsync(data);
     }
     
-    public class WeatherForecastTable
-    {
+```csharp
+public class WeatherForecastTable
+{
+```
         public string CityName { get; set; }
         public DateTime Date { get; set; }
         public string TemperatureC { get; set; }
@@ -117,9 +121,11 @@ It uses the `DateTimeOffset.UtcNow` to calculate the current Unix epoch time and
 
 Since, in our case, the Time to Live property name is `ttl`, which is also a reserved keyword; we need to pass in the explicit property name as a `ExpressionAttributeName`to pass in the explicitly
 
-    [HttpGet("city-name-low-level-expressions-ttl")]
-    public async Task<IEnumerable<WeatherForecastTable>> GetAllForCityLowLevelExpressionsTtl(string cityName, long? ttl)
-    {
+```csharp
+[HttpGet("city-name-low-level-expressions-ttl")]
+public async Task<IEnumerable<WeatherForecastTable>> GetAllForCityLowLevelExpressionsTtl(string cityName, long? ttl)
+{
+```
         ttl = ttl ?? DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         var queryRequest = new QueryRequest()
         {
@@ -167,7 +173,7 @@ DynamoDB Streams capture a time-ordered sequence of events in any DynamoDB table
 
 ![](/images/aws-lambda-dynamodb-streams-trigger-dotnet.jpg)
 
-](__GHOST_URL__/blog/aws-dynamodb-streams-lambda-triggers-dotnet/)
+](/posts/aws-dynamodb-streams-lambda-triggers-dotnet/)
 
 Items that are deleted by the TTL processes have the following field values.
 

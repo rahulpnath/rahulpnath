@@ -3,10 +3,10 @@ title: "Going Serverless on AWS For The .NET Developer: How To Easily Get Starte
 slug: "aws-serverless-application"
 date: "2021-04-16T00:00:00.000Z"
 feature_image: "/images/aws_serverless.jpg"
-tags: []
+tags: ["AWS"]
 ---
 
-[AWS Lambda's](__GHOST_URL__/blog/aws-lambda-net-core/) are the stepping stones to building a Serverless application in AWS.
+[AWS Lambda's](/posts/aws-lambda-net-core/) are the stepping stones to building a Serverless application in AWS.
 
 A Serverless Application in AWS is a combination of Lambda functions, event sources, and other resources that work together to perform tasks. It is more than just a Lambda function; it can include additional resources such as APIs, databases, and event source mappings.
 
@@ -29,7 +29,7 @@ To create a new application, choose the '_AWS Serverless Application (.NET Core 
 
 Select the '_Empty Serverless Application_' blueprint to create a Serverless application with just one function.
 
-As shown below, it contains the same set of files as we saw in the [previous post on getting started with AWS Lambda](__GHOST_URL__/blog/aws-lambda-net-core/) with the addition of one new file `serverless.template` ;which is the AWS SAM template file.
+As shown below, it contains the same set of files as we saw in the [previous post on getting started with AWS Lambda](/posts/aws-lambda-net-core/) with the addition of one new file `serverless.template` ;which is the AWS SAM template file.
 
 ![AWS Serverless Application Empty blueprint application default items](/images/aws_serverless_template_default_items.jpg)
 
@@ -109,9 +109,11 @@ The above scenario defines the Lambda with _AWSLambdaBasicExecutionRole_ role an
 
 The Lambda maps to the `Get` method within the `Functions` class.
 
-    [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
-    namespace empty
-    {
+```json
+[assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
+namespace empty
+{
+```
         public class Functions
         {
             public APIGatewayProxyResponse Get(
@@ -186,7 +188,7 @@ Learn how to get started with AWS DynamoDB with .NET Core by updating the defaul
 
 ![](/images/aws_dynamodb.jpg)
 
-](__GHOST_URL__/blog/aws-dynamodb-net-core)
+](/posts/aws-dynamodb-net-core)
 
 As with the Empty template we created earlier, this one has a `serverless.template` file which defines all the resources (AWS Lambda, DynamoDB, etc.) required for this application.
 
@@ -194,11 +196,15 @@ It also has additional `Parameters` and `Condition` defined in the template to d
 
 ![AWS Serverless Publish Template Parameters dialog](/images/aws_serverless_publish_template_parameters.jpg)
 
+```bash
 Once published, we can use the API URL to interact with the Blog Items in the DynamoDB table. You can use curl or [Postman](https://www.postman.com/) etc. to make the `PUT` request to add items to it.
+```
 
-    curl --location --request PUT '<API URL>' \
-    --header 'Content-Type: application/json' \
-    --data-raw '{"Name": "AWS Serverless", "Content": "This is a test blog"}'
+```bash
+curl --location --request PUT '<API URL>' \
+--header 'Content-Type: application/json' \
+--data-raw '{"Name": "AWS Serverless", "Content": "This is a test blog"}'
+```
     
 
 The other API endpoints can retrieve and delete items if required.

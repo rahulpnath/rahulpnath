@@ -3,7 +3,7 @@ title: "BatchGetItem Operations In DynamoDB Using .NET"
 slug: "dynamodb-batchgetitem-dotnet"
 date: "2023-08-11T02:42:39.000Z"
 feature_image: "/images/DynamoDB-BatchGet.png"
-tags: []
+tags: ["AWS","DynamoDB"]
 ---
 
 Amazon DynamoDB's [BatchGetItem](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html) functionality allows you to retrieve multiple items from one or more DynamoDB tables using a single API call.
@@ -14,7 +14,7 @@ In this blog post, let’s learn how to retrieve items in a batch from DynamoDB 
 
 <iframe src="https://www.youtube.com/embed/mrf\_E4umaAg?feature=oembed" />
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 We will learn, how to
 
@@ -43,9 +43,11 @@ The `DynamoDBContext` provides the `CreateBatchGet` generic function, that takes
 
 The below API method, taken in a list of primary key values (hash, range key) as a `KeyValuePair`.
 
-    [HttpPost("get-batch-dynamodbcontext-one-table")]
-    public async Task<List<WeatherForecast>> GetBatch(List<KeyValuePair<string,DateTime>> keys)
-    {
+```csharp
+[HttpPost("get-batch-dynamodbcontext-one-table")]
+public async Task<List<WeatherForecast>> GetBatch(List<KeyValuePair<string,DateTime>> keys)
+{
+```
         var batchGet = _dynamoDbContext.CreateBatchGet<WeatherForecast>();
         foreach (var key in keys)
             batchGet.AddKey(key.Key, key.Value);
@@ -73,15 +75,17 @@ The DynamoDB .NET SDK by default uses conventions to determine the Table name. H
 
 ![](/images/DynamoDB-Table-Name-Conventions.png)
 
-](__GHOST_URL__/blog/dynamodb-net-table/)
+](/posts/dynamodb-net-table/)
 
 To retrieve items from multiple tables, we need to create multiple instances of the `BatchGet` type using the appropriate .NET Types.
 
 The below code invokes the `CreateBatchGet` function using two different types, representing two different tables in DynamoDB.
 
-    [HttpPost("get-batch-dynamodbcontext-multiple-table")]
-    public async Task<object> GetBatchMultiTable(List<KeyValuePair<string,DateTime>> keys)
-    {
+```csharp
+[HttpPost("get-batch-dynamodbcontext-multiple-table")]
+public async Task<object> GetBatchMultiTable(List<KeyValuePair<string,DateTime>> keys)
+{
+```
         var batchGet1 = _dynamoDbContext.CreateBatchGet<WeatherForecast>();
         var batchGet2 = _dynamoDbContext.CreateBatchGet<WeatherForecastTable>();
         foreach (var key in keys)
@@ -114,8 +118,10 @@ The `DynamoDBContext` also has a function `CreateMultiTableBatchGet` that can be
 
 Instead of using the `Combine` method, you can call the `CreateMultiTableBatchGet` and pass in the `BatchGet` items as params.
 
-    batches = _dynamoDbContext.CreateMultiTableBatchGet(batchGet1, batchGet2);
-    await batches.ExecuteAsync();
+```csharp
+batches = _dynamoDbContext.CreateMultiTableBatchGet(batchGet1, batchGet2);
+await batches.ExecuteAsync();
+```
 
 Batch Fetch Using LowLevel API (AmazonDynamoDBClient)
 -----------------------------------------------------
@@ -138,9 +144,11 @@ The `RequestItems` takes the list of table names that we are querying from and t
 
 Below I loop through the `keys` to fetch from the `WeatherForecast` table and add the hash and range keys to identify each item to be retrieved from the table.
 
-    [HttpPost("get-batch-dynamodbclient-one-table")]
-    public async Task<List<WeatherForecast>> GetBatchDynamoDbClient(Dictionary<string, DateTime> keys)
-    {
+```csharp
+[HttpPost("get-batch-dynamodbclient-one-table")]
+public async Task<List<WeatherForecast>> GetBatchDynamoDbClient(Dictionary<string, DateTime> keys)
+{
+```
         var batchGetItemRequest = new BatchGetItemRequest();
         batchGetItemRequest.RequestItems = new Dictionary<string, KeysAndAttributes>()
         {
@@ -172,9 +180,11 @@ To perform a batch get on multiple tables using the Low-Level `AmazonDynamoDBCli
 
 The below request fetches the same items from both `WeatherForecast` and `WeatherForecastTable` in DynamoDB.
 
-    [HttpPost("get-batch-dynamodbclient-multi-table")]
-    public async Task<List<WeatherForecast>> GetBatchDynamoDbClientMulti(Dictionary<string, DateTime> keys)
-    {
+```csharp
+[HttpPost("get-batch-dynamodbclient-multi-table")]
+public async Task<List<WeatherForecast>> GetBatchDynamoDbClientMulti(Dictionary<string, DateTime> keys)
+{
+```
         var batchGetItemRequest = new BatchGetItemRequest();
         batchGetItemRequest.RequestItems = new Dictionary<string, KeysAndAttributes>()
         {

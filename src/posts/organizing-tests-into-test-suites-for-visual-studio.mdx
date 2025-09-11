@@ -3,7 +3,7 @@ title: "Organizing Tests into Test Suites for Visual Studio"
 slug: "organizing-tests-into-test-suites-for-visual-studio"
 date: "2016-01-18T22:51:03.000Z"
 feature_image: "/images/vs_testExplorer_traits.png"
-tags: []
+tags: ["Testing","Productivity"]
 ---
 
 While working with large code base, that has a lot of tests (unit, integration, acceptance etc), running all of them every time we make a small change (if you are doing TDD or just using build for feedback) takes a lot of time. Organizing tests into different test suites, making it easier to run as required by the current context, is handy in such cases.
@@ -25,10 +25,12 @@ Limitation with the above approach is that it depends on developers to put these
 
 The [Task Runner Explorer](https://visualstudiogallery.msdn.microsoft.com/8e1b4368-4afb-467a-bc13-9650572db708) (TRE) provides custom task runner support to Visual Studio, allowing to run grunt/gulp task or target inside Visual Studio. Grunt/Gulp has packages for most of the unit testing frameworks, using which different build tasks can be created. To select the tests to execute different conventions can also be used. Below is an example of a gulp task to execute all the c# unit tests in the project.
 
-    var gulp = require('gulp');
-    var xunit = require('gulp-xunit-runner');
-    var xunitConsolePath = 'xunit.console.exe';
-    var unitTestsConvention = ['**/*.Tests.dll'];
+```javascript
+var gulp = require('gulp');
+var xunit = require('gulp-xunit-runner');
+var xunitConsolePath = 'xunit.console.exe';
+var unitTestsConvention = ['**/*.Tests.dll'];
+```
     
     gulp.task('c#UnitTests', function () {
       runTests(unitTestsConvention);

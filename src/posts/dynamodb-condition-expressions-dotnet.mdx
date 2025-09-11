@@ -3,10 +3,10 @@ title: "How to Ensure Data Consistency with DynamoDB Condition Expressions From 
 slug: "dynamodb-condition-expressions-dotnet"
 date: "2023-04-26T18:43:02.000Z"
 feature_image: "/images/DynamoDB-Condition-Expressions.png"
-tags: []
+tags: ["AWS","DynamoDB"]
 ---
 
-_This article is sponsored by AWS and is part of my_ [_AWS Series_](__GHOST_URL__/tag/aws/)_._
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
 
 Condition Expressions allow specifying constraints when writing data to an Amazon DynamoDB table.
 
@@ -36,9 +36,11 @@ When making a Put, Update, or Delete operation on a DynamoDB table, you can pass
 
 Below is an example ConditionExpression, which evaluates to true if the Category property is 'Gadgets' and the Price property is between 20 and 100.
 
-    ConditionExpression = "Category = :cat and (Price between :low and :high)",
-    ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
-    {
+```bash
+ConditionExpression = "Category = :cat and (Price between :low and :high)",
+ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
+{
+```
         {":cat", new AttributeValue("Gadgets") },
         {":low", new AttributeValue(){ N = "20" } },
         {":high", new AttributeValue(){ N = "100" } },
@@ -84,7 +86,7 @@ The High-level API, `DynamoDBContext` does not support specifying condition expr
 
 To pass parameters as part of the `CondtionExpression` we can use the `ExpressionAttributeValues` and to pass reserve keywords, we can use the `ExpressionAttributeNames` property.
 
-We saw this earlier when exploring the [different ways to query data from Amazon DynamoDB using .NET](__GHOST_URL__/blog/dynamodb-querying-dotnet/).
+We saw this earlier when exploring the [different ways to query data from Amazon DynamoDB using .NET](/posts/dynamodb-querying-dotnet/).
 
 [
 
@@ -96,7 +98,7 @@ Querying is an essential operation in DynamoDB. It allows you to filter and sele
 
 ![](/images/DynamoDB-Querying-new.png)
 
-](__GHOST_URL__/blog/dynamodb-querying-dotnet/)
+](/posts/dynamodb-querying-dotnet/)
 
 Let's see a few examples using`ConditionExpression` from .NET applications.
 
@@ -106,9 +108,11 @@ The below example shows an example of `PutItemRequest` using Condition Expressio
 
 When updating items, to avoid overwriting stale data, we can check the `LastUpdated` date time property is greater than what's currently in the database item.
 
-    [HttpPost("add-if-latest")]
-    public async Task PostIfLatest(WeatherForecast data)
-    {
+```csharp
+[HttpPost("add-if-latest")]
+public async Task PostIfLatest(WeatherForecast data)
+{
+```
         data.LastUpdated = data.Date;
         data.Date = data.Date.Date;
     
@@ -132,9 +136,11 @@ Using the built-in functions in the ConditionExpression is also very similar.
 
 The below PUT request adds a new item only if no existing item has the same primary key (CityName and Date).
 
-    [HttpPost("add-if-not-exists")]
-    public async Task PostIfNotExists(WeatherForecast data)
-    {
+```csharp
+[HttpPost("add-if-not-exists")]
+public async Task PostIfNotExists(WeatherForecast data)
+{
+```
         data.Date = data.Date.Date;
         var item = Document.FromJson(JsonSerializer.Serialize(data));
         await _amazonDynamoDbClient.PutItemAsync(new PutItemRequest()
@@ -159,9 +165,11 @@ Since `Date` is a reserved keyword used in the `ConditionExpression` we specify 
 
 In the below example, we check if the item we are deleting has a temperature greater than a specific limit - in this case, 20.
 
-    [HttpDelete("delete-if-gt-20")]
-    public async Task DeleteIfGreaterThan20(string cityName, string dateTime)
-    {
+```csharp
+[HttpDelete("delete-if-gt-20")]
+public async Task DeleteIfGreaterThan20(string cityName, string dateTime)
+{
+```
         await _amazonDynamoDbClient.DeleteItemAsync(new DeleteItemRequest()
         {
             TableName = nameof(WeatherForecast),
@@ -187,9 +195,11 @@ Updating items also benefit from using Condition expressions.
 
 I want to update the Summary text on `WeatherForecastData` only if a Summary is empty or does not exist and if the Temperature is greater than a specific limit.
 
-    [HttpPost("update-summary-if-gt")]
-    public async Task UpdateIfLatest(string cityName, string dateTime, int limit, string summary)
-    {
+```csharp
+[HttpPost("update-summary-if-gt")]
+public async Task UpdateIfLatest(string cityName, string dateTime, int limit, string summary)
+{
+```
         await _amazonDynamoDbClient.UpdateItemAsync(new UpdateItemRequest()
         {
             TableName = nameof(WeatherForecast),

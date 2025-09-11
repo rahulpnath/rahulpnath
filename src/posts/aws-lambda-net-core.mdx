@@ -3,14 +3,14 @@ title: "AWS Lambda For The .NET Developer: How To Easily Get Started"
 slug: "aws-lambda-net-core"
 date: "2021-03-17T00:00:00.000Z"
 feature_image: "/images/aws_lambda.jpg"
-tags: []
+tags: ["AWS","Lambda"]
 ---
 
 Early this year, I joined [OFX.com](http://ofx.com/) and have been working with the [Global Currency Account](https://www.ofx.com/en-us/business/global-currency-account/) team.
 
 The company is entirely on AWS Cloud Service. Much of my experience with Cloud platforms has been with Microsoft Azure (where I am also an [MVP](https://mvp.microsoft.com/en-us/PublicProfile/5003875?fullName=Rahul%20Nath)).
 
-This calls for some [new learning](__GHOST_URL__/blog/ultralearning-book-summary/), and I am excited about it. In this post, I explore AWS Lambda for anyone just getting started with it.
+This calls for some [new learning](/posts/ultralearning-book-summary/), and I am excited about it. In this post, I explore AWS Lambda for anyone just getting started with it.
 
 [
 
@@ -91,11 +91,15 @@ The default `Function` class looks like below, with a method `FunctionHandler` t
 
     using Amazon.Lambda.Core;
     
-    // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
-    [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
+```json
+// Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
+[assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
+```
     
-    namespace AWSLambda1
-    {
+```csharp
+namespace AWSLambda1
+{
+```
         public class Function
         {
     
@@ -144,8 +148,10 @@ Depending on the trigger, we need to change the signature of the `FunctionHandle
 
 There are [separate Nuget packages available](https://github.com/aws/aws-lambda-dotnet/tree/master/Libraries/src) for each of these services that can trigger a lambda. Below is an example of handling [SQS Events](https://github.com/aws/aws-lambda-dotnet/tree/master/Libraries/src/Amazon.Lambda.SQSEvents) in an AWS Lambda.
 
-    public class Function
-    {
+```csharp
+public class Function
+{
+```
         public string Handler(SQSEvent sqsEvent)
         {
             foreach (var record in sqsEvent.Records)

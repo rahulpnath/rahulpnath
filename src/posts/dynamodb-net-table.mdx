@@ -3,7 +3,7 @@ title: ".NET DynamoDB SDK: Understanding Table Name Conventions and DynamoDBTabl
 slug: "dynamodb-net-table"
 date: "2023-07-12T02:06:51.000Z"
 feature_image: "/images/DynamoDB-Table-Name-Conventions.png"
-tags: []
+tags: ["AWS","DynamoDB"]
 ---
 
 The [.NET DynamoDB SDK](https://www.nuget.org/packages/AWSSDK.DynamoDBv2) by default uses conventions to resolve Table Names.
@@ -14,7 +14,7 @@ However, there are ways you can customize this name and override it based on you
 
 <iframe src="https://www.youtube.com/embed/Ib0rzQHV7hE?feature=oembed" />
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 In this blog post, let's explore
 
@@ -34,7 +34,7 @@ Learn how to get started with AWS DynamoDB with .NET Core by updating the defaul
 
 ![](/images/aws_dynamodb.jpg)
 
-](__GHOST_URL__/blog/aws-dynamodb-net-core/)
+](/posts/aws-dynamodb-net-core/)
 
 Default Table Name Convention Used By DynamoDB .NET
 ---------------------------------------------------
@@ -86,8 +86,10 @@ The below code configures it to '_test\__' when the application is running in th
     var dynamoDBContext = new DynamoDBContext(
         dynamoDbClient, new DynamoDBContextConfig() {TableNamePrefix = "test_"});
     
-    builder.Services.AddSingleton<IAmazonDynamoDB>(dynamoDbClient);
-    builder.Services.AddSingleton<IDynamoDBContext>(dynamoDBContext);
+```typescript
+builder.Services.AddSingleton<IAmazonDynamoDB>(dynamoDbClient);
+builder.Services.AddSingleton<IDynamoDBContext>(dynamoDBContext);
+```
 
 The prefix value by itself can come from the [application configuration file](https://youtu.be/5GlgHV_12-k).
 
@@ -118,9 +120,11 @@ In cases where you want to use a different name for the table outside of the def
 
 The [DynamoDBTable attribute](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DeclarativeTagsList.html#w126aac18c11c23c33c23) marks a class and specifies the name to be used by default instead of the one via default convention.
 
-    [DynamoDBTable("WeatherForecastTable")]
-    public class WeatherForecastTable
-    {
+```csharp
+[DynamoDBTable("WeatherForecastTable")]
+public class WeatherForecastTable
+{
+```
        public string CityName { get; set; }
        public DateTime Date { get; set; }
        ...

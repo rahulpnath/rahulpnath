@@ -3,7 +3,9 @@ title: "Why You Should Avoid Command Handlers Calling Other Commands?"
 slug: "avoid-commands-calling-commands"
 date: "2021-01-11T00:00:00.000Z"
 feature_image: "/images/sticky_notes.jpg"
-tags: []
+tags: ["Programming"]
+excerpt: ""
+
 ---
 
 One of the patterns that I keep coming back to when building ASP NET Applications is the Command Query Separation (CQS) pattern. Fundamentally, the pattern separates the code to read (Query) and the write (Command) to the data store.
@@ -20,8 +22,9 @@ Let's see an example below of a Command handler for creating a new Order in an a
 
 The `CreateOrderCommand` is issued from the UI to create a new Order. The `CreateOrderHandler` handles this command and creates a new Order in the database, as shown below.
 
-    public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Unit>
-    {
+```csharp
+public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Unit>
+{
         private readonly IMediator _mediator;
         private readonly OrderContext _context;
     
@@ -42,7 +45,7 @@ The `CreateOrderCommand` is issued from the UI to create a new Order. The `Creat
             return Unit.Value;
         }
     }
-    
+``` 
 
 The Problem
 -----------
@@ -51,20 +54,22 @@ Now let's say that when a new Order is created, we need to send a notification t
 
 The easiest way to implement this, one might think, is to add in two more commands - `SendShippingNotificationCommand` and `SendOrderEmailCommand` and invoke these commands from the `CreatedOrderHandler` as shown below.
 
-    public async Task<Unit> Handle(
-        CreateOrderCommand request, CancellationToken cancellationToken)
-    {
-        var order = request.ToOrder(rep);
-    
-        _context.Order.Add(order);
-        await _context.SaveChangesAsync();
-    
-        await _mediator.Send(new SendShippingNotificationCommand(order.Id));
-        await _mediator.Send(new SendOrderEmailCommand(order.Id));
-    
-        return Unit.Value;
-    }
-    
+
+```csharp
+public async Task<Unit> Handle(
+    CreateOrderCommand request, CancellationToken cancellationToken)
+{
+    var order = request.ToOrder(rep);
+
+    _context.Order.Add(order);
+    await _context.SaveChangesAsync();
+
+    await _mediator.Send(new SendShippingNotificationCommand(order.Id));
+    await _mediator.Send(new SendOrderEmailCommand(order.Id));
+
+    return Unit.Value;
+}
+```
 
 It works for now. As we build the application, let's say there are other code ways to create a new Order. e.g.
 
@@ -88,8 +93,9 @@ The problem with the above code is that it is coupling the action and reaction o
 
 When an order is created, we can publish an Event - `OrderCreatedEvent`
 
-    public class OrderCreatedEvent: INotification
-    {
+```csharp
+public class OrderCreatedEvent: INotification
+{
         public OrderCreatedEvent(int id)
         {
             Id = id;
@@ -98,38 +104,41 @@ When an order is created, we can publish an Event - `OrderCreatedEvent`
         public int Id { get; }
     }
     
-
+```
 The handlers where an Order is created is no longer concerned about sending a shipping notification or email or anything else. All it does is to publish an event. This event is a Domain Event and is of importance to the business too.
 
 If you notice the business talk, it will be When an Order is created, send a notification, an email, etc. So modeling our code as well around the event helps decouple these activities.
 
-    public async Task<Unit> Handle(
-        CreateOrderCommand request, CancellationToken cancellationToken)
-    {
-        var order = request.ToOrder(rep);
-    
-        _context.Order.Add(order);
-        await _context.SaveChangesAsync();
-    
-        await _mediator.Publish(new OrderCreatedEvent(order.Id));
-    
-          return Unit.Value;
-    }
-    
+
+```csharp
+public async Task<Unit> Handle(
+    CreateOrderCommand request, CancellationToken cancellationToken)
+{
+    var order = request.ToOrder(rep);
+
+    _context.Order.Add(order);
+    await _context.SaveChangesAsync();
+
+    await _mediator.Publish(new OrderCreatedEvent(order.Id));
+
+      return Unit.Value;
+}
+```
 
 For these Events, you can create zero or more handlers. The handlers can perform the business processes in reaction to the event.
 
 In the below example, I have a single handler, which then invokes the other actions required when an Order is created.
 
-    public class OrderCreatedEventHandler: INotificationHandler<OrderCreatedEvent>
-    {
+```csharp
+public class OrderCreatedEventHandler: INotificationHandler<OrderCreatedEvent>
+{
         public Task Handle(OrderCreatedEvent orderEvent, CancellationToken cancellationToken)
         {
                 await _mediator.Send(new SendShippingNotificationCommand(order.Id));
                 await _mediator.Send(new SendOrderEmailCommand(order.Id));
         }
     }
-    
+```  
 
 Depending on the application use-case, this can be split into multiple handlers and have each handler perform a specific action. MediatR supports different [Publish strategies](https://github.com/jbogard/MediatR/wiki#publish-strategies) that you can use.
 

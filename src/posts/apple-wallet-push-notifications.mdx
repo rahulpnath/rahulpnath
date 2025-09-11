@@ -3,7 +3,9 @@ title: "Enhancing User Experience: Push Notifications in .NET for Apple Wallet P
 slug: "apple-wallet-push-notifications"
 date: "2023-10-23T04:24:49.000Z"
 feature_image: "/images/Apple-Wallet-Push-Notifications.png"
-tags: []
+tags: ["AWS","Dotnet"]
+excerpt: "Apple Wallet Passes Passes are dynamic and they reflect real-world state. Information in Apple Wallet passes can be dynamically updated. Learn how to use Apple Push Notification Service and Web Service endpoint to keep Wallet Pass updated."
+
 ---
 
 Apple Wallet Passes Passes are dynamic and they reflect real-world state. Information in Apple Wallet passes can be dynamically updated.
@@ -18,7 +20,7 @@ The high-level flow remains the same regardless of whichever programming languag
 
 I will use the Lambda Annotations Framework to build these API endpoints. However, you can use your existing application hosting mechanism for this.
 
-_This article is sponsored by AWS and is part of my [_AWS Series_](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [_AWS Series_](/blog/tag/aws/)._
 
 Updating a Wallet Pass
 ----------------------
@@ -67,7 +69,7 @@ The iOS Wallet app allows users to manage payment cards, boarding passes, ticket
 
 ![](/images/Add-To-Apple-Wallet.png)
 
-](__GHOST_URL__/blog/add-to-apple-wallet-dotnet/)
+](/posts/add-to-apple-wallet-dotnet/)
 
 Below are the 5 different endpoint capabilities that the Apple PassKit Web Service Reference expects from the server implementing the web service.
 
@@ -77,14 +79,19 @@ The Register Device endpoint is `POST` method with the URL format as _`webServi
 
 Below is an API Endpoint using the Lambda Annotations framework
 
-    [LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
-    [HttpApi(LambdaHttpMethod.Post, "/v1/devices/{deviceLibraryIdentifier}/registrations/{passTypeIdentifier}/{serialNumber}")]
-    public async Task RegisterDeviceForPushNotificationForAPass(
+```csharp
+[LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
+[HttpApi(LambdaHttpMethod.Post, "/v1/devices/{deviceLibraryIdentifier}/registrations/{passTypeIdentifier}/{serialNumber}")]
+public async Task RegisterDeviceForPushNotificationForAPass(
+```csharp
         string deviceLibraryIdentifier, string passTypeIdentifier, string serialNumber,
         [FromBody] RegisterRequest pushToken)
-    {
-       // Save Device Registration Info to data store
-    }
+
+```css
+{
+   // Save Device Registration Info to data store
+}
+```
 
 ### Get Passes For Device
 
@@ -94,26 +101,34 @@ The `GetPassesForDevice` method uses the deviceLibraryIdentifier and the `passes
 
 It returns an array of SerialNumber strings that the Apple device then uses to enumerate and call the `GetLatestPass` method on.
 
-    [LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
-    [HttpApi(LambdaHttpMethod.Get, "/v1/devices/{deviceLibraryIdentifier}/registrations/{passTypeIdentifier}")]
-    public async Task<GetPassesForDeviceResponse> GetPassesForDevice(
+```csharp
+[LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
+[HttpApi(LambdaHttpMethod.Get, "/v1/devices/{deviceLibraryIdentifier}/registrations/{passTypeIdentifier}")]
+public async Task<GetPassesForDeviceResponse> GetPassesForDevice(
+```csharp
         string deviceLibraryIdentifier, string passTypeIdentifier, [FromQuery] string passesUpdatedSince, ILambdaContext context)
+
+```csharp
+{
+    var updatedSerialNumbers = await GetPassesUpdatedForDeviceSince(
+               deviceLibraryIdentifier, passesUpdatedSince);
+
+    return new GetPassesForDeviceResponse()
     {
-        var updatedSerialNumbers = await GetPassesUpdatedForDeviceSince(
-                   deviceLibraryIdentifier, passesUpdatedSince);
-    
-        return new GetPassesForDeviceResponse()
-        {
-            SerialNumbers = updatedSerialNumbers,
-            LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString(),
-        };
-    }
-    
-    public class GetPassesForDeviceResponse
-    {
+        SerialNumbers = updatedSerialNumbers,
+        LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString(),
+    };
+}
+```
+```csharp
+public class GetPassesForDeviceResponse
+{
+```csharp
+```code
         public string LastUpdated { get; set; }
         public string[] SerialNumbers { get; set; }
     }
+```
 
 We can use any value for the `LastUpdated` property when returning the result. In the example here I am using the UnixTimeMilliseconds as the value returned.
 
@@ -125,33 +140,38 @@ The Get Latest Pass is a `GET` request to _`webServiceURL``/version``/passes/pa
 
 The `Getpass` endpoint method returns the latest pass information if it has been updated. The endpoint uses the header 'If-Modified-Since' value to determine if the server content is modified or not.
 
-    [LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
-    [HttpApi(LambdaHttpMethod.Get, "/v1/passes/{passTypeIdentifier}/{serialNumber}")]
-    public async Task<APIGatewayHttpApiV2ProxyResponse> GetPass(
+```csharp
+[LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
+[HttpApi(LambdaHttpMethod.Get, "/v1/passes/{passTypeIdentifier}/{serialNumber}")]
+public async Task<APIGatewayHttpApiV2ProxyResponse> GetPass(
+```csharp
         string passTypeIdentifier, string serialNumber,
         [FromHeader(Name = "If-Modified-Since")] string ifModifiedSince, ILambdaContext context)
-    {
-        var pass = await GetPass(serialNumber, passTypeIdentifier);
-    
-        if (DateTimeOffset.TryParse(ifModifiedSince, out var lastUpdated) && lastUpdated < pass.LastUpdated)
-            return new APIGatewayHttpApiV2ProxyResponse()
+
+```csharp
+{
+    var pass = await GetPass(serialNumber, passTypeIdentifier);
+
+    if (DateTimeOffset.TryParse(ifModifiedSince, out var lastUpdated) && lastUpdated < pass.LastUpdated)
+        return new APIGatewayHttpApiV2ProxyResponse()
+        {
+            Body = Convert.ToBase64String(pass.PassContent),
+            IsBase64Encoded = true,
+            StatusCode = (int)HttpStatusCode.OK,
+            Headers = new Dictionary<string, string>
             {
-                Body = Convert.ToBase64String(pass.PassContent),
-                IsBase64Encoded = true,
-                StatusCode = (int)HttpStatusCode.OK,
-                Headers = new Dictionary<string, string>
-                {
-                    { "Content-Type", "application/vnd.apple.pkpass" },
-                    { "Last-Modified", pass.LastUpdated.ToString("o") },
-                    { "Content-Disposition", "attachment; filename=ticket.pkpass; filename*=UTF-8''ticket.pkpass" }
-                }
-            };
-        else
-            return new APIGatewayHttpApiV2ProxyResponse()
-            {
-                StatusCode = (int)HttpStatusCode.NotModified
-            };
-    }
+                { "Content-Type", "application/vnd.apple.pkpass" },
+                { "Last-Modified", pass.LastUpdated.ToString("o") },
+                { "Content-Disposition", "attachment; filename=ticket.pkpass; filename*=UTF-8''ticket.pkpass" }
+            }
+        };
+    else
+        return new APIGatewayHttpApiV2ProxyResponse()
+        {
+            StatusCode = (int)HttpStatusCode.NotModified
+        };
+}
+```
 
 If the pass content is updated it returns the new pass information along with the `Last-Modified` header value, which the Apple Device will send in as the 'If-Modified-Since' header value in the subsequent request.
 
@@ -163,15 +183,19 @@ The Unregister Device for Pass updates is a `DELETE` request to _`webServiceURL
 
 The Unregister Device endpoint is very similar to the Register endpoint, only that it uses the `Delete` Http verb.
 
-    [LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
-    [HttpApi(LambdaHttpMethod.Delete, "/v1/devices/{deviceLibraryIdentifier}/registrations/{passTypeIdentifier}/{serialNumber}")]
-    public async Task UnRegisterDeviceForPushNotificationForAPass(
+```csharp
+[LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
+[HttpApi(LambdaHttpMethod.Delete, "/v1/devices/{deviceLibraryIdentifier}/registrations/{passTypeIdentifier}/{serialNumber}")]
+public async Task UnRegisterDeviceForPushNotificationForAPass(
+```csharp
         string deviceLibraryIdentifier, string passTypeIdentifier, string serialNumber,
         [FromBody] RegisterRequest pushToken)
-    {
-        // Remove Device from the registered list of devices for the Serial Number
-    }
-    
+
+```css
+{
+    // Remove Device from the registered list of devices for the Serial Number
+}
+```
 
 This is usually called when the pass is manually removed from the device and it no longer requires an update to be sent for that particular serial number.
 
@@ -183,10 +207,12 @@ The Log endpoint to catch any errors in the other endpoints is a `POST` request 
 
 The Log endpoint is intended to help you debug your web service implementation. Any errors happening in the other Endpoints are sent to this generic endpoint so that we can debug and fix the issues in the endpoint.
 
-    [LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
-    [HttpApi(LambdaHttpMethod.Post, "/v1/log")]
-    public async Task Log([FromBody] LogRequest logRequest)
-    {
+```json
+[LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
+[HttpApi(LambdaHttpMethod.Post, "/v1/log")]
+public async Task Log([FromBody] LogRequest logRequest)
+{
+```csharp
         // Log to standard logging
     }
 
@@ -207,10 +233,12 @@ For any Pass update, we need to push notify all the devices that have that pass 
 
 Using the `IApnsService` instance from the dotAPNS NuGet library and the PushToken received as part of the Register Device API endpoint, we can notify all the devices that have the updated pass added to the wallet.
 
-    [LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
-    [HttpApi(LambdaHttpMethod.Post, "/apple-wallet/push-updates/{serialNumber}")]
-    public async Task PushUpdatesForPass(string serialNumber)
-    {
+```csharp
+[LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
+[HttpApi(LambdaHttpMethod.Post, "/apple-wallet/push-updates/{serialNumber}")]
+public async Task PushUpdatesForPass(string serialNumber)
+{
+```
         var deviceRegistrations = GetDeviceRegistrationForSerialNumber(serialNumber);
         var applePushes = deviceRegistrations
             .Select(device => 

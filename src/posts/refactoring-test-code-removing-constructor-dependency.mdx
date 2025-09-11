@@ -3,21 +3,23 @@ title: "Refactoring Test Code: Removing Constructor Dependency"
 slug: "refactoring-test-code-removing-constructor-dependency"
 date: "2016-03-31T04:18:03.000Z"
 feature_image: "/images/testing.jpg"
-tags: []
+tags: ["Testing","Programming"]
 excerpt: "Learn how to refactor test code to remove constructor dependencies, improve testability, and prevent breaking tests during code changes."
 ---
 
 [![Testing](/images/testing.jpg)](https://www.flickr.com/photos/toomore/23066277453)
 
-In the earlier post, [Removing Unnecessary Dependencies](__GHOST_URL__/blog/refactoring-to-improve-testability-removing-unnecessary-dependencies/), we saw how having an unnecessary dependency hinders testability. In this post we will see how the test code changed by the refactoring we did for removing the unnecessary dependency and explore ways to control these changes.
+In the earlier post, [Removing Unnecessary Dependencies](/posts/refactoring-to-improve-testability-removing-unnecessary-dependencies/), we saw how having an unnecessary dependency hinders testability. In this post we will see how the test code changed by the refactoring we did for removing the unnecessary dependency and explore ways to control these changes.
 
 Impact on Tests by the Refactoring
 ----------------------------------
 
 The refactoring in the last post involved a change in the updating the constructor signature to take in a string value instead of an interface. This broke a lot of our tests and forced us to change all constructor usages with the below code.
 
-    var anonymousName = "Anonymous Name";
-    myService = new MyService(otherDependency, anonymousName);
+```csharp
+var anonymousName = "Anonymous Name";
+myService = new MyService(otherDependency, anonymousName);
+```
     
 
 When seen in isolation, this is not much a change, but as the number of tests grows it becomes a pain. This definitely does not feel right. Breaking tests forces us out of [Test-First Development](http://xunitpatterns.com/test%20first%20development.html) and reduces the confidence in the tests and in the code.
@@ -27,11 +29,13 @@ When seen in isolation, this is not much a change, but as the number of tests gr
 Refactoring Tests
 -----------------
 
-Ideally, we should write tests that do not break when we refactor, so that it helps us to use the same tests over the refactored code. Let's see how we can improve the test code to prevent tests from breaking, when we refactor to [remove unnecessary dependency](__GHOST_URL__/blog/refactoring-to-improve-testability-removing-unnecessary-dependencies/). Below is the original code (_rewritten into xUnit and Moq, as I prefer that_) with the dependency on IAppSettings (which we will change it to string later)
+Ideally, we should write tests that do not break when we refactor, so that it helps us to use the same tests over the refactored code. Let's see how we can improve the test code to prevent tests from breaking, when we refactor to [remove unnecessary dependency](/posts/refactoring-to-improve-testability-removing-unnecessary-dependencies/). Below is the original code (_rewritten into xUnit and Moq, as I prefer that_) with the dependency on IAppSettings (which we will change it to string later)
 
-    [Fact]
-    public void PerformOperationsShouldReturnTrue()
-    {
+```json
+[Fact]
+public void PerformOperationsShouldReturnTrue()
+{
+```
         var otherDependency = new Mock<IMyOtherDependency>();
         var appSettings = new Mock<IAppSettings>();
         appSettings.Setup(a => a["app.name"]).Returns("My Test Application");
@@ -65,9 +69,11 @@ _You have a code fragment that can be grouped together. Turn the fragment into a
 
 Since we only depend on the _IMyOtherDependency_ and the SUT instance instantiated with that, we can extract SUT creation with a given instance of IMyOtherDependency as below.
 
-    [Fact]
-    public void PerformOperationsShouldReturnTrue()
-    {
+```json
+[Fact]
+public void PerformOperationsShouldReturnTrue()
+{
+```
         var otherDependency = new Mock<IMyOtherDependency>();
         var myService = GetMyServiceWithMyOtherDependency(otherDependency);
     
@@ -77,8 +83,10 @@ Since we only depend on the _IMyOtherDependency_ and the SUT instance instantiat
         Assert.True(result);
     }
     
-    private MyService GetMyServiceWithMyOtherDependency(Mock<IMyOtherDependency> otherDependency)
-    {
+```typescript
+private MyService GetMyServiceWithMyOtherDependency(Mock<IMyOtherDependency> otherDependency)
+{
+```
         var appSettings = new Mock<IAppSettings>();
         appSettings.Setup(a => a["app.name"]).Returns("My Test Application");
         var myService = new MyService(otherDependency, appSettings);
@@ -94,8 +102,10 @@ _You have one class doing work that should be done by two. Create a new class an
 
 With these new creational methods the test class is having more responsibility than it should actually have, so let's extract these creation methods into _MyServiceBuilder_ class to see if we can further solve the problem.
 
-    public class MyServiceBuilder
-    {
+```csharp
+public class MyServiceBuilder
+{
+```
         public IAppSettings AppSettings { get; private set; }
         public IMyOtherDependency OtherDependency { get; private set; }
     
@@ -128,9 +138,11 @@ With these new creational methods the test class is having more responsibility t
 
 This takes us to **[Test Data Builder Pattern](http://www.natpryce.com/articles/000714.html)** and as we notice we have reduced the dependency on the MyService constructor to just one and only place where we need to change if the constructor signature changes. Since the [Cyclomatic Complexity](https://en.wikipedia.org/wiki/Cyclomatic_complexity) of _MyServiceBuilder_ is one it is fine not to write tests for it . Using the new builder class our original test case now looks like below.
 
-    [Fact]
-    public void PerformOperationsShouldReturnTrue()
-    {
+```json
+[Fact]
+public void PerformOperationsShouldReturnTrue()
+{
+```
         var otherDependency = new Mock<IMyOtherDependency>();
         var myService = new MyServiceBuilder().WithOtherDependency(otherDependency.Object).Build();
     
@@ -141,15 +153,17 @@ This takes us to **[Test Data Builder Pattern](http://www.natpryce.com/articles/
     }
     
 
-Now the test is just dependent on the objects that it needs. If all the test use _MyServiceBuilder_, we can now easily refactor to [Remove the Unnecessary Dependency](__GHOST_URL__/blog/refactoring-to-improve-testability-removing-unnecessary-dependencies/) on IAppSettings, by just changing the _MyServiceBuilder_ to use a string property. We will also need to change tests that use the _WithAppSettings_ method which is expected, as those tests are dependent on the app settings value in the first place and so the tests definitely need to be re-written.
+Now the test is just dependent on the objects that it needs. If all the test use _MyServiceBuilder_, we can now easily refactor to [Remove the Unnecessary Dependency](/posts/refactoring-to-improve-testability-removing-unnecessary-dependencies/) on IAppSettings, by just changing the _MyServiceBuilder_ to use a string property. We will also need to change tests that use the _WithAppSettings_ method which is expected, as those tests are dependent on the app settings value in the first place and so the tests definitely need to be re-written.
 
 Generic Test Data Builder
 -------------------------
 
 We could have essentially stopped at the above step, but then we realize that it is too much work to create a Test Data Builder class for each of the production code classes that we have. It takes a lot out of the [finite number of keystrokes left in your hands](http://keysleft.com/) and you definitely don't want to waste that in typing redundant code. This is where we can use [AutoFixture](https://github.com/AutoFixture/AutoFixture), that is an open source library for .NET that helps reduce the [Setup](http://xunitpatterns.com/Four%20Phase%20Test.html)/[Arrange](http://c2.com/cgi/wiki?ArrangeActAssert) phase. Using [AutoData Theories with AutoFixture](http://blog.ploeh.dk/2010/10/08/AutoDataTheorieswithAutoFixture/) our test case now looks like below.
 
-    [Theory, AutoMoqData]
-    public void PerformOperationsShouldReturnTrue(
+```csharp
+[Theory, AutoMoqData]
+public void PerformOperationsShouldReturnTrue(
+```
         [Frozen]Mock<IMyOtherDependency> otherDependency,
         MyService myService)
     {

@@ -3,7 +3,7 @@ title: "Getting Started with AWS Lambda SnapStart: A Beginner’s Guide"
 slug: "aws-lambda-snapstart"
 date: "2025-02-03T06:25:28.000Z"
 feature_image: "/images/Lambda-SnapStart.png"
-tags: []
+tags: ["AWS","Lambda"]
 ---
 
 One of the biggest concerns around AWS Lambda is—well, or rather has been—cold starts.
@@ -20,7 +20,7 @@ In this post, we will learn more about AWS Lambda SnapStart and how to set it up
 
 We will also explore how AWS Lambda SnapStart works, how to make your function SnapStart ready, and how to use Runtime hooks along with SnapStart.
 
-Thanks to AWS for sponsoring this article in my [AWS Lambda Series.](__GHOST_URL__/blog/tag/lambda/)
+Thanks to AWS for sponsoring this article in my [AWS Lambda Series.](/posts/tag/lambda/)
 
 Existing Lambda Function Walkthrough
 ------------------------------------
@@ -36,8 +36,10 @@ Below is a simple function that tries to mimic a real-world Lambda Function. It 
 *   Simulate some real computational/IO work by invoking a `Task.Delay`
 *   Logs the different `Guid` values to help observe object states and lifecycles across multiple Lambda invocations.
 
-    public class Function
-    {
+```csharp
+public class Function
+{
+```
         private Guid _constructorId;
         private readonly string _configuration;
     
@@ -106,7 +108,7 @@ The Lambda Lifecycle affects the way we write out Function code. Learn some of t
 
 ![](/images/Lambda-Lifecycle-2.png)
 
-](__GHOST_URL__/blog/lambda-lifecycle-and-net/)
+](/posts/lambda-lifecycle-and-net/)
 
 ### Invoking Lambda Function Parallely from the Command line
 
@@ -213,7 +215,7 @@ The billed duration is shown as the 'Billed Restore Duration.'
 
 ### AWS Lambda SnapStart Lifecycle
 
-With SnapStart enabled Lambda Functions, the Lifecycle differs from a [normal Lambda Function](__GHOST_URL__/blog/lambda-lifecycle-and-net/).
+With SnapStart enabled Lambda Functions, the Lifecycle differs from a [normal Lambda Function](/posts/lambda-lifecycle-and-net/).
 
 You can find the comparison in the Lifecycle in the diagram below.
 
@@ -288,8 +290,10 @@ Let's add Runtime Hooks to make our 'ConstructurId' unique again over multiple i
 
 All we need to do is invoke the `RegisterAfterRestore` method on the `SnapshotRestore` helper class within the constructor code.
 
-    public Function()
-    {
+```csharp
+public Function()
+{
+```
         _configuration = ReadConfigFromS3();
     
         SnapshotRestore.RegisterAfterRestore(() =>

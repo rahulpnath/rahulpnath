@@ -3,10 +3,10 @@ title: "Windows Service Using Topshelf, Quartz and Autofac"
 slug: "windows-service-using-topshelf-quartz-and-autofac"
 date: "2019-01-21T00:00:00.000Z"
 feature_image: "/images/scheduling_jobs.jpg"
-tags: []
+tags: ["Programming"]
 ---
 
-Whenever there is a need for some automated jobs that have to run On-Prem for a client, my default choice has been to use Windows Service along with Quartz. Last year I had blogged about [one such instance](__GHOST_URL__/blog/scheduling-recurring-jobs-with-a-cool-off-period/). However, I did not get into the detail of setting up the project and associated dependencies to run the service.
+Whenever there is a need for some automated jobs that have to run On-Prem for a client, my default choice has been to use Windows Service along with Quartz. Last year I had blogged about [one such instance](/posts/scheduling-recurring-jobs-with-a-cool-off-period/). However, I did not get into the detail of setting up the project and associated dependencies to run the service.
 
 In this post, I will walk through how I got about setting up these recurrent job scheduler to make it easy for me or anyone else who runs into a similar situation.
 
@@ -20,8 +20,10 @@ With Topshelf setup, we have a running windows service application. To add in de
 
     var container = Bootstrapper.BuildContainer();
     
-    var rc = HostFactory.Run(x =>
-    {
+```javascript
+var rc = HostFactory.Run(x =>
+{
+```
         x.UseAutofacContainer(container);
     
         x.Service<SchedulerService>(s =>
@@ -42,8 +44,10 @@ The SchedulerService will now be instantiated using the Autofac container and ma
 
 Below is a sample setup of the Autofac container that registers jobs (MySyncJob) in assembly and adds scheduler instance to the container (using the _QuartzAutofacFactoryModule_). The _IDbConnection_ is registered to match the lifetime scope of quartz job so that each job instance gets a different instance.
 
-    public static class Bootstrapper
-    {
+```csharp
+public static class Bootstrapper
+{
+```
         public static IContainer BuildContainer()
         {
             var builder = new ContainerBuilder();
@@ -80,8 +84,10 @@ Below is a sample setup of the Autofac container that registers jobs (MySyncJob)
 
 The SchedulerService class is used to start the scheduler jobs when the service starts up and shut down the jobs when service is shut down. As you can see the IScheduler instance is constructor injected using Autofac. On start, add the jobs to the scheduler(i am using a cron schedule in the example below).
 
-    public class SchedulerService
-    {
+```csharp
+public class SchedulerService
+{
+```
         private readonly IScheduler _scheduler;
     
         public SchedulerService(IScheduler scheduler)

@@ -3,7 +3,7 @@ title: "Query Object Pattern and Entity Framework - Making Readable Queries"
 slug: "query-object-pattern-and-entity-framework-making-readable-queries"
 date: "2018-12-20T00:00:00.000Z"
 feature_image: "/images/refactoring.jpg"
-tags: []
+tags: ["Dotnet","Programming"]
 ---
 
 Search is a common requirement for most of the applications that we build today. Searching for data often includes multiple fields, data types, and data from multiple tables (especially when using a relational database). I was recently building a Search page which involved searching for Orders - users needed the ability to search by different criteria such as the employee who created the order, orders for a customer, orders between particular dates, order status, an address of delivery. Order criteria are optional, and they allow to narrow down on your search with additional parameters. We were building an API endpoint to query this data based on the parameters using EF Core backed by Azure SQL.
@@ -12,9 +12,11 @@ In this post, we go through the code iterations that I made to improve on the re
 
 > _A [Query Object](https://martinfowler.com/eaaCatalog/queryObject.html) is an interpreter \[Gang of Four\], that is, a structure of objects that can form itself into a SQL query. You can create this query by referring to classes and fields rather than tables and columns. In this way, those who write the queries can do so independently of the database schema, and changes to the schema can be localized in a single place._
 
-    // Query Object capturing the Search Criteria
-    public class OrderSummaryQuery
-    {
+```csharp
+// Query Object capturing the Search Criteria
+public class OrderSummaryQuery
+{
+```
         public int? CustomerId { get; set; }
         public DateRange DateRange { get; set; }
         public string Employee { get; set; }
@@ -30,10 +32,12 @@ Iteration 1 - Crude Form
 
 Let's start with the crudest form of the query stating all possible combinations of the query. Since all properties are nullable, check if a value exists before using it in the query.
 
-    (from order in _context.Order
-    join od in _context.OrderDelivery on order.Id equals od.OrderId
-    join customer in _context.Customer on order.CustomerId equals customer.Id
-    where order.Status == OrderStatus.Quote &&
+```bash
+(from order in _context.Order
+join od in _context.OrderDelivery on order.Id equals od.OrderId
+join customer in _context.Customer on order.CustomerId equals customer.Id
+where order.Status == OrderStatus.Quote &&
+```
           order.Active == true &&
           (query.Employee == null ||
           (order.CreatedBy == query.Employee || customer.Employee == query.Employee)) &&
@@ -48,16 +52,20 @@ Iteration 2 - Separating into Multiple Lines
 
 With all those explicit AND (&&) clauses the query is hard to understand and keep up. Splitting them into multiple where clauses make it more cleaner and keep each search criteria independent. The end SQL query that gets generated remains the same in this case.
 
-> [Aesthetics of code](__GHOST_URL__/blog/left-align-your-code-for-better-readability/) is as important as the code you write. Aligning is an important part that contributes to the overall aesthetics of code.
+> [Aesthetics of code](/posts/left-align-your-code-for-better-readability/) is as important as the code you write. Aligning is an important part that contributes to the overall aesthetics of code.
 
-    from order in _context.Order
-    join od in _context.OrderDelivery on order.Id equals od.OrderId
-    join customer in _context.Customer on order.CustomerId equals customer.Id
-    where order.Status == orderStatus && order.Active == true
-    where query.Employee == null ||
+```bash
+from order in _context.Order
+join od in _context.OrderDelivery on order.Id equals od.OrderId
+join customer in _context.Customer on order.CustomerId equals customer.Id
+where order.Status == orderStatus && order.Active == true
+where query.Employee == null ||
+```
           order.CreatedBy == query.Employee || customer.Employee == query.Employee
-    where !query.CustomerId.HasValue || customer.Id == query.CustomerId.Value
-    where query.DateRange == null ||
+```bash
+where !query.CustomerId.HasValue || customer.Id == query.CustomerId.Value
+where query.DateRange == null ||
+```
           (order.Created >= query.DateRange.StartDate && order.Created <= query.DateRange.EndDate)
     
 
@@ -68,8 +76,10 @@ Now that each criterion is independently visible let's make each of the _where_ 
 
 However, if you use [Expressions](https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ef/language-reference/expressions-in-linq-to-entities-queries) those get transformed to evaluate on the server. Since all of the conditions on our where clauses can be represented as an Expression, let's move those to the Query object class as properties returning Expressions. Since we need data from multiple tables, the intermediate projection _OrderSummaryQueryResult_ helps to work with data from the multiple tables. All our expressions take the _OrderSummaryQueryResult_ projection and perform the appropriate conditions on them.
 
-    public class OrderSummaryQuery
-    {
+```csharp
+public class OrderSummaryQuery
+{
+```
         public Expression<Func<OrderSummaryQueryResult, bool>> BelongsToUser
         {
             get
@@ -90,19 +100,25 @@ However, if you use [Expressions](https://docs.microsoft.com/en-us/dotnet/framew
      join customer in _context.Customer on order.CustomerId equals customer.Id
      select new OrderSummaryQueryResult()
         { Customer = customer, Order =    order, OrderDelivery = od })
-    .Where(query.IsActiveOrder)
-    .Where(query.BelongsToUser)
-    .Where(query.ForCustomer)
-    .Where(query.InDateRange)
+```text
+.Where(query.IsActiveOrder)
+.Where(query.BelongsToUser)
+.Where(query.ForCustomer)
+.Where(query.InDateRange)
+```
     
 
-    -- Generated SQL when order status and employee name is set
-    SELECT [customer].[Name] AS [Customer], [order].[OrderNumber] AS [Number],
+```bash
+-- Generated SQL when order status and employee name is set
+SELECT [customer].[Name] AS [Customer], [order].[OrderNumber] AS [Number],
+```
            [od].[Address], [order].[Created] AS [CreatedDate]
-    FROM [Order] AS [order]
-    INNER JOIN [OrderDelivery] AS [od] ON [order].[Id] = [od].[OrderId]
-    INNER JOIN [Customer] AS [customer] ON [order].[CustomerId] = [customer].[Id]
-    WHERE (([order].[Active] = 1) AND ([order].[Status] = @__OrderStatus_0)) AND
+```bash
+FROM [Order] AS [order]
+INNER JOIN [OrderDelivery] AS [od] ON [order].[Id] = [od].[OrderId]
+INNER JOIN [Customer] AS [customer] ON [order].[CustomerId] = [customer].[Id]
+WHERE (([order].[Active] = 1) AND ([order].[Status] = @__OrderStatus_0)) AND
+```
           (([order].[CreatedBy] = @__employee_1) OR ([customer].[Employee] = @__employee_2))
     
 
@@ -113,9 +129,11 @@ Iteration 4 - Refactoring to Extension method
 
 After the last iteration, we have a query that is easy to read and understand. We also have all queries consolidated within the query object, and it acts as a one place holding all the queries. However, something still felt not right, and I had a quick chat with my friend [Bappi](https://twitter.com/zpbappi), and we refined it further. The above query has too many where clauses and it was just repeating for each of the filters. To encapsulate this further, I moved all the filter expressions to be returned as an Enumerable and wrote an extension method, _ApplyAllFilters_, to execute them all.
 
-    // Expose one property for all the filters
-    public class OrderSummaryQuery
-    {
+```csharp
+// Expose one property for all the filters
+public class OrderSummaryQuery
+{
+```
         public IEnumerable<Expression<Func<OrderSummaryQueryResult, bool>>> AllFilters
         {
             get
@@ -135,8 +153,10 @@ After the last iteration, we have a query that is easy to read and understand. W
     
     ...
     
-    // Extension Method on IQueryable
-    {
+```json
+// Extension Method on IQueryable
+{
+```
         public static IQueryable<T> ApplyAllFilters<T>(
             this IQueryable<T> queryable,
             IEnumerable<Expression<Func<T, bool>>> filters)

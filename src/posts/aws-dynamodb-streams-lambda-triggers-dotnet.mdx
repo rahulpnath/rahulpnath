@@ -3,10 +3,11 @@ title: "DynamoDB Streams and AWS Lambda Trigger in .NET"
 slug: "aws-dynamodb-streams-lambda-triggers-dotnet"
 date: "2022-08-17T00:00:00.000Z"
 feature_image: "/images/aws-lambda-dynamodb-streams-trigger-dotnet.jpg"
-tags: []
+tags: ["AWS","DynamoDB","Lambda"]excerpt: "DynamoDB Streams capture a time-ordered sequence of events in any DynamoDB table. Let's learn how to enable DynamoDB Streams, different stream types and how to consumer stream changes from a .NET AWS Lambda Function."
+
 ---
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 DynamoDB Streams capture a time-ordered sequence of events in any DynamoDB table.
 
@@ -69,9 +70,9 @@ To see this in action, let’s first create an AWS Lambda Function using .NET an
 
 ### Create AWS Lambda Function Using .NET
 
-[AWS Lambda](__GHOST_URL__/blog/aws-lambda-net-core/) is Amazon’s answer to serverless computing services. It allows running code with zero administration of the infrastructure that the code is running on.
+[AWS Lambda](/posts/aws-lambda-net-core/) is Amazon’s answer to serverless computing services. It allows running code with zero administration of the infrastructure that the code is running on.
 
-Make sure to install the AWS Toolkit ([Visual Studio](https://aws.amazon.com/visualstudio/), [Rider](https://aws.amazon.com/rider/), [VS Code](https://aws.amazon.com/visualstudiocode/)) and [set up Credentials for the local development environment](__GHOST_URL__/blog/amazon-credentials-dotnet/).  This helps you quickly develop a .NET application on the AWS infrastructure and deploy them quickly to your AWS Accounts.
+Make sure to install the AWS Toolkit ([Visual Studio](https://aws.amazon.com/visualstudio/), [Rider](https://aws.amazon.com/rider/), [VS Code](https://aws.amazon.com/visualstudiocode/)) and [set up Credentials for the local development environment](/posts/amazon-credentials-dotnet/).  This helps you quickly develop a .NET application on the AWS infrastructure and deploy them quickly to your AWS Accounts.
 
 [
 
@@ -83,12 +84,14 @@ Learn how to get started with AWS Lambda with .NET Core by building out a simple
 
 ![](/images/aws_lambda.jpg)
 
-](__GHOST_URL__/blog/aws-lambda-net-core)
+](/posts/aws-lambda-net-core)
 
 With the AWS Toolkit installed, select the AWS Lambda Lambda Project template from the new project template and choose the DynamoDB blueprint. This creates a .NET AWS Lambda function template project with a `Function.cs` class with everything required to handle DynamoDB Stream events, as shown below.
 
-    public class Function
-    {
+```csharp
+public class Function
+{
+```csharp
         public void FunctionHandler(DynamoDBEvent dynamoEvent, ILambdaContext context)
         {
             context.Logger.LogInformation($"Beginning to process {dynamoEvent.Records.Count} records...");
@@ -108,8 +111,10 @@ With the AWS Toolkit installed, select the AWS Lambda Lambda Project template fr
 
 The `DynamoDBEvent` class represents a list of Stream Record events (`DynamodbStreamRecord`) coming into the DynamoDB Stream. The Stream record class exposes the Keys and the images (old and new) for the change. Below are the properties that we are interested in.
 
-    public class StreamRecord
-    {
+```csharp
+public class StreamRecord
+{
+```csharp
         ...
         public Dictionary<string, AttributeValue> Keys;
         public Dictionary<string, AttributeValue> NewImage;
@@ -121,7 +126,7 @@ These properties are populated or left empty based on the Stream view type selec
 
 **Deploy Lambda Function**
 
-To publish the Lambda function to the AWS account, you can use the Publish to AWS Lambda option that the AWS Toolkit provides. You can directly publish the new lambda function with your [development environment connected to your AWS account](__GHOST_URL__/blog/amazon-credentials-dotnet/).
+To publish the Lambda function to the AWS account, you can use the Publish to AWS Lambda option that the AWS Toolkit provides. You can directly publish the new lambda function with your [development environment connected to your AWS account](/posts/amazon-credentials-dotnet/).
 
 I prefer to set up an automated build/deploy pipeline to publish to your AWS Account for real-world applications. Check out the below for an example of how to set up a Lambda Function deployment pipeline from GitHub Actions.
 
@@ -161,7 +166,7 @@ Learn how to use Amazon CloudWatch when building .NET applications. We will lear
 
 ![](/images/logs.jpg)
 
-](__GHOST_URL__/blog/amazon-cloudwatch-logs-dotnet)
+](/posts/amazon-cloudwatch-logs-dotnet)
 
 Converting DynamoDB Stream Record to .NET Objects
 -------------------------------------------------
@@ -172,10 +177,14 @@ To convert this information into a rich .NET class instance, we first need to co
 
 Using the `Document.FromAttributeMap` method, we can convert the `OldIamge` and `NewImage` on the DynamoDB StreamRecord to a Document object. Once we have the Document object, we can use the `FromDocument` method on the `DynamoDBContext` to convert it into a rich .NET object.
 
-    private readonly DynamoDBContext _context;
-    
-    public void FunctionHandler(DynamoDBEvent dynamoEvent, ILambdaContext context)
-    {
+
+```csharp
+private readonly DynamoDBContext _context;
+```
+```csharp
+public void FunctionHandler(DynamoDBEvent dynamoEvent, ILambdaContext context)
+{
+```csharp
         foreach (var record in dynamoEvent.Records)
         {
             ...
@@ -187,8 +196,10 @@ Using the `Document.FromAttributeMap` method, we can convert the `OldIamge` and 
         }
     }
     
-    private T GetObject<T>(Dictionary<string, AttributeValue> image)
-    {
+```typescript
+private T GetObject<T>(Dictionary<string, AttributeValue> image)
+{
+```
         var document = Document.FromAttributeMap(image);
         return _context.FromDocument<T>(document);
     }
@@ -222,22 +233,24 @@ Event filtering works along with batch size. The stream record is added to the b
 
 The [Lambda event filtering rule](https://docs.aws.amazon.com/lambda/latest/dg/invocation-eventfiltering.html) is specified using JSON. The below rule filters for both Insert and Modify actions on DynamoDB item and checks if the `Name` property is equal to 'Rahul Nath'.
 
-    {
-        "eventName": [
-            "INSERT",
-            "MODIFY"
-        ],
-        "dynamodb": {
-            "NewImage": {
-                "Name": {
-                    "S": [
-                        "Rahul Nath"
-                    ]
-                }
+
+```css
+{
+    "eventName": [
+        "INSERT",
+        "MODIFY"
+    ],
+    "dynamodb": {
+        "NewImage": {
+            "Name": {
+                "S": [
+                    "Rahul Nath"
+                ]
             }
         }
     }
-    
+}
+```
 
 To apply the Filter rule to the Lambda Function, edit the DynamoDB trigger under the Lambda function and specify the JSON string under Filter criteria.
 
@@ -253,7 +266,7 @@ But what happens when there is an error in processing a Stream Record inside our
 
 By default, the DynamoDB stream retries these messages until they are processed successfully. Since DynamoDB Streams ensures a time-ordered delivery, any updates made to items in the DynamoDB Table queue up behind the error stream record. Only once this is processed will the Function continue to receive the new records.
 
-The Lambda Trigger configuration provides options to process and handles these error records so that it does not block the processing of new records. In [another blog post](__GHOST_URL__/blog/aws-dynamodb-streams-lambda-triggers-exception-handling-dotnet/), I will cover the different configurations specific to Error Handling and how to use this. I also cover different integration patterns you can use to process Stream Record events successfully.
+The Lambda Trigger configuration provides options to process and handles these error records so that it does not block the processing of new records. In [another blog post](/posts/aws-dynamodb-streams-lambda-triggers-exception-handling-dotnet/), I will cover the different configurations specific to Error Handling and how to use this. I also cover different integration patterns you can use to process Stream Record events successfully.
 
 [
 
@@ -265,6 +278,6 @@ This article is sponsored by AWS and is part of my AWS Series. DynamoDB Streams 
 
 ![](/images/aws-lambda-dynamodb-streams-trigger-exception-handling-dotnet.jpg)
 
-](__GHOST_URL__/blog/aws-dynamodb-streams-lambda-triggers-exception-handling-dotnet)
+](/posts/aws-dynamodb-streams-lambda-triggers-exception-handling-dotnet)
 
 I hope this helped you get started with DynamoDB Streams from a .NET application.

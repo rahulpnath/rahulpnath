@@ -3,10 +3,10 @@ title: "Dynamically Create Powershell Alias"
 slug: "dynamically-create-powershell-alias"
 date: "2019-12-10T00:00:00.000Z"
 feature_image: "/images/windows_terminal_custom_alias.jpg"
-tags: []
+tags: ["Tools"]
 ---
 
-While playing around with the Windows Terminal, I had set up [Aliasing](__GHOST_URL__/blog/setting-up-windows-terminal/#aliasing) to enable alias for commonly used commands.
+While playing around with the Windows Terminal, I had set up [Aliasing](/posts/setting-up-windows-terminal/#aliasing) to enable alias for commonly used commands.
 
 **For e.g. Typing in _s_ implies _git status_.**
 
@@ -14,8 +14,10 @@ I wanted to create new command aliases from the command line itself, instead of 
 
     $aliasFilePath = "<Alias file path>"
     
-    function New-CommandAlias {
-    param(
+```powershell
+function New-CommandAlias {
+param(
+```
         [parameter(Mandatory=$true)]$CommandName,
         [parameter(Mandatory=$true)]$Command,
         [parameter(Mandatory=$true)]$CommandAlias
@@ -35,16 +37,20 @@ I wanted to create new command aliases from the command line itself, instead of 
 
 The above script writes a new function and maps it to the alias command using the existing [New-Alias cmdlet](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/new-alias?view=powershell-6)
 
-    function Get-GitStatus { & git status -sb $args }
-    New-Alias -Name s -Value Get-GitStatus -Force -Option AllScope
+```powershell
+function Get-GitStatus { & git status -sb $args }
+New-Alias -Name s -Value Get-GitStatus -Force -Option AllScope
+```
     
 
-Add this to your PowerShell profile file (run notepad $PROFILE) as we did for theming when we [set up the windows terminal](__GHOST_URL__/blog/setting_up_windows_terminal/). In the above script, I write to the '_$aliasFIlePath_' and load all the alias from that file using the Dot sourcing operator.
+Add this to your PowerShell profile file (run notepad $PROFILE) as we did for theming when we [set up the windows terminal](/posts/setting_up_windows_terminal/). In the above script, I write to the '_$aliasFIlePath_' and load all the alias from that file using the Dot sourcing operator.
 
 Below are a few sample usages
 
-    New-CommandAlias -CommandName "Get-GitStatus" -Command "git status -sb" -CommandAlias "s"
-    New-CommandAlias -CommandName "Move-ToWorkFolder" -Command "cd C:\Work\" -CommandAlias "mwf"
+```powershell
+New-CommandAlias -CommandName "Get-GitStatus" -Command "git status -sb" -CommandAlias "s"
+New-CommandAlias -CommandName "Move-ToWorkFolder" -Command "cd C:\Work\" -CommandAlias "mwf"
+```
     
 
 The full gist is available [here](https://gist.github.com/rahulpnath/0007a3bdd7da2efc7024bd92c002cf17#file-dynamicpowershellalias-ps1). I have tried adding only a couple of commands, and it did work fine. If you find any issues, please drop a comment.

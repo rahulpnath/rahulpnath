@@ -3,14 +3,14 @@ title: "NServiceBus on AWS SNS:  Learn How To Publish and Subscribe to Events"
 slug: "nservicebus-publish-subscribe-aws-sqs-transport-getting-started"
 date: "2023-04-18T18:41:35.000Z"
 feature_image: "/images/NServiceBus-Events-on-AWS-SQS--1-.png"
-tags: []
+tags: ["AWS"]
 ---
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 NServiceBus is a messaging framework that makes it easy to send, process, and publish messages across various on-premise and cloud-based queuing technologies.
 
-In an earlier blog post, we learned [how to quickly start with NServiceBus on AWS SQS](__GHOST_URL__/blog/getting-started-with-nservicebus-on-aws/). We learned how to Install and set up NServiceBus, set up the receiver and sender to listen to messages on Amazon SQS Transport, and communicate between the two using Commands.
+In an earlier blog post, we learned [how to quickly start with NServiceBus on AWS SQS](/posts/getting-started-with-nservicebus-on-aws/). We learned how to Install and set up NServiceBus, set up the receiver and sender to listen to messages on Amazon SQS Transport, and communicate between the two using Commands.
 
 In this blog post, let's explore how to publish Events using NServiceBus.
 
@@ -31,10 +31,12 @@ Events indicate an action that has happened.
 
 To mark a message as an Event in NServiceBus, it must implement the `IEvent` interface.
 
-Following up with the same [code example from our getting started blog](__GHOST_URL__/blog/getting-started-with-nservicebus-on-aws/), we can raise a `UserCreatedEvent` inside our `CreateUserCommandHandler` every time a user is successfully created.
+Following up with the same [code example from our getting started blog](/posts/getting-started-with-nservicebus-on-aws/), we can raise a `UserCreatedEvent` inside our `CreateUserCommandHandler` every time a user is successfully created.
 
-    public class UserCreatedEvent : IEvent
-    {
+```csharp
+public class UserCreatedEvent : IEvent
+{
+```
         public Guid UserId { get; set; }
         public DateTimeOffset CreatedDateTime { get; set; }
     
@@ -72,8 +74,10 @@ In NServiceBus, this is done by creating a class and implementing the `IHandleMe
 
 Below is an example in the `payroll-service` application, which is interested in the `UserCreatedEvent`.
 
-    internal class UserCreatedHandler : IHandleMessages<UserCreatedEvent>
-    {
+```csharp
+internal class UserCreatedHandler : IHandleMessages<UserCreatedEvent>
+{
+```
         static ILog log = LogManager.GetLogger<UserCreatedHandler>();
     
         public Task Handle(UserCreatedEvent message, IMessageHandlerContext context)
@@ -91,7 +95,7 @@ Any time a User is created, the payroll application has to set up new accounts f
 
 ### Setting Up NServiceBus Event Handler on AWS SQS Transport
 
-The Startup code for `payroll-service` is very similar to how we [set up the Receiver endpoints on Amazon SQS Transport.](__GHOST_URL__/blog/getting-started-with-nservicebus-on-aws/#setting-up-receiver-on-amazon-sqs-transport)
+The Startup code for `payroll-service` is very similar to how we [set up the Receiver endpoints on Amazon SQS Transport.](/posts/getting-started-with-nservicebus-on-aws/#setting-up-receiver-on-amazon-sqs-transport)
 
 It sets up a new Endpoint by specifying  `EndpointConfiguration` and configuring the transport. The Endpoint is named "_payroll-service_" and uses Amazon SQS as its underlying transport.
 
@@ -101,15 +105,19 @@ Even though the transport is named `SqsTransport` , it also uses Amazon SNS unde
     
     Console.WriteLine("Hello, World!");
     
-    var endpointConfiguration = new EndpointConfiguration("payroll-service");
-    var transport = endpointConfiguration.UseTransport<SqsTransport>();
-    transport.S3(bucketForLargeMessages: "user-service-large-messages", keyPrefix: "user");
-    endpointConfiguration.EnableInstallers();
+```csharp
+var endpointConfiguration = new EndpointConfiguration("payroll-service");
+var transport = endpointConfiguration.UseTransport<SqsTransport>();
+transport.S3(bucketForLargeMessages: "user-service-large-messages", keyPrefix: "user");
+endpointConfiguration.EnableInstallers();
+```
     
     var endointInstance = await Endpoint.Start(endpointConfiguration);
     
-    Console.WriteLine("Press any key to stop");
-    Console.ReadKey();
+```csharp
+Console.WriteLine("Press any key to stop");
+Console.ReadKey();
+```
     
     await endointInstance.Stop();
 
@@ -136,7 +144,7 @@ Learn how to get started with Amazon SNS and use it from a .NET application. We 
 
 ![](/images/amazon-sns.jpg)
 
-](__GHOST_URL__/blog/amazon-sns/)
+](/posts/amazon-sns/)
 
 An SNS Topic is automatically created for the Event by NServiceBus and adds a subscription to the SQS Queue that the service listens on.  
 
@@ -170,7 +178,7 @@ Should you be processing messages directly from SNS to Lambda or via an SQS Queu
 
 ![](/images/amazon-sns-to-lambda-or-sns-sqs-lambda-dotnet.jpg)
 
-](__GHOST_URL__/blog/amazon-sns-to-lambda-or-sns-sqs-lambda-dotnet/)
+](/posts/amazon-sns-to-lambda-or-sns-sqs-lambda-dotnet/)
 
 ### Large Event Message Sizes
 
@@ -178,6 +186,6 @@ It's generally recommended to keep the Event data short. Including properties th
 
 However, in cases where you need to pass larger sizes, we can use the Amazon S3 storage to offload the actual message and pass around the S3 Object URL in the Event data.
 
-In the previous post, we saw how to configure this when dealing with [large Message Sizes with NServiceBus and SQS Transport.](__GHOST_URL__/blog/getting-started-with-nservicebus-on-aws/#large-message-sizes-with-nservicebus-and-sqs-transport)
+In the previous post, we saw how to configure this when dealing with [large Message Sizes with NServiceBus and SQS Transport.](/posts/getting-started-with-nservicebus-on-aws/#large-message-sizes-with-nservicebus-and-sqs-transport)
 
 Full source code sample [available here](https://rahulpnath.visualstudio.com/YouTube%20Samples/_git/NServiceBus.AWS.SQS).

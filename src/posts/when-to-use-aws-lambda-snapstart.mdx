@@ -3,7 +3,7 @@ title: "Is AWS Lambda SnapStart Right for Your Workload?"
 slug: "when-to-use-aws-lambda-snapstart"
 date: "2025-02-11T06:08:34.000Z"
 feature_image: "/images/Lambda-SnapStart-For-You-.png"
-tags: []
+tags: ["AWS","Lambda"]
 ---
 
 AWS Lambda SnapStart replaces the Init Duration with a Restore Duration.
@@ -14,7 +14,7 @@ One could argue that this is merely a name change and that cold starts remain an
 
 In this post, let's explore whether this is true, under what circumstances, and when you should consider Lambda SnapStart for your AWS Functions.
 
-Thanks to AWS for sponsoring this article in my [AWS Lambda Series.](__GHOST_URL__/blog/tag/lambda/)
+Thanks to AWS for sponsoring this article in my [AWS Lambda Series.](/posts/tag/lambda/)
 
 What is AWS Lambda SnapStart?
 -----------------------------
@@ -31,7 +31,7 @@ AWS Lambda SnapStart is a performance optimization that speeds up startup times 
 
 ![](/images/Lambda-SnapStart.png)
 
-](__GHOST_URL__/blog/aws-lambda-snapstart/)
+](/posts/aws-lambda-snapstart/)
 
 _AWS_ [_Lambda SnapStart_](https://docs.aws.amazon.com/lambda/latest/dg/snapstart.html) _is a performance optimization that speeds up startup times for Lambda Functions, typically with no changes to your function code._
 
@@ -78,7 +78,7 @@ The impact of SnapStart varies depending on the function’s Init Duration.
 
 Let's compare two workloads—one with an Init Duration in milliseconds and another in seconds—to see how SnapStart affects startup performance in each case.
 
-Below are the CloudWatch LogInsights logs showing the Restore Duration and Init Duration for the function we built in the [Getting Started with AWS Lambda SnapStart](__GHOST_URL__/blog/aws-lambda-snapstart/).
+Below are the CloudWatch LogInsights logs showing the Restore Duration and Init Duration for the function we built in the [Getting Started with AWS Lambda SnapStart](/posts/aws-lambda-snapstart/).
 
 Before enabling SnapStart, the function has an average Init duration of ~550ms.
 
@@ -96,10 +96,12 @@ __Enabling SnapStart on a Function when the Init Duration is already in millisec
 
 I modified the same function to introduce a further delay in the constructor to simulate a more significant Init Duration.
 
-It now has a 5-second delay, which could be the case for some of your production workloads, especially if you are [hosting a full ASP.NET API](__GHOST_URL__/blog/asp-net-core-on-aws-lambda/) or similar workloads.
+It now has a 5-second delay, which could be the case for some of your production workloads, especially if you are [hosting a full ASP.NET API](/posts/asp-net-core-on-aws-lambda/) or similar workloads.
 
-    public Function()
-    {
+```csharp
+public Function()
+{
+```
         _configuration = ReadConfigFromS3();
     
         SnapshotRestore.RegisterAfterRestore(() =>

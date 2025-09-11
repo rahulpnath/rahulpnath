@@ -3,19 +3,23 @@ title: "Exclude Certain Scripts From Transaction When Using DbUp"
 slug: "exclude-certain-scripts-from-transaction-when-using-dbup"
 date: "2018-12-17T00:00:00.000Z"
 feature_image: "/images/dbup_batches.png"
-tags: []
+tags: ["Programming"]
 ---
 
-Recently I had written about [Setting Up DbUP in Azure Pipelines](__GHOST_URL__/blog/setting-up-dbup-in-azure-pipelines/) at one of my clients. We had all our scripts run under [Transaction Per Script](https://dbup.readthedocs.io/en/latest/more-info/transactions/) mode and was all working fine until we had to deploy some SQL scripts that cannot be run under a transaction. So now I have a bunch of SQL script files that can be run under a transaction and some (like the ones below - [Full-Text Search](https://azure.microsoft.com/en-au/blog/full-text-search-is-now-available-for-preview-in-azure-sql-database/)) that cannot be run under a transaction. By default, if you run this using DbUp under a transaction you get the error messageCREATE FULLTEXT CATALOG statement cannot be used inside a user transaction  and this is an [existing issue](https://github.com/DbUp/DbUp/issues/207).
+Recently I had written about [Setting Up DbUP in Azure Pipelines](/posts/setting-up-dbup-in-azure-pipelines/) at one of my clients. We had all our scripts run under [Transaction Per Script](https://dbup.readthedocs.io/en/latest/more-info/transactions/) mode and was all working fine until we had to deploy some SQL scripts that cannot be run under a transaction. So now I have a bunch of SQL script files that can be run under a transaction and some (like the ones below - [Full-Text Search](https://azure.microsoft.com/en-au/blog/full-text-search-is-now-available-for-preview-in-azure-sql-database/)) that cannot be run under a transaction. By default, if you run this using DbUp under a transaction you get the error messageCREATE FULLTEXT CATALOG statement cannot be used inside a user transaction  and this is an [existing issue](https://github.com/DbUp/DbUp/issues/207).
 
-    CREATE FULLTEXT CATALOG MyCatalog
-    GO
+```sql
+CREATE FULLTEXT CATALOG MyCatalog
+GO
+```
     
-    CREATE FULLTEXT INDEX
-    ON  [dbo].[Products] ([Description])
-    KEY INDEX [PK_Products] ON MyCatalog
-    WITH CHANGE_TRACKING AUTO
-    GO
+```bash
+CREATE FULLTEXT INDEX
+ON  [dbo].[Products] ([Description])
+KEY INDEX [PK_Products] ON MyCatalog
+WITH CHANGE_TRACKING AUTO
+GO
+```
     
 
 One option would be to turn off transaction all together using _builder.WithoutTransaction()_ (default transaction setting) and everything would work as usual. But in case you want each of your scripts to be run under a transaction you can choose either of the options below.
@@ -25,20 +29,26 @@ Using Pre-Processors to Modify Script Before Execution
 
 [Script Pre-Processors](https://dbup.readthedocs.io/en/latest/more-info/preprocessors/) are an extensibility hook into DbUp and allows you to modify a script before it gets executed. So we can wrap each SQL script with a transaction before it gets executed. In this case, you have to configure your builder to run WithoutTransaction and modify each script file before execution and explicitly wrap with a transaction if required. Writing a custom pre-processor is quickly done by implementing the IScriptPreprocessor interface, and you get the contents of the script file to modify. In this case, all I do is check whether the text contains 'CREATE FULLTEXT' and wrap with a transaction if it does not. You could use file-name conventions or any other rules of your choice to perform the check and conditionally wrap with a transaction.
 
-    public class ConditionallyApplyTransactionPreprocessor : IScriptPreprocessor
-    {
+```csharp
+public class ConditionallyApplyTransactionPreprocessor : IScriptPreprocessor
+{
+```
         public string Process(string contents)
         {
             if (!contents.Contains("CREATE FULLTEXT", StringComparison.InvariantCultureIgnoreCase))
             {
                 var modified =
                     $@"
-    BEGIN TRANSACTION
-    BEGIN TRY
+```bash
+BEGIN TRANSACTION
+BEGIN TRY
+```
                {contents}
         COMMIT;
-    END TRY
-    BEGIN CATCH
+```bash
+END TRY
+BEGIN CATCH
+```
         ROLLBACK;
         THROW;
     END CATCH";
@@ -116,4 +126,4 @@ If you are not particularly fine with tweaking the pre-processing step and want 
     }
     
 
-Keeping all your scripts in a single place and automating it through the build-release pipeline is [something you need to strive for](__GHOST_URL__/blog/working-effectively-under-constraints/). Hope this helps you to continue using DbUp even if you want to execute scripts that are a mix of transactional and non-transactional.
+Keeping all your scripts in a single place and automating it through the build-release pipeline is [something you need to strive for](/posts/working-effectively-under-constraints/). Hope this helps you to continue using DbUp even if you want to execute scripts that are a mix of transactional and non-transactional.

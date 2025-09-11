@@ -3,10 +3,10 @@ title: "Getting Started with Azure Key Vault"
 slug: "getting-started-with-azure-key-vault"
 date: "2015-01-25T18:22:06.000Z"
 feature_image: "/images/azurekeyvault_overview.png"
-tags: []
+tags: ["Azure"]
 ---
 
-> Please check [here](__GHOST_URL__/blog/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/) for scripts using the latest PowerShell cmdlets.
+> Please check [here](/posts/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/) for scripts using the latest PowerShell cmdlets.
 
 Azure Key Vault service is a cloud hosted, HSM(Hardware Security Modules)-backed service for managing cryptographic keys and other secrets. With Azure Key Vault, the process of managing and controlling the keys required for an application or multiple applications for an enterprise can be handled at a centralized place. Also these sensitive information no longer needs to be exposed in the application's configuration file or in database. Keys can be created in the vault and accessed via url's by the required application. Operations against the Key Vault are authenticated and authorized using Azure Active Directory. So in short all that a developer would need to know are the URI's for the keys, the [sdk/api](https://msdn.microsoft.com/en-us/library/azure/dn903625.aspx) to access the vault features and also on the mechanism to authenticate against the AD application (an appId/client secret or appId/certificate).
 
@@ -29,7 +29,7 @@ Asymmetric cryptography, also known as public key cryptography uses two separate
 
 ![Asymmetric Encryption](/images/asymmetric_encryption.png)
 
-To create a new key in the Azure Key Vault, first we need to create the vault, using powershell scripts. You would need to install [azure module version 0.8.13 version or higher](__GHOST_URL__/blog/azure-key-vault-and-powershell-module-version/) for the key vault scripts to execute. Detailed steps on creating the vault and keys is documented [here](http://azure.microsoft.com/en-in/documentation/articles/key-vault-get-started/). Once we have the key created we can get the attributes of the key, using _Get-AzureKeyVaultKey_. This is as per the [JSON Web Key(JWK) format](https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#page-25). The '_n/e_' values in the below key are for the RSA key type(_kty_), showing the public key information.
+To create a new key in the Azure Key Vault, first we need to create the vault, using powershell scripts. You would need to install [azure module version 0.8.13 version or higher](/posts/azure-key-vault-and-powershell-module-version/) for the key vault scripts to execute. Detailed steps on creating the vault and keys is documented [here](http://azure.microsoft.com/en-in/documentation/articles/key-vault-get-started/). Once we have the key created we can get the attributes of the key, using _Get-AzureKeyVaultKey_. This is as per the [JSON Web Key(JWK) format](https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#page-25). The '_n/e_' values in the below key are for the RSA key type(_kty_), showing the public key information.
 
 ```powershell
 PS C:\> Get-AzureKeyVaultKey -Name rahulkey -VaultName testvaultrahul

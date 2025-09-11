@@ -3,10 +3,10 @@ title: "NServiceBus on AWS SQS: Learn How to Quickly Get Started"
 slug: "getting-started-with-nservicebus-on-aws"
 date: "2023-01-19T08:39:29.000Z"
 feature_image: "/images/NServiceBus-on-AWS-SQS.png"
-tags: []
+tags: ["AWS"]
 ---
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 NServiceBus is a messaging framework provided by Particular Software.
 
@@ -61,8 +61,10 @@ In this example, I have the `user-messages` project, which has a reference to th
 
 I have one Message defined - `CreateUserCommand` as shown below.
 
-    public class CreateUserCommand : ICommand
-    {
+```csharp
+public class CreateUserCommand : ICommand
+{
+```
         public Guid Id { get; set; }
         public string Name { get; set; }
     
@@ -91,14 +93,18 @@ The `EnableInstallers` method on the EndpointConfiguration ensures that all the 
     
     Console.WriteLine("Hello, World!");
     
-    var endpointConfiguration = new EndpointConfiguration("user-service");
-    var transport = endpointConfiguration.UseTransport<SqsTransport>();
-    endpointConfiguration.EnableInstallers();
+```csharp
+var endpointConfiguration = new EndpointConfiguration("user-service");
+var transport = endpointConfiguration.UseTransport<SqsTransport>();
+endpointConfiguration.EnableInstallers();
+```
     
     var endointInstance = await Endpoint.Start(endpointConfiguration);
     
-    Console.WriteLine("Press any key to stop");
-    Console.ReadKey();
+```csharp
+Console.WriteLine("Press any key to stop");
+Console.ReadKey();
+```
     
     await endointInstance.Stop();
     
@@ -109,8 +115,10 @@ The handler class, by convention, must implement the `IHanleMessages<>` interfac
 
 The receiver logs the message contents in this example, as shown below.
 
-    internal class CreateUserCommandHandler : IHandleMessages<CreateUserCommand>
-    {
+```csharp
+internal class CreateUserCommandHandler : IHandleMessages<CreateUserCommand>
+{
+```
         static ILog log = LogManager.GetLogger<CreateUserCommandHandler>();
     
         public async Task Handle(
@@ -134,7 +142,7 @@ Below you can see two Amazon SQS Queue is automatically created
 
 ![](/images/image.png)
 
-You can see these resources in the Amazon Console or from Visual Studio if you have [AWS Toolkit installed and set up.](__GHOST_URL__/blog/amazon-credentials-dotnet/)
+You can see these resources in the Amazon Console or from Visual Studio if you have [AWS Toolkit installed and set up.](/posts/amazon-credentials-dotnet/)
 
 ![](/images/image-1.png)
 
@@ -154,8 +162,10 @@ Since the API does not process any messages and is responsible for only sending 
 
 We also need to configure the Routing to configure the endpoint to which the message must be sent. In this case, the message needs to be sent to the _user-service_ responsible for processing the messages.
 
-    builder.Host.UseNServiceBus(context =>
-    {
+```javascript
+builder.Host.UseNServiceBus(context =>
+{
+```
         var endpointConfiguration = new EndpointConfiguration("user-api");
         var transport = endpointConfiguration.UseTransport<SqsTransport>();
         transport.Routing().RouteToEndpoint(typeof(CreateUserCommand), "user-service");
@@ -166,15 +176,19 @@ We also need to configure the Routing to configure the endpoint to which the mes
 
 The `UserController` has a `POST` method, which uses the `IMessageSession` instance from NServiceBus to send the message. It creates a new `CreateUserCommand` message instance and sends it to the bus.
 
-    public UserController(IMessageSession session, ILogger<UserController> logger)
-    {
+```typescript
+public UserController(IMessageSession session, ILogger<UserController> logger)
+{
+```
         this.session = session;
         _logger = logger;
     }
     
-    [HttpPost]
-    public async Task Post(UserData userData)
-    {
+```csharp
+[HttpPost]
+public async Task Post(UserData userData)
+{
+```
         await session.Send(new CreateUserCommand(userData.Id, userData.Name));
     }
     

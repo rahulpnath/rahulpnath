@@ -3,7 +3,7 @@ title: "Tip of the Week: Cmder - Portable Console Emulator for Windows"
 slug: "cmder-portable-console-emulator-for-windows"
 date: "2017-01-25T00:00:00.000Z"
 feature_image: "/images/cmder.png"
-tags: []
+tags: ["Productivity","Tools"]
 ---
 
 <iframe src="https://www.youtube.com/embed/fpxx8hlNTzc" />
@@ -27,22 +27,26 @@ Cmder supports **_multiple console tabs within a window_**. Tabs makes having mu
 
 \`\`\` text // Powershell Administrator Task \*PowerShell -ExecutionPolicy Bypass -NoLogo -NoProfile -NoExit -Command "Invoke-Expression '. ''%ConEmuDir%\\..\\profile.ps1'''" -new\_console:d:"%USERPROFILE%" \`\`\`
 
-    // Visual Studio Developer Prompt Task
-    cmd /k ""%ConEmuDir%\..\init.bat" &
-    "C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\VsDevCmd.bat""
-    -new_console:d:%USERPROFILE%
+```bash
+// Visual Studio Developer Prompt Task
+cmd /k ""%ConEmuDir%\..\init.bat" &
+"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\VsDevCmd.bat""
+-new_console:d:%USERPROFILE%
+```
     
 
 **_Alias_** is one of the key features that keeps me to Cmder. You can create short commands to map to longer commands. Aliases avoid typing long commands every time you want to perform that action. You can see all existing aliases by running alias command. I use this feature a lot. Most of the git commands are aliases, so I do not have to type them every time. For e.g., when on a git repository I can type _gs_ to run git status. You can also pass arguments to alias. To do a git commit with a message I run _gc The commit message_. Aliases support optional parameters through the $1-9 or the $\*.
 
 To define a alias _alias gs=git status_. Below are some of the alias examples.
 
-    gl=git log --oneline --all --graph --decorate  $*
-    gs=git status
-    ga=git add -A
-    gc=git commit -m "$*"
-    gcb=git checkout -b $*
-    gpsu=git push --set-upstream origin $*
+```powershell
+gl=git log --oneline --all --graph --decorate  $*
+gs=git status
+ga=git add -A
+gc=git commit -m "$*"
+gcb=git checkout -b $*
+gpsu=git push --set-upstream origin $*
+```
     
 
 Check out the [video](https://www.youtube.com/watch?v=fpxx8hlNTzc) for a walk-through of the setup and its usage. Cmder allows to get things done fast and looks great. Try it out to see if it works for you.

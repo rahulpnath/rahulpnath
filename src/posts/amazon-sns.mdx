@@ -3,10 +3,12 @@ title: "Amazon SNS For the .NET Developer: Getting Started Quick and Easy"
 slug: "amazon-sns"
 date: "2022-06-02T00:00:00.000Z"
 feature_image: "/images/amazon-sns.jpg"
-tags: []
+tags: ["AWS"]
+excerpt: "Learn how to get started with Amazon SNS and use it from a .NET application. We will learn about Topics, sending messages to topics, and using Subscriptions to receive messages. We will also learn about Filters, how to use them, and error handling with SNS."
+
 ---
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 Amazon Simple Notification Service or SNS, is a publish-subscribe service, managed by AWS.
 
@@ -53,15 +55,18 @@ In our API example, let’s say we add a new `POST` endpoint to add new `Weather
 
 > _The application or the source that sends messages to the SNS is the Publisher._
 
-It’s [a good practice to decouple applications actions into their own isolated process](__GHOST_URL__/blog/avoid-commands-calling-commands/), so that we can track and manage them independently. For example, if an email fails, we can retry it separately, and it doesn’t have to affect regenerating the report or saving new weather data itself.
+It’s [a good practice to decouple applications actions into their own isolated process](/posts/avoid-commands-calling-commands/), so that we can track and manage them independently. For example, if an email fails, we can retry it separately, and it doesn’t have to affect regenerating the report or saving new weather data itself.
 
 Publishing a message to a publish-subscribe service allows us to decouple application logic. When adding new weather data, we can publish a message to the Amazon SNS Topic and we can have multiple subscribers that can do the associated actions of sending an email or regenerating the report.
 
 Use the `PublishAsync` method on the `AmazonSimpleNotificationServiceClient` to send the `PublishRequest` message which contains the Subject, Message the ARN of the SNS Topic.
 
-    [HttpPost]
-    public async Task Post(WeatherForecast data)
-    {
+```csharp
+[HttpPost]
+public async Task Post(WeatherForecast data)
+{
+```
+```csharp
         var client = new AmazonSimpleNotificationServiceClient();
         var request = new PublishRequest()
         {
@@ -69,6 +74,7 @@ Use the `PublishAsync` method on the `AmazonSimpleNotificationServiceClient` to 
             Message = JsonSerializer.Serialize(data),
             TopicArn = "arn:aws:sns:us-east-1:189107071895:weather-forecast",
         };
+```
         
         var response = await client.PublishAsync(request);
     }
@@ -117,24 +123,26 @@ Learn to build Serverless Applications on AWS
 
 Below is the default AWS Lambda template function using the Simple SNS Function Blueprint.
 
-    public async Task FunctionHandler(
-        SNSEvent evnt, ILambdaContext context)
+
+```csharp
+public async Task FunctionHandler(
+    SNSEvent evnt, ILambdaContext context)
+{
+    foreach(var record in evnt.Records)
     {
-        foreach(var record in evnt.Records)
-        {
-            await ProcessRecordAsync(record, context);
-        }
+        await ProcessRecordAsync(record, context);
     }
-    
-    private async Task ProcessRecordAsync(
-        SNSEvent.SNSRecord record, ILambdaContext context)
-    {
-        context.Logger.LogInformation($"Processed record {record.Sns.Message}");
-    
-        // TODO: Do interesting work based on the new message
-        await Task.CompletedTask;
-    }
-    
+}
+
+private async Task ProcessRecordAsync(
+    SNSEvent.SNSRecord record, ILambdaContext context)
+{
+    context.Logger.LogInformation($"Processed record {record.Sns.Message}");
+
+    // TODO: Do interesting work based on the new message
+    await Task.CompletedTask;
+}
+```
 
 Once you publish the Lambda function to AWS, you can set up a new SNS Subscription either from the SNS Topic list or from the AWS Lambda Triggers list.
 
@@ -163,23 +171,27 @@ Let’s say we want to filter out messages based on the month of the Weather For
 
 Using the below code, let’s add a new custom Message Attribute before sending the message to SNS.
 
-    request.MessageAttributes.Add(
-        "Month",
-        new MessageAttributeValue()
-        {
-            DataType = "String",
-            StringValue = data.Date.ToString("MMMM")
-        });
-    
+
+```css
+request.MessageAttributes.Add(
+    "Month",
+    new MessageAttributeValue()
+    {
+        DataType = "String",
+        StringValue = data.Date.ToString("MMMM")
+    });
+```
 
 For the Subscriber, where we want to apply the filter policy, we can edit it in the AWS Console → Edit Subscription.
 
-    {
-      "Month": [
-        "February"
-      ]
-    }
-    
+
+```css
+{
+  "Month": [
+    "February"
+  ]
+}
+```
 
 Specifying the below policy filters out only the messages which have the Month property set to February. It will filter anything else out.
 
@@ -187,9 +199,11 @@ Specifying the below policy filters out only the messages which have the Month p
 
 Filter Policies JSON structure supports different filtering capabilities
 
+```code
 *   **Exact Matching** → Attribute matches one or more values _”Month” : \[”February”\]_
 *   **Prefix Matching →** Attribute includes the keyword _prefix_ and it matches the specified prefix. Below matches _March_ and _May”Month” : \[{”prefix”: “Ma”}\]_
 *   **Anything-but Matching →** This does an exclusion match. Below matches all months other than February and March. _"Month": \[{"anything-but": \["February", “March”\]}\]_
+```
 
 Retries & Dead-letter Queues
 ----------------------------

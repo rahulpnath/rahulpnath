@@ -3,10 +3,12 @@ title: "Amazon API Gateway - Introduction To Building REST APIs"
 slug: "amazon-api-gateway-rest-api-introduction"
 date: "2022-07-22T00:00:00.000Z"
 feature_image: "/images/learning_code.jpg"
-tags: []
+tags: ["AWS"]
+excerpt: "Learn how to build REST API using API Gateway. We will learn the different building blocks of REST APIs, how they connect with each other, and how you can build and configure an API in the AWS Console."
+
 ---
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 Amazon API Gateway is an AWS service for managing APIs at any scale.
 
@@ -118,17 +120,19 @@ A mapping template is a script written in [Velocity Template Language (VTL)](htt
 
 The Mapping template below uses the count property from the query string to set the `statusCode` property on the Integration Request.
 
-    {
-      #set($countString = $input.params('count'))
-      #set($Integer = 0)
-      #set($count=$Integer.parseInt($countString))
-      #if( $count < 20 )
-        "statusCode": 200
-      #else
-        "statusCode": 500
-      #end
-    }
-    
+
+```css
+{
+  #set($countString = $input.params('count'))
+  #set($Integer = 0)
+  #set($count=$Integer.parseInt($countString))
+  #if( $count < 20 )
+    "statusCode": 200
+  #else
+    "statusCode": 500
+  #end
+}
+```
 
 With Non-Proxy Integrations, you can also set up the [Integration passthrough behaviors.](https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-passthrough-behaviors.html) API Gateway supports different options to decide whether to pass through requests coming into the API Gateway to the integration backend.
 

@@ -3,13 +3,15 @@ title: "Rename SQL Table and Update Naming Conventions for Associated Keys and C
 slug: "rename-sql-table"
 date: "2019-11-30T00:00:00.000Z"
 feature_image: ""
-tags: []
+tags: ["Programming"]
 ---
 
 At work, we usually [DbUp](https://dbup.github.io/) changes to SQL Server. We follow certain naming conventions when creating table constraints and Indexes. Here is an example
 
-    create table Product
-    (
+```sql
+create table Product
+(
+```
       Id uniqueidentifier not null unique,
       CategoryId uniqueidentifier not null,
       VendorId uniqueidentifier not null,
@@ -28,11 +30,13 @@ _If you know of a tool that can do this, let know in the comments and stop readi
 
 Since I have been playing around with F# for a while, I chose to write it in that. The SQL Server Management Objects (SMO) provides a collection of objects to manage SQL Server programmatically, and it can be used from F# as well. Using the [#I and #r](https://docs.microsoft.com/en-us/dotnet/fsharp/tutorials/fsharp-interactive/#differences-between-the-interactive-scripting-and-compiled-environments) directives, the SMO library path and DLL's can be referred.
 
-    #I @"C:\Program Files\Microsoft SQL Server\140\SDK\Assemblies\";;
-    #I @"C:\Program Files (x86)\Microsoft SQL Server\140\SDK\Assemblies";;
-    #r "Microsoft.SqlServer.Smo.dll";;
-    #r "Microsoft.SqlServer.ConnectionInfo.dll";;
-    #r "Microsoft.SqlServer.Management.Sdk.Sfc.dll";;
+```bash
+#I @"C:\Program Files\Microsoft SQL Server\140\SDK\Assemblies\";;
+#I @"C:\Program Files (x86)\Microsoft SQL Server\140\SDK\Assemblies";;
+#r "Microsoft.SqlServer.Smo.dll";;
+#r "Microsoft.SqlServer.ConnectionInfo.dll";;
+#r "Microsoft.SqlServer.Management.Sdk.Sfc.dll";;
+```
     
 
 The SMO object model is a hierarchy of objects with the Server as the top-level object. Given a server name, we can start navigating through the entire structure and interact with the related objects. Below is how we can narrow down to the table that we want to rename.
@@ -64,32 +68,40 @@ For the create scripts, I do a string replace of the old table name with the new
 
 Below is what the script generated for renaming the above table from 'Product' to 'ProductRenamed'. This output can further be optimized, passing in the appropriate parameters to the ScriptingOptions class.
 
-    let script = generateRenameScripts "(localdb)\\MSSQLLocalDB" "Warehouse" "Product" "ProductRenamed"
-    File.WriteAllLines (@"C:\Work\Scripts\test.sql", script) |> ignore
+```javascript
+let script = generateRenameScripts "(localdb)\\MSSQLLocalDB" "Warehouse" "Product" "ProductRenamed"
+File.WriteAllLines (@"C:\Work\Scripts\test.sql", script) |> ignore
+```
     
 
-    ALTER TABLE [Product] DROP CONSTRAINT [FK_Product_Category]
-    ALTER TABLE [Product] DROP CONSTRAINT [FK_Product_Vendor]
-    DROP INDEX [IX_Product_CategoryId] ON [Product]
-    ALTER TABLE [Product] DROP CONSTRAINT [PK_Product] WITH ( ONLINE = OFF )
-    ALTER TABLE [Product] DROP CONSTRAINT [UQ__Product__3214EC065B6D1E82]
-    EXEC sp_rename 'Product', 'ProductRenamed'
-    ALTER TABLE [ProductRenamed]  WITH CHECK ADD  CONSTRAINT [FK_ProductRenamed_Category] FOREIGN KEY([CategoryId])
-    REFERENCES [Category] ([Id])
-    ALTER TABLE [ProductRenamed] CHECK CONSTRAINT [FK_ProductRenamed_Category]
-    ALTER TABLE [ProductRenamed]  WITH CHECK ADD  CONSTRAINT [FK_ProductRenamed_Vendor] FOREIGN KEY([VendorId])
-    REFERENCES [Vendor] ([Id])
-    ALTER TABLE [ProductRenamed] CHECK CONSTRAINT [FK_ProductRenamed_Vendor]
-    CREATE NONCLUSTERED INDEX [IX_ProductRenamed_CategoryId] ON [ProductRenamed]
-    (
+```sql
+ALTER TABLE [Product] DROP CONSTRAINT [FK_Product_Category]
+ALTER TABLE [Product] DROP CONSTRAINT [FK_Product_Vendor]
+DROP INDEX [IX_Product_CategoryId] ON [Product]
+ALTER TABLE [Product] DROP CONSTRAINT [PK_Product] WITH ( ONLINE = OFF )
+ALTER TABLE [Product] DROP CONSTRAINT [UQ__Product__3214EC065B6D1E82]
+EXEC sp_rename 'Product', 'ProductRenamed'
+ALTER TABLE [ProductRenamed]  WITH CHECK ADD  CONSTRAINT [FK_ProductRenamed_Category] FOREIGN KEY([CategoryId])
+REFERENCES [Category] ([Id])
+ALTER TABLE [ProductRenamed] CHECK CONSTRAINT [FK_ProductRenamed_Category]
+ALTER TABLE [ProductRenamed]  WITH CHECK ADD  CONSTRAINT [FK_ProductRenamed_Vendor] FOREIGN KEY([VendorId])
+REFERENCES [Vendor] ([Id])
+ALTER TABLE [ProductRenamed] CHECK CONSTRAINT [FK_ProductRenamed_Vendor]
+CREATE NONCLUSTERED INDEX [IX_ProductRenamed_CategoryId] ON [ProductRenamed]
+(
+```
       [CategoryId] ASC
-    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-    ALTER TABLE [ProductRenamed] ADD  CONSTRAINT [PK_ProductRenamed] PRIMARY KEY CLUSTERED 
-    (
+```sql
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+ALTER TABLE [ProductRenamed] ADD  CONSTRAINT [PK_ProductRenamed] PRIMARY KEY CLUSTERED 
+(
+```
       [Id] ASC
-    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-    ALTER TABLE [ProductRenamed] ADD UNIQUE NONCLUSTERED 
-    (
+```sql
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+ALTER TABLE [ProductRenamed] ADD UNIQUE NONCLUSTERED 
+(
+```
       [Id] ASC
     )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
     

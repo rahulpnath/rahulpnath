@@ -3,7 +3,8 @@ title: "AWS DynamoDB For The .NET Developer: How To Easily Get Started"
 slug: "aws-dynamodb-net-core"
 date: "2021-04-06T00:00:00.000Z"
 feature_image: "/images/aws_dynamodb.jpg"
-tags: []
+tags: ["AWS","DynamoDB"]excerpt: "Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it's data store. We will learn to do basic Creat, Read, Update and Delete operations from the API."
+
 ---
 
 DynamoDB is a cloud-hosted NoSQL database provided by Amazon Web Services (AWS). DynamoDB provides _reliable performance,_ a _managed experience,_ and a convenient _API access_ to interact with it.
@@ -60,13 +61,15 @@ There can be any other property on the Item and necessarily need not be the same
 
 We can add JSON data to the table as below → On top of City and Date properties, it contains Summary and Temperature in Celsius as our `WeatherForecast` class.
 
-    {
-      "City": "Brisbane",
-      "Date": "2021-04-02T02:10:40.595Z",
-      "Summary": "Warm",
-      "TemperatureC": 20
-    }
-    
+
+```css
+{
+  "City": "Brisbane",
+  "Date": "2021-04-02T02:10:40.595Z",
+  "Summary": "Warm",
+  "TemperatureC": 20
+}
+```
 
 Below is a snapshot of the Table with a few items added to it.
 
@@ -89,17 +92,21 @@ _The Query operation allows selecting multiple items with the same partition/has
 
 The `Get` method below uses the `DynamoDBContext` to perform the `Query` operation and get back all the items with the given `city` name as the partition key.
 
-    public WeatherForecastController(
-        IDynamoDBContext dynamoDbContext,
-        ILogger<WeatherForecastController> logger)
-    {
-        _dynamoDbContext = dynamoDbContext;
-        _logger = logger;
-    }
-    
-    [HttpGet]
-    public async Task<IEnumerable<WeatherForecast>> Get(string city = "Brisbane")
-    {
+
+```csharp
+public WeatherForecastController(
+    IDynamoDBContext dynamoDbContext,
+    ILogger<WeatherForecastController> logger)
+{
+    _dynamoDbContext = dynamoDbContext;
+    _logger = logger;
+}
+```
+```csharp
+[HttpGet]
+public async Task<IEnumerable<WeatherForecast>> Get(string city = "Brisbane")
+{
+```csharp
         return await _dynamoDbContext
             .QueryAsync<WeatherForecast>(city)
             .GetRemainingAsync();
@@ -110,13 +117,15 @@ The `Get` function now returns all the weather forecast data for the given city 
 
 We can add a filter condition on the date (range key) to match the original functionality.
 
-    return await _dynamoDbContext
-        .QueryAsync<WeatherForecast>(
-            city, 
-            QueryOperator.Between, 
-            new object[] { DateTime.Now.Date.AddDays(1), DateTime.Now.Date.AddDays(5)})
-        .GetRemainingAsync();
-    
+
+```csharp
+return await _dynamoDbContext
+    .QueryAsync<WeatherForecast>(
+        city, 
+        QueryOperator.Between, 
+        new object[] { DateTime.Now.Date.AddDays(1), DateTime.Now.Date.AddDays(5)})
+    .GetRemainingAsync();
+```
 
 The above query uses the `Between` operator on the date range key to filter out the items between a specific date range. Similarly, there are [different operators](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.KeyConditionExpressions) like _Equal, LessThan, GreaterThanOrEqual, BeginsWith_, etc.
 
@@ -130,14 +139,18 @@ With the Controller now using the `IDynamoDBContext` let's wire up the applicati
 
 **NOTE:** _To keep things simple, I've hard-coded the Access Key and the Secret Key in the code. You should move this into [Configuration file](https://youtu.be/5GlgHV_12-k) and use [Secret Manager](https://youtu.be/PkLLP2tcd28) for local development._
 
-    var credentials = new BasicAWSCredentials("<ACCESS_KEY>", "<SECRET_KEY>");
-    var config = new AmazonDynamoDBConfig()
-    {
+```csharp
+var credentials = new BasicAWSCredentials("<ACCESS_KEY>", "<SECRET_KEY>");
+var config = new AmazonDynamoDBConfig()
+{
+```
         RegionEndpoint = RegionEndpoint.APSoutheast2
-    };
-    var client = new AmazonDynamoDBClient(credentials, config);
-    services.AddSingleton<IAmazonDynamoDB>(client);
-    services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
+```csharp
+};
+var client = new AmazonDynamoDBClient(credentials, config);
+services.AddSingleton<IAmazonDynamoDB>(client);
+services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
+```sql
     
 
 The above code creates an `AmazonDynamoDBClient` using the credentials and Region to access DynamoDB for your account. The `DynamoDBContext` requires only the `AmazonDynamoDBClient`.
@@ -158,15 +171,19 @@ The `SaveAsync` method creates a new Item if the primary key does not already ex
 
 Below I use the `GenerateDummyData` to generate some weather forecast given a city name. Using the `SaveAsync` method, we can write back to DynamoDB.
 
-    [HttpPost]
-    public async Task Post(string city)
-    {
+```csharp
+[HttpPost]
+public async Task Post(string city)
+{
+```csharp
         var data =  GenererateDummyData(city);
         foreach (var d in data)
             await _dynamoDbContext.SaveAsync(d);
-    }
-    private static WeatherForecast[] GenererateDummyData(string city)
-    {
+```csharp
+}
+private static WeatherForecast[] GenererateDummyData(string city)
+{
+```csharp
         var rng = new Random();
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
@@ -181,17 +198,24 @@ Below I use the `GenerateDummyData` to generate some weather forecast given a ci
 
 If you want to update an existing item's property, use the `LoadAsync` method to load the Item, update the property, and save it back using the `SaveAsync` method.
 
-    var todayForecast = await _dynamoDbContext
-        .LoadAsync<WeatherForecast>(city, DateTime.Now.Date );
-    todayForecast.TemperatureC = 20;
-    await _dynamoDbContext.SaveAsync(todayForecast);
+
+```csharp
+var todayForecast = await _dynamoDbContext
+    .LoadAsync<WeatherForecast>(city, DateTime.Now.Date );
+```
+```csharp
+todayForecast.TemperatureC = 20;
+await _dynamoDbContext.SaveAsync(todayForecast);
+```
     
 
 Similarly, the `DeleteAsync` method deletes an item by specifying the partition and the range key or the Item itself.
 
-    [HttpDelete]
-    public async Task Delete(string city)
-    {
+```csharp
+[HttpDelete]
+public async Task Delete(string city)
+{
+```
         await _dynamoDbContext
             .DeleteAsync<WeatherForecast>(city, DateTime.Now.Date);
     }
@@ -216,7 +240,7 @@ I hope this helps you to get a basic understanding of DynamoDB and how to get st
 
 In future posts, I'll show you how to automate creating tables and avoid manual creation. I'll also show how to set up a local development environment using docker and more.
 
-[\*Subscribe to my Newsletter](__GHOST_URL__/subscribe) below to stay updated and have a great time learning!\*
+[\*Subscribe to my Newsletter](#) below to stay updated and have a great time learning!\*
 
 ### References
 

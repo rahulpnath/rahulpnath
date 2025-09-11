@@ -1,5 +1,8 @@
 const withMDX = require('@next/mdx')({
-  extension: /\.mdx?$/
+  extension: /\.mdx?$/,
+  options: {
+    providerImportSource: "./src/mdx-components", // 👈 point to your file
+  },
 });
 
 module.exports = withMDX({

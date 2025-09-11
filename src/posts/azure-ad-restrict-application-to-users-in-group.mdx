@@ -3,10 +3,10 @@ title: "Azure AD: Restrict Application Access To Users Belonging To A Group"
 slug: "azure-ad-restrict-application-to-users-in-group"
 date: "2019-06-04T00:00:00.000Z"
 feature_image: "/images/azure_ad_user_assignment.jpg"
-tags: []
+tags: ["Azure"]
 ---
 
-For one of the web application I was working on, access was to be restricted based on user belonging to a particular Azure AD Group. The application as such did not have any Role Based Functionality. It feels an overhead to set up the [Role Based Access](__GHOST_URL__/blog/dot-net-core-api-and-azure-ad-groups-based-access/) when all we want is to restrict users belonging to a particular group.
+For one of the web application I was working on, access was to be restricted based on user belonging to a particular Azure AD Group. The application as such did not have any Role Based Functionality. It feels an overhead to set up the [Role Based Access](/posts/dot-net-core-api-and-azure-ad-groups-based-access/) when all we want is to restrict users belonging to a particular group.
 
 In this post, let us look at how we can set up Azure AD authentication such that only users of a particular group can authenticate against it and get a token. I used the [ASP.NET Core 2.1 Azure AD authentication sample](https://github.com/juunas11/aspnetcore2aadauth), but this applies to any application trying to get a token from an Azure AD application.
 
@@ -37,6 +37,6 @@ Handling Managed Service Identity Service Principal
 
 Even though it is possible to add MSI service principal to an Azure AD Group it does not work as intended. The request was failing to get a token with the error that the user is not assigned to a role. It looks like this is one of the cases where a full service principal is required.
 
-To get this working for an MSI service principal, I had to create a dummy application role for the AD application and grant the MSI service principal that role for the AD application. Check the [Using AD Role section in this article](__GHOST_URL__/blog/how-to-authenticate-azure-function-with-azure-web-app-using-managed-service-identity/#using-ad-role) for full details on setting this up. Note that in this case, you need to explicitly add in the application roles and grant access for the service principal for each of them.
+To get this working for an MSI service principal, I had to create a dummy application role for the AD application and grant the MSI service principal that role for the AD application. Check the [Using AD Role section in this article](/posts/how-to-authenticate-azure-function-with-azure-web-app-using-managed-service-identity/#using-ad-role) for full details on setting this up. Note that in this case, you need to explicitly add in the application roles and grant access for the service principal for each of them.
 
 Only users belonging to the group or have been assigned directly to the AD application can get a token for the AD application and hence access the Web application. This is particularly useful when the application does not have any Role Based functionality and all you want is restrict access to a certain group of people within your directory/organization.

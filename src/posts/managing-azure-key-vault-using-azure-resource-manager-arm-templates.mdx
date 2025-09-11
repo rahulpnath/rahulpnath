@@ -3,10 +3,10 @@ title: "Managing Azure Key Vault using Azure Resource Manager (ARM) Templates"
 slug: "managing-azure-key-vault-using-azure-resource-manager-arm-templates"
 date: "2016-06-05T06:15:31.000Z"
 feature_image: ""
-tags: []
+tags: ["Azure"]
 ---
 
-Creating and managing Azure Key Vault was mostly supported through PowerShell cmdlets [initially](__GHOST_URL__/blog/getting-started-with-azure-key-vault/), but there are multiple ways of achieving this now - [REST API](__GHOST_URL__/blog/managing-azure-key-vault-over-the-rest-api/), [PowerShell](__GHOST_URL__/blog/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/), CLI or ARM templates. In this post, we will look into how we can use [Azure Resource Manager](https://azure.microsoft.com/en-us/documentation/articles/resource-group-authoring-templates/) (ARM) templates to create and manage a Key Vault.
+Creating and managing Azure Key Vault was mostly supported through PowerShell cmdlets [initially](/posts/getting-started-with-azure-key-vault/), but there are multiple ways of achieving this now - [REST API](/posts/managing-azure-key-vault-over-the-rest-api/), [PowerShell](/posts/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/), CLI or ARM templates. In this post, we will look into how we can use [Azure Resource Manager](https://azure.microsoft.com/en-us/documentation/articles/resource-group-authoring-templates/) (ARM) templates to create and manage a Key Vault.
 
 Azure Resource Manager and Templates
 ------------------------------------
@@ -30,9 +30,9 @@ You can [export a template from existing resources](https://azure.microsoft.com/
 Key Vault ARM Template
 ----------------------
 
-The [Key Vault schema](https://github.com/Azure/azure-resource-manager-schemas/blob/c301d6ed1d8876cad60af1f81d420e9249a80594/schemas/2015-06-01/Microsoft.KeyVault.json) is authored here and is part of the root schema URL that we had [seen above](http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#). Though it might not be able to fully understand the schema details, it helps to understand at a high level what are the different parameters that are allowed when defining a Key Vault. At present, the schema allows only creating [Secrets](__GHOST_URL__/blog/moving-sensitive-information-from-configuration-file-to-azure-key-vault/) within a Key Vault and [Keys have to be created separately](__GHOST_URL__/blog/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/).
+The [Key Vault schema](https://github.com/Azure/azure-resource-manager-schemas/blob/c301d6ed1d8876cad60af1f81d420e9249a80594/schemas/2015-06-01/Microsoft.KeyVault.json) is authored here and is part of the root schema URL that we had [seen above](http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#). Though it might not be able to fully understand the schema details, it helps to understand at a high level what are the different parameters that are allowed when defining a Key Vault. At present, the schema allows only creating [Secrets](/posts/moving-sensitive-information-from-configuration-file-to-azure-key-vault/) within a Key Vault and [Keys have to be created separately](/posts/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/).
 
-Like we did using the [REST API](__GHOST_URL__/blog/managing-azure-key-vault-over-the-rest-api/), with this ARM template I want to create or update a Key Vault with a specified set of properties (like Vault Name, tenant etc), the access policies to specify the AD objects (applications/users) that have access to the Vault and create a few secrets.
+Like we did using the [REST API](/posts/managing-azure-key-vault-over-the-rest-api/), with this ARM template I want to create or update a Key Vault with a specified set of properties (like Vault Name, tenant etc), the access policies to specify the AD objects (applications/users) that have access to the Vault and create a few secrets.
 
 Create a new JSON file with any name you like (_azuredeploy.json_) and copy the above template structure into it. For the content version, you can use any value that you like for e.g. 1.0.0. Next, we need to define the parameters that we need, that are specific to each Key Vault deployment. Without parameters, we will be always deploying the resources with the same name and properties, so it is a good practice to externalize it and use it as required. [Parameters](https://azure.microsoft.com/en-us/documentation/articles/resource-group-authoring-templates/#parameters) have a defined structure and allows to have basic validation for the input values. All parameters that does not have a _defaultValue_ needs to be passed in while using the template.
 

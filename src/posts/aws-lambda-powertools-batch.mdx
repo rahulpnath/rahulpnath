@@ -3,7 +3,7 @@ title: "Efficiently Handle SQS Messages with AWS Lambda Powertools Batch Utility
 slug: "aws-lambda-powertools-batch"
 date: "2024-01-05T06:26:02.000Z"
 feature_image: "/images/_Powertools---Batch.png"
-tags: []
+tags: ["AWS","Lambda"]
 ---
 
 The AWS Lambda PowerTools Batch processing utility makes it easy to process a batch of messages from Amazon SQS, Amazon Kinesis Data Streams, and Amazon DynamoDB Streams.
@@ -14,7 +14,7 @@ It provides a simple interface to process each batch record, enables parallel pr
 
 In this post, let’s learn how to use the Lambda Powertools Batch processing utility to process messages in batches from Amazon SQS.
 
-_This article is sponsored by AWS and is part of my_ [_AWS Series_](__GHOST_URL__/tag/aws/)_._
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
 
 Native Batch Processing With AWS Lambda
 ---------------------------------------
@@ -31,12 +31,14 @@ Learn how to process SQS messages from AWS Lambda Function. We will learn how to
 
 ![](/images/amazon-sqs-lambda-triggers-dotnet.jpg)
 
-](__GHOST_URL__/blog/amazon-sqs-lambda-trigger-dotnet/)
+](/posts/amazon-sqs-lambda-trigger-dotnet/)
 
 The below Lambda Function handles an `SQSEvent` and processes each of the records contained in it.
 
-    [LambdaFunction(Role = "@NotifyCustomersLambdaExecutionRole")]
-    public async Task<SQSBatchResponse> NotifyCustomers(
+```csharp
+[LambdaFunction(Role = "@NotifyCustomersLambdaExecutionRole")]
+public async Task<SQSBatchResponse> NotifyCustomers(
+```
            SQSEvent evnt, ILambdaContext context)
     {
         var response = new SQSBatchResponse()
@@ -89,7 +91,7 @@ Learn how to handle exceptions, configure Dead Letter Queue, re-drive messages f
 
 ![](/images/amazon-sqs-lambda-trigger-exception-handling-dotnet.jpg)
 
-](__GHOST_URL__/blog/amazon-sqs-lambda-trigger-exception-handling-dotnet/)
+](/posts/amazon-sqs-lambda-trigger-exception-handling-dotnet/)
 
 By default, SQS will retry all the messages in a batch even if only a subset of the messages fails to process.
 
@@ -110,16 +112,20 @@ To start using the Powertools Batch utility from our application, let's first ad
 
 You can decorate the Function Handler with the `BatchProcessorAttribute` to start using the Batch utility, as shown below.
 
-    [LambdaFunction(Role = "@NotifyCustomersLambdaExecutionRole")]
-    [BatchProcessor(RecordHandler = typeof(NotifyCustomerRecordHandler))]
-    public BatchItemFailuresResponse HandleNotifyCustomersBatch(
+```json
+[LambdaFunction(Role = "@NotifyCustomersLambdaExecutionRole")]
+[BatchProcessor(RecordHandler = typeof(NotifyCustomerRecordHandler))]
+public BatchItemFailuresResponse HandleNotifyCustomersBatch(
+```
          SQSEvent evnt, ILambdaContext context)
     {
         return SqsBatchProcessor.Result.BatchItemFailuresResponse;
     }
     
-    public class NotifyCustomerRecordHandler : ISqsRecordHandler
-    {
+```csharp
+public class NotifyCustomerRecordHandler : ISqsRecordHandler
+{
+```
         public async Task<RecordHandlerResult> HandleAsync(
             SQSEvent.SQSMessage message, CancellationToken cancellationToken)
         {

@@ -3,16 +3,18 @@ title: "Tip of the Week: Text Editing - Split or Combine Multiple Lines"
 slug: "text-editing-split-or-combine-multiple-lines"
 date: "2017-10-13T00:00:00.000Z"
 feature_image: "/images/textediting_split_combine.jpg"
-tags: []
+tags: ["Productivity"]
 ---
 
-As a developer, I often end up needing to manipulate text. Sometimes this text can get quite large, and it might take a while to do it manually. If you have a text editor under your [tool belt](__GHOST_URL__/blog/tools-that-I-use/), it often helps in situations like that. Let's looks at one of the common scenarios that I come across and how we can solve that using a text editor. I use [Sublime Text](https://www.sublimetext.com/) as my go-to editor for such text editing hacks, but you can do this in any text editor that supports [simultaneous editing](https://en.wikipedia.org/wiki/Simultaneous_editing).
+As a developer, I often end up needing to manipulate text. Sometimes this text can get quite large, and it might take a while to do it manually. If you have a text editor under your [tool belt](/posts/tools-that-I-use/), it often helps in situations like that. Let's looks at one of the common scenarios that I come across and how we can solve that using a text editor. I use [Sublime Text](https://www.sublimetext.com/) as my go-to editor for such text editing hacks, but you can do this in any text editor that supports [simultaneous editing](https://en.wikipedia.org/wiki/Simultaneous_editing).
 
 Let's say I just get a list of comma separated values and need to insert double (or single) quotes around each value to use in a SQL query. To demonstrate this, I ended up going to [random.org](https://www.random.org/integers/) to generate a list of random values and had to use the same technique that I was to demonstrate as in the SQL query case. I generated 12 random numbers, and the site gave a tab separated list of values, as shown below.
 
-    91    66    31    11    90
-    80    1    24    48    61
-    61    66
+```bash
+91    66    31    11    90
+80    1    24    48    61
+61    66
+```
     
 
 I now need to convert this into a comma-separated list. Let's see how we can go about doing this.

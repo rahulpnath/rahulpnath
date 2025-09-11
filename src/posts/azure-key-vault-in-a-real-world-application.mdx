@@ -3,12 +3,12 @@ title: "Azure Key Vault in a Real World Application"
 slug: "azure-key-vault-in-a-real-world-application"
 date: "2015-04-25T11:46:09.000Z"
 feature_image: "/images/multiple_ad_application.png"
-tags: []
+tags: ["Azure"]
 ---
 
-> Please check [here](__GHOST_URL__/blog/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/) for scripts using the latest PowerShell cmdlets.
+> Please check [here](/posts/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/) for scripts using the latest PowerShell cmdlets.
 
-Over the last couple of posts we have seen how to [Get Started with Azure Key Vault](__GHOST_URL__/blog/getting-started-with-azure-key-vault/), [Authenticate a Client Application with the Vault](__GHOST_URL__/blog/authenticating-a-client-application-with-azure-key-vault/) and also on how the vault can be used as an [alternate to the configuration file to keep sensitive information secure](__GHOST_URL__/blog/moving-sensitive-information-from-configuration-file-to-azure-key-vault/). In this post we will explore into how a key vault can be fit into the life-cycle of an application, configuring application to use the keyvault for different deployments and also on how to manage the keys/secrets for these different deployments. Any application that uses the Key Vault to manage keys and other sensitive information, should be able to switch easily to use the vault configured for it.
+Over the last couple of posts we have seen how to [Get Started with Azure Key Vault](/posts/getting-started-with-azure-key-vault/), [Authenticate a Client Application with the Vault](/posts/authenticating-a-client-application-with-azure-key-vault/) and also on how the vault can be used as an [alternate to the configuration file to keep sensitive information secure](/posts/moving-sensitive-information-from-configuration-file-to-azure-key-vault/). In this post we will explore into how a key vault can be fit into the life-cycle of an application, configuring application to use the keyvault for different deployments and also on how to manage the keys/secrets for these different deployments. Any application that uses the Key Vault to manage keys and other sensitive information, should be able to switch easily to use the vault configured for it.
 
 Configuring Client-Applications to use the Key vault
 ----------------------------------------------------
@@ -29,14 +29,18 @@ From a client application all we need to have is to the configuration for the ke
 
 In the above configuration I assume that when these configurations are used from the code, we know that if a value is a key or secret. We could have an extended configuration or string prefix's (key\* or secret\*) to indicate this and then have the code automatically detect it too if required to decouple that, but I don't see it really necessary. So the application at any time would only depend on these configured values, and we can easily switch it use any vault configured with the required key/secret values.
 
-    var keyVaultIdentifierHelper = new KeyVaultIdentifierHelper(ConfigurationManager.AppSettings["KeyVaultUrl"]);
-    var connectionStringIdentifier =
+```csharp
+var keyVaultIdentifierHelper = new KeyVaultIdentifierHelper(ConfigurationManager.AppSettings["KeyVaultUrl"]);
+var connectionStringIdentifier =
+```
         keyVaultIdentifierHelper.GetSecretIdentifier(ConfigurationManager.AppSettings["SqlConnectionString"]);
     var connectionStringSecret = await keyClient.GetSecretAsync(connectionStringIdentifier);
     
 
-    public class KeyVaultIdentifierHelper
-    {
+```csharp
+public class KeyVaultIdentifierHelper
+{
+```
         private const string KeyFormat = "{0}/keys/{1}";
         private const string SecretFormat = "{0}/secrets/{1}";
         private readonly string keyVaultUrl;
@@ -67,13 +71,13 @@ Now that we have decoupled the application from the Key Vault, we need to see ho
 Restricting Permissions to Key Vault
 ------------------------------------
 
-We had seen how to [authenticate a client application with a Key Vault](__GHOST_URL__/blog/authenticating-a-client-application-with-azure-key-vault/) using an Active Directory (AD) application, and how to set various access policies for these application's. Applications should be given only the minimum set of permissions that it requires to operate on, most probably this would be only the read permissions. For [administrative application's](https://github.com/rahulpnath/AzureKeyVaultExplorer) we would want to give all permissions so that it can modify the vault keys/secrets as required. For such a scenario it is best to have, two (or more) separate AD application's created and have separate permissions provided.
+We had seen how to [authenticate a client application with a Key Vault](/posts/authenticating-a-client-application-with-azure-key-vault/) using an Active Directory (AD) application, and how to set various access policies for these application's. Applications should be given only the minimum set of permissions that it requires to operate on, most probably this would be only the read permissions. For [administrative application's](https://github.com/rahulpnath/AzureKeyVaultExplorer) we would want to give all permissions so that it can modify the vault keys/secrets as required. For such a scenario it is best to have, two (or more) separate AD application's created and have separate permissions provided.
 
 ![Multiple AD applications to access key vault with different permissions](/images/multiple_ad_application.png)
 
 What all should be there in my configuration file?
 --------------------------------------------------
 
-All your [sensitive information should be moved out of your application configuration file](__GHOST_URL__/blog/moving-sensitive-information-from-configuration-file-to-azure-key-vault/), and Key Vault is the one place to have them all. The application's configuration file should only have the azure key vault url and the AD application id and certificate identifier (thumb print) that can be used to authenticate with the AD. Yes it is advisable to use the [certificate authentication mechanism](__GHOST_URL__/blog/authenticating-a-client-application-with-azure-key-vault/) as opposed to the secret mechanism, if not you would have to put the secret in your configuration file, which would be like 'giving a thief the key to your safe'.Additionally you could also have the key identifier mappings in the configuration file that the application can use to map to key/secret in the vault as we had seen above.
+All your [sensitive information should be moved out of your application configuration file](/posts/moving-sensitive-information-from-configuration-file-to-azure-key-vault/), and Key Vault is the one place to have them all. The application's configuration file should only have the azure key vault url and the AD application id and certificate identifier (thumb print) that can be used to authenticate with the AD. Yes it is advisable to use the [certificate authentication mechanism](/posts/authenticating-a-client-application-with-azure-key-vault/) as opposed to the secret mechanism, if not you would have to put the secret in your configuration file, which would be like 'giving a thief the key to your safe'.Additionally you could also have the key identifier mappings in the configuration file that the application can use to map to key/secret in the vault as we had seen above.
 
 By doing this we have fully decoupled the application and its dependency with the vault store and have also protected all our sensitive information. This also helps in having the application to be tested with configurations appropriate to the type of deployment. Hope this helps you in developing your application against the key vault.

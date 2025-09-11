@@ -3,10 +3,10 @@ title: "Azure Managed Service Identity And Local Development"
 slug: "azure-managed-service-identity-and-local-development"
 date: "2020-04-14T00:00:00.000Z"
 feature_image: "/images/defaultazurecredential_environment_credential.jpg"
-tags: []
+tags: ["Azure"]
 ---
 
-One of the common challenges when building cloud applications is managing credentials for authenticating to cloud services. The Managed Service Identity feature of Azure AD provides an automatically managed identity in Azure AD. This identity helps authenticate with cloud service that supports Azure AD authentication. In a previous post, we saw how the [DefaultAzureCredential](__GHOST_URL__/blog/defaultazurecredential-from-azure-sdk/) that is part of the Azure SDK's, helps unify how we get token from Azure AD. The DefaultAzureCredential, combined with Managed Service Identity, allows us to authenticate with Azure services without the need for any additional credentials.
+One of the common challenges when building cloud applications is managing credentials for authenticating to cloud services. The Managed Service Identity feature of Azure AD provides an automatically managed identity in Azure AD. This identity helps authenticate with cloud service that supports Azure AD authentication. In a previous post, we saw how the [DefaultAzureCredential](/posts/defaultazurecredential-from-azure-sdk/) that is part of the Azure SDK's, helps unify how we get token from Azure AD. The DefaultAzureCredential, combined with Managed Service Identity, allows us to authenticate with Azure services without the need for any additional credentials.
 
 <iframe src="https://www.youtube.com/embed/GAcFnnPxGow" />
 
@@ -29,7 +29,7 @@ In Azure Portal, under the Azure Active Directory -> App Registration, create a 
 
 Now that we have all the required values, lets set up the Environment Variables. You can do this either as part of your application itself or under the Windows Environment Variables.
 
-**PRO TIP**: _Have a script file as part of the source code to set up such variables. Make sure the sensitive values are shared securely (and [not via the source control](__GHOST_URL__/blog/keeping-sensitive-configuration-data-out-of-source-control/))_
+**PRO TIP**: _Have a script file as part of the source code to set up such variables. Make sure the sensitive values are shared securely (and [not via the source control](/posts/keeping-sensitive-configuration-data-out-of-source-control/))_
 
 If you want to set it from the source code, you can do something like below
 
@@ -44,7 +44,7 @@ If you want to set it from the source code, you can do something like below
 
 Add the sensitive configs to the [User Secrets](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-3.1&tabs=windows#json-structure-flattening-in-visual-studio) from Visual Studio so that you don't have to check them into source control.
 
-When using DefaultAzureCredential to authenticate against resources like Key Vault, SQL Server, etc., you can create just one Azure AD application for the whole team and share the credentials around securely (use a [password manager](__GHOST_URL__/blog/password-manager-get-one-if-you-havent-already/)).
+When using DefaultAzureCredential to authenticate against resources like Key Vault, SQL Server, etc., you can create just one Azure AD application for the whole team and share the credentials around securely (use a [password manager](/posts/password-manager-get-one-if-you-havent-already/)).
 
 Using SharedTokenCacheCredential
 --------------------------------

@@ -3,10 +3,10 @@ title: "How to Implement Optimistic Locking in .NET for Amazon DynamoDB"
 slug: "dynamodb-optimistic-locking"
 date: "2023-05-02T19:41:10.000Z"
 feature_image: "/images/DynamoDB-Optimistic-Locking.png"
-tags: []
+tags: ["AWS","DynamoDB"]
 ---
 
-_This article is sponsored by AWS and is part of my_ [_AWS Series_](__GHOST_URL__/tag/aws/)_._
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
 
 It is essential to ensure data consistency when multiple users or applications access the same data simultaneously.
 
@@ -52,8 +52,10 @@ When using the Object persistence model, which is the high-level API using the `
 
 To use this feature, all you need to do is add a new property and assign the `DynamoDBVersion` attribute to, in the .NET class representing the DynamoDB table object.
 
-    public class WeatherForecast
-    {
+```csharp
+public class WeatherForecast
+{
+```
         public string CityName { get; set; }
         public DateTime Date { get; set; }
         public int TemperatureC { get; set; }
@@ -73,9 +75,11 @@ In the sample above, since the Version property is an integer, `DynamoDBContext`
 
 To disable Optimistic Locking checking when using `DynamoDBContext` along with Version tags, you can pass the `SkipVersionCheck` flag as true.
 
-    [HttpPost("post-skip-versioning")]
-    public async Task PostSkipVersion(WeatherForecast data)
-    {
+```csharp
+[HttpPost("post-skip-versioning")]
+public async Task PostSkipVersion(WeatherForecast data)
+{
+```
         data.Date = data.Date.Date;
         await _dynamoDbContext.SaveAsync(
             data,
@@ -117,12 +121,14 @@ Condition Expressions allow specifying constraints when writing data to an Amazo
 
 ![](/images/DynamoDB-Condition-Expressions.png)
 
-](__GHOST_URL__/blog/dynamodb-condition-expressions-dotnet/)
+](/posts/dynamodb-condition-expressions-dotnet/)
 
 Below is an example `UpdateItemRequest` which sets the `ConditionExpression` that checks the version number on the DynamoDB server item is the same as that when we retrieved the item for the update.
 
-    var updateItemRequest = new UpdateItemRequest
-    {
+```csharp
+var updateItemRequest = new UpdateItemRequest
+{
+```
         TableName = "TableName",
         Key = new Dictionary<string, AttributeValue>
         {

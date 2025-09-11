@@ -3,10 +3,12 @@ title: "How To Manage Multiple Stages in Amazon API Gateway REST API?"
 slug: "amazon-api-gateway-rest-api-multiple-stages"
 date: "2022-08-01T00:00:00.000Z"
 feature_image: "/images/learning_code.jpg"
-tags: []
+tags: ["AWS"]
+excerpt: "Learn how to configure different Stages to use different backend integrations - Lambda Function, DynamoDB etc - based on the Stage they are running. We will use Stage variables to set up connections with different Lambda Functions and DynamoDB database."
+
 ---
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 When building applications, we want the ability to test them before we deploy them to the production environment. It applies to building API applications.
 
@@ -18,7 +20,7 @@ In this blog post, learn how to configure different Stages to use backend integr
 <iframe src="https://www.youtube.com/embed/13Urq-AqH8M" />
 </div>
 
-In a previous post, we learned [how to build an API Gateway REST API Using AWS Lambda Proxy Integration](__GHOST_URL__/blog/amazon-api-gateway-rest-api-lambda-proxy-integration/). We learned how to handle the API Gateway requests in a Lambda function built in .NET, connect to a DynamoDB table and perform CRUD operations.
+In a previous post, we learned [how to build an API Gateway REST API Using AWS Lambda Proxy Integration](/posts/amazon-api-gateway-rest-api-lambda-proxy-integration/). We learned how to handle the API Gateway requests in a Lambda function built in .NET, connect to a DynamoDB table and perform CRUD operations.
 
 [
 
@@ -30,7 +32,7 @@ In this post, you will learn how to build a REST API using Amazon API Gateway wi
 
 ![](/images/aws_lambda.jpg)
 
-](__GHOST_URL__/blog/amazon-api-gateway-rest-api-lambda-proxy-integration)
+](/posts/amazon-api-gateway-rest-api-lambda-proxy-integration)
 
 However, when deploying to multiple Stages, we had one issue -  APIs deployed to different Stages were using the same backend integrations - Lambda Function and DynamoDB table. We want each API Stage to talk to its own backed integration services. This makes each Stage isolated and runs without affecting other Stages.
 
@@ -114,8 +116,9 @@ For the Lambda function to be able to talk to the correct DynamoDB table, we nee
 
 When setting up the `DynamoDBContext` instance, we can pass a configuration to apply a prefix for table names.
 
-    public Function()
-    {
+```csharp
+public Function()
+{
         var environment = Environment.GetEnvironmentVariable("Environment");
         _dynamoDbContext = new DynamoDBContext(new AmazonDynamoDBClient(),
             new DynamoDBContextConfig()
@@ -123,6 +126,7 @@ When setting up the `DynamoDBContext` instance, we can pass a configuration to a
                 TableNamePrefix = environment
             });
     }
+```
     
 
 Since we are using the environment variable to determine the value to prefix to DynamoDB table names, we can configure this based on the environment the Lambda Function is running for.
@@ -143,7 +147,7 @@ This opens the IAM Role, where you can Add additional Permissions to the role.
 
 ![Update the Lambda IAM Role to provider permissions to talk to the Stage-specific DynamoDB table. Explicitly select the required permissions and the Resources the Lambda function needs access to.](/images/api-gateway-rest-api-lambda-proxy-lambda-iam-role-stage.jpg)
 
-I’ve added the same set of permissions that we provided when setting up the first Lambda Function [in the previous post](__GHOST_URL__/blog/amazon-api-gateway-rest-api-lambda-proxy-integration/), but to the stage-specific DynamoDB table.
+I’ve added the same set of permissions that we provided when setting up the first Lambda Function [in the previous post](/posts/amazon-api-gateway-rest-api-lambda-proxy-integration/), but to the stage-specific DynamoDB table.
 
 ### Setting Up API Gateway and Lambda Permissions
 

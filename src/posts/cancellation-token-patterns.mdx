@@ -3,7 +3,7 @@ title: "5 Recommended Patterns When  Using Cancellation Token in .NET"
 slug: "cancellation-token-patterns"
 date: "2024-04-02T04:53:01.000Z"
 feature_image: "/images/Cancellation-Token-Practices-2.png"
-tags: []
+tags: ["Dotnet","AWS"]
 ---
 
 Are you passing around the CancellationToken to all your functions blindly?
@@ -34,7 +34,7 @@ Imagine having a long-running request triggered by a user on your server. But th
 
 ![](/images/Cancellation-Token.png)
 
-](__GHOST_URL__/blog/cancellation-token-dotnet/)
+](/posts/cancellation-token-dotnet/)
 
 _This article is sponsored by AWS_.
 
@@ -43,7 +43,7 @@ The Problem With Cancelling All Functions
 
 Any time you chain multiple cancellable operations together by calling them together (either parallelly or sequentially), it's possible to leave the application in an invalid state.
 
-Let's look at the same example as in the [previous post](__GHOST_URL__/blog/cancellation-token-dotnet/), where we are uploading a file to Amazon S3.
+Let's look at the same example as in the [previous post](/posts/cancellation-token-dotnet/), where we are uploading a file to Amazon S3.
 
 This problem is not limited to Amazon S3 but applies to any cancellable operations chained together.
 
@@ -57,7 +57,7 @@ Learn how to get started with Amazon S3 from a .NET Core application. We will le
 
 ![](/images/storage-box.jpg)
 
-](__GHOST_URL__/blog/amazon-s3-dotnet/)
+](/posts/amazon-s3-dotnet/)
 
 So, continue reading even if you don't understand how Amazon S3 works or how to use it from a .NET application. But if you want to learn more about Amazon S3, check out the post below.
 
@@ -85,8 +85,10 @@ So, continue reading even if you don't understand how Amazon S3 works or how to 
         .DisableAntiforgery()
         .WithOpenApi();
     
-    async Task PerformAdditionalTasks(CancellationToken cancellationToken)
-    {
+```csharp
+async Task PerformAdditionalTasks(CancellationToken cancellationToken)
+{
+```
         await Task.Delay(1000, cancellationToken);
         
         var snsClient = new AmazonSimpleNotificationServiceClient();
@@ -149,8 +151,10 @@ But you can see this pattern of keeping it optional in almost all the SDKs/Nuget
 
 For example, look at the two different methods from the Amazon S3 client and the SNS client below
 
-    // S3 Client
-    public virtual Task<PutObjectResponse> PutObjectAsync(
+```csharp
+// S3 Client
+public virtual Task<PutObjectResponse> PutObjectAsync(
+```
       PutObjectRequest request, 
       System.Threading.CancellationToken cancellationToken = default(CancellationToken))
     

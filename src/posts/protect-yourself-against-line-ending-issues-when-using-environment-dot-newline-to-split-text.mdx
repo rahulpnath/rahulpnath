@@ -3,7 +3,7 @@ title: "Protect Yourself Against Line Ending Issues when Using Environment.Newli
 slug: "protect-yourself-against-line-ending-issues-when-using-environment-dot-newline-to-split-text"
 date: "2016-07-11T05:45:31.000Z"
 feature_image: "/images/newline_diff.png"
-tags: []
+tags: ["Dotnet","Programming"]
 ---
 
 > _In computing, a [newline](https://en.wikipedia.org/wiki/Newline), also known as a line ending, end of line (EOL), or line break, is a special character or sequence of characters signifying the end of a line of text and the start of a new line. The actual codes representing a newline vary across operating systems, which can be a problem when exchanging text files between systems with different newline representations._
@@ -57,11 +57,13 @@ I chose to use LF to split the text and trim any additional characters, while al
 
 The easiest and fastest way that this would have come to my notice was to have a unit test in place. This would ensure that the test fails on the build machine. A test like below will pass on my local but not on the build machine as UsageMap would not return any value for the destination system.
 
-    [Theory]
-    [InlineData("MovieWeek", "Weekly-Movie")]
-    [InlineData("Dell15", "Laptop-Group3")]
-    public void SutReturnsExpected(string sourceSystemCode, string expected)
-    {
+```json
+[Theory]
+[InlineData("MovieWeek", "Weekly-Movie")]
+[InlineData("Dell15", "Laptop-Group3")]
+public void SutReturnsExpected(string sourceSystemCode, string expected)
+{
+```
         var sut = new UsageMap();
         var actual = sut.GetDestinationCode(sourceSystemCode);
         Assert.Equal(expected, actual);

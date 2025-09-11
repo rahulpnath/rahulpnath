@@ -3,7 +3,7 @@ title: "3 Different Ways To Do Data Pagination from Amazon DynamoDB Using .NET"
 slug: "dynamodb-pagination"
 date: "2023-03-02T20:39:25.000Z"
 feature_image: "/images/DynamoDB-Pagination.png"
-tags: []
+tags: ["AWS","DynamoDB"]
 ---
 
 DynamoDB charges for reading, writing, and storing data in your DynamoDB tables.
@@ -43,7 +43,7 @@ Learn how to get started with AWS DynamoDB with .NET Core by updating the defaul
 
 ![](/images/aws_dynamodb.jpg)
 
-](__GHOST_URL__/blog/aws-dynamodb-net-core/)
+](/posts/aws-dynamodb-net-core/)
 
 When Does DynamoDB Start Paginating?
 ------------------------------------
@@ -71,8 +71,10 @@ However, with all the different methods, it uses the Partition and the Range Key
 
 So to achieve this and pass the next key back and forth from the UI to the API, let's define a new generic class `PagedResult` as below.
 
-    public class PagedResult<T> where T: class
-    {
+```csharp
+public class PagedResult<T> where T: class
+{
+```
         public List<T> Items { get; set; }
         public string NextPageKey { get; set; }
     }
@@ -104,8 +106,10 @@ The below code uses the `JsonSerializer` and the `Convert` class to convert the 
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
             }));
             
-    return new PagedResult<WeatherForecast>()
-    {
+```csharp
+return new PagedResult<WeatherForecast>()
+{
+```
         Items = items,
         NextPageKey = nextPageKey
     };
@@ -139,10 +143,12 @@ So instead of passing back and forth `LastEvaluatedKey` as a base64 string, we c
 
 To do this, I use the .NET SDKs Document model, which has helper methods to easily create `Dictionary<string,AttributeValue>` type.
 
-    [HttpGet("city-paged")]
-    public async Task<PagedResult<WeatherForecast>> GetPagedWeatherData(
-    string cityName, DateTime? lastReadItem)
-    {
+```csharp
+[HttpGet("city-paged")]
+public async Task<PagedResult<WeatherForecast>> GetPagedWeatherData(
+string cityName, DateTime? lastReadItem)
+{
+```
         Dictionary<string,AttributeValue> startKey = null;
         if (lastReadItem != null)
         {
@@ -183,8 +189,10 @@ The same can also be achieved by using `KeyConditionExpression` and specifying t
 
 The below code specifies the greater than condition on the Date property (Range Key) to read items that are greater than the specified date.
 
-    [HttpGet("city-name-paged-range-key-condition")]
-    public async Task<PagedResult<WeatherForecast>> GetAllForCityPagedWithKeyCondition(
+```csharp
+[HttpGet("city-name-paged-range-key-condition")]
+public async Task<PagedResult<WeatherForecast>> GetAllForCityPagedWithKeyCondition(
+```
         string cityName, DateTime? fromDateTime)
     {
         var queryRequest = new QueryRequest()

@@ -3,7 +3,7 @@ title: "Populating Data for Tests"
 slug: "populating-data-for-tests"
 date: "2017-03-07T00:00:00.000Z"
 feature_image: "/images/test_data.jpg"
-tags: []
+tags: ["Testing"]
 ---
 
 Populating data for tests usually makes tests more coupled with the code it is testing.
@@ -20,8 +20,10 @@ I use [xUnit.net](https://xunit.github.io/) as my test framework, but you can us
 
 Let's start with some simple tests on a Customer class shown below.
 
-    public class Customer
-    {
+```csharp
+public class Customer
+{
+```
         public Guid Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -42,12 +44,14 @@ Let's say we need to test that the FullName property returns as expected. We wil
 
 Theories allow us to create parameterized tests with which we can run a given test with different parameter options. Like in this example we need to test the Customer class with different set of First and Last Name combinations. As you can see below the test is attributed with Theory Attribute, and we use the InlineData attribute to pass static values to the test. Using these parameters we are now able to test for different combinations of first and last names. The test populates only the required properties on Customer object for testing FullName.
 
-    [Theory]
-    [InlineData("Adobe", "Photoshop", "Adobe Photoshop")]
-    [InlineData("Visual", "Studio", "Visual Studio")]
-    [InlineData("Rode", "Podcaster", "Rode Podcaster")]
-    public void CustomerFullNameReturnsExpected(string firstName, string lastName, string expected)
-    {
+```json
+[Theory]
+[InlineData("Adobe", "Photoshop", "Adobe Photoshop")]
+[InlineData("Visual", "Studio", "Visual Studio")]
+[InlineData("Rode", "Podcaster", "Rode Podcaster")]
+public void CustomerFullNameReturnsExpected(string firstName, string lastName, string expected)
+{
+```
         // Fixture setup
         var customer = new Customer() { FirstName = firstName, LastName = lastName };
         // Exercise system
@@ -60,21 +64,23 @@ Theories allow us to create parameterized tests with which we can run a given te
 
 > _Tests help refine the public API as they are the first consumers_
 
-The tests above acts as a clue indicating that the three properties - FirstName, LastName, FullName are related and go hand-in-hand. These tests are a strong indication that these properties can be grouped together into a class and possibly tested separately. We can extract these properties into a [Value Object](__GHOST_URL__/blog/thinking-beyond-primitive-values-value-objects/) for e.g. Name. I will not go into the implementation details of that, and I hope you can do that you own.
+The tests above acts as a clue indicating that the three properties - FirstName, LastName, FullName are related and go hand-in-hand. These tests are a strong indication that these properties can be grouped together into a class and possibly tested separately. We can extract these properties into a [Value Object](/posts/thinking-beyond-primitive-values-value-objects/) for e.g. Name. I will not go into the implementation details of that, and I hope you can do that you own.
 
-The above tests still have a high dependency on the code that it is testing - **_the constructor_**. Imagine if we had a lot of such tests that constructs the Consumer class inline in the setup phase. All tests will break if the class constructor changes. We saw in the [refactoring to remove constructor dependency](__GHOST_URL__/blog/refactoring-test-code-removing-constructor-dependency/) how to remove such dependencies and make the tests independent of the constructor dependencies. We can introduce Object Mother or Test Data Builder pattern as mentioned in the article. Optimizing further we can also use [AutoFixture](https://github.com/AutoFixture/AutoFixture) to generate test data. Moving into these patterns or AutoFixture brings in an added benefit as well; the rest of properties on the Customer class also gets populated by default.
+The above tests still have a high dependency on the code that it is testing - **_the constructor_**. Imagine if we had a lot of such tests that constructs the Consumer class inline in the setup phase. All tests will break if the class constructor changes. We saw in the [refactoring to remove constructor dependency](/posts/refactoring-test-code-removing-constructor-dependency/) how to remove such dependencies and make the tests independent of the constructor dependencies. We can introduce Object Mother or Test Data Builder pattern as mentioned in the article. Optimizing further we can also use [AutoFixture](https://github.com/AutoFixture/AutoFixture) to generate test data. Moving into these patterns or AutoFixture brings in an added benefit as well; the rest of properties on the Customer class also gets populated by default.
 
 ### Explicitly Setting Properties
 
 By introducing AutoFixture, we no longer need to create the Customer object explicitly. We can use the Fixture class generate a Customer class for us. Using AutoFixture, this can be achieved in at least two ways (I am not sure if there are more ways of doing this).
 
-    // Using Fixture class
-    [Theory]
-    [InlineData("Adobe", "Photoshop", "Adobe Photoshop")]
-    [InlineData("Visual", "Studio", "Visual Studio")]
-    [InlineData("Rode", "Podcaster", "Rode Podcaster")]
-    public void CustomerFullNameReturnsExpected(string firstName, string lastName, string expected)
-    {
+```csharp
+// Using Fixture class
+[Theory]
+[InlineData("Adobe", "Photoshop", "Adobe Photoshop")]
+[InlineData("Visual", "Studio", "Visual Studio")]
+[InlineData("Rode", "Podcaster", "Rode Podcaster")]
+public void CustomerFullNameReturnsExpected(string firstName, string lastName, string expected)
+{
+```
         // Fixture setup
         var fixture = new Fixture();
         var customer = fixture.Build<Customer>()
@@ -89,13 +95,15 @@ By introducing AutoFixture, we no longer need to create the Customer object expl
     }
     
 
-    // Using Injected Object
-    [Theory]
-    [InlineAutoData("Adobe", "Photoshop", "Adobe Photoshop")]
-    [InlineAutoData("Visual", "Studio", "Visual Studio")]
-    [InlineAutoData("Rode", "Podcaster", "Rode Podcaster")]
-    public void CustomerFullNameReturnsExpected(string firstName, string lastName, string expected, Customer customer)
-    {
+```csharp
+// Using Injected Object
+[Theory]
+[InlineAutoData("Adobe", "Photoshop", "Adobe Photoshop")]
+[InlineAutoData("Visual", "Studio", "Visual Studio")]
+[InlineAutoData("Rode", "Podcaster", "Rode Podcaster")]
+public void CustomerFullNameReturnsExpected(string firstName, string lastName, string expected, Customer customer)
+{
+```
         // Fixture setup
         customer.FirstName = firstName;
         customer.LastName = lastName;
@@ -117,10 +125,12 @@ When using immutable types or properties with private setters, we cannot set the
 
 > \-[_Mark Seemann_](http://stackoverflow.com/a/20816487/1948745) _(creator of AutoFixture)_
 
-In these cases, the suggested approach is something closer to the manual [Test Data Builder](http://www.natpryce.com/articles/000714.html) we saw in the [refactoring example](__GHOST_URL__/blog/refactoring-test-code-removing-constructor-dependency/). We can either have an explicit test data builder class or define extension methods on the immutable type such that it changes just the specified property and returns all other values same, as shown below.
+In these cases, the suggested approach is something closer to the manual [Test Data Builder](http://www.natpryce.com/articles/000714.html) we saw in the [refactoring example](/posts/refactoring-test-code-removing-constructor-dependency/). We can either have an explicit test data builder class or define extension methods on the immutable type such that it changes just the specified property and returns all other values same, as shown below.
 
-    public class Name
-    {
+```csharp
+public class Name
+{
+```
         public readonly string FirstName;
         public readonly string LastName;
         public string FullName
@@ -158,8 +168,10 @@ Without any custom code if we are to rely on AutoFixture to generate us, such cl
 
 For the DateRange class below we can add the following Customization.
 
-    public class DateRange
-    {
+```csharp
+public class DateRange
+{
+```
         public readonly DateTime EndDate;
         public readonly DateTime StartDate;
     
@@ -174,16 +186,20 @@ For the DateRange class below we can add the following Customization.
     }
     
 
-    public class DateRangeCustomization : ICustomization
-    {
+```csharp
+public class DateRangeCustomization : ICustomization
+{
+```
         public void Customize(IFixture fixture)
         {
             fixture.Customizations.Add(new DateRangeSpecimenBuilder());
         }
     }
     
-    public class DateRangeSpecimenBuilder : ISpecimenBuilder
-    {
+```csharp
+public class DateRangeSpecimenBuilder : ISpecimenBuilder
+{
+```
         public object Create(object request, ISpecimenContext context)
         {
             var requestAsType = request as Type;
@@ -204,8 +220,10 @@ The customization gets invoked every time a DateRange object is requested using 
 
 [Mock Objects](http://xunitpatterns.com/Mock%20Object.html) is a popular way to unit test classes in isolation. For the external dependencies that a [System Under Test](http://xunitpatterns.com/SUT.html) (SUT) has, the dependencies are mocked using a mocking framework. In these cases, we can setup the external dependencies to return different values as we expect for different tests and test the logic of the SUT and how it responds. Such tests are usually more coupled with the implementation as we have to setup the mocks prior. So we need to have an understanding of the return values expected from dependencies and the parameters expected by the dependencies. I use Moq framework for mocking, and AutoFixture has a library that helps integrate well with it.
 
-    public HttpResponseMessage Get(Guid id)
-    {
+```csharp
+public HttpResponseMessage Get(Guid id)
+{
+```
         var customer = CustomerRepository.Get(id);
     
         if (customer == null)
@@ -215,9 +233,11 @@ The customization gets invoked every time a DateRange object is requested using 
     }
     
 
-    [Theory]
-    [InlineAutoMoqData]
-    public void CustomerControllerGetWithNoCustomerReturnsNotFound(
+```json
+[Theory]
+[InlineAutoMoqData]
+public void CustomerControllerGetWithNoCustomerReturnsNotFound(
+```
         Guid customerId,
         [Frozen]Mock<ICustomerRepository> customerRepository,
         CustomerController sut)

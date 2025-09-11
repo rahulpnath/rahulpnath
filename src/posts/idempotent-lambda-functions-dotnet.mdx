@@ -3,7 +3,7 @@ title: "How To Easily Make Your .NET AWS Lambda Function Idempotent"
 slug: "idempotent-lambda-functions-dotnet"
 date: "2023-12-04T06:18:54.000Z"
 feature_image: "/images/Powertools---Idempotency.png"
-tags: []
+tags: ["AWS","Lambda"]
 ---
 
 Idempotency refers to the property of a function that produces the same result regardless of how many times it is executed with the same input parameters.
@@ -16,7 +16,7 @@ The [Powertools Idempotency utility](https://docs.powertools.aws.dev/lambda/dotn
 
 In this blog post, let's learn how to get started using the Powertools Idempotency package, some key features, and how it easily fits into your existing Lambda Functions.
 
-_This article is sponsored by AWS and is part of my_ [_AWS Series_](__GHOST_URL__/tag/aws/)_._
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
 
 .NET Lambda Function and Powertools Idempotency Package
 -------------------------------------------------------
@@ -31,24 +31,28 @@ To start using the Idempotency utility, let's first install the NuGet package - 
 
 Once installed, we only need to add the `Idempotent` attribute to our Lambda Function handler endpoint, as shown below.
 
-    [LambdaFunction(Role = "@WeatherApiLambdaExecutionRole")]
-    [HttpApi(LambdaHttpMethod.Post, "/weather-forecast")]
-    [Idempotent]
-    public async Task AddWeatherData([FromBody] WeatherForecast weatherForecast)
-    {
+```json
+[LambdaFunction(Role = "@WeatherApiLambdaExecutionRole")]
+[HttpApi(LambdaHttpMethod.Post, "/weather-forecast")]
+[Idempotent]
+public async Task AddWeatherData([FromBody] WeatherForecast weatherForecast)
+{
+```
         Console.WriteLine("Running time consuming process");
         await Task.Delay(TimeSpan.FromSeconds(5));
         await dynamoDBContext.SaveAsync(weatherForecast);
     }
 
-The Lambda Function sample uses [Lambda Annotations Framework](__GHOST_URL__/blog/lambda-annotation-framework-crud-api/) , which makes it extremely easy to build Lambda Functions in .NET.
+The Lambda Function sample uses [Lambda Annotations Framework](/posts/lambda-annotation-framework-crud-api/) , which makes it extremely easy to build Lambda Functions in .NET.
 
 The function is an API endpoint that takes in a `WeatherForecast` data from the body of the API Gateway API request object.
 
 In the Function constructor, you can initialize the Idempotency configuration. The code below sets up the package to use the DynamoDB table `IdempotencyTable` , as it's storage mechanism to maintain request/response information.
 
-    public Functions(IDynamoDBContext dynamoDBContext)
-    {
+```csharp
+public Functions(IDynamoDBContext dynamoDBContext)
+{
+```
         this.dynamoDBContext = dynamoDBContext;
         Idempotency.Configure(builder => builder.UseDynamoDb("IdempotencyTable"));
     }
@@ -74,11 +78,13 @@ The Idempotency package automatically used the first parameter In the above func
 
 If there is more than one parameter for the Lambda Function, you can explicitly mark the item to use as the Idempotency Key using the `IdempotencyKey` attribute.
 
-    [LambdaFunction(Role = "@WeatherApiLambdaExecutionRole")]
-    [HttpApi(LambdaHttpMethod.Post, "/weather-forecast")]
-    [Idempotent]
-    public async Task AddWeatherData(APIGatewayHttpApiV2ProxyRequest request, [IdempotencyKey][FromBody] WeatherForecast weatherForecast)
-    {
+```json
+[LambdaFunction(Role = "@WeatherApiLambdaExecutionRole")]
+[HttpApi(LambdaHttpMethod.Post, "/weather-forecast")]
+[Idempotent]
+public async Task AddWeatherData(APIGatewayHttpApiV2ProxyRequest request, [IdempotencyKey][FromBody] WeatherForecast weatherForecast)
+{
+```
         Console.WriteLine("Running time consuming process");
         await Task.Delay(TimeSpan.FromSeconds(5));
         await dynamoDBContext.SaveAsync(weatherForecast);
@@ -90,8 +96,10 @@ This helps to ensure that the idempotency key is not affected by properties in t
 
 The code below specifies the `CityName` and `Date` properties to be used for the Idempotency key, ignoring all other properties on the request object (`WeatherForecast`).
 
-    public Functions(IDynamoDBContext dynamoDBContext)
-    {
+```csharp
+public Functions(IDynamoDBContext dynamoDBContext)
+{
+```
         this.dynamoDBContext = dynamoDBContext;
         Idempotency.Configure(builder =>
             builder
@@ -113,8 +121,10 @@ In these cases, you can either add the `Temperature` property to the Idempotency
 
 The initialization code below sets up the property validation`TemperatureC` using the `WithPayloadValidationJmesPath` function.
 
-    public Functions(IDynamoDBContext dynamoDBContext)
-    {
+```csharp
+public Functions(IDynamoDBContext dynamoDBContext)
+{
+```
         this.dynamoDBContext = dynamoDBContext;
         Idempotency.Configure(builder =>
             builder

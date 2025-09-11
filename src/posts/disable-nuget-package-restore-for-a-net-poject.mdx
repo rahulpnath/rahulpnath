@@ -3,10 +3,10 @@ title: "Disable NuGet Package Restore for a .Net Poject"
 slug: "disable-nuget-package-restore-for-a-net-poject"
 date: "2016-05-02T13:26:59.000Z"
 feature_image: ""
-tags: []
+tags: ["Programming"]
 ---
 
-_If you have decided on [Checking in Package Dependencies into Source Control](__GHOST_URL__/blog/checking-in-package-dependencies-into-source-control/) for an existing project that uses Nuget Packages then this post is for you_
+_If you have decided on [Checking in Package Dependencies into Source Control](/posts/checking-in-package-dependencies-into-source-control/) for an existing project that uses Nuget Packages then this post is for you_
 
 When using NuGet package references that are not included in the source control, these packages gets restored during build time. There are [multiple ways that NuGet supports restore these dependencies at build time](https://docs.nuget.org/consume/package-restore)
 
@@ -29,36 +29,50 @@ The PowerShell script does the below for a given solution directory folder (mand
 
 _The script leaves blank lines in the _csproj_ files in place of the removed nodes._
 
-    //  Remove NuGet Restore https://gist.github.com/rahulpnath/13d3b4f54cec51e22344876b1566b911#file-remove-nuget-restore-ps1
-    param([Parameter(Mandatory=$true)][string]$solutionDirectory)
+```powershell
+//  Remove NuGet Restore https://gist.github.com/rahulpnath/13d3b4f54cec51e22344876b1566b911#file-remove-nuget-restore-ps1
+param([Parameter(Mandatory=$true)][string]$solutionDirectory)
+```
     
      $importNugetTargetsTag= [regex]::escape(@'
-    <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-    '@)
+```xml
+<Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+'@)
+```
     
-    $restorePackagesTag = '<RestorePackages>.*?</RestorePackages>'
-    $nuGetPackageImportStamp = '<NuGetPackageImportStamp>.*?</NuGetPackageImportStamp>'
+```xml
+$restorePackagesTag = '<RestorePackages>.*?</RestorePackages>'
+$nuGetPackageImportStamp = '<NuGetPackageImportStamp>.*?</NuGetPackageImportStamp>'
+```
     
     $EnsureNuGetPackageBuildImportsTargetTag = '(?smi)<Target Name="EnsureNuGetPackageBuildImports".*?</Target>'
     
-    foreach ($f in Get-ChildItem -Recurse -Path $solutionDirectory -Filter *.csproj | sort-object)
-    {
+```powershell
+foreach ($f in Get-ChildItem -Recurse -Path $solutionDirectory -Filter *.csproj | sort-object)
+{
+```
         $text = Get-Content $f.FullName -Raw
         $text `
             -replace $importNugetTargetsTag, "" `
             -replace $nuGetPackageImportStamp, "" `
             -replace $restorePackagesTag, "" `
             -replace $EnsureNuGetPackageBuildImportsTargetTag, "" `
-            | set-content $f.FullName
-    }
+```html
+| set-content $f.FullName
+```
+```html
+}
+```
     
     Get-ChildItem -Path $solutionDirectory -include .nuget -Recurse | foreach ($_) { remove-item $_.fullname -Force -Recurse }
     
 
 Any similarity with the scripts [here](http://weblogs.asp.net/jongalloway/scripting-net-project-migration-to-automatic-nuget-package-restore) is intended as that was my starting place. To explicitly [opt out of the Automatic Package Restore](https://docs.nuget.org/consume/package-restore#opting-out) on Visual Studio add a _Nuget.config_ in the solution root.
 
-    <?xml version="1.0" encoding="utf-8"?>
-    <configuration>
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+```
       <packageRestore>
         <!-- Opts out of both Automatic Package Restore and MSBuild-Integrated Package Restore -->
         <add key="enabled" value="False" />

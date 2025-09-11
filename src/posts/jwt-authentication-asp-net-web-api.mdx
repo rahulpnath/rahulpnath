@@ -3,7 +3,7 @@ title: "How To Protect Your ASP NET Web API Using JWT Authentication"
 slug: "jwt-authentication-asp-net-web-api"
 date: "2021-03-24T00:00:00.000Z"
 feature_image: "/images/security.jpg"
-tags: []
+tags: ["Azure","Dotnet"]
 ---
 
 When building applications, we often want to control access to it. The process of securing your application is referred to as Authentication and Authorization.
@@ -41,7 +41,7 @@ Use Azure AD groups to enable/disable functionality for your users based on thei
 
 ![](/images/azure_ad_Groups.png)
 
-](__GHOST_URL__/blog/dot-net-core-api-and-azure-ad-groups-based-access)
+](/posts/dot-net-core-api-and-azure-ad-groups-based-access)
 
 ### Real-World Analogy
 
@@ -141,8 +141,10 @@ The `UseAuthentication` call sets up authentication in the middleware, and the c
 
 If not authenticated, it returns a 401 HTTP Status Code along with a response message. If authenticated, it continues with the `next` middleware in the pipeline.
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    {
+```csharp
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+```
        // Other configurations
         app.UseAuthentication();
         app.Use(async (context, next) =>
@@ -186,25 +188,29 @@ To use the Implicit flow to get the token from Azure AD, we need to request the 
 
 It needs to be passed a few variables, as shown below. Check [here](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-implicit-grant-flow#getting-access-tokens-silently-in-the-background) if you want to learn more.
 
-    https://login.microsoftonline.com/<TENANT ID>/oauth2/authorize?
-    client_id=<AD APP CLIENT ID>
-    &response_type=token
-    &redirect_uri=http%3A%2F%2Flocalhost%3A5000%2F // Redirect URL
-    &resource=<AD APP CLIENT ID>
-    &response_mode=fragment
-    &state=12345
-    &nonce=678910
+```typescript
+https://login.microsoftonline.com/<TENANT ID>/oauth2/authorize?
+client_id=<AD APP CLIENT ID>
+&response_type=token
+&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2F // Redirect URL
+&resource=<AD APP CLIENT ID>
+&response_mode=fragment
+&state=12345
+&nonce=678910
+```
     
 
 Fill in the appropriate values for your AD Tenant and the AD Application details in the URL above. I have split it into multiple lines to show it easily here. Remove the line breaks from the URL and navigate to it in the browser.
 
 It will launch the login screen for your Azure AD, and once granted permissions; it will redirect to the `redirect_uri` as specified in the URL above, along with the Bearer token and few other details as shown below.
 
-    http://localhost:5000/#access_token=<ACCESS_TOKEN_VALUE>
-    &token_type=<BEARER TOKEN>
-    &expires_in=3597
-    &state=12345
-    &session_state=b9446bcb-59fe-4ddf-abdc-d7c42996f1af
+```typescript
+http://localhost:5000/#access_token=<ACCESS_TOKEN_VALUE>
+&token_type=<BEARER TOKEN>
+&expires_in=3597
+&state=12345
+&session_state=b9446bcb-59fe-4ddf-abdc-d7c42996f1af
+```
     
 
 Extract the Bearer token from the URL above, and we can use this to authenticate against our Web API.

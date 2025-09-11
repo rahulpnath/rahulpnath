@@ -3,14 +3,14 @@ title: "Generating PDF: .Net Core and Azure Web Application"
 slug: "net-core-pdf"
 date: "2020-03-02T00:00:00.000Z"
 feature_image: "/images/net_pdf.jpg"
-tags: []
+tags: ["Dotnet","Azure"]
 ---
 
 Generating a PDF is one of those features that come along in a while and gets me thinking.
 
 _How do I do this now?_
 
-Previously I had written about [dynamically generating a large PDF from website contents](__GHOST_URL__/blog/generating-a-large-pdf-from-website-contents/). The PDF library I used that then, did have the limitation of not being able to run on Azure Web App. It was because of [Azure sandbox restrictions](https://github.com/projectkudu/kudu/wiki/Azure-Web-App-sandbox#pdf-generation-from-html).
+Previously I had written about [dynamically generating a large PDF from website contents](/posts/generating-a-large-pdf-from-website-contents/). The PDF library I used that then, did have the limitation of not being able to run on Azure Web App. It was because of [Azure sandbox restrictions](https://github.com/projectkudu/kudu/wiki/Azure-Web-App-sandbox#pdf-generation-from-html).
 
 <iframe src="https://www.youtube.com/embed/fp-Rc3qNDdA" />
 
@@ -37,8 +37,10 @@ An instance of the engine is used to generate HTML from a razor view. By using _
 
 The HtmlGenerationService below takes in a data object and generates the HTML string using the RazorLightEngine. By convention, it expects a template file (\*.cshtml) within a folder. E.g., For data type 'Quote', it expects a template with key 'Quote/Quote.cshtml'.
 
-    public class HtmlGenerationService : IHtmlGenerationService
-    {
+```csharp
+public class HtmlGenerationService : IHtmlGenerationService
+{
+```
         private readonly IRazorLightEngine _razorLightEngine;
     
         public HtmlGenerationService(IRazorLightEngine razorLightEngine)
@@ -63,8 +65,10 @@ With the HTML generated, we can use the HtmlToPdfConverter, the [NReco wrapper](
 
 With .Net Core, the [wkhtmltopdf](https://wkhtmltopdf.org/) executable does not get bundled as part of the NuGet package. It is because the executable differs based on the hosting OS environment. Make sure to include the [executable](https://wkhtmltopdf.org/downloads.html) and set to be copied to the bin folder. By default, the converter looks for the executable (_wkhtmltopdf.exe_) under the folder _wkhtmltopdf_. The path is configurable.
 
-    public class PdfGeneratorService : IPdfGeneratorService
-    {
+```csharp
+public class PdfGeneratorService : IPdfGeneratorService
+{
+```
         ...
         public PdfGeneratorService(
             IHtmlGenerationService htmlGenerationService, NRecoConfig config) {...}
@@ -93,8 +97,10 @@ With .Net Core, the [wkhtmltopdf](https://wkhtmltopdf.org/) executable does not 
 
 Calling the _GeneratePdf_ function with the HTML string returns the Pdf byte array. The Pdf byte array can be returned as a File or saved for later reference.
 
-    public async Task<IActionResult> Get(string id)
-    {
+```csharp
+public async Task<IActionResult> Get(string id)
+{
+```
         ...
         var result = await PdfGenerationService.Generate(model);
         return File(result, "application/pdf", $"Quote - {model.Number}.pdf");
@@ -125,10 +131,12 @@ Once I had the PDF generation pipeline set up, the challenge was to get the form
 
 To see the output of the razor template as and when you make changes, return the HTML content as _ContentResult_ back on the API endpoint. When calling this from a browser, it will automatically render it.
 
-    [HttpGet]
-    [Route("{id}")]
-    public async Task<IActionResult> Get(string id, [FromQuery]bool? html)
-    {   ...
+```csharp
+[HttpGet]
+[Route("{id}")]
+public async Task<IActionResult> Get(string id, [FromQuery]bool? html)
+{   ...
+```
         if (html.GetValueOrDefault())
         {
             var htmlResult = await HtmlGenerationService.Generate(model);

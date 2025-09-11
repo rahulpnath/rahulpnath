@@ -3,7 +3,7 @@ title: "Windows Phone Series – Incremental Loading"
 slug: "windows-phone-series-incremental-loading"
 date: "2013-03-03T08:53:45.000Z"
 feature_image: "/images/wp_incremental_loading_longlistselector.jpg"
-tags: []
+tags: ["Dotnet"]
 ---
 
 Some time back we had a look on doing [Incremental Loading with a Windows 8 store app](http://rahulpnath.wordpress.com/2012/10/28/windows-8-series-incremental-loading/). This same scenario is something that one would come across quite frequently while developing a Windows Phone application too. We have a couple of options in dealing with this while on a Windows phone application. In an ideal case while binding to a large data on a windows phone application, we might be using a [LongListSelector](http://msdn.microsoft.com/en-US/library/windowsphone/develop/microsoft.phone.controls.longlistselector\(v=vs.105\).aspx) or a Listbox control.
@@ -12,17 +12,21 @@ While using a LongListSelector, we can use the Link event(if you are using [Wind
 
 Below is the piece of code that will fetch us the photo from the [500px api](http://developers.500px.com/) to populate the listbox data.
 
-    private static int requestPerPage = 20;
-    private int currentPage = 1;
-    private bool isCurrentlyLoading = false;
+```csharp
+private static int requestPerPage = 20;
+private int currentPage = 1;
+private bool isCurrentlyLoading = false;
+```
     
     private ObservableCollection<Photo> Photos = new ObservableCollection<Photo>();
     
     private string datasourceUrl="https://api.500px.com/v1/photos?feature=popular&consumer_key="
               + consumerKey + "&rpp=" + requestPerPage.ToString() + "&page={0}";
     
-    private void LoadDataFromSource()
-    {
+```csharp
+private void LoadDataFromSource()
+{
+```
         isCurrentlyLoading = true;
         var query = string.Format(datasourceUrl, currentPage);
         WebClient client = new WebClient();
@@ -31,8 +35,10 @@ Below is the piece of code that will fetch us the photo from the [500px api](htt
     
     }
     
-    void client_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
-    {
+```json
+void client_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
+{
+```
         using (var reader = new MemoryStream(Encoding.Unicode.GetBytes(e.Result)))
         {
             var ser = new DataContractJsonSerializer(typeof(RootObject));
@@ -55,8 +61,10 @@ Below is the piece of code that will fetch us the photo from the [500px api](htt
 
 In the ItemRealized/Link event based on whether you are developing for Windows Phone 7 or 8, below would be the code that goes into that. We need to check the current item that is realized i.e rendered on the UI and see if it is
 
-    private void photosList_ItemRealized_1(object sender, ItemRealizationEventArgs e)
-    {
+```csharp
+private void photosList_ItemRealized_1(object sender, ItemRealizationEventArgs e)
+{
+```
         Photo photo = e.Container.Content as Photo;
         if (photo != null)
         {
@@ -73,13 +81,17 @@ In the ItemRealized/Link event based on whether you are developing for Windows P
 
 In case you want to use a normal listbox, you can do that also. We would need to hook up with VisualStateGroups. This [link](http://blogs.msdn.com/b/slmperf/archive/2011/06/30/windows-phone-mango-change-listbox-how-to-detect-compression-end-of-scroll-states.aspx) explains this in details, and I have just reused parts of it as is. We need to override the scrollviewer style to hook into this new StateGroups. We need to look for CompressionBottom state, for the currentstatechanged event of the scrollviewer.
 
-    private void myScrollViewer_Loaded_1(object sender, RoutedEventArgs e)
-    {
+```csharp
+private void myScrollViewer_Loaded_1(object sender, RoutedEventArgs e)
+{
+```
         SetScrollViewer();
     }
     
-    private void SetScrollViewer()
-    {
+```csharp
+private void SetScrollViewer()
+{
+```
         // Visual States are always on the first child of the control template
         FrameworkElement element = VisualTreeHelper.GetChild(myScrollViewer, 0)
                                 as FrameworkElement;
@@ -95,8 +107,10 @@ In case you want to use a normal listbox, you can do that also. We would need to
         }
     }
     
-    private void vgroup_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)
-    {
+```csharp
+private void vgroup_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)
+{
+```
         if (e.NewState.Name == "CompressionTop")
         {
     

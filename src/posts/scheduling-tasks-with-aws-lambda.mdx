@@ -3,7 +3,7 @@ title: "Serverless Task Automation: Task Scheduling with AWS Lambda and Amazon E
 slug: "scheduling-tasks-with-aws-lambda"
 date: "2023-10-30T06:31:51.000Z"
 feature_image: "/images/scheduling-tasks-lambda.png"
-tags: []
+tags: ["AWS","Lambda"]
 ---
 
 Scheduling tasks using AWS Lambda is useful for automating repetitive, time-based operations. Some common use cases include data backups, report generation, data cleanup, and periodic application maintenance.
@@ -14,7 +14,7 @@ With [Amazon EventBridge Scheduler](https://docs.aws.amazon.com/eventbridge/late
 
 In this post, let's learn how to use Amazon EventBridge and set up schedules to trigger a Lambda Function built using .NET. The concepts apply to other programming languages as well.
 
-_This article is sponsored by AWS and is part of my [_AWS Series_](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [_AWS Series_](/blog/tag/aws/)._
 
 AWS EventBridge and .NET Lambda Trigger
 ---------------------------------------
@@ -31,12 +31,14 @@ This blog post is a collection of other posts that covers various aspects of AWS
 
 ![](/images/AWS-Lambda.png)
 
-](__GHOST_URL__/blog/aws-lambda-dotnet-developer/)
+](/posts/aws-lambda-dotnet-developer/)
 
 To handle EventBridge Events from a Lambda Function we use the `ScheduledEvent` class from the [Amazon.Lambda.CloudWatchEvents](https://www.nuget.org/packages/Amazon.Lambda.CloudWatchEvents) NuGet package
 
-    public string FunctionHandler(ScheduledEvent input, ILambdaContext context)
-    {
+```csharp
+public string FunctionHandler(ScheduledEvent input, ILambdaContext context)
+{
+```
         Console.WriteLine($"Scheduled Task Run with {JsonSerializer.Serialize(input)}");
         return input.Source.ToUpper();
     }
@@ -95,8 +97,10 @@ This is done under the AWS EventBridge Rule by setting the Additional Settings, 
 
 In the above example, I have hardcoded the input to be a string input. In this case, the Lambda Function can take in a `string` as it's input type as shown below.
 
-    public string FunctionHandler(string input, ILambdaContext context)
-    {
+```csharp
+public string FunctionHandler(string input, ILambdaContext context)
+{
+```
       ...
     }
 

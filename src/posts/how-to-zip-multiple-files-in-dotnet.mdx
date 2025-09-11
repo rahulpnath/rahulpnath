@@ -3,7 +3,7 @@ title: "HOW TO: ZIP Multiple CSV Files In ASP.NET"
 slug: "how-to-zip-multiple-files-in-dotnet"
 date: "2020-05-15T00:00:00.000Z"
 feature_image: "/images/how_to_create_zip_file_in_asp_net.jpg"
-tags: []
+tags: ["Programming"]
 ---
 
 Recently at a client, I had to generate many CSV files from an API endpoint. The user will download the CSV files as a ZIP archive file.
@@ -25,8 +25,10 @@ CSVHelper is available as a NuGet package and easy to [get started](https://josh
 
 In this case, I had to generate multiple CSV files grouped by StoreName with delivery details for the day. The _DeliveryJobRecord_ represents on record in the CSV file.
 
-    public class DeliveryJobRecord
-    {
+```csharp
+public class DeliveryJobRecord
+{
+```
         public string StoreName { get; set; }
         public string OrderNo { get; set; }
        ...
@@ -37,8 +39,10 @@ Using the CSVWriter class, generate a CSV file for a list of records.
 
 In this case, I do not want any physical files on the server, so I am using the MemoryStream to generate the files. The [WriteRecords](https://joshclose.github.io/CsvHelper/getting-started#writing-a-csv-file) method on the CSVWriter writes out the data in CSV format to the memory stream.
 
-    foreach (var store in storeGroup)
-    {
+```csharp
+foreach (var store in storeGroup)
+{
+```
         byte[] bytes;
         using (var ms = new MemoryStream())
         {
@@ -70,9 +74,11 @@ To generate a zip file, use the ZipArchive class that is part of the System.IO.C
 
 The [CreateEntry](https://docs.microsoft.com/en-us/dotnet/api/system.io.compression.ziparchive.createentry?view=netcore-3.1) function allows adding a new file to the zip archive. The function returns a [ZipArchiveEntry](https://docs.microsoft.com/en-us/dotnet/api/system.io.compression.ziparchiveentry?view=netcore-3.1), which allows writing the CSV files to it.
 
-    var compressedFileStream = new MemoryStream();
-    using (var zipArchive = new ZipArchive(compressedFileStream, ZipArchiveMode.Create, true))
-    {
+```csharp
+var compressedFileStream = new MemoryStream();
+using (var zipArchive = new ZipArchive(compressedFileStream, ZipArchiveMode.Create, true))
+{
+```
         foreach (var deliveryFile in deliveryFiles)
         {
             var zipEntry = zipArchive.CreateEntry(deliveryFile.FileName);
@@ -85,8 +91,10 @@ The [CreateEntry](https://docs.microsoft.com/en-us/dotnet/api/system.io.compress
         }
     }
     
-    return new File()
-    {
+```csharp
+return new File()
+{
+```
         Bytes = compressedFileStream.ToArray(),
         FileName = $"Delivery Details.zip"
     }
@@ -94,9 +102,11 @@ The [CreateEntry](https://docs.microsoft.com/en-us/dotnet/api/system.io.compress
 
 Looping around all the delivery files, add them to the ZipArchive. Zip files are binary data, so return [it as 'application/octet-stream'](https://www.iana.org/assignments/media-types/application/zip) in the API endpoint.
 
-    [HttpGet]
-    public IActionResult DownloadDeliveriesForToday()
-    {
+```json
+[HttpGet]
+public IActionResult DownloadDeliveriesForToday()
+{
+```
         var zipFile = GetZippedFile(DateTime.UtcNow);
         return File(zipFile.Bytes, "application/octet-stream", zipFile.FileName);
     }

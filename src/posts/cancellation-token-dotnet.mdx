@@ -3,7 +3,7 @@ title: "A .NET Programmer's Guide to CancellationToken"
 slug: "cancellation-token-dotnet"
 date: "2024-03-22T03:30:10.000Z"
 feature_image: "/images/Cancellation-Token.png"
-tags: []
+tags: ["Dotnet","AWS"]
 ---
 
 Imagine having a long-running request triggered by a user on your server.
@@ -73,18 +73,24 @@ The CancellationToken object in itself is created and managed using the `Cancell
 
 The below source code shows a simple usage of the `CancellationToken`.
 
-    var source = new CancellationTokenSource();
-    Console.WriteLine("Press any key to cancel the operation...");
-    var longRunningTask = LongRunningOperationAsync(source.Token);
+```csharp
+var source = new CancellationTokenSource();
+Console.WriteLine("Press any key to cancel the operation...");
+var longRunningTask = LongRunningOperationAsync(source.Token);
+```
     
-    Console.ReadKey();
-    Console.WriteLine("Key Pressed");
-    source.Cancel();
+```csharp
+Console.ReadKey();
+Console.WriteLine("Key Pressed");
+source.Cancel();
+```
     
     await longRunningTask;
     
-    async Task LongRunningOperationAsync(CancellationToken cancellationToken)
-    {
+```csharp
+async Task LongRunningOperationAsync(CancellationToken cancellationToken)
+{
+```
         try
         {
             var i = 0;
@@ -166,7 +172,7 @@ Learn how to get started with Amazon S3 from a .NET Core application. We will le
 
 ![](/images/storage-box.jpg)
 
-](__GHOST_URL__/blog/amazon-s3-dotnet/)
+](/posts/amazon-s3-dotnet/)
 
 This could also be any other service like [Azure Blob Storage](https://youtu.be/TAPERUEGhvw?si=iYxpwFNDR9lU0zLM) etc.
 

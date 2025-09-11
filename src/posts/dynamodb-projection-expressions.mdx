@@ -3,7 +3,7 @@ title: "How to Optimize Your DynamoDB Queries With Projection Expressions in .NE
 slug: "dynamodb-projection-expressions"
 date: "2023-03-10T09:13:05.000Z"
 feature_image: "/images/DynamoDB-Projection-Expressions.png"
-tags: []
+tags: ["AWS","DynamoDB"]
 ---
 
 When reading data from a DynamoDB table, by default, it returns all of the attributes of the items.
@@ -16,7 +16,7 @@ In these scenarios, you can use a ProjectionExpression to limit the item attribu
 
 In this article, let’s learn about ProjectionExpressions in DynamoDB and how to use them when building applications.
 
-_This article is sponsored by AWS and is part of my [.NET on AWS Series](__GHOST_URL__/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [.NET on AWS Series](/posts/tag/aws/)._
 
 💡
 
@@ -44,8 +44,10 @@ By default, it reads all the properties on the DynamoDB item.
 
 To limit the properties read, you can use the `ProjectionExpression` property on the `QueryRequest` class as a comma-separated list of values.
 
-    [HttpGet("city-date-advanced-filter-projection")]
-    public async Task<IEnumerable<WeatherForecastListItem>> GetLowLevelAdvancedProjectionAsync(
+```csharp
+[HttpGet("city-date-advanced-filter-projection")]
+public async Task<IEnumerable<WeatherForecastListItem>> GetLowLevelAdvancedProjectionAsync(
+```
         string cityName, DateTime startDate, int minTemp, int maxTemp)
     {
         var request = new QueryRequest()
@@ -61,8 +63,10 @@ If any of the properties you want to read is a Reserved Keyword in DynamoDB, the
 
 In the example below, `Date` is a reserved keyword, and you can see how to use that as part of ProjectionExpression in .NET.
 
-    [HttpGet("city-date-advanced-filter-projection")]
-    public async Task<IEnumerable<WeatherForecastListItem>> GetLowLevelAdvancedProjectionAsync(
+```csharp
+[HttpGet("city-date-advanced-filter-projection")]
+public async Task<IEnumerable<WeatherForecastListItem>> GetLowLevelAdvancedProjectionAsync(
+```
         string cityName, DateTime startDate, int minTemp, int maxTemp)
     {
         var request = new QueryRequest()
@@ -89,7 +93,7 @@ Querying is an essential operation in DynamoDB. It allows you to filter and sele
 
 ![](/images/DynamoDB-Querying-new.png)
 
-](__GHOST_URL__/blog/dynamodb-querying-dotnet/)
+](/posts/dynamodb-querying-dotnet/)
 
 ### Projection Expression with List Index
 

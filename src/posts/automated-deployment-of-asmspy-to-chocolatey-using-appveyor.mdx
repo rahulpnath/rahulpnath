@@ -3,7 +3,9 @@ title: "Automated Deployment of AsmSpy to Chocolatey Using AppVeyor"
 slug: "automated-deployment-of-asmspy-to-chocolatey-using-appveyor"
 date: "2016-08-01T04:32:19.000Z"
 feature_image: "/images/asmspy.png"
-tags: []
+tags: ["Tools","Programming"]
+excerpt: "Using AppVeyor to Automatically deploy AsmSpy to Chocolatey."
+
 ---
 
 Recently I have been trying to contribute to open source projects, to build the habit of reading others code. I chose to start with projects that I use regularly. [AsmSpy](https://github.com/mikehadlow/AsmSpy) is one such project.
@@ -24,7 +26,7 @@ AsmSpy is currently distributed as a [zip package](http://static.mikehadlow.com/
 Automating Chocolatey Releases
 ------------------------------
 
-Now that I have to manage the AsmSpy Chocolatey package installations, I decided to automate the process of Chocolatey package creation and upload. Since I had used AppVeyor for [automating Click-Once deployment](__GHOST_URL__/blog/automated-clickonce-deployment-of-a-wpf-application-using-appveyor/) of [CLAL](https://github.com/rahulpnath/clal), I decided to use AppVeyor for this.
+Now that I have to manage the AsmSpy Chocolatey package installations, I decided to automate the process of Chocolatey package creation and upload. Since I had used AppVeyor for [automating Click-Once deployment](/posts/automated-clickonce-deployment-of-a-wpf-application-using-appveyor/) of [CLAL](https://github.com/rahulpnath/clal), I decided to use AppVeyor for this.
 
 ### **The Goal**
 
@@ -49,20 +51,22 @@ The AppVeyor team was quick to respond and suggested a possible problem with the
 
 AppVeyor has [support for Chocolatey commands](https://www.appveyor.com/blog/2014/11/06/appveyor-with-a-hint-of-chocolatey) out of the box, which makes it easy to create packages on a successful build. I added in the [nuspec file](https://github.com/mikehadlow/AsmSpy/blob/master/AsmSpy/AsmSpy.nuspec) that defines the Chocolatey Package and added an after-build script to generate the package. AppVeyor exposes [environment variables](https://www.appveyor.com/docs/environment-variables), that are set for every build. In the 'after\_build' scripts I trigger Chocolatey packaging only if the build is triggered by a commit with a tag (APPVEYOR\_REPO\_TAG\_NAME). Every build generates the zip package that can be used to test the current build.
 
-    version: 1.0.{build}
-    build:
+```yaml
+version: 1.0.{build}
+build:
       verbosity: minimal
-    after_build:
-      - cmd: >-
-          7z a asmspy.zip .\AsmSpy\bin\Debug\AsmSpy.exe
-          if defined APPVEYOR_REPO_TAG_NAME choco pack .\AsmSpy\AsmSpy.nuspec --version %APPVEYOR_REPO_TAG_NAME%
-          if defined APPVEYOR_REPO_TAG_NAME appveyor PushArtifact asmspy.%APPVEYOR_REPO_TAG_NAME%.nupkg -DeploymentName ReleaseNuget
-    artifacts:
-      - path: asmspy.zip
-        name: Zip Package
-      - path: '\AsmSpy\bin\*.nupkg'
-        name: Nuget Package
-    
+
+after_build:
+  - cmd: >-
+      7z a asmspy.zip .\AsmSpy\bin\Debug\AsmSpy.exe
+      if defined APPVEYOR_REPO_TAG_NAME choco pack .\AsmSpy\AsmSpy.nuspec --version %APPVEYOR_REPO_TAG_NAME%
+      if defined APPVEYOR_REPO_TAG_NAME appveyor PushArtifact asmspy.%APPVEYOR_REPO_TAG_NAME%.nupkg -DeploymentName ReleaseNuget
+artifacts:
+  - path: asmspy.zip
+    name: Zip Package
+  - path: '\AsmSpy\bin\*.nupkg'
+    name: Nuget Package
+```
 
 ### **Setting up Chocolatey Environment**
 
@@ -72,12 +76,14 @@ Since Chocolatey is built on top of NuGet infrastructure, it supports deployment
 
 The projects build setting is configured to deploy to the Environment created above for a build triggered by a commit with a tag.
 
-    deploy:
-      - provider: Environment
-        name: AsmSpy Chocolatey
-        on:
-          branch: master
-          APPVEYOR_REPO_TAG: true
-    
+
+```yaml
+deploy:
+  - provider: Environment
+    name: AsmSpy Chocolatey
+    on:
+      branch: master
+      APPVEYOR_REPO_TAG: true
+```
 
 From now on any tagged commit is pushed into the master branch on the repository it will trigger a release into Chocolatey. I have not tested this yet as there were no updates to the tool. I might trigger a test release sometime soon to see if it all works well end to end. Since with this automated deployment, we no longer use the zip URL to download the package in Chocolatey. The exe gets bundled along with the package. There might be some extra build scripts required to support the upgrade scenario for Chocolatey. I will update the post after the first deployment using this new pipeline!. From version [1.2.0](https://chocolatey.org/packages/asmspy/1.2.0) it uses this new pipeline

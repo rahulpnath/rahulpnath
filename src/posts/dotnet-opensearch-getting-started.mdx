@@ -3,7 +3,7 @@ title: "Querying OpenSearch from .NET: Full-Text Search on DynamoDB Data."
 slug: "dotnet-opensearch-getting-started"
 date: "2025-01-17T06:19:02.000Z"
 feature_image: "/images/OpenSearch-.NET.png"
-tags: []
+tags: ["AWS","DynamoDB"]
 ---
 
 In this post let's learn how to perform a full-text search on DynamoDB from a .NET application.
@@ -14,7 +14,7 @@ Since DynamoDB is not best suited for advanced querying and full-text search cap
 
 This post will explore how to connect to OpenSearch and search the data from a .NET application.
 
-Thanks to AWS for sponsoring this post in my [Amazon DynamoDB Series](__GHOST_URL__/blog/tag/dynamodb/).
+Thanks to AWS for sponsoring this post in my [Amazon DynamoDB Series](/posts/tag/dynamodb/).
 
 DynamoDB To OpenSearch
 ----------------------
@@ -31,7 +31,7 @@ Let’s learn how to set up the DynamoDB Zero ETL plugin for OpenSearch, a fully
 
 ![](/images/DynamoDB-Zero-ETL.png)
 
-](__GHOST_URL__/blog/dynamodb-etl-opensearch-amazon/)
+](/posts/dynamodb-etl-opensearch-amazon/)
 
 This article expects you to have this pipeline ready and data flowing from DynamoDB to OpenSearch.
 
@@ -66,8 +66,10 @@ It takes in a `ConnectionSettings` class that you can configure with the connect
         .DefaultIndex("<OPEN SEARCH INDEX>")
         .DefaultFieldNameInferrer(p => p);
         
-    var client = new OpenSearchClient(settings);
-    builder.Services.AddSingleton<IOpenSearchClient>(client);
+```csharp
+var client = new OpenSearchClient(settings);
+builder.Services.AddSingleton<IOpenSearchClient>(client);
+```
 
 By default, the client uses camelCasing for the property names. Based on how you have your data in OpenSearch you will need to adjust this using the `DefaultFieldNameInferrer`.
 
@@ -93,7 +95,7 @@ Learn different ways to set up and manage credentials and sensitive information 
 
 ![](/images/secure-key-1.jpg)
 
-](__GHOST_URL__/blog/amazon-credentials-dotnet/)
+](/posts/amazon-credentials-dotnet/)
 
 OpenSearch clients support the ability to sign requests using [AWS Signature V4](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_sigv.html).
 
@@ -104,8 +106,10 @@ Querying Amazon OpenSearch from .NET
 
 To query the index, I have a movie class defined below that reflects the properties available in the OpenSearch index.
 
-    public class Movie
-    {
+```csharp
+public class Movie
+{
+```
         public int IsAvailableForStreaming { get; set; }
         public string[] Genre { get; set; }
         public string Description { get; set; }
@@ -118,8 +122,10 @@ To query the index, I have a movie class defined below that reflects the propert
 
 Below is a sample ElasticSearch query that searches the `movies` index for documents where the specified term appears in either the `Title` or `Description` fields, returning matching results.
 
-    GET  movies/_search
-    {
+```json
+GET  movies/_search
+{
+```
       "query": {
         "bool": {
           "must": [
@@ -165,8 +171,10 @@ This returns a list of movies matching the searchdescriptor criteria specified.
 
 Below is a more advanced query on the OpenSearch Index that searches for documents where the term "avengers" appears in the `Title` or `Description` fields, and filters the results to include only those that are available for streaming and have a Rating of 8 and above.
 
-    GET  movies/_search
-    {
+```json
+GET  movies/_search
+{
+```
       "query": {
         "bool": {
           "must": [

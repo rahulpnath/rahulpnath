@@ -3,7 +3,7 @@ title: "AWS CDK For The .NET Developer: How To Easily Get Started"
 slug: "aws-cdk-dotnet"
 date: "2024-11-20T06:59:50.000Z"
 feature_image: "/images/AWS-CDK.png"
-tags: []
+tags: ["AWS"]
 excerpt: "A practical guide for .NET developers to get started with AWS CDK. Learn core concepts, setup, project creation, and how to define and deploy cloud infrastructure using familiar programming languages."
 ---
 
@@ -34,7 +34,7 @@ Before you dive into code, let's understand the three main concepts when using C
 
 These concepts work together to organize and deploy your application infrastructure efficiently.
 
-Thanks to AWS for sponsoring this post in my [.NET on AWS Series](__GHOST_URL__/blog/tag/aws/),
+Thanks to AWS for sponsoring this post in my [.NET on AWS Series](/posts/tag/aws/),
 
 Install and Setup AWS CDK
 -------------------------
@@ -43,7 +43,9 @@ To work with AWS CDK, we must first install and configure the AWS CDK Command Li
 
 If you have Node and npm setup, you can use it to install the CLI using the command below.
 
-    npm install -g aws-cdk
+```bash
+npm install -g aws-cdk
+```
 
 Once installed, run the `cdk --version` command to ensure it's up and running.
 
@@ -59,7 +61,7 @@ Learn different ways to set up and manage credentials and sensitive information 
 
 ![](/images/secure-key.jpg)
 
-](__GHOST_URL__/blog/amazon-credentials-dotnet/)
+](/posts/amazon-credentials-dotnet/)
 
 Create CDK .NET Project
 -----------------------
@@ -102,12 +104,13 @@ This blog post is a collection of other posts that covers various aspects of AWS
 
 ![](/images/AWS-Lambda.png)
 
-](__GHOST_URL__/blog/aws-lambda-dotnet-developer/)
+](/posts/aws-lambda-dotnet-developer/)
 
 Below is the function code that our Lambda Function runs.
 
-    public class Function
-    {
+```csharp
+public class Function
+{
         public async Task FunctionHandler(string input, ILambdaContext context)
         {
             var dynamoDbContext = new DynamoDBContext(new AmazonDynamoDBClient());
@@ -119,6 +122,7 @@ Below is the function code that our Lambda Function runs.
                 });
         }
     }
+```
 
 Building CDK Stack in .NET
 --------------------------
@@ -134,8 +138,9 @@ The package provides the `App` and `Stack` classes to represent the Application 
 
 The below code is the main function in our CDK project that sets up an `App` instance and also defines the `HelloCdkStack` for our application.
 
-    sealed class Program
-    {
+```csharp
+sealed class Program
+{
         public static void Main(string[] args)
         {
             var app = new App();
@@ -144,8 +149,8 @@ The below code is the main function in our CDK project that sets up an `App` ins
         }
     }
     
-    public class HelloCdkStack : Stack
-    {
+public class HelloCdkStack : Stack
+{
         internal HelloCdkStack(
             Construct scope, string id, IStackProps props = null) 
             : base(scope, id, props)
@@ -153,6 +158,7 @@ The below code is the main function in our CDK project that sets up an `App` ins
           // Define your AWS Resources
         }
     }
+```
 
 All the resources we need to create are defined within the Stack class.
 
@@ -160,14 +166,16 @@ All the resources we need to create are defined within the Stack class.
 
 To set up a Lambda Function, we can use the `Function` class and provide the required properties to be set on our Lambda Function.
 
-    var lambda = new Function(this, "hello-cdk-labmda", new FunctionProps()
-    {
+```csharp
+var lambda = new Function(this, "hello-cdk-labmda", new FunctionProps()
+{
         FunctionName = "hello-cdk-labmda",
         Runtime = Runtime.DOTNET_8,
         Handler = "hello-cdk-lambda::hello_cdk_lambda.Function::FunctionHandler",
         Code = Code.FromAsset(@".\src\artifacts\hello-cdk-lambda.zip"),
         Timeout = Duration.Seconds(30)
     });
+ ```
 
 The CDK code above expects the lambda function to be packaged as a zip file and available under the artifacts folder.
 
@@ -179,8 +187,9 @@ The CDK defines the Lambda Function, its Handler, the code artifact to use, and 
 
 Similarly, we can use the `Table` construct to create a DynamoDB Table.
 
-    var userTable = new Table(this, "user-table", new TableProps()
-    {
+```csharp
+var userTable = new Table(this, "user-table", new TableProps()
+{
         TableName = "User",
         PartitionKey = new Attribute()
         {
@@ -189,6 +198,7 @@ Similarly, we can use the `Table` construct to create a DynamoDB Table.
         },
         RemovalPolicy = RemovalPolicy.DESTROY
     });
+ ```
 
 The above code creates a table, specifies it's name and the PartitionKey attribute.
 
@@ -199,8 +209,9 @@ It also sets the `RemovalPolicy` to `Destroy` which means the table will be dele
 Since our Lambda Function must write to the DynamoDB table, we must ensure it has the appropriate permissions.
 
 This is quickly done using CDK with one line of code.
-
+```csharp
     dynamoTable.GrantReadWriteData(lambda);
+```
 
 We use the `GrantReadWriteData` function on the Table construct to grant permissions to the Lambda function.
 

@@ -3,7 +3,7 @@ title: "Learn How to Map Complex .NET Types to DynamoDB using Custom Converters"
 slug: "dynamodb-custom-converters-dotnet"
 date: "2023-03-08T08:00:30.000Z"
 feature_image: "/images/DynamoDB-Custom-Converters.png"
-tags: []
+tags: ["AWS","DynamoDB"]
 ---
 
 DynamoDB supports using custom types in your Documents.
@@ -16,7 +16,7 @@ Custom Converters allow specifying custom maps for these types in DynamoDB.
 
 In this article, let’s learn how to use custom types and specify custom converters to save these types to your DynamoDB documents.
 
-_This article is sponsored by AWS and is part of my [.NET on AWS Series](__GHOST_URL__/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [.NET on AWS Series](/posts/tag/aws/)._
 
 .NET Complex Types and DynamoDB
 -------------------------------
@@ -35,7 +35,7 @@ Learn how to get started with AWS DynamoDB with .NET Core by updating the defaul
 
 ![](/images/aws_dynamodb.jpg)
 
-](__GHOST_URL__/blog/aws-dynamodb-net-core/)
+](/posts/aws-dynamodb-net-core/)
 
 A complex type is a group of other primitive types or complex types in .NET.
 
@@ -47,8 +47,10 @@ This behavior is the same as when specifying complex types in API return data.
 
 For example, the below `Wind` class, when used in a DynamoDB document object, gets serialized as a JSON object with the two properties.
 
-    public class Wind
-    {
+```csharp
+public class Wind
+{
+```
         public decimal Speed { get; set; }
         public string Direction { get; set; }
     }
@@ -75,8 +77,10 @@ To add a custom converter, we need to implement the `IPropertyConverter` interfa
 
 As you would have guessed, these methods convert the .NET object to a DynamoDB item (`DynamoDBEntry`) and from DynamoDB back to the .NET object.
 
-    public class DynamoEnumStringConverter < TEnum >: IPropertyConverter 
-    {  
+```csharp
+public class DynamoEnumStringConverter < TEnum >: IPropertyConverter 
+{  
+```
       public object FromEntry(DynamoDBEntry entry) 
       {
         return (TEnum) Enum.Parse(typeof (TEnum), entry.AsString());
@@ -101,16 +105,20 @@ There are two ways you can do this, and let's explore both of them.
 
 To apply the DynamoDB Custom Converter on a type, we use the `DynamoDBProperty` attribute and specify the Converter type, as shown below.
 
-    public class WeatherForecast
-    {
+```csharp
+public class WeatherForecast
+{
+```
         ...
         [DynamoDBProperty(typeof(DynamoEnumStringConverter<WeatherType>))]
         public WeatherType WeatherType { get; set; }
         public Wind Wind { get; set; }
     }
     
-    public enum WeatherType
-    {
+```typescript
+public enum WeatherType
+{
+```
         None,
         Sunny,
         Cloudy,
@@ -134,8 +142,10 @@ To avoid duplicating the converter, specify the DynamoDB converter at the Dynamo
 
 The below code sets up the DynamoDB Customer converter on the `ConverterCache` property on the `DynamoDBContext` class.
 
-    var dynamoDBContext = new DynamoDBContext(dynamoDbClient);
-    dynamoDBContext.ConverterCache
+```csharp
+var dynamoDBContext = new DynamoDBContext(dynamoDbClient);
+dynamoDBContext.ConverterCache
+```
          .Add(typeof(WeatherType), new DynamoEnumStringConverter<WeatherType>());
     builder.Services.AddSingleton<IDynamoDBContext>(dynamoDBContext);
     
@@ -155,8 +165,10 @@ You can find a sample implementation of a [ValueObject here.](https://learn.micr
 
 Using the `ValueObject` reference implementation as a base class below is a `Temperature` Value Object, which has two properties - `Degree` and `TemperatureType`.
 
-    namespace dynamodb_querying
-    {
+```csharp
+namespace dynamodb_querying
+{
+```
         public class Temperature : ValueObject
         {
             public decimal Degree { get; private set; }
@@ -195,8 +207,10 @@ The below custom converter is for the .NET Value Object Type.
 
 For example, I want to save the `Temperature` as a custom string in DynamoDB - _20°C, 35_°F, etc.
 
-    public class DynamoTemperatureConverter : IPropertyConverter
-    {
+```csharp
+public class DynamoTemperatureConverter : IPropertyConverter
+{
+```
         public object FromEntry(DynamoDBEntry entry)
         {
             if (entry != null)

@@ -3,7 +3,7 @@ title: "Getting Started with ASP.NET Web Api"
 slug: "getting-started-with-asp-net-web-api"
 date: "2012-08-22T06:38:11.000Z"
 feature_image: "/images/web_api_default_template_welcome_screen.png"
-tags: []
+tags: ["Dotnet"]
 ---
 
 A web api is to expose your application’s programming interface over the web,using the HTTP interface.This makes the api accessible from any device that can make HTTP calls.With the wide range of devices that’s available nowadays,Web Api would be the best way to reach out to all of them.Web Api helps you to open up your application to other developers and encourage them to build device specific application.
@@ -43,8 +43,10 @@ To check the remaining of HTTP actions we would need to write the implementation
 
 So lets get back to the Cafeteria business.We will create a model to represent the FoodDishes that the cafeteria has to offer.For now we will just have a id,name and description field in the model.
 
-    public class FoodDish
-    {
+```csharp
+public class FoodDish
+{
+```
         public int FoodDishId { get; set; }
         [Required]
         public string FoodDishName { get; set; }
@@ -74,8 +76,10 @@ Now to see the newly created dish you can either use a GET on ‘/api/FoodDishes
 
 Lets take a deeper look in the controller,to see how all this is happening.Will look into the GET and POST here in this post as DELETE and PUT would be then easy to follow. The GET method that visual studio scaffolded for us,just returns the requested fooddish from the database.If the food item does not exists it returns a ‘NotFound’/404 error.Notice that here we are using HTTP’s error code’s so that client can easily understand the error.
 
-    public FoodDish GetFoodDish(int id)
-    {
+```csharp
+public FoodDish GetFoodDish(int id)
+{
+```
         FoodDish fooddish = db.FoodDishes.Find(id);
         if (fooddish == null)
             throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
@@ -86,9 +90,11 @@ Lets take a deeper look in the controller,to see how all this is happening.Will 
 
 The POST method,checks if the new fooddish entered is valid.In our case we have FoodDishName as a required attribute,so as long as that property is present the ModelState.IsValid would be true.If you have additional validation attributes those would be checked too.If the state is valid then the item is inserted into the database and in the response we write the Location where this new fooddish can be accessed from.This location is what we saw above in the fiddler response.If the ModelState is not valid we sent a BadRequest,so that client can recheck the data send.We can send customized error messages too back to the client,so that the client understands where exactly the issue is.I will be covering validation,authentication and error reporting in a separate post,as that calls for a deeper explanation
 
-    [HttpPost]
-    public HttpResponseMessage CreateNewFoodDish(FoodDish fooddish)
-    {
+```json
+[HttpPost]
+public HttpResponseMessage CreateNewFoodDish(FoodDish fooddish)
+{
+```
         if (ModelState.IsValid)
         {
             db.FoodDishes.Add(fooddish);

@@ -3,21 +3,23 @@ title: "Refactoring to Improve Testability: Extracting Dependencies"
 slug: "refactoring-to-improve-testability-extracting-dependencies"
 date: "2016-04-03T03:14:28.000Z"
 feature_image: "/images/coding.jpg"
-tags: []
+tags: ["Testing","Programming"]
 ---
 
 [![Refactoring](/images/coding.jpg)](https://pixabay.com/en/code-data-programming-code-944504/)
 
-In the earlier post, [Removing Unnecessary Dependencies](__GHOST_URL__/blog/refactoring-to-improve-testability-removing-unnecessary-dependencies/), we saw how having an unnecessary dependency hinders testability. In this post we will see just the opposite of that - extracting functionality out of a class and creating another class to separate responsibilities, making it easier to test and adhere to [Single Responsibility Principle](https://blog.8thlight.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html)(SRP).
+In the earlier post, [Removing Unnecessary Dependencies](/posts/refactoring-to-improve-testability-removing-unnecessary-dependencies/), we saw how having an unnecessary dependency hinders testability. In this post we will see just the opposite of that - extracting functionality out of a class and creating another class to separate responsibilities, making it easier to test and adhere to [Single Responsibility Principle](https://blog.8thlight.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html)(SRP).
 
 > _Violating Single Responsibility Principle makes writings tests harder._
 
-Some of the common tests smell (from XUnit Test Patterns by Gerard Meszaros, [a recommended read](__GHOST_URL__/blog/language-agnostic-books-for-every-developer-2/)) that helps me to find these dependencies are [Hard-To-Test Code](http://xunitpatterns.com/Hard%20to%20Test%20Code.html) and [Fragile Tests](http://xunitpatterns.com/Fragile%20Test.html). In this post we will explore the refactoring with the help of an example - I have to process usages (anything like electricity, internet, water etc.) for a list of locations aggregated over for a day. There is a repository where the last processed date for the location is stored, and whenever this process runs we have to process for all the days from the last processed date till the current day.
+Some of the common tests smell (from XUnit Test Patterns by Gerard Meszaros, [a recommended read](/posts/language-agnostic-books-for-every-developer-2/)) that helps me to find these dependencies are [Hard-To-Test Code](http://xunitpatterns.com/Hard%20to%20Test%20Code.html) and [Fragile Tests](http://xunitpatterns.com/Fragile%20Test.html). In this post we will explore the refactoring with the help of an example - I have to process usages (anything like electricity, internet, water etc.) for a list of locations aggregated over for a day. There is a repository where the last processed date for the location is stored, and whenever this process runs we have to process for all the days from the last processed date till the current day.
 
 The existing code looks like below, which loops through a list of locations passed in, fetches the last processed date from a repository , gets all the days to be processed till today (_DateTime.Now.Date_) and processes them for all the days.
 
-    public class LocationsUsagesCalculator
-    {
+```csharp
+public class LocationsUsagesCalculator
+{
+```
         ILocationUsages locationUsages;
         IUsageRepository usageRepository;
     
@@ -61,8 +63,10 @@ Testability Issues with Current Design
 
 The code is self-explanatory and does what's expected. But what interests us more is the test code for this. From a test perspective we need to make sure that for all locations, usages gets processed for the pending days. Direct cases when last processed day is a day before, a couple of days before and different for each location are some of the likely scenarios. Let's see one of the cases where the last processed day is a few days before for all locations
 
-    [Theory, AutoMoqData]
-    public void ProcessUsagesWithCoupleOfDaysBeforeAsLastProcessedProcessesAllDaysTillTodayForEachLocation(
+```csharp
+[Theory, AutoMoqData]
+public void ProcessUsagesWithCoupleOfDaysBeforeAsLastProcessedProcessesAllDaysTillTodayForEachLocation(
+```
        [Frozen]Mock<ILocationUsages> locationUsages,
        [Frozen]Mock<IUsageRepository> usageRepository,
        IEnumerable<Location> locations,
@@ -99,8 +103,10 @@ We clearly see that this one class does a lot more things than what its name sug
 
 Finding all the dates till a given date (today in this case) is not this classes responsibility and can easily be pulled out. Since the SUT depends on _IUsageRepository_ just to calculate the dates I can pull that out along with the refactoring. I have created a new interface, _IUsageDatesCalculator_, to return all the days pending process. With this interface, the test code looks a bit more clear and easier to write.
 
-    [Theory, Tests.AutoMoqData]
-    public void ProcessUsagesProcessesForAllLocationForPendingDays(
+```csharp
+[Theory, Tests.AutoMoqData]
+public void ProcessUsagesProcessesForAllLocationForPendingDays(
+```
         IEnumerable<DateTime> datesToProcess,
         [Frozen]Mock<ILocationUsages> locationUsages,
         [Frozen]Mock<IUsageDatesCalculator> usageDatesCalculator,
@@ -132,11 +138,13 @@ It's a good practice to inject a Time Provider into the consumer so that you can
 
 Refactoring the dependency with current time using a inject interface, _ITimeProvider_, makes setting the current day easy as shown in the tests below. I can now hard code my expected dates into the test code and not depend on a runtime generated list.
 
-    [Theory]
-    [InlineAutoMoqData("2016-04-02","2016-03-29", "2016-03-30,2016-03-31,2016-04-01,2016-04-02")]
-    [InlineAutoMoqData("2016-04-02", "2016-04-02", "")]
-    [InlineAutoMoqData("2016-04-02", "2016-04-01", "2016-04-02")]
-    public void GetDatesToCalculateReturnsExpectedDates(
+```json
+[Theory]
+[InlineAutoMoqData("2016-04-02","2016-03-29", "2016-03-30,2016-03-31,2016-04-01,2016-04-02")]
+[InlineAutoMoqData("2016-04-02", "2016-04-02", "")]
+[InlineAutoMoqData("2016-04-02", "2016-04-01", "2016-04-02")]
+public void GetDatesToCalculateReturnsExpectedDates(
+```
         string todayString,
         string lastProcessedDayString,
         string expectedDaysString,

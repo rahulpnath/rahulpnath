@@ -3,7 +3,7 @@ title: "Efficient File Bundling in ASP NET: A Guide to Streaming ZIP Archives"
 slug: "stream-zip-files-asp-dotnet"
 date: "2024-07-10T10:03:28.000Z"
 feature_image: "/images/Stream-Zip-Files-in-ASP-NET.png"
-tags: []
+tags: ["AWS","Dotnet"]
 ---
 
 Bundling files into a zip archive for downloading via an API endpoint is a common requirement for many applications.
@@ -19,7 +19,7 @@ We’ll explore two approaches: the first is simple but inefficient, and the sec
 
 For the demo, I’ll store the files in Amazon S3, which I will retrieve, zip, and send back to the user. The same approach applies if you’re streaming files from a disk or any other cloud storage.
 
-Thank you to AWS for sponsoring this video; it’s part of my [ASP NET Series](__GHOST_URL__/blog/tag/asp-net/).
+Thank you to AWS for sponsoring this video; it’s part of my [ASP NET Series](/posts/tag/asp-net/).
 
 Bundle Files into Zip Archive in .NET
 -------------------------------------
@@ -46,7 +46,7 @@ Learn how to get started with Amazon S3 from a .NET Core application. We will le
 
 ![](/images/storage-box.jpg)
 
-](__GHOST_URL__/blog/amazon-s3-dotnet/)
+](/posts/amazon-s3-dotnet/)
 
 The code below shows an example of how you can build a Zip archive using the ZipArchive class in .NET.
 
@@ -58,16 +58,22 @@ The ZipArchive instance must be created with the `leaveOpen` flag set to true to
 
 As we read the file contents from the S3 bucket, we write that to the archive as a new Entry. An entry is nothing but a new file within the Zip archive.
 
-    var bucketName = "myapp-data-files";
-    var listObjects = await amazonS3Client
+```csharp
+var bucketName = "myapp-data-files";
+var listObjects = await amazonS3Client
+```
         .ListObjectsV2Async(new ListObjectsV2Request() {BucketName = bucketName});
     
-    var zipStream = new MemoryStream();
-    using var zipArchive = new ZipArchive(
+```csharp
+var zipStream = new MemoryStream();
+using var zipArchive = new ZipArchive(
+```
         zipStream, ZipArchiveMode.Create, leaveOpen: true);
         
-    foreach (var s3Object in listObjects.S3Objects)
-    {
+```csharp
+foreach (var s3Object in listObjects.S3Objects)
+{
+```
         var file = await amazonS3Client
             .GetObjectAsync(s3Object.BucketName, s3Object.Key);
         var entry = zipArchive.CreateEntry(file.Key);
@@ -75,8 +81,10 @@ As we read the file contents from the S3 bucket, we write that to the archive as
         await file.ResponseStream.CopyToAsync(entryStream);
     }
     
-    zipArchive.Dispose();
-    zipStream.Seek(0, SeekOrigin.Begin);
+```csharp
+zipArchive.Dispose();
+zipStream.Seek(0, SeekOrigin.Begin);
+```
 
 Once all the files are written into the `ZipArchive` we can dispose of the instance and use the underlying `MemoryStream` instance for the Zip archive contents.
 
@@ -131,7 +139,7 @@ Imagine having a long-running request triggered by a user on your server. But th
 
 ![](/images/Cancellation-Token.png)
 
-](__GHOST_URL__/blog/cancellation-token-dotnet/)
+](/posts/cancellation-token-dotnet/)
 
 Stream ZipArchive in ASP NET API
 --------------------------------

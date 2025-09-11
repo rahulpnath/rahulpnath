@@ -3,7 +3,7 @@ title: "Enable Cross-Origin Requests (CORS) in ASP.Net Web API Using CorsOptions
 slug: "enable-cross-origin-requests-cors-in-asp-dot-net-web-api-using-corsoptions"
 date: "2018-08-14T00:00:00.000Z"
 feature_image: "/images/cors.png"
-tags: []
+tags: ["Dotnet"]
 ---
 
 I was setting up an API at one of the client's place recently and found that currently, they allow any origin to hit their API by setting the [CorsOptions.AllowAll](https://msdn.microsoft.com/en-us/library/dn450212\(v=vs.113\).aspx) options. In this post, we will look at how to set the CORS options and restrict it to only the domains that you want your API to be accessed from.
@@ -25,25 +25,35 @@ In Web API there are multiple ways that you can set CORS.
 
 In the below snippet I am using the _Microsoft.Owin.Cors_ pipeline to setup CORS for the API. The code first reads the application configuration file to get a list of semicolon (;) separated hostnames which are added to the list of allowed origins in the [CorsPolicy](https://docs.microsoft.com/en-us/previous-versions/aspnet/web-frameworks/dn726408\(v=vs.118\)). By setting the corsOptions with _UseCors_ extension method, the policy gets applied to all the requests coming through the website.
 
-    var allowedOriginsConfig = ConfigurationManager.AppSettings["origins"];
-    var allowedOrigins = allowedOriginsConfig
+```csharp
+var allowedOriginsConfig = ConfigurationManager.AppSettings["origins"];
+var allowedOrigins = allowedOriginsConfig
+```
         .Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
     
-    var corsPolicy = new CorsPolicy()
-    {
+```csharp
+var corsPolicy = new CorsPolicy()
+{
+```
         AllowAnyHeader = true,
         AllowAnyMethod = true,
         SupportsCredentials = true
-    };
-    foreach (var origin in allowedOrigins)
+```csharp
+};
+foreach (var origin in allowedOrigins)
+```
         corsPolicy.Origins.Add(origin);
     
-    var policyProvider = new CorsPolicyProvider()
-    {
+```csharp
+var policyProvider = new CorsPolicyProvider()
+{
+```
         PolicyResolver = (context) => Task.FromResult(corsPolicy)
-    };
-    var corsOptions = new CorsOptions()
-    {
+```csharp
+};
+var corsOptions = new CorsOptions()
+{
+```
         PolicyProvider = policyProvider
     };
     
@@ -57,8 +67,10 @@ If you want to have different CORS policies based on different Controllers/route
     app.Map(
         "/api/SpecificController",
         (appbuilder) => appbuilder.UseCors(corsOptions2));
-    ...
-    app.UseCors(corsOptions1);
+```text
+...
+app.UseCors(corsOptions1);
+```
     
 
 CORS ≠ Security

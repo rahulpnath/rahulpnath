@@ -3,7 +3,7 @@ title: "Introducing Code Formatting into a Large Code Base"
 slug: "introducing-code-formatting-into-a-large-codebase"
 date: "2016-10-03T00:00:00.000Z"
 feature_image: "/images/codeformatting_column_guide.png"
-tags: []
+tags: ["Programming"]
 ---
 
 Code Formatting is an important aspect of writing code. If followed well it helps keep the code more readable and easy to work with. Here are some of the different aspects of formatting code and my personal preferences. I then explore options to enforce code formatting and ways to introduce it into an existing code base.
@@ -27,19 +27,23 @@ Settings for these are often available at the IDE level. In Visual Studio this i
 
 Avoid aligning by common separators (=;,) when they occur in adjacent lines. This kind of alignment falls out of order when we rename variables or properties. It happens when you chaange property names.
 
-    // Not Refactoring friendly and
-    // needs extra effort to keep it formatted
-    var person = new Person()
-    {
+```csharp
+// Not Refactoring friendly and
+// needs extra effort to keep it formatted
+var person = new Person()
+{
+```
         FirstName = "Rahul",
         LastName  = "Nath",
         Site      = "www.rahulpnath.com"
     };
     
 
-    // Refactoring friendly
-    var person = new Person()
-    {
+```csharp
+// Refactoring friendly
+var person = new Person()
+{
+```
         FirstName = "Rahul",
         LastName = "Nath",
         Site = "www.rahulpnath.com"
@@ -48,7 +52,7 @@ Avoid aligning by common separators (=;,) when they occur in adjacent lines. Thi
 
 ### **Horizontal Formatting**
 
-_You should never have to scroll to the right_ - I caught on with this recommendation from the book Clean Code ([a recommended read](__GHOST_URL__/blog/language-agnostic-books-for-every-developer-2/)). It is also recommended that a function should fit on the screen, without needing to scroll up or down. This encourages to keep functions short and specific.
+_You should never have to scroll to the right_ - I caught on with this recommendation from the book Clean Code ([a recommended read](/posts/language-agnostic-books-for-every-developer-2/)). It is also recommended that a function should fit on the screen, without needing to scroll up or down. This encourages to keep functions short and specific.
 
 > _We should strive to keep our lines short. The old Hollerith limit of 80 is a bit arbitrary, and I’m not opposed to lines edging out to 100 or even 120. But beyond that is probably just careless_
 
@@ -77,8 +81,10 @@ A better variant of the above style is to have the parameters in the new line al
         string parameter2,
         int parameter3,
         string optionalParameter = "Test")
-    {
-    }
+```json
+{
+}
+```
     
 
 ### **Visibility Based Ordering**
@@ -103,10 +109,12 @@ Source Control Hooks
 
 We can plug into various hooks that source controls give to enforce code formatting on developer machines. In git, you can add a [custom pre-commit hook](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) to run the StyleCop analysis on all the staged files. [StyleCopcli](https://github.com/bbadjari/stylecopcli) is an open source application that wraps over the StyleCop DLLs and allows running the analysis from the command line. So in the hook, I use this CLI to run StyleCop analysis on all the staged files.
 
-    #!/bin/sh
-    echo "Running Code Analysis"
-    ./stylecopcli/StyleCopCLI.exe -cs $(git diff --cached --name-only)
-    if [ $? = 2 ]
+```bash
+#!/bin/sh
+echo "Running Code Analysis"
+./stylecopcli/StyleCopCLI.exe -cs $(git diff --cached --name-only)
+if [ $? = 2 ]
+```
         then
             echo Commit Failed! Fix StyleCop Errors
             exit 1

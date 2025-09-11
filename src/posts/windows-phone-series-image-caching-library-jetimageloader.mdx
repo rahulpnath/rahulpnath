@@ -3,7 +3,7 @@ title: "Windows Phone Series: Image Caching Library - JetImageLoader"
 slug: "windows-phone-series-image-caching-library-jetimageloader"
 date: "2014-04-17T23:56:17.000Z"
 feature_image: "/images/WP-JetImagLoader.png"
-tags: []
+tags: ["Dotnet"]
 ---
 
 Recently on a client project, I had a requirement to cache images locally on the phone and then load it from there from subsequent requests. Initially I had plans for custom implementing this using sqlite and custom code. While googling for this, I came across an awesome custom library that solved my problem with just a few lines of code – [JetImageLoader](https://github.com/artem-zinnatullin/jet-image-loader) by [Artem](https://github.com/artem-zinnatullin). This is available via nuget, making it easy to install
@@ -17,8 +17,10 @@ Integrating this library into any existing project is even easier and is just ab
 
 You would need to add a custom converter and add this as part of the resource. There is a sample for this on Github where the [project source](https://github.com/artem-zinnatullin/jet-image-loader) also lives.
 
-    public class JetImageLoaderImplementation
-    {
+```csharp
+public class JetImageLoaderImplementation
+{
+```
         public static readonly BaseMemoryCache<string,stream> MemoryCacheImpl = new WeakMemoryCache<string,stream>();
         public static readonly BaseStorageCache StorageCacheImpl = new LimitedStorageCache(IsolatedStorageFile.GetUserStoreForApplication(), "\\image_cache", new SHA1CacheFileNameGenerator(), 1024 * 1024 * 10);</p>
         public static JetImageLoaderConfig GetJetImageLoaderConfig()
@@ -35,8 +37,10 @@ You would need to add a custom converter and add this as part of the resource. T
     }
     
 
-    public class JetImageLoaderConverter : BaseJetImageLoaderConverter
-    {
+```csharp
+public class JetImageLoaderConverter : BaseJetImageLoaderConverter
+{
+```
         protected override JetImageLoaderConfig GetJetImageLoaderConfig()
         {
             return JetImageLoaderImplementation.GetJetImageLoaderConfig();

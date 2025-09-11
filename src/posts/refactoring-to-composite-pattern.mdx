@@ -3,7 +3,7 @@ title: "Refactoring to Composite Pattern"
 slug: "refactoring-to-composite-pattern"
 date: "2017-04-13T00:00:00.000Z"
 feature_image: "/images/composite_pattern.png"
-tags: []
+tags: ["Programming"]
 ---
 
 I often come across functions that do multiple things. Many times such functions have a common pattern where multiple sections within the function use the same parameters for calculations. The results from these different code sections within the function are either separated by conditionals (if, switch, etc.) or combined using various arithmetic operators. The most obvious refactoring in such scenarios is to move the code sections into different functions within the same class. Having it in separate functions keeps the code readable. But on closer observation, such functions can be moved into different classes, keeping each of these code sections as the only responsibility.
@@ -13,8 +13,10 @@ Identifying the Refactoring
 
 Within a function when a similar pattern of code repeats, it could be refactored into multiple classes and composed to give the same functionality. Let us take a simple example of a function where we are validating an Account object based on different criteria. The various criteria end up as conditionals within the function. This function can soon get big and difficult to manage. It also makes it harder to test. If you are adding more validations to this class over a period you are violating the Open-Closed Principle (OCP), the O in [SOLID](http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod). Depending on the level of abstraction that we are looking at, the class also violates the Single Responsibility Principle(SRP), the S in SOLID. The function handles validations based on different criteria.
 
-    public List<string> Validate(Account account)
-    {
+```typescript
+public List<string> Validate(Account account)
+{
+```
         var result = new List<string>();
     
         if (string.IsNullOrEmpty(account.Email))
@@ -48,13 +50,17 @@ In the Account validation above, the function checks for an email and validates 
 
 The actual C# code looks like this after the refactoring.
 
-    public interface IValidateAccount
-    {
+```typescript
+public interface IValidateAccount
+{
+```
         IEnumerable<string> Validate(Account account);
     }
     
-    public class AccountValidators : IValidateAccount
-    {
+```csharp
+public class AccountValidators : IValidateAccount
+{
+```
         public readonly IEnumerable<IValidateAccount> Validators;
         public AccountValidators()
         {
@@ -72,8 +78,10 @@ The actual C# code looks like this after the refactoring.
         }
     }
     
-    public class AccountHasEmailValidator : IValidateAccount
-    {
+```csharp
+public class AccountHasEmailValidator : IValidateAccount
+{
+```
         public IEnumerable<string> Validate(Account account)
         {
             if (account != null && string.IsNullOrEmpty(account.Email))
@@ -81,8 +89,10 @@ The actual C# code looks like this after the refactoring.
         }
     }
     
-    public class AccountEmailIsValidValidator : IValidateAccount
-    {
+```csharp
+public class AccountEmailIsValidValidator : IValidateAccount
+{
+```
         public IEnumerable<string> Validate(Account account)
         {
             if (account != null && account.Email != null && !IsValidEmail(account.Email))
@@ -91,7 +101,7 @@ The actual C# code looks like this after the refactoring.
     }
     
 
-After the refactoring, we have separate classes for each of the validation rules. The _AccountValidators_ class composes all the other validators and provides the same uniform interface for the consumers to validate an account. It calls on to all the Validators iteratively and invokes the Validate method on them. You can use Dependency Injection to inject in all validators to this class if you are not comfortable hard-wiring them. The IoC container can be setup using [registration by convention](__GHOST_URL__/blog/ioc-registration-by-convention/), which prevents the needs for explicit registration for any new validators.
+After the refactoring, we have separate classes for each of the validation rules. The _AccountValidators_ class composes all the other validators and provides the same uniform interface for the consumers to validate an account. It calls on to all the Validators iteratively and invokes the Validate method on them. You can use Dependency Injection to inject in all validators to this class if you are not comfortable hard-wiring them. The IoC container can be setup using [registration by convention](/posts/ioc-registration-by-convention/), which prevents the needs for explicit registration for any new validators.
 
 One other worry that I have seen common when moving to such a pattern is that - _We now have a lot more classes. Does that not affect the performance?_. If you are following SOLID principles to the core and want to maintain loose coupling in your code then creating more classes is something you cannot avoid. We do not want any [God Classes](http://wiki.c2.com/?GodClass) in our code and the first step towards it is to split them into different classes.
 
@@ -101,8 +111,10 @@ One other worry that I have seen common when moving to such a pattern is that - 
 
 The composition can be complex conditions as in the case below. For, e.g., let's say we need to execute a different kind of algorithm to calculate based on a property.
 
-    public class AccountCalculator : ICalculate
-    {
+```csharp
+public class AccountCalculator : ICalculate
+{
+```
         public AccountCalculator(ICalculate calculate1, ICalculate calculate2, ICalculate calculate3)
         {
             ...

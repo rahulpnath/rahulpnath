@@ -3,7 +3,8 @@ title: "AWS Lambda Powertools for .NET - Bedrock Agent Function Resolver"
 slug: "aws-lambda-powertools-for-net-bedrock-agent-function-resolver"
 date: "2025-07-31T06:31:33.000Z"
 feature_image: "/images/Copy-of-AWS-Bedrock.png"
-tags: []
+tags: ["AWS","Lambda"]
+excerpt: "Let's learn how to easily add your custom Lambda Function to Amazon Bedrock Agents using the Lambda Powertools library."
 ---
 
 Amazon Bedrock Agents can invoke functions to perform tasks based on user input.
@@ -52,11 +53,13 @@ This blog post is a collection of other posts that covers various aspects of AWS
 
 ![](/images/AWS-Lambda-1.png)
 
-](__GHOST_URL__/blog/aws-lambda-dotnet-developer/)
+](/posts/aws-lambda-dotnet-developer/)
 
 Add the [BedrockAgentFunction](https://www.nuget.org/packages/AWS.Lambda.Powertools.EventHandler.Resolvers.BedrockAgentFunction) nuget package to the Lambda Function
 
-    dotnet add package AWS.Lambda.Powertools.EventHandler.Resolvers.BedrockAgentFunction
+```powershell
+dotnet add package AWS.Lambda.Powertools.EventHandler.Resolvers.BedrockAgentFunction
+```
 
 The NuGet package provides the `BedrockAgentFunctionResolver` to register your [tools](https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html) to handle requests from Bedrock agent.
 
@@ -64,8 +67,9 @@ The resolve automatically parses the incoming request, routes it to the appropri
 
 Below is a sample Lambda Function code that sets up two tools for Bedrock Agent.
 
-    public class Function
-    {
+```csharp
+public class Function
+{
         private readonly BedrockAgentFunctionResolver _resolver;
     
         public Function()
@@ -86,7 +90,7 @@ Below is a sample Lambda Function code that sets up two tools for Bedrock Agent.
             return _resolver.Resolve(input, context);
         }
     }
-
+```
 ### Lambda Function Entrypoint
 
 In the above code, the `FunctionHandler` function is the entry point for the Lambda Function
@@ -109,11 +113,11 @@ The Lambda Lifecycle affects the way we write out Function code. Learn some of t
 
 ![](/images/Lambda-Lifecycle-2-1.png)
 
-](__GHOST_URL__/blog/lambda-lifecycle-and-net/)
+](/posts/lambda-lifecycle-and-net/)
 
 The tools supported can be registered in the `BedrockAgentFunctionResolver` instance using the `Tool` function, passing in the tool name and the function delegate.
 
-Once you have setup the tools and the function, publish the Lambda Function to your [AWS Account](__GHOST_URL__/blog/amazon-credentials-dotnet/).
+Once you have setup the tools and the function, publish the Lambda Function to your [AWS Account](/posts/amazon-credentials-dotnet/).
 
 Creating Amazon Bedrock Agent
 -----------------------------

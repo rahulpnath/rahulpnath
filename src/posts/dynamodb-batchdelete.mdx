@@ -3,7 +3,7 @@ title: "Batch Delete Item Operations In DynamoDB Using .NET"
 slug: "dynamodb-batchdelete"
 date: "2023-08-15T03:08:07.000Z"
 feature_image: "/images/DynamoDB-BatchDelete.png"
-tags: []
+tags: ["AWS","DynamoDB"]
 ---
 
 DynamoDB's batch delete functionality allows deleting multiple items from one or more DynamoDB tables with a single API call.
@@ -14,9 +14,9 @@ Batch Delete minimizes the number of API requests and enhances performance while
 
 <iframe src="https://www.youtube.com/embed/XZ6bLM2IxNE?feature=oembed" />
 
-We use the same APIs used in the [BatchWriteItem](__GHOST_URL__/blog/dynamodb-batchwrite/) to perform the batch delete operations as well.
+We use the same APIs used in the [BatchWriteItem](/posts/dynamodb-batchwrite/) to perform the batch delete operations as well.
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 In this article, we will learn, how to
 
@@ -49,9 +49,11 @@ The `DynamoDBContext` provides the `CreateBatchWrite` generic function, that tak
 
 In the below example, it takes a list of  `KeyValuePair` with the `CityName` and `Date` to be deleted from the DynamoDB as a single batch operation.
 
-    [HttpPost("batch-delete-one-table")]
-    public async Task DeleteBatch(List<KeyValuePair<string,DateTime>> keys)
-    {
+```csharp
+[HttpPost("batch-delete-one-table")]
+public async Task DeleteBatch(List<KeyValuePair<string,DateTime>> keys)
+{
+```
         var batchDelete = _dynamoDbContext.CreateBatchWrite<WeatherForecast>();
         foreach (var key in keys)
             batchDelete.AddDeleteKey(key.Key, key.Value);
@@ -78,15 +80,17 @@ The DynamoDB .NET SDK by default uses conventions to determine the Table name. H
 
 ![](/images/DynamoDB-Table-Name-Conventions.png)
 
-](__GHOST_URL__/blog/dynamodb-net-table/)
+](/posts/dynamodb-net-table/)
 
 To delete data from multiple tables, we need to create multiple instances of the `BatchWrite` type passing in the appropriate .NET types.
 
 The below code invokes the `CreateBatchWrite` on two different types, representing two different tables in DynamoDB.
 
-    [HttpPost("batch-delete-multiple-table")]
-    public async Task DeleteBatchMultipleTable(List<KeyValuePair<string,DateTime>> keys)
-    {
+```csharp
+[HttpPost("batch-delete-multiple-table")]
+public async Task DeleteBatchMultipleTable(List<KeyValuePair<string,DateTime>> keys)
+{
+```
         var batchDelete1 = _dynamoDbContext.CreateBatchWrite<WeatherForecast>();
         var batchDelete2 = _dynamoDbContext.CreateBatchWrite<WeatherForecastTable>();
         foreach (var key in keys)
@@ -131,9 +135,11 @@ The `AmazonDynamoDBClient` provides the `BatchWriteAsync` function to delete ite
 
 It has multiple overloads and one of them uses the `BatchWriteItemRequest` as shown below.
 
-    [HttpPost("batch-delete-client")]
-    public async Task DeleteBatchClient(List<KeyValuePair<string,DateTime>> keys)
-    {
+```csharp
+[HttpPost("batch-delete-client")]
+public async Task DeleteBatchClient(List<KeyValuePair<string,DateTime>> keys)
+{
+```
         var batchWriteRequest = new BatchWriteItemRequest
         {
             RequestItems = new Dictionary<string, List<WriteRequest>>
@@ -162,8 +168,10 @@ The `BatchWriteItemResponse` returns the result of the Batch Write operation. Th
 
 To perform a batch delete on multiple tables using the .NET Low-Level `AmazonDynamoDBClient` instance, all we need to do is pass another key value pair of items with the appropriate table name, and the items
 
-    var batchWriteRequest = new BatchWriteItemRequest
-    {
+```csharp
+var batchWriteRequest = new BatchWriteItemRequest
+{
+```
         RequestItems = new Dictionary<string, List<WriteRequest>>
         {
             {nameof(WeatherForecast), <itemsToInsert>},

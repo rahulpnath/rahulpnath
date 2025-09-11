@@ -3,7 +3,7 @@ title: "How to Use LocalStack for Seamless AWS Development in .NET"
 slug: "aws-localstack-dotnet"
 date: "2024-11-21T06:55:35.000Z"
 feature_image: "/images/LocalStack.png"
-tags: []
+tags: ["AWS"]
 ---
 
 Testing against live AWS services can be costly, time-consuming, and sometimes impractical when building cloud-based applications.
@@ -23,7 +23,7 @@ In this article, you’ll learn how to:
 
 Let’s dive in!
 
-Thanks to AWS for sponsoring this post in my [.NET on AWS Series](__GHOST_URL__/blog/tag/aws/)
+Thanks to AWS for sponsoring this post in my [.NET on AWS Series](/posts/tag/aws/)
 
 What is LocalStack?
 -------------------
@@ -64,7 +64,7 @@ Most options that's available to create resources in AWS, also works with LocalS
 
 Below, I show you how to create resources using the GUI and the CLI.
 
-In a future post, we will explore how you can seamlessly provision resources using [AWS CDK](__GHOST_URL__/blog/aws-cdk-dotnet/).
+In a future post, we will explore how you can seamlessly provision resources using [AWS CDK](/posts/aws-cdk-dotnet/).
 
 ### Creating Resources Using LocalStack GUI
 
@@ -109,8 +109,10 @@ Based on your preferences, we can use a few options to set up our .NET applicati
 
 You can configure the .NET clients individually when registering them in the application container (or wherever you are instantiating it).
 
-    if (builder.Environment.IsDevelopment())
-    {
+```csharp
+if (builder.Environment.IsDevelopment())
+{
+```
         var localStackUrl = "http://localhost:4566";
         var localStackRegion = "ap-southeast-2";
         
@@ -120,9 +122,11 @@ You can configure the .NET clients individually when registering them in the app
                 ServiceURL = localStackUrl,
                 AuthenticationRegion = localStackRegion
             }));
-    }
-    else
-    {
+```json
+}
+else
+{
+```
         builder.Services.AddAWSService<IAmazonDynamoDB>();
     }
 
@@ -138,10 +142,12 @@ Also, I wouldn't say I like this approach since it is a lot of conditional code 
 
 AWS provides an easier way to override the configurations at a global level, by overriding the AWS Options globally.
 
-    var options = builder.Configuration.GetAWSOptions();
-    options.DefaultClientConfig.ServiceURL = "http://localhost:4566";
-    options.DefaultClientConfig.AuthenticationRegion = "ap-southeast-2";
-    builder.Services.AddDefaultAWSOptions(options);
+```csharp
+var options = builder.Configuration.GetAWSOptions();
+options.DefaultClientConfig.ServiceURL = "http://localhost:4566";
+options.DefaultClientConfig.AuthenticationRegion = "ap-southeast-2";
+builder.Services.AddDefaultAWSOptions(options);
+```
 
 This is quickly done by getting the AWSOptions using the `GetAWSOptions` call and then updating the `ServiceURL` and `AuthenticationRegion` properties on it and registering it back into the container.
 
@@ -199,7 +205,7 @@ Learn how to process SQS messages from AWS Lambda Function. We will learn how to
 
 ![](/images/amazon-sqs-lambda-triggers-dotnet.jpg)
 
-](__GHOST_URL__/blog/amazon-sqs-lambda-trigger-dotnet/)
+](/posts/amazon-sqs-lambda-trigger-dotnet/)
 
     awslocal lambda create-event-source-mapping `
         --function-name weatherforecast-service `

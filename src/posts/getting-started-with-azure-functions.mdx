@@ -3,7 +3,7 @@ title: "Azure Functions ⚡ For The .NET Developer: How To Easily Get Started"
 slug: "getting-started-with-azure-functions"
 date: "2021-10-21T00:00:00.000Z"
 feature_image: "/images/laptop_developer.jpg"
-tags: []
+tags: ["Azure"]
 ---
 
 What is the most essential part of programming?
@@ -51,8 +51,10 @@ An Azure Function is defined as a static method within a class library project i
 
 The below function is an Azure Queue Storage triggered Function. It runs anytime a message is dropped in the `add-weatherdata`. The connection string to the queue is specified as part of the environment configuration with the name `WeatherDataQueue`.
 
-    public static class Function1
-    {
+```csharp
+public static class Function1
+{
+```
         [FunctionName("ProcessWeatherData")]
         public static void Run(
             [QueueTrigger("add-weatherdata", Connection = "WeatherDataQueue")]string myQueueItem, 
@@ -98,7 +100,7 @@ Azure Identity library provides Azure Active Directory token authentication supp
 
 ![](/images/pfx_security.jpg)
 
-](__GHOST_URL__/blog/defaultazurecredential-from-azure-sdk)
+](/posts/defaultazurecredential-from-azure-sdk)
 
 In our example, we added in the `WeatherDataQueue` connection string to connect to the Azure Queue Storage. We can replace this to use Managed Identites.
 

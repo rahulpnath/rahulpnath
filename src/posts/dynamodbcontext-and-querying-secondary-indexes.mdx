@@ -3,13 +3,13 @@ title: "How to Query Secondary Indexes Using DynamoDBContext From the .NET SDK?"
 slug: "dynamodbcontext-and-querying-secondary-indexes"
 date: "2023-07-20T04:46:10.000Z"
 feature_image: "/images/DynamoDBContext-Indexes.png"
-tags: []
+tags: ["AWS","DynamoDB"]
 ---
 
 DynamoDB supports two types of Secondary indexes
 
-*   [Global Secondary Index (GSI)](__GHOST_URL__/blog/dynamodb-global-secondary-index-gsi/)
-*   [Local Secondary Index (LSI)](__GHOST_URL__/blog/local-secondary-index-dynamodb/)
+*   [Global Secondary Index (GSI)](/posts/dynamodb-global-secondary-index-gsi/)
+*   [Local Secondary Index (LSI)](/posts/local-secondary-index-dynamodb/)
 
 In the earlier posts, we explored how to query the Indexes using the Low-Level API `IAmazonDynamoDB`.
 
@@ -17,7 +17,7 @@ In the earlier posts, we explored how to query the Indexes using the Low-Level A
 
 In this blog let's learn how we can query the Index using the High-Level API, `IDynamoDBContext`.
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 The High-Level API does have limitations with the way it can interact with the Index and often for more advanced level functionalities, you will need to switch down to the Low-Level API for querying.
 
@@ -33,7 +33,7 @@ Querying is an essential operation in DynamoDB. It allows you to filter and sele
 
 ![](/images/DynamoDB-Querying-new.png)
 
-](__GHOST_URL__/blog/dynamodb-querying-dotnet/)
+](/posts/dynamodb-querying-dotnet/)
 
 DynamoDBContext QueryAsync and Indexes
 --------------------------------------
@@ -46,9 +46,11 @@ The `DynamoDBOperationConfig` has a property `IndexName`, to specify the name of
 
 Querying any of the Indexes, Global Secondary Index, or Local Secondary Index, using the High-Level API works the same, as shown below.
 
-    [HttpGet("dynamodbcontext-query-index")]
-    public async Task<IEnumerable<WeatherForecastListItem>> QueryGSIIndexUsingDynamoDBContext(DateTime dateTime)
-    {
+```csharp
+[HttpGet("dynamodbcontext-query-index")]
+public async Task<IEnumerable<WeatherForecastListItem>> QueryGSIIndexUsingDynamoDBContext(DateTime dateTime)
+{
+```
         return await _dynamoDbContext
             .QueryAsync<WeatherForecastListItem>(
                 dateTime.Date,
@@ -62,7 +64,7 @@ Querying any of the Indexes, Global Secondary Index, or Local Secondary Index, u
 
 All you need to do is to specify the `IndexName` as part of the `DynamoDBOperationConfig`.
 
-You can specify the table name via the `OverriderTableName` property or use the `DynamoDBTable` attribute. Check out the [.NET DynamoDB SDK: Understanding Table Name Conventions and DynamoDBTable Attribute](__GHOST_URL__/blog/dynamodb-net-table/) to learn more.
+You can specify the table name via the `OverriderTableName` property or use the `DynamoDBTable` attribute. Check out the [.NET DynamoDB SDK: Understanding Table Name Conventions and DynamoDBTable Attribute](/posts/dynamodb-net-table/) to learn more.
 
 DynamoDBContext LoadAsync and Indexes
 -------------------------------------

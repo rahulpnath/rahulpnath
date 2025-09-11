@@ -3,12 +3,12 @@ title: "How To Set Up Dependency Injection in Lambda Functions Using Annotations
 slug: "lambda-annotations-dependency-injection"
 date: "2023-09-04T06:21:22.000Z"
 feature_image: "/images/Lambda-Annotation-Framework---DI.png"
-tags: []
+tags: ["AWS","Lambda"]
 ---
 
 The Lambda Annotations Framework provides a programming model for .NET developers to create AWS Lambda Functions.
 
-In previous posts, we learned [how to get started with the Annotations Framework](__GHOST_URL__/blog/aws-lambda-annotation-framework/) and also [how to build a CRUD API](__GHOST_URL__/blog/lambda-annotation-framework-crud-api/) using the Annotations Framework.
+In previous posts, we learned [how to get started with the Annotations Framework](/posts/aws-lambda-annotation-framework/) and also [how to build a CRUD API](/posts/lambda-annotation-framework-crud-api/) using the Annotations Framework.
 
 We saw how the Annotations Framework makes the development experience with Lambda Functions very similar to building APIs using ASP NET Core Framework.
 
@@ -18,7 +18,7 @@ Another feature that the Annotations Framework provides is support for Dependenc
 
 In this post let’s learn [how to setup Dependency Injection](https://github.com/aws/aws-lambda-dotnet/blob/master/Libraries/src/Amazon.Lambda.Annotations/README.md#dependency-injection-integration) when building Lambda Functions using the Annotations Framework.
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 Setting Up DI In .NET Lambda Annotations
 ----------------------------------------
@@ -29,9 +29,11 @@ The class must have a method `ConfigureServices` taking in the `IServiceCollecti
 
 Below I have the `Startup` class which has the method specified and the `LambdaStartup` attribute applied.
 
-    [LambdaStartup]
-    public class Startup
-    {
+```csharp
+[LambdaStartup]
+public class Startup
+{
+```
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IDependency, MyDependency>();
@@ -51,8 +53,10 @@ To inject the dependency through the constructor is very similar to how we do DI
 
     private readonly IMyDependency _myDependencyCtor;
     
-    public Function(IMyDependency myDependencyCtor)
-    {
+```csharp
+public Function(IMyDependency myDependencyCtor)
+{
+```
         _myDependencyCtor = myDependencyCtor;
     }
     
@@ -67,10 +71,12 @@ We can store this as a class-level property and use it in our Lambda Function co
 
 You can also inject a dependency through the Function parameters by adding the `FromServices` attribute.
 
-    [LambdaFunction]
-    [HttpApi(LambdaHttpMethod.Get, "/add/{a}/{b}")]
-    public List<string> Add(int a, int b, ILambdaContext lambdaContext, [FromServices] IDependency scopedDependencyFunc)
-    {
+```csharp
+[LambdaFunction]
+[HttpApi(LambdaHttpMethod.Get, "/add/{a}/{b}")]
+public List<string> Add(int a, int b, ILambdaContext lambdaContext, [FromServices] IDependency scopedDependencyFunc)
+{
+```
         var returnValues = new List<string>
         {
             _scopedDependencyCtor.Test("Constructor"),
@@ -114,7 +120,7 @@ The Lambda Lifecycle affects the way we write out Function code. Learn some of t
 
 ![](/images/Lambda-Lifecycle-2.png)
 
-](__GHOST_URL__/blog/lambda-lifecycle-and-net/)
+](/posts/lambda-lifecycle-and-net/)
 
 The lifetime scope of the dependencies injected via the Service collection is dependent on the Lambda instance.
 

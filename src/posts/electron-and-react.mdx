@@ -3,7 +3,7 @@ title: "Setting up an Electron Application using create-react-app Template"
 slug: "electron-and-react"
 date: "2017-10-10T00:00:00.000Z"
 feature_image: "/images/electron.png"
-tags: []
+tags: ["Programming"]
 ---
 
 [Electron](https://electron.atom.io/) is a great way to build cross-platform desktop applications using HTML, CSS and JavaScript. I was surprised when I first came across Electron to see many of the applications that I use daily was developed in electron and I never knew about it. Since then I was interested in learning more about developing an application using Electron. Recently I was playing around with an idea for a side project and decided to use Electron as I wanted a desktop application. TDK react
@@ -13,11 +13,17 @@ Setting up the React Application
 
 With the [create-react-app](https://github.com/facebookincubator/create-react-app) template generator, it is easy to setup and get up and running a react application. All you need to run are the below commands, and you have everything set up for a react application.
 
-    npm install -g create-react-app
+```bash
+npm install -g create-react-app
+```
     
-    create_react_app electron_react
-    cd electron_react
-    npm start
+```bash
+create_react_app electron_react
+```bash
+cd electron_react
+```
+npm start
+```
     
 
 The above commands will create an 'electron-react' folder with all the code and set up the app at _http://localhost:3000_ in development mode.
@@ -25,7 +31,9 @@ The above commands will create an 'electron-react' folder with all the code and 
 Setting up Electron
 -------------------
 
+```bash
 Now that we have a react application setup, let us integrate electron with it. The below command installs electron package.
+```
 
     npm install electron
     
@@ -72,27 +80,33 @@ Opening up two consoles and starting up the react server first will start becomi
 
 Install both the packages and modify the _package.json_ as shown below.
 
-    "react-start": "react-scripts start",
-    "electron-dev": "set DEV_URL=http://localhost:3000 && electron .",
-    "start": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000/ && npm run electron-dev\""
+```json
+"react-start": "react-scripts start",
+"electron-dev": "set DEV_URL=http://localhost:3000 && electron .",
+"start": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000/ && npm run electron-dev\""
+```
     
 
 Running _npm start_ now launches the react application, waits for the server to be up and running and then launches the electron application.
 
 The electron app depends on the react application being hosted locally to run. Let's update _main.js_ so that it can run from the generated output of the react application. Running _npm build_ generates the website contents into the build folder.
 
-    ...
-    const path = require('path');
-    const url = require('url');
-    ...
+```javascript
+...
+const path = require('path');
+const url = require('url');
+...
+```
      const startUrl = process.env.DEV_URL ||
         url.format({
           pathname: path.join(__dirname, '/../build/index.html'),
           protocol: 'file:',
           slashes: true
         });
-    mainWindow.loadURL(startUrl);
-    ...
+```text
+mainWindow.loadURL(startUrl);
+...
+```
     
 
 Set the _[homepage](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md#building-for-relative-paths)_ property in package.json (_"homepage": "./"_) to enable relative paths on the generated _index.html_ file. Once this is done, we can generate the site using _npm run build_ and run the electron application using _'electron .'_. This will launch the application from the _build_ folder.

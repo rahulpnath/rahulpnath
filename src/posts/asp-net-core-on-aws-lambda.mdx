@@ -3,14 +3,16 @@ title: "How To Build and Host ASP NET Core Applications on AWS Lambda Functions"
 slug: "asp-net-core-on-aws-lambda"
 date: "2022-12-15T09:55:44.000Z"
 feature_image: "/images/AWS-Lambda-Function-URLs-Auth.png"
-tags: []
+tags: ["AWS","Dotnet","Lambda"]
+excerpt: ""
+
 ---
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 AWS Lambda is a compute service that lets you run code without provisioning or managing servers.
 
-You can build application APIs on Lambda Function with API Gateways ([REST](__GHOST_URL__/blog/aws-dotnet-lambda-authorizer-api-gateway/) or [HTTP API](__GHOST_URL__/blog/amazon-api-gateway-http-apis/)) or [Function URL’s](__GHOST_URL__/blog/function-urls-in-aws-lambda-dotnet/).
+You can build application APIs on Lambda Function with API Gateways ([REST](/posts/aws-dotnet-lambda-authorizer-api-gateway/) or [HTTP API](/posts/amazon-api-gateway-http-apis/)) or [Function URL’s](/posts/function-urls-in-aws-lambda-dotnet/).
 
 <iframe src="https://www.youtube.com/embed/PTnWbKWm3uo?feature=oembed" />
 
@@ -29,23 +31,34 @@ You can find the complete source code of the Nuget package here on [Github](http
 
 Once added, enable Lambda Hosting using the extension method `AddAWSLambdaHosting` as shown below.
 
-    builder.Services.AddAWSLambdaHosting(LambdaEventSource.RestApi);
+
+```
+builder.Services.AddAWSLambdaHosting(LambdaEventSource.RestApi);
+```
 
 Depending on how you plan to expose the ASP NET API, you can choose different options for the `LambdaEventSource`. The supported values are `RestApi`, `HttpApi` and `ApplicationLoadBalancer` as shown below.
 
-    public enum LambdaEventSource
-    {
+```typescript
+public enum LambdaEventSource
+{
+```
+```code
         //
         // Summary:
         //     API Gateway REST API
+```
         RestApi,
+```code
         //
         // Summary:
         //     API Gateway HTTP API
+```
         HttpApi,
+```code
         //
         // Summary:
         //     ELB Application Load Balancer
+```
         ApplicationLoadBalancer
     }
     
@@ -56,7 +69,10 @@ You can use the [.NET Core Global Tools for AWS](https://aws.amazon.com/blogs/de
 
 Navigate to the root of the project folder for the ASP NET application and run the below command to deploy the application to Lambda.
 
-    dotnet lambda deploy-function
+
+```powershell
+dotnet lambda deploy-function
+```
 
 The CLI tool prompts for more inputs to configure the Lambda Function like the runtime (_dotnet6_), Function name, IAM Role, default timeout, etc.
 
@@ -94,7 +110,7 @@ Learn how to get started with AWS Lambda with .NET Core by building out a simple
 
 ![](/images/aws_lambda.jpg)
 
-](__GHOST_URL__/blog/aws-lambda-net-core/)
+](/posts/aws-lambda-net-core/)
 
 Exposing ASP NET API Over a URL
 -------------------------------
@@ -119,13 +135,13 @@ A Function URL is a dedicated endpoint for your Lambda function. Learn how to en
 
 ![](/images/AWS-Lambda-Function-URLs.png)
 
-](__GHOST_URL__/blog/function-urls-in-aws-lambda-dotnet/)
+](/posts/function-urls-in-aws-lambda-dotnet/)
 
 When using Function URLs to expose ASP NET Api on Lambda Function, use the  `LambdaEventSource` with the value `HttpApi`.
 
 ![Function URL enabled for Lambda Function. Navigate to the URL to access the ASP NET API Application](/images/image-2.png)
 
-Navigate to the Function URL to access the ASP NET API Application. You can also add [Function URL Auth](__GHOST_URL__/blog/how-to-secure-and-authenticate-lambda-function-urls/) to protect the API endpoint for specific applications or users with access.
+Navigate to the Function URL to access the ASP NET API Application. You can also add [Function URL Auth](/posts/how-to-secure-and-authenticate-lambda-function-urls/) to protect the API endpoint for specific applications or users with access.
 
 ### ASP NET API Over AWS API Gateway
 
@@ -149,7 +165,7 @@ Learn how to get started with API Gateway by building an HTTP API backed by AWS 
 
 ![](/images/learning_code.jpg)
 
-](__GHOST_URL__/blog/amazon-api-gateway-http-apis/)
+](/posts/amazon-api-gateway-http-apis/)
 
 To expose as HTTP APIs, use the `LambdaEventSource` with the value `HttpApi` , same as with the Function URL.
 
@@ -167,7 +183,7 @@ Learn how to build REST API using API Gateway. We will learn the different build
 
 ![](/images/learning_code.jpg)
 
-](__GHOST_URL__/blog/amazon-api-gateway-rest-api-introduction/)
+](/posts/amazon-api-gateway-rest-api-introduction/)
 
 When exposing Lambda Functions over API Gateway REST APIs, set the `LambdaEventSource` as `RestApi`.
 

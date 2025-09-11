@@ -3,7 +3,7 @@ title: "Tip of the Week: Postman - Chaining Requests to Speed Up Manual API Test
 slug: "postman-chaining-requests-to-speed-up-manual-api-tests"
 date: "2017-12-11T00:00:00.000Z"
 feature_image: "/images/postman_chaining_requests.png"
-tags: []
+tags: ["Programming"]
 ---
 
 I was recently playing around with [MessageMedia API](https://www.messagemedia.com.au/) trying to [send SMS and get the status of the SMS sent](https://developers.messagemedia.com/code/messages-api-documentation/). Sending the SMS and getting the status of the last sent SMS always happened in succession when testing it manually. Once I send the message, I waited for the API response, grabbed the message id from the response and used that to form the get status request.
@@ -14,9 +14,11 @@ I was recently playing around with [MessageMedia API](https://www.messagemedia.c
 
 I added two requests and saved it to a collection in Postman - one to Send Message and other to Get Message status. I have created an environment variable for holding the message id. For the request that sends a message, the below Test snippet is added. It parses the response body of the request and extracts the message id of the last send message. This is then saved to the environment variable. The [Test](https://www.getpostman.com/docs/postman/scripts/test_scripts) snippet is always run after performing the request.
 
-    var jsonData = JSON.parse(responseBody);
-    postman.setEnvironmentVariable('messageId', jsonData.messages[0].message_id);
-    tests['Success'] = true;
+```csharp
+var jsonData = JSON.parse(responseBody);
+postman.setEnvironmentVariable('messageId', jsonData.messages[0].message_id);
+tests['Success'] = true;
+```
     
 
 The Get message request uses the messageId from the environment variables to construct its URL. The URL looks like below.

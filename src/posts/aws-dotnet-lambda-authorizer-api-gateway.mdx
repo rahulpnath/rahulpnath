@@ -3,10 +3,11 @@ title: "Using .NET AWS Lambda Authorizer To Secure API Gateway REST API"
 slug: "aws-dotnet-lambda-authorizer-api-gateway"
 date: "2022-08-03T00:00:00.000Z"
 feature_image: "/images/aws-lambda-authorizer-dotnet.jpg"
-tags: []
+tags: ["AWS","Lambda"]excerpt: "Lambda Authorizer is a feature provided by API Gateway that helps us separate the authentication logic from our business logic in our function code. Let's learn how to build a Lambda Authorizer in .NET Core and use it to secure an API Gateway REST API."
+
 ---
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 When building serverless APIs with AWS Lambda and API Gateway, one of the most critical questions is how to secure the API.
 
@@ -35,7 +36,7 @@ In this post, you will learn how to build a REST API using Amazon API Gateway wi
 
 ![](/images/aws_lambda.jpg)
 
-](__GHOST_URL__/blog/amazon-api-gateway-rest-api-lambda-proxy-integration)
+](/posts/amazon-api-gateway-rest-api-lambda-proxy-integration)
 
 For this post, I will use the API Gateway REST API built in the above article.
 
@@ -63,49 +64,53 @@ The validation mechanisms change based on the type of token and how it’s gener
 
 For this blog post, I am using [JSON Web Token Builder](http://jwtbuilder.jamiekurtz.com/) to generate test tokens. To validate the token, I use the `JwtSecurityTokenHandler` class and the _privateKey_ used to sign the token (in that online tool).
 
-    private static ClaimsPrincipal? ValidateToken(string authToken)
+
+```csharp
+private static ClaimsPrincipal? ValidateToken(string authToken)
+    {
+        const string privateKey = "qwertyuiopasdfghjklzxcvbnm123456";
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var validationParameters = new TokenValidationParameters()
         {
-            const string privateKey = "qwertyuiopasdfghjklzxcvbnm123456";
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var validationParameters = new TokenValidationParameters()
-            {
-                ValidateLifetime = false,
-                ValidateAudience = false,
-                ValidateIssuer = false,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(privateKey)) 
-            };
-    
-            try
-            {
-                return tokenHandler.ValidateToken(authToken, validationParameters, out SecurityToken validatedToken);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            ValidateLifetime = false,
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(privateKey)) 
+        };
+
+        try
+        {
+            return tokenHandler.ValidateToken(authToken, validationParameters, out SecurityToken validatedToken);
         }
-    
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+```
 
 If the token is valid, it returns a `ClaimsPrincipal` object instance which contains information about the token.
 
 Below is the decoded payload of the test JWT token I am using.
 
-    {
-      "iss": "Online JWT Builder",
-      "iat": 1658808785,
-      "exp": 1690344785,
-      "aud": "www.example.com",
-      "sub": "hello@rahulpnath.com",
-      "GivenName": "Rahul",
-      "Surname": "Nath",
-      "Email": "hello@rahulpnath.com",
-      "Role": [
-        "Admin",
-        "User"
-      ],
-      "UserId": "e660c2dd-2688-44de-82d1-41590ae4aace"
-    }
-    
+
+```css
+{
+  "iss": "Online JWT Builder",
+  "iat": 1658808785,
+  "exp": 1690344785,
+  "aud": "www.example.com",
+  "sub": "hello@rahulpnath.com",
+  "GivenName": "Rahul",
+  "Surname": "Nath",
+  "Email": "hello@rahulpnath.com",
+  "Role": [
+    "Admin",
+    "User"
+  ],
+  "UserId": "e660c2dd-2688-44de-82d1-41590ae4aace"
+}
+```
 
 Use the appropriate key names to retrieve the claims from the `ClaimsPrincipal`. Below is an example of retrieving the userId value from the Claims.
 
@@ -115,8 +120,9 @@ Use the appropriate key names to retrieve the claims from the `ClaimsPrincipal`.
 
 Lambda Authorizer returns the same response object, `APIGatewayCustomAuthorizerResponse`, for both authorized and unauthorized responses.
 
-    return new APIGatewayCustomAuthorizerResponse()
-    {
+```csharp
+return new APIGatewayCustomAuthorizerResponse()
+{
         PrincipalID = userId,
         PolicyDocument = new APIGatewayCustomAuthorizerPolicy()
         {
@@ -130,9 +136,8 @@ Lambda Authorizer returns the same response object, `APIGatewayCustomAuthorizerR
                 }
             }
         }
-    };
-    
-
+    };    
+```
 If authorized, it specifies `Resource`, a list of ARNs it provides access for, and also the list of Action allowed. In our example, since the authorizer is for accessing an API endpoint, we return the `MethodArn` and provide the appropriate permissions. In this case, `execute-api:Invoke` permission to invoke the Lambda function.
 
 Setting Up Authorizer in API Gateway
@@ -148,7 +153,7 @@ Below I create a Token based authorizer, _user-service-authorizer,_ which uses t
 
 You can create multiple Authorizers if required for the same REST API. Creating an Authorizer here does not apply it to the API automatically.
 
-We need to set the Authorizer explicitly for each Method endpoint for the API. This is set under the [Method Request section under a Resoruce](__GHOST_URL__/blog/amazon-api-gateway-rest-api-introduction/).
+We need to set the Authorizer explicitly for each Method endpoint for the API. This is set under the [Method Request section under a Resoruce](/posts/amazon-api-gateway-rest-api-introduction/).
 
 E.g., Below for the `GET` method on the _Users_ resource, set the Authorization to the new _user-service-authorizer_
 
@@ -193,8 +198,9 @@ Updating our initial code, instead of just specifying the calling method ARN bac
 
 For example, below, I have updated the `Resource` property of the returned `IAMPolicyStatement` class to specify “\*”, to indicate it has access to all methods. This is possible only in scenarios where the user is in an Admin role and has access to all functionality.
 
-    return new APIGatewayCustomAuthorizerResponse()
-    {
+```csharp
+return new APIGatewayCustomAuthorizerResponse()
+{
         ...,
         PolicyDocument = new APIGatewayCustomAuthorizerPolicy()
         {
@@ -209,7 +215,7 @@ For example, below, I have updated the `Resource` property of the returned `IAMP
             }
         }
     };
-    
+  ```  
 
 For other users, you can explicitly return the method ARNs that the user can access based on their role. The application can use conventions or will need to keep a map of roles vs. methods to return this information.
 
@@ -222,14 +228,15 @@ Since the token-related information is available in the Lambda Authorizer, we ne
 
 The request context can be used to pass information from the Lambda Authorizer to the Lambda function code.
 
-    var userId = claims.FindFirst("UserId")?.Value;
-    var email = claims.FindFirst("Email")?.Value;
-    var givenName = claims.FindFirst("GivenName")?.Value;
-    var surname = claims.FindFirst("Surname")?.Value;
-    var roles = string.Join(",", claims.FindAll("Role").Select(x => x.Value));
-    
-    return new APIGatewayCustomAuthorizerResponse()
-    {
+```csharp
+var userId = claims.FindFirst("UserId")?.Value;
+var email = claims.FindFirst("Email")?.Value;
+var givenName = claims.FindFirst("GivenName")?.Value;
+var surname = claims.FindFirst("Surname")?.Value;
+var roles = string.Join(",", claims.FindAll("Role").Select(x => x.Value));
+
+return new APIGatewayCustomAuthorizerResponse()
+{
         ...,
         Context = new APIGatewayCustomAuthorizerContextOutput()
         {
@@ -239,17 +246,19 @@ The request context can be used to pass information from the Lambda Authorizer t
             {"Roles", roles }
         }
     };
-    
+```  
 
 The content passed via the Context property of the Lambda Authorizer response is available in the APIGatewayProxyRequest under the `RequestContext.Authorizer` property.
 
-    public async Task<APIGatewayProxyResponse> FunctionHandler(
-        APIGatewayProxyRequest request, ILambdaContext context)
-    {
-        var userId = request.RequestContext.Authorizer["UserId"];
-        ...
-    }
-    
+
+```csharp
+public async Task<APIGatewayProxyResponse> FunctionHandler(
+    APIGatewayProxyRequest request, ILambdaContext context)
+{
+    var userId = request.RequestContext.Authorizer["UserId"];
+    ...
+}
+```
 
 These values can be used for business logic, logging, etc, as required by your application code.
 

@@ -3,14 +3,14 @@ title: "yo ko - A Yeoman Generator For KnockoutJS"
 slug: "yo-ko-a-yeoman-generator-for-knockoutjs"
 date: "2014-08-20T10:20:06.000Z"
 feature_image: "/images/yo_ko.png"
-tags: []
+tags: ["Programming"]
 ---
 
 Templates/Scaffolding is something that we are all used to nowadays, given that we use an IDE for development. Visual Studio is one popular IDE, that is very popular among people developing on the Microsoft platform. Visual studio comes with a lot of pre-installed templates and scaffolding templates and also has a rich extension support from the [community](http://visualstudiogallery.msdn.microsoft.com/site/search?f%5B0%5D.Type=RootCategory&f%5B0%5D.Value=templates&f%5B0%5D.Text=Templates). While developing on text editors(say like [Sublime Text](http://www.sublimetext.com/) which is what I have been using), which are not for any specific technology you might not have all the templating and scaffolding supported right out of the box. You might find plugins for specific editors but not for all the frameworks that are available today.
 
 [Yeoman](http://yeoman.io/) is the Web's scaffolding tool for Modern Web Apps. Yeoman is a command line tool that runs over [Node.js](http://nodejs.org/). Setting it up is pretty easy with the instructions [here](http://yeoman.io/learning/index.html). To scaffold web applications, which is the same as creating a new project in Visual Studio from a template, we need to install framework specific generators for Yeoman. There are some \`[officially maintained generators](http://yeoman.io/generators/official.html) and also ones that are [maintained by the community](http://yeoman.io/generators/community.html).
 
-KnockoutJs helps you simplify dynamic JavaScript UIs using the Model-View-ViewModel (MVVM) pattern. If you are new to knockout and come from a XAML backgorund, [KnockoutJS For XAML Developers](__GHOST_URL__/blog/knockoutjs-for-xaml-developers/), would help you. For KnockoutJs, there is an awesome generator that is written by [Steve Sanderson](https://twitter.com/stevensanderson), the creator of knockout itself and is available [here](https://www.npmjs.org/package/generator-ko). You can install this as below
+KnockoutJs helps you simplify dynamic JavaScript UIs using the Model-View-ViewModel (MVVM) pattern. If you are new to knockout and come from a XAML backgorund, [KnockoutJS For XAML Developers](/posts/knockoutjs-for-xaml-developers/), would help you. For KnockoutJs, there is an awesome generator that is written by [Steve Sanderson](https://twitter.com/stevensanderson), the creator of knockout itself and is available [here](https://www.npmjs.org/package/generator-ko). You can install this as below
 
 > $ npm install generator-ko
 
@@ -31,7 +31,7 @@ The generator creates the folder structure as shown here and by default has setu
 *   [Hahser](https://github.com/millermedeiros/hasher/): Browsing History Manager
 *   [Jquery](http://jquery.com/): Feature rich library
 *   [Js-Signals](http://millermedeiros.github.io/js-signals/): Custom/Event Messaging System
-*   [Knockout](__GHOST_URL__/blog/knockoutjs-for-xaml-developers/): Simplifies dynamic Javascript UIs with [MVVM pattern](__GHOST_URL__/tag/mvvm/)
+*   [Knockout](/posts/knockoutjs-for-xaml-developers/): Simplifies dynamic Javascript UIs with [MVVM pattern](/blog/tag/mvvm/)
 *   [Requirejs](http://requirejs.org/): File and Module Loader
 *   [Requirejs-text](https://github.com/requirejs/text): AMD loader plugin for text resources
 
@@ -53,7 +53,7 @@ The knockout components are defined in the _components_ folder and has both the 
 
 The build is managed is using [Gulp](http://gulpjs.com/), which can be installed using [npm](https://www.npmjs.org/package/gulp). To build the project, you need to run _gulp_ at the root folder. The build packages all the javascript modules/files into a single file, replaces the required updates in the html file, minifies the html, js and css etc. If not for the build systems, the application would have to make lots of file/scripts/css requests or would have to have it all in the same file while development which makes working as a team difficult. These build system are highly configurable and can be used to setup output as required. The build tasks are defined in the _gulpfile.js_ and the '_default_' task runs when running the gulp command. This is will generate the optimized files in the _dist_ folder, which can be hosted in the server of your choice. I use the [zero-configuration command-line http-server](https://www.npmjs.org/package/http-server) available on nodejs.
 
-![yo ko application ](__GHOST_URL__/content/images/yo_ko_app.png)
+![yo ko application ](/images/yo_ko_app.png)
 
 **Adding New Components**
 

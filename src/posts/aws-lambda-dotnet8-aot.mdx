@@ -3,7 +3,7 @@ title: "AWS Lambda and .NET 8: Enhancing Serverless Performance with Native AOT"
 slug: "aws-lambda-dotnet8-aot"
 date: "2024-11-05T04:39:16.000Z"
 feature_image: "/images/Lambda-.NET-8.png"
-tags: []
+tags: ["AWS","Lambda"]
 ---
 
 It's been a while since AWS Lambda supports .NET 8.
@@ -24,9 +24,9 @@ This blog post is a collection of other posts that covers various aspects of AWS
 
 ![](/images/AWS-Lambda.png)
 
-](__GHOST_URL__/blog/aws-lambda-dotnet-developer/)
+](/posts/aws-lambda-dotnet-developer/)
 
-Thanks to AWS for sponsoring this article in my [AWS Lambda Series.](__GHOST_URL__/blog/tag/lambda/)
+Thanks to AWS for sponsoring this article in my [AWS Lambda Series.](/posts/tag/lambda/)
 
 What's New in AWS Lambda and .NET 8?
 ------------------------------------
@@ -50,22 +50,26 @@ You can find more details on them in the official documentation [here](https://a
 Building Your First .NET 8 AWS Lambda Function
 ----------------------------------------------
 
-The [AWS Toolkit](__GHOST_URL__/blog/aws-lambda-net-core/#setting-up-first-project) has been updated to create .NET 8 Lambda functions, which makes it easy to create new projects.
+The [AWS Toolkit](/posts/aws-lambda-net-core/#setting-up-first-project) has been updated to create .NET 8 Lambda functions, which makes it easy to create new projects.
 
 It supports different blueprints that you can choose to create your Lambda function. Below is the sample code for an Empty Lambda Function, which generates a simple function that converts a string input to upper case.
 
-    [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
-    namespace hello_dotnet8_lambda;
+```csharp
+[assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
+namespace hello_dotnet8_lambda;
+```
     
-    public class Function
-    {
+```csharp
+public class Function
+{
+```
         public string FunctionHandler(string input, ILambdaContext context)
         {
             return input.ToUpper();
         }
     }
 
-You can also use the [Mock Lambda test tool](__GHOST_URL__/blog/aws-lambda-net-core/#mock-lambda-test-tool) to run and test your functions locally.
+You can also use the [Mock Lambda test tool](/posts/aws-lambda-net-core/#mock-lambda-test-tool) to run and test your functions locally.
 
 AWS Lambda and Native AOT with .NET
 -----------------------------------
@@ -82,8 +86,10 @@ In this case, the Function code is slightly different, using the `LambdaBootstra
 
 The `FunctionHandler` is passed on to the bootstrap code and is executed at runtime.
 
-    public class Function
-    {
+```csharp
+public class Function
+{
+```
         private static async Task Main()
         {
             Func<string, ILambdaContext, string> handler = FunctionHandler;
@@ -102,15 +108,17 @@ The `FunctionHandler` is passed on to the bootstrap code and is executed at runt
 
 The `csproj` file also has some additional flags set up for Native AOT support. This sets up the Native AOT compile settings for the project file.
 
-    <AWSProjectType>Lambda</AWSProjectType>
-    <!-- Set build directory like publish to help Lambda tool find dependencies -->
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <!-- Enable Native AOT for better cold start time -->
-    <PublishAot>true</PublishAot>
-    <!-- Strip debug symbols to reduce executable size -->
-    <StripSymbols>true</StripSymbols>
-    <!-- Trim only trimmable assemblies to reduce size -->
-    <TrimMode>partial</TrimMode>
+```xml
+<AWSProjectType>Lambda</AWSProjectType>
+<!-- Set build directory like publish to help Lambda tool find dependencies -->
+<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+<!-- Enable Native AOT for better cold start time -->
+<PublishAot>true</PublishAot>
+<!-- Strip debug symbols to reduce executable size -->
+<StripSymbols>true</StripSymbols>
+<!-- Trim only trimmable assemblies to reduce size -->
+<TrimMode>partial</TrimMode>
+```
     
 
 To compile Lambda function using the Native AOT feature, you need to have docker setup.
@@ -131,7 +139,7 @@ In AWS Lambda, the **Init Duration** represents the time taken to initialize the
 
 In the example log, an Init Duration of **109.89 ms**, which is significantly lower than a Lambda Function that uses JIT compilation.
 
-You can find the Lambda Init duration in [CloudWatch logs](__GHOST_URL__/blog/amazon-cloudwatch-logs-dotnet/), every time a new instance of the function is created. If that entry is missing, it means you are reusing a Lambda instance.
+You can find the Lambda Init duration in [CloudWatch logs](/posts/amazon-cloudwatch-logs-dotnet/), every time a new instance of the function is created. If that entry is missing, it means you are reusing a Lambda instance.
 
 [
 
@@ -143,4 +151,4 @@ The Lambda Lifecycle affects the way we write out Function code. Learn some of t
 
 ![](/images/Lambda-Lifecycle-2.png)
 
-](__GHOST_URL__/blog/lambda-lifecycle-and-net/)
+](/posts/lambda-lifecycle-and-net/)

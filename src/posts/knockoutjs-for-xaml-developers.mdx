@@ -3,10 +3,10 @@ title: "KnockoutJS For XAML Developers"
 slug: "knockoutjs-for-xaml-developers"
 date: "2014-07-07T23:35:39.000Z"
 feature_image: "/images/MVVM_Knockoutjs.jpg"
-tags: []
+tags: ["Programming"]
 ---
 
-After a very long time since I have actually wanted to move out to web development, recently I have started developing a website as part of my personal project, along with a friend of mine. I have been into desktop/mobile development on Microsoft technologies, using XAML for a very long time. [Model-View-View Model (MVVM)](__GHOST_URL__/tag/mvvm/) is a pattern that got popular because of the powerful binding engine in XAML. It is always comforting to see familiar patterns while moving into unexplored technology areas. Same is the reason I chose to explore [KnockoutJS](http://knockoutjs.com/index.html)(KO), which simplifies dynamic JavaScript UIs with the MVVM pattern.
+After a very long time since I have actually wanted to move out to web development, recently I have started developing a website as part of my personal project, along with a friend of mine. I have been into desktop/mobile development on Microsoft technologies, using XAML for a very long time. [Model-View-View Model (MVVM)](/blog/tag/mvvm/) is a pattern that got popular because of the powerful binding engine in XAML. It is always comforting to see familiar patterns while moving into unexplored technology areas. Same is the reason I chose to explore [KnockoutJS](http://knockoutjs.com/index.html)(KO), which simplifies dynamic JavaScript UIs with the MVVM pattern.
 
 ![MVVM Knockout](/images/MVVM_Knockoutjs.jpg)
 
@@ -48,9 +48,11 @@ In XAML updates to a collection is usually handled using an \[ObservableCollecti
 
 In XAML when there are properties dependent on others , to notify changes we have to explicitly call RaisePropertyChanged on all the dependent properties. A very common example is below
 
-    private string firstName;
-    public string FirstName
-    {
+```csharp
+private string firstName;
+public string FirstName
+{
+```
        get { return firstName; }
        set
        {
@@ -61,9 +63,11 @@ In XAML when there are properties dependent on others , to notify changes we hav
                 OnPropertyChanged("FullName");
             }
        }
-    }
-    public string FullName
-    {
+```csharp
+}
+public string FullName
+{
+```
         get { return FirstName +" " + LastName; }
     }
     

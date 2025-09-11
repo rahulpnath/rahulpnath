@@ -3,16 +3,20 @@ title: "Learn How to Easily Integrate Lambda Annotations and Other AWS Services"
 slug: "annotations-framework-and-other-aws-services"
 date: "2023-11-06T07:04:46.000Z"
 feature_image: "/images/Lambda-Annotations-and-AWS-Services.png"
-tags: []
+tags: ["AWS","Lambda"]
+excerpt: "Learn how to use the Lambda Annotations Framework to integrate with other AWS Services like S3, SQS, SNS, DynamoDB etc. In this blog post we will see an example using S3."
+
 ---
 
 The [Lambda Annotations Framework](https://github.com/aws/aws-lambda-dotnet/blob/master/Libraries/src/Amazon.Lambda.Annotations/README.md?ref=rahulpnath.com) is a programming model that makes it easier to build AWS Lambda Functions using .NET.
 
 In previous blog posts, we learned how to get started using the Lambda Annotations Framework, build a CRUD API Endpoint, and set up Dependency Injection when creating Lambda Functions using the Annotations Framework.
 
-*   [Learn How AWS Lambda Annotations Framework Makes API Gateway Integration Easy](__GHOST_URL__/blog/aws-lambda-annotation-framework/)
-*   [Serverless API Development Made Easy: Using AWS Lambda Annotations for CRUD](__GHOST_URL__/blog/lambda-annotation-framework-crud-api/)
-*   [How To Set Up Dependency Injection in Lambda Functions Using Annotations Framework](__GHOST_URL__/blog/lambda-annotations-dependency-injection/)
+```code
+*   [Learn How AWS Lambda Annotations Framework Makes API Gateway Integration Easy](/posts/aws-lambda-annotation-framework/)
+*   [Serverless API Development Made Easy: Using AWS Lambda Annotations for CRUD](/posts/lambda-annotation-framework-crud-api/)
+*   [How To Set Up Dependency Injection in Lambda Functions Using Annotations Framework](/posts/lambda-annotations-dependency-injection/)
+```
 
 In all the above scenarios we used the Annotations Framework along with building Lambda Functions for the API Gateway.
 
@@ -26,7 +30,7 @@ In this blog post, let's see a quick example of using the Lambda Annotations Fra
 
 For E.g., we need to run a Lambda Function every time a new file is uploaded to an Amazon S3 bucket and have the function code read the file and process it. This could be an image post-processing Lambda Function, a report ingestion service, a bulk data upload service, etc.
 
-_This article is sponsored by AWS and is part of my_ [_AWS Series_](__GHOST_URL__/tag/aws/)_._
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
 
 AWS Lambda and Amazon S3 Integration
 ------------------------------------
@@ -47,7 +51,7 @@ Amazon S3 raises event notifications when Objects are created and modified. Lear
 
 ![](/images/amazon-s3-lambda-triggers-dotnet.jpg)
 
-](__GHOST_URL__/blog/amazon-s3-lambda-triggers-dotnet/)
+](/posts/amazon-s3-lambda-triggers-dotnet/)
 
 
 Lambda Functions that integrate with Amazon S3 services, take in a `S3Event` class type, to bind to the Amazon S3 event.
@@ -60,7 +64,7 @@ public async Task FunctionHandler(S3Event evnt, ILambdaContext context)
       .GetObjectAsync(s3Event.Bucket.Name, s3Event.Object.Key);
   ...
 }
-```
+```sql
 
 This happens by default using the basic Lambda JSON Serializer and there is nothing specific that the Annotations Framework can provide us here.
 
@@ -81,7 +85,10 @@ The below code shows examples of injecting the `IAmazonS3` instance both using t
 ```csharp
 public Function(IAmazonS3 s3Client)
 {
-    S3Client = s3Client;
+
+```
+S3Client = s3Client;
+```
 }
 
 [LambdaFunction(ResourceName = "MyLambdaFunction")]
@@ -90,7 +97,7 @@ public async Task FunctionHandler(
 {
   ...
 }
-```
+```csharp
 
 
 To inject via the FunctionHandler method, we need to add `FromServices` attribute, to tell Annotations Framework to resolve the type from the DI container.

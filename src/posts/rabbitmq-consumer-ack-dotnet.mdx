@@ -3,7 +3,7 @@ title: "Exploring Manual and Automatic Acknowledgment in RabbitMQ with .NET"
 slug: "rabbitmq-consumer-ack-dotnet"
 date: "2024-02-12T06:42:25.000Z"
 feature_image: "/images/_RabbitMQ---ACK.png"
-tags: []
+tags: ["RabbitMQ","AWS"]
 ---
 
 Messages picked up for processing by the consumers are not guaranteed to be successfully processed.
@@ -23,7 +23,7 @@ There are two acknowledgement modes supported in RabbitMQ
 *   Automatic ACK
 *   Manual ACK
 
-_This article is sponsored by AWS and is part of my_ [_RabbitMQ Series_](__GHOST_URL__/blog/tag/rabbitmq/)_._
+_This article is sponsored by AWS and is part of my_ [_RabbitMQ Series_](/posts/tag/rabbitmq/)_._
 
 Automatic Acknowledgement From .NET Application
 -----------------------------------------------
@@ -42,8 +42,10 @@ However, when using Automatic acknowledgement, when there are exceptions in mess
 
 The code below throws an exception if the message received contains the word 'exception.' This message is processed and removed from the queue, even though the consumer threw an exception while processing.
 
-    consumer.Received += (model, ea) =>
-    {
+```javascript
+consumer.Received += (model, ea) =>
+{
+```
         var body = ea.Body.ToArray();
         var message = Encoding.UTF8.GetString(body);
         Console.WriteLine($"[x] Received message {message}");
@@ -80,8 +82,10 @@ Delivery tags are scoped to a channel, so the same channel must acknowledge a me
   
 Below is the sample code in the RabbitMQ consumer to acknowledge (`BasicAck`) and reject (`BasicReject`) a message based on the consumer logic.
 
-    consumer.Received += (model, ea) =>
-    {
+```javascript
+consumer.Received += (model, ea) =>
+{
+```
         var body = ea.Body.ToArray();
         var message = Encoding.UTF8.GetString(body);
         Console.WriteLine($"[x] Received message {message}");

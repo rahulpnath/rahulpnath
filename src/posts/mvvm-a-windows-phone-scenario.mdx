@@ -3,11 +3,11 @@ title: "MVVM – A Windows phone scenario"
 slug: "mvvm-a-windows-phone-scenario"
 date: "2013-07-26T05:21:51.000Z"
 feature_image: ""
-tags: []
+tags: ["Dotnet"]
 excerpt: "A practical guide to implementing MVVM in Windows Phone apps, covering common scenarios, architectural patterns, and tips for using MVVM Light toolkit."
 ---
 
-With multiple platforms/devices, embracing the same technology, common architectural patterns become more popular as they provide us with what we want the most – \*\*Reusability. \*\*MVVM has turned out to be a must use architectural pattern while developing for Windows phone/Windows 8 store apps. I had blogged on this, [Why MVVM matters](__GHOST_URL__/blog/mvvm-does-it-really-matter/).
+With multiple platforms/devices, embracing the same technology, common architectural patterns become more popular as they provide us with what we want the most – \*\*Reusability. \*\*MVVM has turned out to be a must use architectural pattern while developing for Windows phone/Windows 8 store apps. I had blogged on this, [Why MVVM matters](/posts/mvvm-does-it-really-matter/).
 
 In this post will take a quick look into the scenarios that would come across while we develop a windows phone app and how that could possibly(as there could be many other ways/approaches too) be implemented using MVVM. I would be covering shorter scenarios in this same post, and those that would be better off in a different one would be linked here . [MVVM Light](http://mvvmlight.codeplex.com/) is a very popular toolkit that assists in getting started with MVVM quickly and we would also be using the same. This can be easily added in as a [nuget package](http://nuget.org/packages/mvvmLight)MVVM Light does come with a ViewModelBase class, that all your View Models are to inherit so that you do not have to worry about implementing the [INotifyPropertyChanged](http://msdn.microsoft.com/en-in/library/system.componentmodel.inotifypropertychanged.aspx) interface. I would still think of having a intermediate view model base class specific to our app and have all the reusable piece of code that you want across your ViewModels.
 
@@ -30,8 +30,10 @@ We will discuss each on in details and the sample that we would be using is that
 
 MVVM Light comes default with a ViewModelLocator(**VML**) class that will help you with the binding of the ViewModels(**VM’s**) with the corresponding View. The VML will have public properties for the different view models that you have. You can either have different public properties for each of your view model here, or have a property for MainViewModel and then that would in turn have other ViewModel properties. The VML uses a SimpleIOC container to resolve type instances. In simple terms, with an IoC container all we are trying to solve is to minimize the dependency between different types/classes, so that we would never have to instantiate one class(complex type) in another. So whenever a instance of a class is required, the IoC container would generate it for us , and all we would be concerned would be of the interface that we require. For IoC to resolve types for us we need to register the interface and the original class that implements the interface. Below you see how we are registering for the interface IDataService and setting its implementation class to DataService. Similarly we can also register classes, which would be how we would be registering our VM’s.
 
-    SimpleIoc.Default.Register<IDataService, DataService>();
-    SimpleIoc.Default.Register<MainViewModel>();
+```typescript
+SimpleIoc.Default.Register<IDataService, DataService>();
+SimpleIoc.Default.Register<MainViewModel>();
+```
     
 
 When installing the nuget package itself an instance of the VML is added into the app.xaml class, which can be used in all the View classes to data-bind to the VM.
@@ -52,8 +54,10 @@ This instance is used in all the view classes as below  in the xaml.
 
 The Main property returns the View model that should be bound with the view. The ‘ServiceLocator.Current’, returns the default instance of the SimpleIoc. The GetInstance always returns the same instance of the ViewModel as if it would have for a Singleton. If you need a new instance then you would need to pass a specific key(any identifier value) to get a different instance.
 
-    public MainViewModel Main
-    {
+```csharp
+public MainViewModel Main
+{
+```
         {
             return ServiceLocator.Current.GetInstance<MainViewModel>();
         }
@@ -94,14 +98,20 @@ It’s not just the data that gets displayed needs to be separated out cleanly. 
         VerticalAlignment="Center" HorizontalAlignment="Center" />
     
 
-    public MainViewModel()
-    {
+```csharp
+public MainViewModel()
+{
+```
         MyCommand = new RelayCommand(OnMyCommand);
-    }
-    public RelayCommand MyCommand { get; set; }
+```csharp
+}
+public RelayCommand MyCommand { get; set; }
+```
     
-    private void OnMyCommand()
-    {
+```csharp
+private void OnMyCommand()
+{
+```
         MessageBox.Show("You clicked me :)");
     }
     
@@ -116,13 +126,17 @@ We could  easily wire up all such events from the code-behind class, and have i
 
 Code Behind:
 
-    private MainViewModel viewModel
-    {
+```csharp
+private MainViewModel viewModel
+{
+```
        get { return this.DataContext as MainViewModel; }
     }
     
-    protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
-    {
+```csharp
+protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
+{
+```
        base.OnNavigatedTo(e);
        viewModel.OnnavigatedToCommand.Execute(NavigationContext.QueryString);
     }
@@ -130,16 +144,22 @@ Code Behind:
 
 View Model
 
-    public MainViewModel()
-    {
+```csharp
+public MainViewModel()
+{
+```
         OnnavigatedToCommand = new RelayCommand<IDictionary<string, string>>(OnNavigatedTo);
-    }
-    public RelayCommand<IDictionary<string, string>> OnnavigatedToCommand { get; set; }
+```typescript
+}
+public RelayCommand<IDictionary<string, string>> OnnavigatedToCommand { get; set; }
+```
     
-    private void OnNavigatedTo(IDictionary<string,string> parameters)
-    {
-    // do whatever you want to here
-    }
+```typescript
+private void OnNavigatedTo(IDictionary<string,string> parameters)
+{
+// do whatever you want to here
+}
+```
     
 
 *   **EventToCommand Behavior**
@@ -148,10 +168,12 @@ With the EventToCommand behavior introduced for Blend, can be used to bind an IC
 
 Just to keep a sample here, below would be how it would look like
 
-    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-    xmlns:command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WP71"
-    ...
-    <ListBox>
+```typescript
+xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+xmlns:command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WP71"
+...
+<ListBox>
+```
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="SelectionChanged">
                 <command:EventToCommand Command="{Binding SelectionChangedCommand}" />
@@ -165,40 +187,52 @@ Just to keep a sample here, below would be how it would look like
     </ListBox>
     
 
-    public MainViewModel()
-    {
+```csharp
+public MainViewModel()
+{
+```
         SelectionChangedCommand = new RelayCommand(OnSelectionChangedCommand);
-    }
-    public RelayCommand SelectionChangedCommand { get; set; }
-    private void OnSelectionChangedCommand()
-    {
-    // do whatever you want to here
-    }
+```csharp
+}
+public RelayCommand SelectionChangedCommand { get; set; }
+private void OnSelectionChangedCommand()
+{
+// do whatever you want to here
+}
+```
     
 
 *   **Messenger**
 
 We could also use a messenger service, to propogate UI events to VM’s. MVVMLight  has a built in messenger service that can be used for this. In simple terms a messenger is nothing but a decoupled eventing system, something of a publisher-subscriber model. In the messenger one entity  would send a message and there would be another entity that listens for this message and acts upon it.
 
-    private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
+```csharp
+private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+{
+```
         Messenger.Default.Send<NotificationMessage>(
             new NotificationMessage("You could have your own items here by using a generic NotificationMessage<>"));
-    }
-    …
+```text
+}
+…
+```
     
-    public MainViewModel()
-    {
+```csharp
+public MainViewModel()
+{
+```
         MessengerInstance.Register<NotificationMessage>(this, OnSelectionChanged);
-    }
-    private void OnSelectionChanged(NotificationMessage message)
-    {
-    // do whatever you want to here
-    }
+```csharp
+}
+private void OnSelectionChanged(NotificationMessage message)
+{
+// do whatever you want to here
+}
+```
     
 
 As you see above, in the code behind we send a Notification message indicating a click has happened. In the VM we register for the notification message and act upon it. We could send generic objects via the notification message and also create our own messages by inheriting from MessageBase of mvvmlight. This [article](http://msdn.microsoft.com/en-us/magazine/jj694937.aspx) gives more information and scenarios around this
 
 We are still left with a lot more scenarios to cover here and I would be covering them in a separate post to keep this one 'short' :)
 
-**Edit**: Check out [MVVM – A Windows Phone Scenario – Part 2](__GHOST_URL__/blog/mvvm-a-windows-phone-scenario-part-2/) for the rest of the scenarios
+**Edit**: Check out [MVVM – A Windows Phone Scenario – Part 2](/posts/mvvm-a-windows-phone-scenario-part-2/) for the rest of the scenarios

@@ -3,25 +3,29 @@ title: "MVVM – A Windows Phone Scenario – Part 2"
 slug: "mvvm-a-windows-phone-scenario-part-2"
 date: "2014-01-07T16:05:28.000Z"
 feature_image: ""
-tags: []
+tags: ["Dotnet"]
 ---
 
-We had looked into many of the common MVVM scenarios, that we come across while developing windows phone applications in [MVVM – A Windows Phone Scenario.](__GHOST_URL__/blog/mvvm-a-windows-phone-scenario/) We will see some more that we were left off, in this post.
+We had looked into many of the common MVVM scenarios, that we come across while developing windows phone applications in [MVVM – A Windows Phone Scenario.](/posts/mvvm-a-windows-phone-scenario/) We will see some more that we were left off, in this post.
 
 **5\. Page Navigations and Parameters**
 
 For almost all the application, we would need to transfer the control from one page to another, so that the user can navigate through the various contents on the application. In a MVVM application, these navigations would be basically triggered from the ViewModel, as it is there where we need to know where the next control should go to. Navigation is basically a platform specific feature and we would not want to bring in any dependency between a platform specific feature and our ViewModels. So the best way here is to _inverse the dependency_, using an interface and inject the dependency via an IoC container. Will call the interface here as _INavigationService \_as given below, and the implementation \_NavigationService_.
 
-    public interface INavigationService
-    {
+```typescript
+public interface INavigationService
+{
+```
     	void Navigate(string uri);
     	void Navigate(string uri, Dictionary<string, string> parameters);
     	void PerformActionOnUIThread(Action action);
     	void GoBack();
     }
     
-    public class NavigationService : INavigationService
-    {
+```csharp
+public class NavigationService : INavigationService
+{
+```
     	public void Navigate(string uri)
     	{
     		DispatcherHelper.UIDispatcher.BeginInvoke(() =>
@@ -81,8 +85,10 @@ Here in the above example the parameters are considered to be primitive data-typ
 
     public static object Parameters { get; set; }
     
-    public void Navigate(string uri, object parameters)
-    {
+```csharp
+public void Navigate(string uri, object parameters)
+{
+```
         Parameters = parameters;
         DispatcherHelper.UIDispatcher.BeginInvoke(() =>
             {
@@ -102,8 +108,10 @@ When developing applications for both Windows phone and Windows 8 or x-platform,
 
 Most of the processing/data loading work in done usually on the OnNavigatedTo of the page. To hook to this event in the ViewModel, we would go ahead and introduce some base classes so that we can reuse this in all over ViewModels. We have a application specific base class for the PhoneApplicationPage. We override the _OnNavigatedTo_ event here and call on to the application specific base ViewModel’s OnNavigatedTo event. For any ViewModel to hook into this event just needs to override this method on the ViewModel, as shown in the sample below
 
-    public abstract class ApplicationPageBase: PhoneApplicationPage
-    {
+```csharp
+public abstract class ApplicationPageBase: PhoneApplicationPage
+{
+```
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
@@ -113,8 +121,10 @@ Most of the processing/data loading work in done usually on the OnNavigatedTo of
         }
     }
     
-    public class ApplicationViewModelBase: ViewModelBase
-    {
+```csharp
+public class ApplicationViewModelBase: ViewModelBase
+{
+```
         public virtual void OnPageNavigatedTo(Dictionary<string, string> parameters)
         {
             // Override this in any of the ViewModel to hook to the OnNavigatedTo event on the page
@@ -126,7 +136,7 @@ Similarly for any of the other page events also you could create it in the page 
 
 **7\. Application Bar**
 
-I have already put out a detailed post on how to implement an application bar using MVVM. It details out 2 approaches one using Messenger and another having the applciation bar as a service. Check it out at  - [Windows Phone Series – MVVM and ApplicationBar](__GHOST_URL__/blog/windows-phone-series-mvvm-and-applicationbar/)
+I have already put out a detailed post on how to implement an application bar using MVVM. It details out 2 approaches one using Messenger and another having the applciation bar as a service. Check it out at  - [Windows Phone Series – MVVM and ApplicationBar](/posts/windows-phone-series-mvvm-and-applicationbar/)
 
 We have seen most of the basic scenarios that we normally come across while developing an application for windows phone and on how MVVM can be applied to that, so that we can make the best out of it. With lots of devices getting out there and having the need to have your application on all platform demands the maximum reuse, so that you can be out there quickly. MVVM plays a very important role in structuring your code making this possible. Even while developing cross platform application using [Xamarin](http://xamarin.com/), MVVM can be used to advantage so that all the application logic is neatly abstracted away from UI.
 

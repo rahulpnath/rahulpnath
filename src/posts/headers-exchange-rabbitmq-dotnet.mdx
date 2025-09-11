@@ -3,7 +3,7 @@ title: "RabbitMQ Headers Exchange Explained"
 slug: "headers-exchange-rabbitmq-dotnet"
 date: "2024-04-05T04:20:55.000Z"
 feature_image: "/images/RABBITMQ-1.png"
-tags: []
+tags: ["RabbitMQ","AWS"]
 ---
 
 Headers Exchange in RabbitMQ routes messages using message headers to route messages.
@@ -20,7 +20,7 @@ In this post, let’s explore
 
 I use [Amazon MQ](https://aws.amazon.com/amazon-mq/?ref=rahulpnath.com), a managed message broker service that supports ActiveMQ and RabbitMQ engine types, to host my RabbitMQ instance. However, you can use [one of the various options that RabbitMQ provides](https://www.rabbitmq.com/download.html?ref=rahulpnath.com) to host your instance.
 
-_This article is sponsored by AWS and is part of my_ [_RabbitMQ Series_](__GHOST_URL__/blog/tag/rabbitmq/)_._
+_This article is sponsored by AWS and is part of my_ [_RabbitMQ Series_](/posts/tag/rabbitmq/)_._
 
 What is a RabbitMQ Headers Exchange?
 ------------------------------------
@@ -89,7 +89,7 @@ RabbitMQ is a powerful open-source message broker facilitating communication bet
 
 ![](/images/rabbit-mq-dotnet.png)
 
-](__GHOST_URL__/blog/amazon-mq-rabbitmq-dotnet/)
+](/posts/amazon-mq-rabbitmq-dotnet/)
 
 ### Create and Send Messages to Headers Exchange From .NET
 
@@ -97,29 +97,39 @@ Exchanges are created using the Channel.
 
 The `ExchangeDeclare` the method takes in an exchange name and its type. Below is an example of creating a RabbitMQ Headers Exchange in .NET.
 
-    var factory = new ConnectionFactory()
-    {
+```csharp
+var factory = new ConnectionFactory()
+{
+```
         Uri = new Uri("YOUR RABBIT INSTANCE URI"),
         Port = 5671,
         UserName = "<USERNAME FROM CONFIGURATION FILE>",
         Password = "<PASSWORD FROM CONFIGURATION FILE>"
     };
     
-    using var connection = factory.CreateConnection();
-    using var channel = connection.CreateModel();
+```csharp
+using var connection = factory.CreateConnection();
+using var channel = connection.CreateModel();
+```
     
-    var exchangeName = "weather_headers";
-    channel.ExchangeDeclare(exchangeName, ExchangeType.Headers);
+```csharp
+var exchangeName = "weather_headers";
+channel.ExchangeDeclare(exchangeName, ExchangeType.Headers);
+```
 
 When sending a message, the sender specifies the Exchange, message body, and message headers.
 
-    var basicProps = channel.CreateBasicProperties();
-    basicProps.Headers = new Dictionary<string, object>()
-    {
+```csharp
+var basicProps = channel.CreateBasicProperties();
+basicProps.Headers = new Dictionary<string, object>()
+{
+```
         {"location", location},
         {"temperature", temperature}
-    };
-    channel.BasicPublish(exchangeName, routingKey, basicProps, body);
+```text
+};
+channel.BasicPublish(exchangeName, routingKey, basicProps, body);
+```
 
 The above code uses the `CreateBasicProperties` method on the channel to construct the instance to add in the Headers.
 
@@ -131,25 +141,33 @@ Messages are routed to Queues from Exchanges using the Binding information.
 
 To create a Queue, use the `QueueDeclare` method. It will create a new Queue only if one doesn't exist with the same name.
 
-    var factory = new ConnectionFactory()
-    {
+```csharp
+var factory = new ConnectionFactory()
+{
+```
         Uri = new Uri("YOUR RABBIT INSTANCE URI"),
         Port = 5671,
         UserName = "<USERNAME FROM CONFIGURATION FILE>",
         Password = "<PASSWORD FROM CONFIGURATION FILE>"
     };
     
-    using var connection = factory.CreateConnection();
-    using var channel = connection.CreateModel();
+```csharp
+using var connection = factory.CreateConnection();
+using var channel = connection.CreateModel();
+```
     
     channel.QueueDeclare(queueName, false, false, false, null);
     
-    var bindingHeaders = new Dictionary<string, object>()
-    {
+```csharp
+var bindingHeaders = new Dictionary<string, object>()
+{
+```
         {"x-match", match},
         {"location", location}
-    };
-    if (!string.IsNullOrEmpty(temperature))
+```csharp
+};
+if (!string.IsNullOrEmpty(temperature))
+```
         bindingHeaders.Add("temperature", temperature);
     
     channel.QueueBind(queueName, "weather_headers", routingKey:string.Empty, bindingHeaders);

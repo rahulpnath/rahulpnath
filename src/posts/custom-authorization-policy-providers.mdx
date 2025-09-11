@@ -3,54 +3,68 @@ title: "Custom Authorization Policy Providers in .Net Core For Checking Multiple
 slug: "custom-authorization-policy-providers"
 date: "2019-03-29T00:00:00.000Z"
 feature_image: "/images/azure_ad_Groups.png"
-tags: []
+tags: ["Azure","Dotnet"]excerpt: "Extending Azure AD Groups Role based access to support combinations of multiple groups to grant access."
+
 ---
 
-In the post, [.Net Core Web App and Azure AD Security Groups Role based access](__GHOST_URL__/blog/dot-net-core-api-and-azure-ad-groups-based-access/), we saw how to use Azure AD Security Groups to provide Role Based Access for your .Net Core applications. We covered only cases where our Controllers/functions were provided access based on a single Azure AD Security group. At times you might want to extend this to include multiple groups, e.g., A user can edit an order if they belong to Admin OR Manager group or both Admin ANDManager group. In this post, we will see how to achieve that.
+In the post, [.Net Core Web App and Azure AD Security Groups Role based access](/posts/dot-net-core-api-and-azure-ad-groups-based-access/), we saw how to use Azure AD Security Groups to provide Role Based Access for your .Net Core applications. We covered only cases where our Controllers/functions were provided access based on a single Azure AD Security group. At times you might want to extend this to include multiple groups, e.g., A user can edit an order if they belong to Admin OR Manager group or both Admin ANDManager group. In this post, we will see how to achieve that.
 
 Belongs to Multiple Groups
 --------------------------
 
 In the previous post, we added different policy per AD Security Group and used that in the _Authorize_ attribute to restrict access to a particular Security Group, say _Admin_. If you want to limit functionality to **users who belong to both Admin AND Manager**, you can use two attributes one after the other as shown below.
 
-    [Authorize(Policy = "Admin")]
-    [Authorize(Policy = "Manager")]
-    [ApiController]
-    public partial class AddUsersController : ControllerBase
-    ...
+```json
+[Authorize(Policy = "Admin")]
+[Authorize(Policy = "Manager")]
+[ApiController]
+public partial class AddUsersController : ControllerBase
+...
+```javascript
     
 
-The above code looks for policies named 'Admin' and 'Manager', which we registered on application startup using the _services.AddAuthorization_ call (as shown in the [previous post](__GHOST_URL__/blog/dot-net-core-api-and-azure-ad-groups-based-access/)).
+The above code looks for policies named 'Admin' and 'Manager', which we registered on application startup using the _services.AddAuthorization_ call (as shown in the [previous post](/posts/dot-net-core-api-and-azure-ad-groups-based-access/)).
 
 Belongs to Any One Group
 ------------------------
 
 In cases where you want to restrict access to a controller/function depending on the user being part of at least one of the groups in a list of given groups, e.g., **user is either Admin OR Manager**. The natural tendency is to use a comma-separated list of values for the Policy as shown below.
 
-    [Authorize(Policy = "Admin,Manager")]
-    [ApiController]
-    public partial class AddUsersController : ControllerBase
-    ...
+```csharp
+[Authorize(Policy = "Admin,Manager")]
+[ApiController]
+public partial class AddUsersController : ControllerBase
+...
+```sql
     
 
 The above code looks for a policy named _'Admin,Manager'_ and for it to work you need to add in a policy named the same.
 
-    options.AddPolicy(
-        "Admin,Manager",
-        policy =>
-            policy.AddRequirements(new IsMemberOfAnyGroupRequirement(adminGroup, managerGroup));
-    
+
+```
+options.AddPolicy(
+    "Admin,Manager",
+
+```
+policy =>
+    policy.AddRequirements(new IsMemberOfAnyGroupRequirement(adminGroup, managerGroup));
+```
+```
 
 As you can see, I have modified the _IsMemberOfGroupRequirement_ class from the previous blog post to _IsMemberOfAnyGroupRequirement_, which now takes in a list of AzureAdGroupConfig. The handler for the requirement (_IsMemberOfAnyGroupHandler_) is updated to check if the user claims have at least one of the required claim.
 
-    public class AzureAdGroupConfig
-    {
+```csharp
+public class AzureAdGroupConfig
+{
+```csharp
         public string GroupName { get; set; }
         public string GroupId { get; set; }
     }
     
-    public class IsMemberOfAnyGroupRequirement : IAuthorizationRequirement
-    {
+```csharp
+public class IsMemberOfAnyGroupRequirement : IAuthorizationRequirement
+{
+```csharp
         public AzureAdGroupConfig[] AzureAdGroupConfigs { get; set; }
     
         public IsMemberOfAnyGroupRequirement(params AzureAdGroupConfig[] groupConfigs)
@@ -59,8 +73,10 @@ As you can see, I have modified the _IsMemberOfGroupRequirement_ class from the 
         }
     }
     
-    public class IsMemberOfAnyGroupHandler : AuthorizationHandler<IsMemberOfAnyGroupRequirement>
-    {
+```csharp
+public class IsMemberOfAnyGroupHandler : AuthorizationHandler<IsMemberOfAnyGroupRequirement>
+{
+```csharp
         protected override Task HandleRequirementAsync(
             AuthorizationHandlerContext context, IsMemberOfAnyGroupRequirement requirement)
         {
@@ -95,8 +111,10 @@ _IsMemberOFANyGroupAttribute_ is a custom authorize attribute that takes in a li
 
 **_Make sure to choose a SEPARATOR that you know will not be there in your group names._**
 
-    public class IsMemberOfAnyGroupAttribute : AuthorizeAttribute
-    {
+```csharp
+public class IsMemberOfAnyGroupAttribute : AuthorizeAttribute
+{
+```csharp
         public const string POLICY_PREFIX = "IsMemberOfAnyGroup";
         public const string SEPARATOR = "_";
     
@@ -113,8 +131,10 @@ _IsMemberOFANyGroupAttribute_ is a custom authorize attribute that takes in a li
 
 To create a custom policy provider inherit from _IAuthorizationPolicyProvider_ or the default implementation available, _DefaultAuthorizationPolicyProvider_. Since I wanted to fall back to the default policies available first and then provide custom policies, I am inheriting from _DefaultAuthorizationPolicyProvider_. The only parameter available to us is the _policyName_, which is used to resolve the appropriate policy. The code first checks for any default policies available, those which are explicitly registered. I assume any policies referred to by the default _Authorize_ attribute will have an associated Policy registered explicitly. For policies with the known prefix, POLICY\_PREFIX we extract out the group names and build a new _IsMemberOfAnyGroupRequirement_ dynamically.
 
-    public class ADGroupsPolicyProvider : DefaultAuthorizationPolicyProvider
-    {
+```csharp
+public class ADGroupsPolicyProvider : DefaultAuthorizationPolicyProvider
+{
+```csharp
         private List<AzureAdGroupConfig> _adGroupConfigs;
     
         public ADGroupsPolicyProvider(
@@ -157,14 +177,18 @@ To create a custom policy provider inherit from _IAuthorizationPolicyProvider_ o
 
 Don't forget to register the new policy provider at Startup.
 
-    services.AddSingleton<IAuthorizationPolicyProvider, ADGroupsPolicyProvider>();
-    
+
+```html
+services.AddSingleton<IAuthorizationPolicyProvider, ADGroupsPolicyProvider>();
+```bash
 
 Using the new attribute is the same as before. However, you don't need to register a policy for _'Admin,Manager'_ explicitly. When the default policy provider cannot find a policy, it will return a dynamic policy with IsMemberOfAnyGroupRequirement having the above two groups. For any of the possible group combinations, this will happen automatically now.
 
-    [IsMemberOfAnyGroupAttribute("Admin", "Manager")]
-    [ApiController]
-    public partial class AddUsersController : ControllerBase
+```csharp
+[IsMemberOfAnyGroupAttribute("Admin", "Manager")]
+[ApiController]
+public partial class AddUsersController : ControllerBase
+```
     
 
 Hope this helps you extend the Policy-based authorization in ASP.Net Core applications and mix and match with the way you want to enable access for your users.

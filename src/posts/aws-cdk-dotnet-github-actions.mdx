@@ -3,7 +3,9 @@ title: "Building and Deploying .NET Applications with AWS CDK on GitHub Actions"
 slug: "aws-cdk-dotnet-github-actions"
 date: "2024-12-04T07:43:09.000Z"
 feature_image: "/images/CDK---GitHub-Actions.png"
-tags: []
+tags: ["AWS","DevOps"]
+excerpt: "Let's learn how to set up a build-deploy pipeline on GitHub Actions to automate infrastructure management and deploy resources on AWS for our .NET application."
+
 ---
 
 The **AWS Cloud Development Kit (CDK)** simplifies cloud infrastructure management.
@@ -14,7 +16,7 @@ GitHub Actions provides a powerful CI/CD solution that integrates seamlessly wit
 
 In this post, let's explore how to set up a build-deploy pipeline to automatically create resources and deploy your .NET application to AWS using GitHub Actions.
 
-Thanks to AWS for sponsoring this post in my .[NET on AWS Series](__GHOST_URL__/blog/tag/aws/)
+Thanks to AWS for sponsoring this post in my .[NET on AWS Series](/posts/tag/aws/)
 
 Setting Up GitHub Actions File
 ------------------------------
@@ -60,24 +62,27 @@ AWS CDK simplifies Cloud Infrastructure management. CDK lets you define AWS reso
 
 ![](/images/AWS-CDK-2.png)
 
-](__GHOST_URL__/blog/aws-cdk-dotnet/)
+](/posts/aws-cdk-dotnet/)
 
 This post will focus on the GitHub Actions workflow side to set up the pipeline to run and deploy our .NET application.
 
 This GitHub Actions workflow, named **"Weather Data Service"**, triggers on every push to the `main` branch.
 
-    name: Weather Data Service
-    
-    on:
-      push:
-        branches:
-          - main
-    
-    jobs:
-      build_and_deploy:
-        runs-on: ubuntu-latest
-        permissions:
-          contents: read
+
+```yaml
+name: Weather Data Service
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+```
 
 It defines a single job, `build_and_deploy`which runs on an Ubuntu environment with read-only permissions for repository contents.
 
@@ -176,7 +181,7 @@ AWS CDK simplifies Cloud Infrastructure management. CDK lets you define AWS reso
 
 ![](/images/AWS-CDK-1.png)
 
-](__GHOST_URL__/blog/aws-cdk-dotnet/)
+](/posts/aws-cdk-dotnet/)
 
 To deploy the application, all we need to do is run the `cdk deploy` command
 
@@ -188,8 +193,9 @@ Ensure that the `requie-approval` is turned off so that it does not prompt for a
 
 Our CDK code looks for the deploy package from the artifacts folder, as shown below.
 
-    // Lambda Function To Process SQS
-    var weatherLambdaFunction = new Function(this, "WeatherDataProcessor", new FunctionProps {
+```csharp
+// Lambda Function To Process SQS
+var weatherLambdaFunction = new Function(this, "WeatherDataProcessor", new FunctionProps {
       FunctionName = "weather-data-processor",
         Runtime = Runtime.DOTNET_8,
         Handler = "WeatherForecast.Service::WeatherForecast.Service.Function::FunctionHandler",
@@ -197,7 +203,7 @@ Our CDK code looks for the deploy package from the artifacts folder, as shown be
         ...
         }
     });
-
+```
 Since our previous steps have generated the artifacts files, the CDK code automatically picks these up and deploys to the respective AWS resources.
 
 If the resource does not exist or has been modified, those changes are also performed.

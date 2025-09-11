@@ -3,7 +3,7 @@ title: "Setting up Build and Deploy Pipeline for a .NET Core Console Application
 slug: "build-and-deploy-a-net-core-console-application"
 date: "2018-01-03T00:00:00.000Z"
 feature_image: "/images/net_core_teamcity.png"
-tags: []
+tags: ["DevOps"]
 ---
 
 I was given a console application written in .NET Core 2.0 and asked to set up a continuous deployment pipeline using [TeamCity](https://www.jetbrains.com/teamcity/) and [Octopus Deploy](https://octopus.com/). I struggled a bit with some parts, so thought it's worth putting together a post on how I went about it. If you have a better or different way of doing things, please shout out in the comments below.
@@ -40,8 +40,10 @@ For the Deploy Package step I have enabled Custom Deployment Scripts and [JSON C
 
 Once the package is deployed, the custom script starts up the application.
 
-    cd C:\DeploymentFolder
-    Start-Process dotnet .\ApplicationName.dll
+```bash
+cd C:\DeploymentFolder
+Start-Process dotnet .\ApplicationName.dll
+```
     
 
 With all that set, any time a change is pushed into the source control repository, TeamCity picks that up, build and triggers a deployment to the configured environments in Octopus Deploy. Hope this helps!

@@ -3,7 +3,7 @@ title: "Making Code Reviews Effective"
 slug: "code-review"
 date: "2017-01-03T00:00:00.000Z"
 feature_image: "/images/codereview_friendly.png"
-tags: []
+tags: ["Programming","Thoughts"]
 ---
 
 Code review is an essential practice of the development life cycle. It helps improve the code quality, unify team practices, share knowledge, mentoring etc. over a longer period of time. It helps find mistakes that are overlooked while developing and helps improve the overall quality of the software. This helps accelerate the deployment process as changes are more likely to pass through testing.
@@ -19,7 +19,7 @@ Below are some of my thoughts on the various aspects involved in a Code Review.
 Sending a Review
 ----------------
 
-Before sending for a code review make sure that only the necessary files for the change are added in the review. Often it happens that when we write code there are remains of things that we tried and discarded, like new files, packages, changes to project metadata files etc. Double check and make sure that the changes are what are just required. Ensure that the code builds successfully. If there are any build scripts that your team uses, make sure that those are run and passes successfully. When submitting a code review make sure that you reference the associated work item - be it a bug, story, task etc. Add [tests](__GHOST_URL__/tag/testing/). Add in a description detailing the change and any reasoning behind it to add in more context. This will help the reviewer understand the code much faster. Add in relevant people for the review and submit a request. Check out [some great tips for a better-looking review request](http://blog.ploeh.dk/2015/01/15/10-tips-for-better-pull-requests/).
+Before sending for a code review make sure that only the necessary files for the change are added in the review. Often it happens that when we write code there are remains of things that we tried and discarded, like new files, packages, changes to project metadata files etc. Double check and make sure that the changes are what are just required. Ensure that the code builds successfully. If there are any build scripts that your team uses, make sure that those are run and passes successfully. When submitting a code review make sure that you reference the associated work item - be it a bug, story, task etc. Add [tests](/blog/tag/testing/). Add in a description detailing the change and any reasoning behind it to add in more context. This will help the reviewer understand the code much faster. Add in relevant people for the review and submit a request. Check out [some great tips for a better-looking review request](http://blog.ploeh.dk/2015/01/15/10-tips-for-better-pull-requests/).
 
 Handling Review Comments
 ------------------------
@@ -51,7 +51,7 @@ Once the business aspect is covered have a look at the technical aspect of the c
 
 ### **Aesthetic**
 
-Code formatting is as important as the code itself. Code is read more often than written, so we should try and optimize code for reading. I would prefer to automate this as far as possible so that people don't need to look for these in reviews. I feel that is often time not well spent and also tends to lead to longer discussions ([tabs vs Spaces](https://blog.codinghorror.com/death-to-the-space-infidels/)). When it is part of the build and automated people seldom complain about it and in a very short period of time, the formatting rules become second nature to them. If you currently do not have automated checks you can gradually [introduce formatting checks into your builds for a large code base](__GHOST_URL__/blog/introducing-code-formatting-into-a-large-codebase/).
+Code formatting is as important as the code itself. Code is read more often than written, so we should try and optimize code for reading. I would prefer to automate this as far as possible so that people don't need to look for these in reviews. I feel that is often time not well spent and also tends to lead to longer discussions ([tabs vs Spaces](https://blog.codinghorror.com/death-to-the-space-infidels/)). When it is part of the build and automated people seldom complain about it and in a very short period of time, the formatting rules become second nature to them. If you currently do not have automated checks you can gradually [introduce formatting checks into your builds for a large code base](/posts/introducing-code-formatting-into-a-large-codebase/).
 
 > _Don't go by 'It's done like that everywhere so I will keep it the same'_
 

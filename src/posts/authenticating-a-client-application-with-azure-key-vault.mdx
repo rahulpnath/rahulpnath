@@ -3,12 +3,14 @@ title: "Authenticating a Client Application with Azure Key Vault"
 slug: "authenticating-a-client-application-with-azure-key-vault"
 date: "2015-03-06T11:40:25.000Z"
 feature_image: "/images/default_ad_settings.PNG"
-tags: []
+tags: ["Azure"]
+excerpt: "This post describes the different methods by which a client application can access Azure Key Vault and use the keys for performing cryptographic activities."
+
 ---
 
-> Please check [here](__GHOST_URL__/blog/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/) for scripts using the latest PowerShell cmdlets and check out the new [Visual Studio Connected Service feature](__GHOST_URL__/blog/azure-key-vault-as-a-connected-service-in-visual-studio-2017/).
+> Please check [here](/posts/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/) for scripts using the latest PowerShell cmdlets and check out the new [Visual Studio Connected Service feature](/posts/azure-key-vault-as-a-connected-service-in-visual-studio-2017/).
 
-Azure Key Vault provides an easy way for managing cryptographic keys and secrets (like connection strings or passwords) in a secure and distributed manner as opposed to having them in the configuration file or a database. If you are new to Azure Key Vault check out the [Getting Started with Azure Key Vault](__GHOST_URL__/blog/getting-started-with-azure-key-vault/) on how to setup the vault and add keys and use that from a console application.
+Azure Key Vault provides an easy way for managing cryptographic keys and secrets (like connection strings or passwords) in a secure and distributed manner as opposed to having them in the configuration file or a database. If you are new to Azure Key Vault check out the [Getting Started with Azure Key Vault](/posts/getting-started-with-azure-key-vault/) on how to setup the vault and add keys and use that from a console application.
 
 In this post we will explore into the ways of authenticating a client application with a key vault. For an application to use the key vault it must authenticate using a token from the Azure Active Directory (AD). For this an application needs to be registered in the Azure AD and this application needs to be authorized to access key or secret in the vault using the [Set-AzureKeyVaultAccessPolicy](https://msdn.microsoft.com/en-us/library/azure/dn903607.aspx) that comes as part of the [key vault powershell scripts](https://gallery.technet.microsoft.com/scriptcenter/Azure-Key-Vault-Powershell-1349b091).
 
@@ -40,13 +42,16 @@ In the drop-down under the keys select the duration and choose a duration of you
 
 Now that we have created the application and have the clientid and the secret we need to authorize the application to access the key vault. For this we use the _Set-AzureKeyVaultAccessPolicy_ from the powershell and provide the client id of the application that we have just created. The _PermissionToKeys_ parameter determines the permission that the application would have on the keys in the vault which can take multiple comma separated values (all, backup, create, decrypt, delete, encrypt, import, get, list, restore, sign, wrapkey, unwrapkey, update and verify). Similarly for access to secrets in the keyvault you need to set _PermissionToSecrets_ which can all take multiple values (all, delete, get, list and set).
 
-    PS C:\> Set-AzureKeyVaultAccessPolicy -VaultName 'TestVaultRahul' -ServicePrincipalName '01c74fc1-4fb3-455e-8612-d5ad05a7fe2a' -PermissionsToKeys all
-    
+
+```powershell
+PS C:\> Set-AzureKeyVaultAccessPolicy -VaultName 'TestVaultRahul' -ServicePrincipalName '01c74fc1-4fb3-455e-8612-d5ad05a7fe2a' -PermissionsToKeys all
+```
 
 Now using the clientid and the secret we can authenticate from the client application using it as below
 
-    var keyClient = new KeyVaultClient((authority, resource, scope) =>
-    {
+```csharp
+var keyClient = new KeyVaultClient((authority, resource, scope) =>
+{
         var adCredential = new ClientCredential(clientid, applicationSecret);
         var authenticationContext = new AuthenticationContext(authority, null);
         return authenticationContext.AcquireToken(resource, adCredential).AccessToken;
@@ -60,22 +65,27 @@ Now using the clientid and the secret we can authenticate from the client applic
 
 Creating an application that can be authenticated using the clientid and the certificate is only possible using powershell scripts, and these are again available with the key vault powershell scripts. For this we first need to create a certificate or if your organization already has provided one use that. Since this is for demo I would be creating a test certificate as [explained here](https://msdn.microsoft.com/en-in/library/ff699202.aspx).
 
-    makecert -sv mykey.pvk -n "cn=AD Test Vault Application" ADTestVaultApplication.cer -b 03/03/2014 -e 06/05/2016 -r
-    pvk2pfx -pvk mykey.pvk -spc ADTestVaultApplication.cer -pfx ADTestVaultApplication.pfx -po test
+```powershell
+makecert -sv mykey.pvk -n "cn=AD Test Vault Application" ADTestVaultApplication.cer -b 03/03/2014 -e 06/05/2016 -r
+pvk2pfx -pvk mykey.pvk -spc ADTestVaultApplication.cer -pfx ADTestVaultApplication.pfx -po test
+```
     
 
 Once we have the certificate, we can create a new AD application and specify certificate authentication for the application as shown below. Make sure that you give the full path to the certificate as below (mine was located under C:\\cert)
 
-    Connect-AzureAD -DomainName '<domainname>'
-    $newADApplication = New-AzureADApplication -DisplayName 'TestVaultApplication'
-    Add-AzureADApplicationCredential -ObjectId $newADApplication.objectId -FilePath C:\cert\ADTestVaultApplication.cer
-    $newADApplication.appId
+```powershell
+Connect-AzureAD -DomainName '<domainname>'
+$newADApplication = New-AzureADApplication -DisplayName 'TestVaultApplication'
+Add-AzureADApplicationCredential -ObjectId $newADApplication.objectId -FilePath C:\cert\ADTestVaultApplication.cer
+$newADApplication.appId
+```
     
 
 Once the application is created, we need to perform the same authorization steps as above to give the application access to the key vault, after which we can use the clientid (that would be output to the powershell console) and the certificate to authenticate the application. Make sure that the certificate is installed into the store so that it can be used by the application.
 
-    var keyClient = new KeyVaultClient((authority, resource, scope) =>
-    {
+```csharp
+var keyClient = new KeyVaultClient((authority, resource, scope) =>
+{
         var authenticationContext = new AuthenticationContext(authority, null);
         X509Certificate2 certificate;
         X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
@@ -99,10 +109,10 @@ Once the application is created, we need to perform the same authorization steps
         var result = authenticationContext.AcquireToken(resource, clientAssertionCertificate);
         return result.AccessToken;
     });
-    
+  ```  
 
 <iframe src="https://www.youtube.com/embed/JbshGF4ZwGE" />
 
-You could use either ways to authenticate an application to Azure Key Vault. Using the certificate way would be more secure as you can also password protect your certificate so that it cannot be installed without having that. If using the client secret anybody having access to the configuration would be able to access the vault. Also make sure that you give the application's only necessary permissions for accessing keys and secrets while registering the application. You could use the sample used in the [Getting Started with Azure Key Vault](__GHOST_URL__/blog/getting-started-with-azure-key-vault/) [sample](https://github.com/rahulpnath/Blog/tree/master/AzureKeyVault). The code in there uses clientId and secret, you could change it with the above code to use certificate authentication.
+You could use either ways to authenticate an application to Azure Key Vault. Using the certificate way would be more secure as you can also password protect your certificate so that it cannot be installed without having that. If using the client secret anybody having access to the configuration would be able to access the vault. Also make sure that you give the application's only necessary permissions for accessing keys and secrets while registering the application. You could use the sample used in the [Getting Started with Azure Key Vault](/posts/getting-started-with-azure-key-vault/) [sample](https://github.com/rahulpnath/Blog/tree/master/AzureKeyVault). The code in there uses clientId and secret, you could change it with the above code to use certificate authentication.
 
-> **_[Key Vault supports Managed Service Identity](__GHOST_URL__/blog/authenticating-with-azure-key-vault-using-managed-service-identity/) which makes authenticating with it even more easier if your application is deployed in Azure. You no longer have to add any configuration related to key vault to the applications config file._**
+> **_[Key Vault supports Managed Service Identity](/posts/authenticating-with-azure-key-vault-using-managed-service-identity/) which makes authenticating with it even more easier if your application is deployed in Azure. You no longer have to add any configuration related to key vault to the applications config file._**

@@ -3,7 +3,8 @@ title: "Web Application Occasionally Throwing 'Could not Load File or Assembly o
 slug: "could-not-load-file-or-assembly-or-one-of-its-dependencies"
 date: "2016-07-01T00:45:05.000Z"
 feature_image: "/images/doubleWrite_dll_conflict.jpg"
-tags: []
+tags: ["Tools","Dotnet"]excerpt: ""
+
 ---
 
 We were facing a strange 'could not load DLL issue', when building and running multiple host projects in Visual Studio (VS 2015), side by side. We had 2 host projects - an NServiceBus worker role project (a console application) and a Web application and a few other projects, a couple of which are shared between both the host projects. It often happened in our team, when running the IIS-hosted Web application, it threw the error :
@@ -19,10 +20,14 @@ Using AsmSpy to find conflicting assemblies
 
 [AsmSpy](https://github.com/mikehadlow/AsmSpy) is a command-line tool to view conflicting assembly references in a given folder. This is helpful to find the different assemblies that refer to different versions of the same assembly in the given folder. Using AsmSpy, on the bin folder of the web application, it showed the conflicting Newtonsoft.Json DLL references by different projects in the solution. There were three different versions of Newtonsoft Nuget package referred in the whole solution. The web project referred to an older version than the shared project and the worker project.
 
-    asmspy WebApplication1\bin\ nonsystem
-    
-    Detailing only conflicting assembly references.
-    Reference: Newtonsoft.Json
+
+```
+asmspy WebApplication1\bin\ nonsystem
+```
+```yaml
+Detailing only conflicting assembly references.
+Reference: Newtonsoft.Json
+```sql
        7.0.0.0 by SharedLibrary
        6.0.0.0 by WebApplication1
        4.5.0.0 by WebGrease
@@ -35,11 +40,11 @@ Using MsBuild Structured Log to find conflicting writes
 
 Using the [Msbuild Structured Log Viewer](https://github.com/KirillOsenkov/MSBuildStructuredLog) to analyze what was happening with the build, I noticed the below '_DoubleWrites_' happening with Newtonsoft DLL. The double writes list shows all the folders from where the DLL was getting written into the bin folder of the project getting building. In the MSBuild Structured log viewer, a DLL pops up only when there are more than one places from where a DLL is getting written, hence the name '_Double writes_. This is a problem as there is a possibility of one write overriding other, depending on the order of writes, causing DLL version conflicts (which is exactly what's happening here).
 
-![Double Write Dll conflict](__GHOST_URL__/content/images/doubleWrite_msbuildLogViewer.png)
+![Double Write Dll conflict](/images/doubleWrite_msbuildLogViewer.png)
 
 But in this specific case, the log captured above does not show the full problem but hints us of a potential problem. The build capture when building the whole solution (sln) shows that there are 2 writes happening from 2 different Newtonsoft package folders, which shows a potential conflict (_as shown above_). This does not explain the specific error we are facing with the Web application. Running the tool on just the Web application project (csproj), it does not show any DoubleWrites (_as shown below_).
 
-![Double Write Dll conflict](__GHOST_URL__/content/images/doubleWrite_proj_msbuildLogViewer.png)
+![Double Write Dll conflict](/images/doubleWrite_proj_msbuildLogViewer.png)
 
 This confirms that there is something happening with the Web application bin outputs when we build the worker/shared dependency project.
 
@@ -73,9 +78,11 @@ Now that we know what exactly causes the issue, it is easy to create a [sample a
 *   Create a console application/WPF application with a newer version of Newtonsoft Package.
 *   Create a shared library project with a newer version of Newtonsoft Nuget package. Add this shared project as a project reference to both Web application and console/WPF application.
 
-    Install-Package Newtonsoft.Json -ProjectName WebApplication1 -Version 6.0.1
-    Install-Package Newtonsoft.Json -ProjectName SharedLibrary -Version 7.0.1
-    Install-Package Newtonsoft.Json -ProjectName WpfApplication1 -Version 8.0.3
+```powershell
+Install-Package Newtonsoft.Json -ProjectName WebApplication1 -Version 6.0.1
+Install-Package Newtonsoft.Json -ProjectName SharedLibrary -Version 7.0.1
+Install-Package Newtonsoft.Json -ProjectName WpfApplication1 -Version 8.0.3
+```
     
 
 Follow the build repro steps above to reproduce the error. Change CopyLocal or update NuGet references and see issue gets resolved.

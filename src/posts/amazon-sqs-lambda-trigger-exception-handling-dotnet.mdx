@@ -3,12 +3,14 @@ title: "How to Handle Exceptions When Processing SQS Messages in .NET Lambda Fun
 slug: "amazon-sqs-lambda-trigger-exception-handling-dotnet"
 date: "2022-09-22T00:00:00.000Z"
 feature_image: "/images/amazon-sqs-lambda-trigger-exception-handling-dotnet.jpg"
-tags: []
+tags: ["AWS","Lambda"]
+excerpt: "Learn how to handle exceptions, configure Dead Letter Queue, re-drive messages from Amazon SQS and how to enable batch error processing from a .NET Lambda Function."
+
 ---
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
-In a previous post, we learned how to [process messages coming to Amazon SQS using Lambda Functions](__GHOST_URL__/blog/amazon-sqs-lambda-trigger-dotnet/) written in .NET.
+In a previous post, we learned how to [process messages coming to Amazon SQS using Lambda Functions](/posts/amazon-sqs-lambda-trigger-dotnet/) written in .NET.
 
 We have messages coming into the queue, the Lambda function gets triggered, processes the message, and successfully removes the message from the queue. Great!
 
@@ -22,10 +24,12 @@ Maybe it’s an unhandled code path, a null reference exception, or an external 
 
 In this post, you’ll learn,
 
+```sql
 *   What happens on Exception in Processing Messages?
 *   Handle Retries and Configure Dead-letter Queue (DLQ)
 *   ReDrive Messages from Dead-letter Queue
 *   Enabling Batch Error Processing
+```
 
 [
 
@@ -37,7 +41,7 @@ Learn how to process SQS messages from AWS Lambda Function. We will learn how to
 
 ![](/images/amazon-sqs-lambda-triggers-dotnet.jpg)
 
-](__GHOST_URL__/blog/amazon-sqs-lambda-trigger-dotnet)
+](/posts/amazon-sqs-lambda-trigger-dotnet)
 
 What happens on Exception in Processing Messages?
 -------------------------------------------------
@@ -50,8 +54,10 @@ First, let's simulate an exception in our Lambda Function handler.
 
 Let’s update the Lambda Function code to simulate an exception to see the exception handling in action.
 
-    private async Task ProcessMessageAsync(SQSEvent.SQSMessage message, ILambdaContext context)
-    {
+```csharp
+private async Task ProcessMessageAsync(SQSEvent.SQSMessage message, ILambdaContext context)
+{
+```csharp
         context.Logger.LogInformation($"Processed message {message.Body}");
     
         if (message.Body.Contains("Exception"))
@@ -72,7 +78,7 @@ The Lambda Function will throw an error as soon as it picks up for processing.
 
 > When an exception happens in processing Lambda Function does not acknowledge the successful processing of the message.
 
-The message is not deleted from the Queue by the Lambda Function. After the [default VisbilityTimeout](__GHOST_URL__/blog/amazon-sqs) period of the Queue (30secs), the message is made available in the Queue for processing again.
+The message is not deleted from the Queue by the Lambda Function. After the [default VisbilityTimeout](/posts/amazon-sqs) period of the Queue (30secs), the message is made available in the Queue for processing again.
 
 In this case, where we have simulated an exception based on the message body, this message will always throw an exception (with the current Function code). The message gets retried every 30 seconds.
 
@@ -90,7 +96,7 @@ Learn how to get started with Amazon SQS and use it from a .NET Application. We 
 
 ![](/images/queue.jpg)
 
-](__GHOST_URL__/blog/amazon-sqs)
+](/posts/amazon-sqs)
 
 Handle Retries and Configure Dead-letter Queue (DLQ)
 ----------------------------------------------------
@@ -165,12 +171,16 @@ However, in these cases, we must tell SQS the messages that were processed succe
 
 The `SQSBatchResponse` signals SQS the failed messages in a batch.
 
-    public async Task<SQSBatchResponse> FunctionHandler(SQSEvent evnt, ILambdaContext context)
-    {
+```csharp
+public async Task<SQSBatchResponse> FunctionHandler(SQSEvent evnt, ILambdaContext context)
+{
+```csharp
+```csharp
         var response = new SQSBatchResponse()
         {
             BatchItemFailures = new List<SQSBatchResponse.BatchItemFailure>()
         };
+```
     
         context.Logger.LogInformation($"Received Message of count {evnt.Records.Count}");
         foreach (var message in evnt.Records)
@@ -178,17 +188,21 @@ The `SQSBatchResponse` signals SQS the failed messages in a batch.
             try
             {
                 await ProcessMessageAsync(message, context);
+```code
             }
             catch (Exception e)
             {
+```
     
                 context.Logger.LogError(e.Message);
                 response.BatchItemFailures.Add(new SQSBatchResponse.BatchItemFailure()
+```json
                 {
                     ItemIdentifier = message.MessageId
                 });
             }
         }
+```
     
         return response;
     }
@@ -206,8 +220,10 @@ Once enabled and the new function code deployed, we can successfully process mes
 
 If you want to simulate and test the batch item failures, you can use the below Linqpad script to send bulk messages.
 
-    async Task Main()
-    {
+```csharp
+async Task Main()
+{
+```
       var sqsClient = new AmazonSQSClient();
       var batchRequest = Enumerable.Range(1, 100)
             .Select(e => new SendMessageBatchRequestEntry(Guid.NewGuid().ToString(), $"Test {(e % 5 == 0 ? "Exception" : "")} {e}")).ToList();

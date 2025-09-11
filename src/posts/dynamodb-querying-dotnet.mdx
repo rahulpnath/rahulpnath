@@ -3,7 +3,7 @@ title: "5 Ways To Query Data From Amazon DynamoDB using .NET"
 slug: "dynamodb-querying-dotnet"
 date: "2023-02-17T07:53:45.000Z"
 feature_image: "/images/DynamoDB-Querying-new.png"
-tags: []
+tags: ["AWS","DynamoDB"]
 ---
 
 Querying is an essential operation in DynamoDB.
@@ -14,7 +14,7 @@ When moving over to DynamoDB from more traditional relational databases like SQL
 
 <iframe src="https://www.youtube.com/embed/iv6OKueqBd4?feature=oembed" />
 
-_This article is sponsored by AWS and is part of my_ [_AWS Series_](__GHOST_URL__/tag/aws/)_._
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
 
 In this article, let’s explore the different ways you can query data from Amazon DynamoDB when building applications using .NET. We will learn
 
@@ -43,7 +43,7 @@ Learn how to get started with AWS DynamoDB with .NET Core by updating the defaul
 
 ![](/images/aws_dynamodb.jpg)
 
-](__GHOST_URL__/blog/aws-dynamodb-net-core/)
+](/posts/aws-dynamodb-net-core/)
 
 > One of the reasons why it can be a bit tricky with querying data is that you almost always need the partition key to get any data out of DynamoDB.
 
@@ -60,10 +60,12 @@ I have updated the API to add a `CityName` property to the `WeatherForecast` cla
 
     var dynamoDbClient = new AmazonDynamoDBClient(
         FallbackCredentialsFactory.GetCredentials(), RegionEndpoint.APSoutheast2);
-    builder.Services.AddSingleton<IAmazonDynamoDB>(dynamoDbClient);
-    builder.Services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
+```typescript
+builder.Services.AddSingleton<IAmazonDynamoDB>(dynamoDbClient);
+builder.Services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
+```
 
-If any of this is unclear, check the previous blog post on [Getting Started With DynamoDB](__GHOST_URL__/blog/aws-dynamodb-net-core/).
+If any of this is unclear, check the previous blog post on [Getting Started With DynamoDB](/posts/aws-dynamodb-net-core/).
 
 1\. Load Specific Item
 ----------------------
@@ -72,9 +74,11 @@ To load a specific item from the DynamoDB, we require both the Hash key and the 
 
 The `LoadAsync` method, takes in both these as parameters and returns the `WeatherForecast` object.
 
-    [HttpGet("specific-date")]
-    public async Task<WeatherForecast> GetAsync(string cityName, DateTime date)
-    {
+```csharp
+[HttpGet("specific-date")]
+public async Task<WeatherForecast> GetAsync(string cityName, DateTime date)
+{
+```
         return await _dynamoDbContext.LoadAsync<WeatherForecast>(cityName, date);
     }
     
@@ -96,9 +100,11 @@ In this case, all we have is the `CityName`, which is the Hash key.
 
 We can use the `QueryAsync` method and pass in the hash key to it, as shown below.
 
-    [HttpGet("city-all")]
-    public async Task<IEnumerable<WeatherForecast>>  GetAsync(string cityName)
-    {
+```csharp
+[HttpGet("city-all")]
+public async Task<IEnumerable<WeatherForecast>>  GetAsync(string cityName)
+{
+```
         return await _dynamoDbContext.QueryAsync<WeatherForecast>(cityName).GetRemainingAsync();
     }
     
@@ -118,9 +124,11 @@ And the application might be interested only in the last month's data or three, 
 
 In these scenarios, we can use the `QueryOperator` and pass in the range key along with it.
 
-    [HttpGet("city-date-filter")]
-    public async Task<IEnumerable<WeatherForecast>> GetAsync(string cityName, DateTime dateTime)
-    {
+```csharp
+[HttpGet("city-date-filter")]
+public async Task<IEnumerable<WeatherForecast>> GetAsync(string cityName, DateTime dateTime)
+{
+```
         return await _dynamoDbContext.QueryAsync<WeatherForecast>(cityName, QueryOperator.GreaterThan,
                 new object[] {dateTime})
             .GetRemainingAsync();
@@ -133,8 +141,10 @@ Since the greater than operator requires only one parameter, we need to pass in 
 
 However, if you are using the `QueryOperator.Between`, which requires two dates, you need to pass them in order (start and end) to the object array, as shown below.
 
-    [HttpGet("city-date-filter")]
-    public async Task<IEnumerable<WeatherForecast>> GetAsync(
+```csharp
+[HttpGet("city-date-filter")]
+public async Task<IEnumerable<WeatherForecast>> GetAsync(
+```
         string cityName, DateTime dateTime, DateTime? endDateTime)
     {
         return await _dynamoDbContext
@@ -169,9 +179,11 @@ The `QueryRequest` expects us to pass the `TableName` and the `KeyConditions`. T
 
 In our case, since we want to get all the weather forecast items for the city name, let’s pass in the `CityName` property and the Condition `ComparisonOperator.EQ` to the expected city name, as shown below.
 
-    [HttpGet("city-all-low-level")]
-    public async Task<IEnumerable<WeatherForecast>> GetLowLevelAsync(string cityName)
-    {
+```csharp
+[HttpGet("city-all-low-level")]
+public async Task<IEnumerable<WeatherForecast>> GetLowLevelAsync(string cityName)
+{
+```
         var request = new QueryRequest()
         {
             TableName = nameof(WeatherForecast),
@@ -211,8 +223,10 @@ Below we have the `KeyConditionExpression` to get all `CityName` matching to the
 
 Below we need a key-value pair for the cityName placeholder and its associated value, which is the actual city name we are looking to get the data for.
 
-    var request = new QueryRequest()
-    {
+```csharp
+var request = new QueryRequest()
+{
+```
         TableName = nameof(WeatherForecast),
         KeyConditionExpression = "CityName = :cityName",
         ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
@@ -239,8 +253,10 @@ In these scenarios, where the property names conflict with DynamoDB Reserved Key
 
 As shown below, the `KeyConditionExpression` now specifies a placeholder ‘#Date’ for the Date property and adds the appropriate mapping for the placeholder to the actual property name in the `ExpressionAttributeNames` property.
 
-    var request = new QueryRequest()
-    {
+```csharp
+var request = new QueryRequest()
+{
+```
         TableName = nameof(WeatherForecast),
         KeyConditionExpression = "CityName = :cityName and #Date > :startDate",
         ExpressionAttributeNames = new Dictionary<string, string>()
@@ -268,8 +284,10 @@ Since in this case, we need to get all the weather data items with a temperature
 
 This again uses the same placeholder name for the value, and it passes the actual value as part of the `ExpressionAttributeValues` as shown below.
 
-    var request = new QueryRequest()
-    {
+```csharp
+var request = new QueryRequest()
+{
+```
         TableName = nameof(WeatherForecast),
         KeyConditionExpression = "CityName = :cityName and #Date > :startDate",
         FilterExpression = "TemperatureC >= :minTemp",
@@ -296,8 +314,10 @@ All we need to do is pass in multiple parameters for the between operator using 
 
 Below is an example that uses the between operator in `FilterExpression` to filter all the items within a given temperature range.
 
-    var request = new QueryRequest()
-    {
+```csharp
+var request = new QueryRequest()
+{
+```
         TableName = nameof(WeatherForecast),
         KeyConditionExpression = "CityName = :cityName and #Date > :startDate",
         FilterExpression = "TemperatureC between :minTemp and :maxTemp",

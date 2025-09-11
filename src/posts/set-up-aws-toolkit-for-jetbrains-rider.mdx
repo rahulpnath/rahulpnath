@@ -3,7 +3,7 @@ title: "Guide To Building AWS Lambda Functions with Ease in JetBrains Rider"
 slug: "set-up-aws-toolkit-for-jetbrains-rider"
 date: "2023-11-01T06:45:15.000Z"
 feature_image: "/images/Lambda-Function-JetBrains-Rider.png"
-tags: []
+tags: ["AWS","Lambda"]
 ---
 
 The [AWS Toolkit plugin for JetBrains Rider](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/getting-started.html) makes it easier to develop, debug, and deploy serverless applications with AWS right from your IDE.
@@ -41,7 +41,7 @@ Learn different ways to set up and manage credentials and sensitive information 
 
 ![](/images/secure-key.jpg)
 
-](__GHOST_URL__/blog/amazon-credentials-dotnet/)
+](/posts/amazon-credentials-dotnet/)
 
 Create Lambda Functions in JetBrains Rider
 ------------------------------------------
@@ -58,8 +58,10 @@ To create an empty Lambda Function, search for 'Lambda Empty Function' template 
 
 Once you fill in the required Solution Name, Project Name, and the solution directory it generates a default Lambda Function .NET project, with the below `FunctionHanlder` Lambda function.
 
-    public string FunctionHandler(string input, ILambdaContext context)
-    {
+```csharp
+public string FunctionHandler(string input, ILambdaContext context)
+{
+```
         return input.ToUpper();
     }
 
@@ -77,8 +79,10 @@ JetBrains Rider Lambda Simple SQS Function template to integrate Amazon SQS with
 
 The template generates the required code to handle `SQSEvents` in the AWS Function Handler.
 
-    public async Task FunctionHandler(SQSEvent evnt, ILambdaContext context)
-    {
+```csharp
+public async Task FunctionHandler(SQSEvent evnt, ILambdaContext context)
+{
+```
         foreach (var message in evnt.Records)
         {
             await ProcessMessageAsync(message, context);
@@ -105,7 +109,7 @@ This blog post is a collection of other posts that covers various aspects of AWS
 
 ![](/images/AWS-Lambda.png)
 
-](__GHOST_URL__/blog/aws-lambda-dotnet-developer/)
+](/posts/aws-lambda-dotnet-developer/)
 
 Debugging Lambda Function from JetBrains Rider
 ----------------------------------------------
@@ -133,4 +137,4 @@ Learn how to setup .NET Mock Lambda Test Tool to work with JetBrains Rider IDE.
 
 ![](/images/Rider---Mock-Lambda-Tool.png)
 
-](__GHOST_URL__/blog/how-to-set-up-aws-net-mock-lambda-test-tool-on-jetbrains-rider/)
+](/posts/how-to-set-up-aws-net-mock-lambda-test-tool-on-jetbrains-rider/)

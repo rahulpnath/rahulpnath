@@ -3,7 +3,7 @@ title: "C# Yield Return Statement: A Deep Dive"
 slug: "yield-statement-csharp-dotnet"
 date: "2024-10-14T06:57:23.000Z"
 feature_image: "/images/C--Yield-Statement.png"
-tags: []
+tags: ["Dotnet","AWS"]
 ---
 
 In .NET, Iterators provide a way to create an Enumerable.
@@ -16,7 +16,7 @@ In this post, let’s learn how to use `yield` statement to create an enumerable
 
 We will also see a real-world use case to search through a large log file stored in cloud storage without downloading the entire file into memory.
 
-This post is sponsored by AWS and is part of my .[NET Series](__GHOST_URL__/blog/tag/dotnet/).
+This post is sponsored by AWS and is part of my .[NET Series](/posts/tag/dotnet/).
 
 yield Statement in C#
 ---------------------
@@ -27,8 +27,10 @@ The yield method is used to define an iterator method.
 
 Below is a simple iterator method that returns an int enumerable.
 
-    static IEnumerable<int> CreateSimpleIterator() 
-    {
+```typescript
+static IEnumerable<int> CreateSimpleIterator() 
+{
+```
       yield return 10;
       yield return 20;
       yield return 30;
@@ -38,8 +40,10 @@ The above code uses the `yield return` statement to return each enumerable item 
 
 Consuming this is similar to consuming any other enumerables in .NET. You can use a for loop, for each, LINQ methods, etc.
 
-    void Main() 
-    {
+```json
+void Main() 
+{
+```
       var list = CreateSimpleIterator();
       foreach(var item in list) {
         item.Dump();
@@ -73,8 +77,10 @@ Let's say we want to generate multiples of tens but limit the numbers generated 
   
 The below code loops through and returns as long as the current number is less than 100.
 
-    static IEnumerable < int > CreateSimpleIterator(int number) 
-    {
+```csharp
+static IEnumerable < int > CreateSimpleIterator(int number) 
+{
+```
       for (int i = 0; i < number; i++) {
         var tens = i * 10;
     
@@ -100,8 +106,10 @@ To understand this further, let's introduce a few console write-line statements 
 
 It writes to the console before starting the item generation, right before returning an item, and when it generates all the items.
 
-    async Task Main() 
-    {
+```csharp
+async Task Main() 
+{
+```
       var numbers = CreateSimpleIterator(3);
       "Printing Numbers".Dump();
       foreach(var number in numbers) {
@@ -109,8 +117,10 @@ It writes to the console before starting the item generation, right before retur
       }
     }
     
-    static IEnumerable < int > CreateSimpleIterator(int number) 
-    {
+```csharp
+static IEnumerable < int > CreateSimpleIterator(int number) 
+{
+```
       "Starting".Dump();
       for (int i = 0; i < number; i++) {
         var tens = i * 10;
@@ -127,15 +137,17 @@ It writes to the console before starting the item generation, right before retur
 
 The above method prints the following for the input 3.
 
-    Printing Numbers
-    Starting
-    Returning for 0
-    0
-    Returning for 1
-    10
-    Returning for 2
-    20
-    Ending
+```bash
+Printing Numbers
+Starting
+Returning for 0
+0
+Returning for 1
+10
+Returning for 2
+20
+Ending
+```
 
 You can see the line `Printing Numbers` comes first, even though we have invoked the `CreateSimpleIterator` method before it.  
   
@@ -157,8 +169,10 @@ The lazy generation of items enables us to generate infinite collections using i
 
 The below code generates an infinite list of multiples of tens.
 
-    static IEnumerable < int > CreateSimpleIterator() 
-    {
+```csharp
+static IEnumerable < int > CreateSimpleIterator() 
+{
+```
       var i = 0;
       while (true) {
         yield
@@ -168,8 +182,10 @@ The below code generates an infinite list of multiples of tens.
 
 It's up to the consuming code to terminate or limit the number of items this iterator method generates.
 
-    foreach(var number in numbers.Take(20)) 
-    {
+```csharp
+foreach(var number in numbers.Take(20)) 
+{
+```
       number.Dump();
     }
 
@@ -200,14 +216,16 @@ Learn how to get started with Amazon S3 from a .NET Core application. We will le
 
 ![](/images/storage-box.jpg)
 
-](__GHOST_URL__/blog/amazon-s3-dotnet/)
+](/posts/amazon-s3-dotnet/)
 
 The below code first gets the file object from S3 using the .NET SDK and then uses a StreamReader to read through the file line by line.
 
 For each line it reads it checks if it contains the search term.
 
-    async IAsyncEnumerable<string> FetchAndProcessLogsAsync(IAmazonS3 s3Client, string logFileKey, string searchTerm)
-    {
+```csharp
+async IAsyncEnumerable<string> FetchAndProcessLogsAsync(IAmazonS3 s3Client, string logFileKey, string searchTerm)
+{
+```
         // Get the S3 object (log file) from the bucket
         var getObjectRequest = new GetObjectRequest
         {
@@ -261,6 +279,6 @@ AsyncEnumerables enhances eumeration of collections with asynchronous capabiliti
 
 ![](/images/AsyncEnumerable--2-.png)
 
-](__GHOST_URL__/blog/async-enumerable-dotnet/)
+](/posts/async-enumerable-dotnet/)
 
 The above code limits the number of lines retrieved from the cloud S3 files to 200. Once that many lines (or the end of the file) are retrieved, it will stop reading the file and exit the collection generation.

@@ -3,7 +3,9 @@ title: "Getting Started with Async Enumerables: A .NET Developer's Guide"
 slug: "async-enumerable-dotnet"
 date: "2024-07-19T03:54:21.000Z"
 feature_image: "/images/AsyncEnumerable--2-.png"
-tags: []
+tags: ["Dotnet","AWS"]
+excerpt: "AsyncEnumerables enhances eumeration of collections with asynchronous capabilities. In this post, let's explore how C# combines 'yield return' with 'async' and 'await' to create efficient asynchronous data streams and how 'await foreach' lets us effortlessly consume them."
+
 ---
 
 Enumeration of collections has been the bread-and-butter of many programs.
@@ -39,23 +41,27 @@ Learn how to get started with Amazon S3 from a .NET Core application. We will le
 
 ![](/images/storage-box.jpg)
 
-](__GHOST_URL__/blog/amazon-s3-dotnet/)
+](/posts/amazon-s3-dotnet/)
 
 The below code uses the `GetAllFileS3Objects` method to loop through the Amazon S3 bucket using the [AWSSDK.S3](https://www.nuget.org/packages/AWSSDK.S3) Nuget package.
 
 Since the S3 SDK returns paged results of objects, the function builds up an internal list of object files before returning the entire collection.
 
-    var ratings = await GetAllRatings(client);
+
+```csharp
+var ratings = await GetAllRatings(client);
+
+var filteredRatings = ratings
+    .Where(r => r.Rating == 3)
+    .Take(50)
+    .Select(r => r.Review);
     
-    var filteredRatings = ratings
-        .Where(r => r.Rating == 3)
-        .Take(50)
-        .Select(r => r.Review);
-        
-    Console.WriteLine(string.Join(Environment.NewLine, filteredRatings));
-    
-    async Task<List<ProductRating>> GetAllRatings(AmazonS3Client s3Client)
-    {
+Console.WriteLine(string.Join(Environment.NewLine, filteredRatings));
+```
+```csharp
+async Task<List<ProductRating>> GetAllRatings(AmazonS3Client s3Client)
+{
+```csharp
         var s3Objects = await GetAllFileS3Objects(s3Client);
         var productRatings = new List<ProductRating>();
         var fileReadCounter = 0;
@@ -69,8 +75,10 @@ Since the S3 SDK returns paged results of objects, the function builds up an int
         return productRatings;
     }
     
-    async Task<IEnumerable<S3Object>> GetAllFileS3Objects(AmazonS3Client amazonS3Client)
-    {
+```csharp
+async Task<IEnumerable<S3Object>> GetAllFileS3Objects(AmazonS3Client amazonS3Client)
+{
+```csharp
         ListObjectsV2Response? s3ObjectsResponse = null;
         var result = new List<S3Object>();
         do
@@ -133,8 +141,10 @@ So, instead of doing all the I/O work upfront, it does it just when it's needed.
 
 The below code now implements `IAsyncEnumerable` for out `GetAllFilesS3Objects` method, which returns all the objects from the S3 bucket.
 
-    async IAsyncEnumerable<S3Object> GetAllFileS3Objects(AmazonS3Client amazonS3Client)
-    {
+```csharp
+async IAsyncEnumerable<S3Object> GetAllFileS3Objects(AmazonS3Client amazonS3Client)
+{
+```csharp
         ListObjectsV2Response? s3ObjectsResponse = null;
         do
         {
@@ -167,8 +177,10 @@ With the function `GetAllFileS3Objects` now returning an `IAsyncEnumerable`, we 
 
 However, since enumerating the collection itself has to be an async operation, we can now move that to the `foreach` statement.
 
-    async Task<List<ProductRating>> GetAllRatings(AmazonS3Client s3Client)
-    {
+```csharp
+async Task<List<ProductRating>> GetAllRatings(AmazonS3Client s3Client)
+{
+```csharp
         var s3Objects = GetAllFileS3Objects(s3Client);
         ...
         await foreach (var s3Object in s3Objects)
@@ -187,8 +199,10 @@ This code still builds up the entire rating object before applying the filtering
 
 That's easily solved by moving down the condition and the filtering below into the `GetAllRatings` method and applying it there.
 
-    async Task<List<ProductRating>> GetAllRatings(AmazonS3Client s3Client)
-    {
+```csharp
+async Task<List<ProductRating>> GetAllRatings(AmazonS3Client s3Client)
+{
+```
         var s3Objects = GetAllFileS3Objects(s3Client);
         ...
         

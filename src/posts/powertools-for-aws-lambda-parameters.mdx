@@ -3,7 +3,7 @@ title: "How To Effectively Manage Sensitive Information in AWS Lambda: Powertool
 slug: "powertools-for-aws-lambda-parameters"
 date: "2024-01-01T23:14:36.000Z"
 feature_image: "/images/Powertools---Parameters.png"
-tags: []
+tags: ["AWS","Lambda"]
 excerpt: "Learn how to manage sensitive information in AWS Lambda using Powertools Parameters. This post covers storing configuration and secrets, using AWS services like Parameter Store and Secrets Manager, and integrating with the Lambda Powertools library for .NET."
 ---
 
@@ -17,7 +17,7 @@ The AWS Lambda Powertools library makes it easy to work with these different ser
 
 In this blog post, let’s learn how to get started using the Lambda Powertools Parameters NuGet package, use it when building Lambda Functions, and connect quickly to Parameter Store and Secrets Manager using the library package.
 
-_This article is sponsored by AWS and is part of my_ [_AWS Series_](__GHOST_URL__/tag/aws/)_._
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
 
 AWS Powertools Parameters Package
 ---------------------------------
@@ -43,7 +43,7 @@ Learn how to get started with AWS Parameter Store and use it from a .NET applica
 
 ![](/images/security_lock.jpg)
 
-](__GHOST_URL__/blog/aws-parameter-store/)
+](/posts/aws-parameter-store/)
 
 Parameter Store makes decoupling your code from configuration easy and acts as version control for your configuration data.
 
@@ -96,9 +96,11 @@ When retrieving the value, we can use the `WithTransformation` and specify to us
 
     var myConfiguration = await ParametersManager.SsmProvider.WithTransformation(Transformation.Json)
          .GetAsync<MyConfiguration>("/my-configuration");
-    ...
-    public class MyConfiguration
-    {
+```csharp
+...
+public class MyConfiguration
+{
+```
         public string Secret { get; set; }
         public string Url { get; set; }
     }
@@ -122,7 +124,7 @@ Learn how to get started with using AWS Secrets Manager using a .NET Application
 
 ![](/images/secure-padlock.jpg)
 
-](__GHOST_URL__/blog/aws-secrets-manager/)
+](/posts/aws-secrets-manager/)
 
 ### Retrieving Secrets From Secrets Manager
 

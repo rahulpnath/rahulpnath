@@ -3,7 +3,9 @@ title: "Enable Versioning on Your Amazon S3 Buckets"
 slug: "amazon-s3-versioning-dotnet"
 date: "2024-07-11T02:44:21.000Z"
 feature_image: "/images/Enable-S3-Versioning.png"
-tags: []
+tags: ["AWS"]
+excerpt: "Amazon S3 versioning is a powerful feature that allows you to preserve, retrieve, and restore every version of every object in your bucket.   In this post, let’s explore S3 versioning and how to use it when building .NET applications."
+
 ---
 
 Amazon S3 versioning is a powerful feature that allows you to preserve, retrieve, and restore every version of every object in your bucket.
@@ -57,7 +59,7 @@ Learn how to get started with Amazon S3 from a .NET Core application. We will le
 
 ![](/images/storage-box.jpg)
 
-](__GHOST_URL__/blog/amazon-s3-dotnet/)
+](/posts/amazon-s3-dotnet/)
 
 Versioning and Adding Files
 ---------------------------
@@ -66,18 +68,21 @@ When working with an Amazon S3 bucket with versioning turned on, you can add fil
 
 Below is a sample ASP minimal API endpoint that takes in a File from the request and uploads it to S3.
 
-    app.MapPost("/upload-file", async (
-            [FromForm] FileUploadRequest request, 
-            IAmazonS3 s3Client) =>
+
+```csharp
+app.MapPost("/upload-file", async (
+        [FromForm] FileUploadRequest request, 
+        IAmazonS3 s3Client) =>
+    {
+        await s3Client.PutObjectAsync(new PutObjectRequest()
         {
-            await s3Client.PutObjectAsync(new PutObjectRequest()
-            {
-                BucketName = bucketName,
-                Key = request.File.FileName,
-                InputStream = request.File.OpenReadStream()
-            });
-            return Results.NoContent();
-        })
+            BucketName = bucketName,
+            Key = request.File.FileName,
+            InputStream = request.File.OpenReadStream()
+        });
+        return Results.NoContent();
+    })
+```
 
 The code uses the `PutObjectAsync` method and passes a `PutObjectRequest` with the appropriate bucket details, object name, and contents to upload the file.
 
@@ -102,25 +107,28 @@ Getting files from a versioned S3 bucket works similarly to a non-versioned buck
 
 The code below is a sample ASP NET minimal API endpoint that retrieves a file from S3 given a bucket name, key, and an optional versionId.
 
-    app.MapGet("/get-file", async (
-            string key, string? versionId,
-            IAmazonS3 s3Client, HttpResponse response) =>
-        {
-            var fileObject = await s3Client.GetObjectAsync(
-                new GetObjectRequest()
-                {
-                    BucketName = bucketName,
-                    Key = key,
-                    VersionId = versionId
-                });
-                
-            response.ContentType = "application/octet-stream";
-            response.Headers.Append(
-                $"Content-Disposition", 
-                $"attachment; filename={fileObject.Key}");
-            var responseStream = response.BodyWriter.AsStream();
-            await fileObject.ResponseStream.CopyToAsync(responseStream);
-        })
+
+```csharp
+app.MapGet("/get-file", async (
+        string key, string? versionId,
+        IAmazonS3 s3Client, HttpResponse response) =>
+    {
+        var fileObject = await s3Client.GetObjectAsync(
+            new GetObjectRequest()
+            {
+                BucketName = bucketName,
+                Key = key,
+                VersionId = versionId
+            });
+            
+        response.ContentType = "application/octet-stream";
+        response.Headers.Append(
+            $"Content-Disposition", 
+            $"attachment; filename={fileObject.Key}");
+        var responseStream = response.BodyWriter.AsStream();
+        await fileObject.ResponseStream.CopyToAsync(responseStream);
+    })
+```
 
 When the versionId is null, it retrieves the latest version of the given key if it exists.
 
@@ -132,24 +140,27 @@ You can retrieve all the versions of the object if required for a given key in a
 
 This allows one to navigate the different versions of the object for that key.
 
-    app.MapGet("/get-file-versions", async (
-            string key, IAmazonS3 s3Client) =>
-        {
-            var fileObject = await s3Client
-                .ListVersionsAsync(
-                    new ListVersionsRequest()
-                    {
-                        BucketName = bucketName,
-                        Prefix = key
-                    });
-            return fileObject.Versions
-                .Select(a => new
+
+```csharp
+app.MapGet("/get-file-versions", async (
+        string key, IAmazonS3 s3Client) =>
+    {
+        var fileObject = await s3Client
+            .ListVersionsAsync(
+                new ListVersionsRequest()
                 {
-                    a.BucketName, a.Key, 
-                    a.VersionId, a.IsLatest, 
-                    a.IsDeleteMarker
+                    BucketName = bucketName,
+                    Prefix = key
                 });
-        })
+        return fileObject.Versions
+            .Select(a => new
+            {
+                a.BucketName, a.Key, 
+                a.VersionId, a.IsLatest, 
+                a.IsDeleteMarker
+            });
+    })
+```
 
 The `ListVersionsAsync` method can be used by passing in the `ListVersionsRequest` object with the bucket name and a Prefix attribute.
 
@@ -165,18 +176,21 @@ Deleting a file in a non-versioned S3 bucket deletes it forever, and you cannot 
 
 However, a delete on a versioned S3 bucket only inserts a new object against the key as a delete marker, becoming the latest version for that object. It does not delete the actual file but maintains a version of it.
 
-    app.MapDelete("/delete-file", 
-            async (
-                string fileName, string? versionId, IAmazonS3 s3Client) =>
+
+```csharp
+app.MapDelete("/delete-file", 
+        async (
+            string fileName, string? versionId, IAmazonS3 s3Client) =>
+    {
+        await s3Client.DeleteObjectAsync(new DeleteObjectRequest()
         {
-            await s3Client.DeleteObjectAsync(new DeleteObjectRequest()
-            {
-                BucketName = bucketName,
-                Key = fileName,
-                VersionId = versionId
-            });
-            return Results.NoContent();
-        })
+            BucketName = bucketName,
+            Key = fileName,
+            VersionId = versionId
+        });
+        return Results.NoContent();
+    })
+```
 
 Performing a `GET` Object request when the current version is a delete marker returns a 404 Not Found error, very similar to how it would work on a non-versioned S3 bucket.
 

@@ -3,12 +3,12 @@ title: "How To Deploy Web App and Web Job In A Single Pipeline"
 slug: "azure-webapp-with-webjobs-dotnet-core-build-depoy"
 date: "2021-05-07T00:00:00.000Z"
 feature_image: "/images/andrik-langfield-ujx_KIIujRg-unsplash.jpg"
-tags: []
+tags: ["DevOps","Azure"]
 ---
 
 How do you deploy an Azure Web App along with a Web Job?
 
-I keep getting this question. I had covered how to [Continuously Deploy Your .NET Core Azure WebJobs](__GHOST_URL__/blog/azure-webjobs-dotnet-core-build-depoy/) in a previous post. Check that out if you are getting started with WebJobs.
+I keep getting this question. I had covered how to [Continuously Deploy Your .NET Core Azure WebJobs](/posts/azure-webjobs-dotnet-core-build-depoy/) in a previous post. Check that out if you are getting started with WebJobs.
 
 This post will add to the [earlier project](https://rahulpnath.visualstudio.com/YouTube%20Samples/_git/WebJobs), an Azure Web App and show how to set up a build and deploy pipeline for both Web App and Web Job.
 
@@ -22,7 +22,7 @@ Let's add an [ASP NET Core React Single Page Application](https://youtu.be/mILRI
 The solution now has two projects:
 
 *   **WebApExample -** React Single Page Application
-*   **WebJobExample.WebJob -** Web Job Application (set up in this [post in detail](__GHOST_URL__/blog/azure-webjobs-dotnet-core-build-depoy/))
+*   **WebJobExample.WebJob -** Web Job Application (set up in this [post in detail](/posts/azure-webjobs-dotnet-core-build-depoy/))
 
 ![Web App with Web Job Visual Studio Solution Explorer](/images/web_app_with_web_job.jpg)
 
@@ -117,7 +117,7 @@ Access secrets in Azure Key Vault from .Net Core and learn how to elegantly hand
 
 ![](/images/pfx_security.jpg)
 
-](__GHOST_URL__/blog/connect-net-core-to-azure-key-vault-in-ten-minutes)
+](/posts/connect-net-core-to-azure-key-vault-in-ten-minutes)
 
 The Task by default uses Zip Deploy unless explicitly specified under the 'Additional Deployment Options' section.
 
@@ -140,7 +140,7 @@ If the Web App and Web Job are usually deployed together and depend on each othe
 
 However, if the Web Job and the Web App are unrelated and changes are independent and need to be released independently, I suggest keeping them in different App Service.
 
-Instead of deploying it under the same App Service as the Web App, you can create a new App Service. For Azure Web App, the pricing is at the [Azure App Service Plan](https://docs.microsoft.com/en-us/azure/app-service/overview-hosting-plans). You can create both the App Service under the same plan to save on cost. You can then create one [pipeline for Web App](https://youtu.be/SYhufaLn51w) and [another pipeline for Web Job](__GHOST_URL__/blog/azure-webjobs-dotnet-core-build-depoy/).
+Instead of deploying it under the same App Service as the Web App, you can create a new App Service. For Azure Web App, the pricing is at the [Azure App Service Plan](https://docs.microsoft.com/en-us/azure/app-service/overview-hosting-plans). You can create both the App Service under the same plan to save on cost. You can then create one [pipeline for Web App](https://youtu.be/SYhufaLn51w) and [another pipeline for Web Job](/posts/azure-webjobs-dotnet-core-build-depoy/).
 
 Keeping it separate avoids deploying into specific folders of the App Service (in this case, web app into _wwwroot_ and web jobs to the _AppData/jobs_). Any changes to the file will trigger a restart of the App Service instance. You could also consider making the Web Job an Azure Function in this case.
 

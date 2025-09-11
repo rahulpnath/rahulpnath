@@ -3,7 +3,8 @@ title: "Step-by-Step: Setting Up GitHub Actions to Build and Deploy .NET to EC2"
 slug: "ec2-github-actions-asp-net"
 date: "2025-07-13T19:56:01.000Z"
 feature_image: "/images/Copy-of-AWS-EC2-Build-Deploy-Pipeline--1-.png"
-tags: []
+tags: ["AWS","EC2"]
+excerpt: "Learn how to set up a complete CI/CD pipeline using GitHub Actions to build and deploy ASP.NET Core applications to AWS EC2 instances with systemd service management."
 ---
 
 In this post, we’ll set up a **build and deployment pipeline using GitHub Actions** to deploy an [ASP.NET](http://ASP.NET) Core application to an AWS EC2 instance.
@@ -16,7 +17,7 @@ We’ll configure the GitHub Actions workflow to:
 
 <iframe src="https://www.youtube.com/embed/hViTuEA75-w?feature=oembed" />
 
-This post is part of my [AWS EC2 series](__GHOST_URL__/blog/tag/ec2/), and thanks to AWS for sponsoring this video.
+This post is part of my [AWS EC2 series](/posts/tag/ec2/), and thanks to AWS for sponsoring this video.
 
 If you are completely new to running .NET apps on AWS EC2 I highly recommend checking out my Step-by-Step guide.
 
@@ -30,7 +31,7 @@ Let’s learn how to leverage Amazon EC2 to host your .NET applications. In this
 
 ![](/images/EC2-ASP-NET.png)
 
-](__GHOST_URL__/blog/amazon-ec2-dotnet-api-hosting/)
+](/posts/amazon-ec2-dotnet-api-hosting/)
 
 Setting Up EC2 Instance
 -----------------------
@@ -51,12 +52,13 @@ AWS CDK simplifies Cloud Infrastructure management. CDK lets you define AWS reso
 
 ![](/images/AWS-CDK-3.png)
 
-](__GHOST_URL__/blog/aws-cdk-dotnet/)
+](/posts/aws-cdk-dotnet/)
 
 Here's a snippet from the [CDK code](https://github.com/rahulpnath/aws-ec2/commit/1c358d5218a1b84206048043bf04eef854d0a70f#diff-ceaf3769e56ae6c1122a8121107e005a33d99b33f6580d4521e7705f9d17dbfd) to set up the EC2 instance.
 
-    // Create EC2 InstanceMore actions
-    var instance = new Instance_(this, "WebApiInstance", new InstanceProps {
+```csharp
+// Create EC2 InstanceMore actions
+var instance = new Instance_(this, "WebApiInstance", new InstanceProps {
       InstanceType = InstanceType.Of(InstanceClass.BURSTABLE3, InstanceSize.MICRO),
         MachineImage = MachineImage.LatestAmazonLinux2023(),
         Vpc = vpc,
@@ -64,6 +66,7 @@ Here's a snippet from the [CDK code](https://github.com/rahulpnath/aws-ec2/commi
         SecurityGroup = securityGroup,
         KeyPair = KeyPair.FromKeyPairName(this, "key-0a498c763ef8ab954", "my-key-pair"),
     });
+```
 
 To set up the key pair navigate to the AWS Console → EC2 → Key Pairs
 
@@ -123,16 +126,18 @@ This GitHub Actions workflow starts when a push is made to the `test` branch. It
 *   Runs `dotnet publish` from the `src/` directory, targeting `linux-x64` and generating a **self-contained** release build.
 *   Outputs the build to a `./publish` folder for deployment.
 
-    - uses: actions/checkout@v3
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-    
-    - name: Publish
-      working-directory: src
-      run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --output ./publish --self-contained true -r linux-x64
+```yaml
+- uses: actions/checkout@v3
+
+- name: Setup .NET
+  uses: actions/setup-dotnet@v3
+  with:
+    dotnet-version: ${{ env.DOTNET_VERSION }}
+
+- name: Publish
+  working-directory: src
+  run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --output ./publish --self-contained true -r linux-x64
+```
 
 This ensures a clean, ready-to-run build that includes the .NET runtime.
 
@@ -147,43 +152,44 @@ Key steps include:
 *   **Transferring the published files and service definition** to the EC2 instance
 *   **Reloading `systemd` and restarting the service** to run the new version
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-    
-    - name: Copy files to EC2
-      working-directory: src
-      env:
-        EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-        EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
-      run: |
-        echo "$EC2_SSH_KEY" > ssh_key.pem
-        chmod 600 ssh_key.pem
-    
-        # Stop the service and clear the directory
-        ssh -o StrictHostKeyChecking=no -i ssh_key.pem $EC2_USERNAME '
-         sudo systemctl stop myapi || true
-         rm -rf ~/myapi/*
-        '
-    
-        # Copy the published files
-        scp -o StrictHostKeyChecking=no -i ssh_key.pem -r ./publish/* $EC2_USERNAME:~/myapi/
-    
-        # Copy the service file
-        scp -o StrictHostKeyChecking=no -i ssh_key.pem ./MyApi/myapi.service $EC2_USERNAME:~/myapi/
-    
-        # Setup and start the service
-        ssh -o StrictHostKeyChecking=no -i ssh_key.pem $EC2_USERNAME '
-         sudo cp ~/myapi/myapi.service /etc/systemd/system/
-         sudo chmod +x ~/myapi/MyApi
-         sudo systemctl daemon-reload
-         sudo systemctl enable myapi
-         sudo systemctl restart myapi
-        '
-    
+```yaml
+- name: Configure AWS credentials
+  uses: aws-actions/configure-aws-credentials@v2
+  with:
+    aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    aws-region: ${{ secrets.AWS_REGION }}
+
+- name: Copy files to EC2
+  working-directory: src
+  env:
+    EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+    EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+  run: |
+    echo "$EC2_SSH_KEY" > ssh_key.pem
+    chmod 600 ssh_key.pem
+
+    # Stop the service and clear the directory
+    ssh -o StrictHostKeyChecking=no -i ssh_key.pem $EC2_USERNAME '
+     sudo systemctl stop myapi || true
+     rm -rf ~/myapi/*
+    '
+
+    # Copy the published files
+    scp -o StrictHostKeyChecking=no -i ssh_key.pem -r ./publish/* $EC2_USERNAME:~/myapi/
+
+    # Copy the service file
+    scp -o StrictHostKeyChecking=no -i ssh_key.pem ./MyApi/myapi.service $EC2_USERNAME:~/myapi/
+
+    # Setup and start the service
+    ssh -o StrictHostKeyChecking=no -i ssh_key.pem $EC2_USERNAME '
+     sudo cp ~/myapi/myapi.service /etc/systemd/system/
+     sudo chmod +x ~/myapi/MyApi
+     sudo systemctl daemon-reload
+     sudo systemctl enable myapi
+     sudo systemctl restart myapi
+    '
+```
 
 This ensures a consistent and automated deployment with minimal manual intervention.
 

@@ -3,7 +3,7 @@ title: "Windows Phone Series: Bing Maps and Turn-by-Turn Navigation"
 slug: "windows-phone-series-bing-maps-and-turn-by-turn-navigation"
 date: "2014-03-07T23:40:39.000Z"
 feature_image: "/images/Bing_wp_simulator_geolocation.jpg"
-tags: []
+tags: ["Dotnet"]
 ---
 
 Many applications today provide features that integrate with users location and provide information on a map based on that. In this blog will see how we can use the Bing maps to show a users current location, search for destination and show route to that location. For this will use Bing maps, and you would have to create an account here and create a key that we would be using. Make sure that you read on the [licensing terms](http://www.microsoft.com/maps/product/terms.html) on the api if you are planning to use this in a published application.
@@ -31,8 +31,10 @@ The  first thing that we would want is to track our location, so that we could 
 
     GeoPosition myPosition;
     
-    private void TrackMe()
-    {
+```csharp
+private void TrackMe()
+{
+```
         startingPoint = null;
         CurrentPosition.Children.Clear();
         if (myWatcher != null)
@@ -46,8 +48,10 @@ The  first thing that we would want is to track our location, so that we could 
         myWatcher.PositionChanged += myWatcher_PositionChanged;
     }
     
-    void myWatcher_PositionChanged(object sender, GeoPositionChangedEventArgs e)
-    {
+```json
+void myWatcher_PositionChanged(object sender, GeoPositionChangedEventArgs e)
+{
+```
          myPosition = myWatcher.Position;
          currentLocation = myWatcher.Position.Location;
          if (isInDriveMode)
@@ -65,15 +69,19 @@ Location points are depicted on maps using the Pushpin user control. Now that we
 
     RouteServiceClient routeService = new RouteServiceClient("BasicHttpBinding_IRouteService");
     
-    routeService.CalculateRouteCompleted += (sender, e) =&gt;
-    {
+```json
+routeService.CalculateRouteCompleted += (sender, e) =&gt;
+{
+```
         DrawRoute(e);
     };
     
     mapBing.SetView(LocationRect.CreateLocationRect(locations));
     
-    routeService.CalculateRouteAsync(new RouteRequest()
-    {
+```csharp
+routeService.CalculateRouteAsync(new RouteRequest()
+{
+```
         Credentials = new Credentials()
         {
             ApplicationId = LocationManager.bingApiKey
@@ -92,9 +100,11 @@ Location points are depicted on maps using the Pushpin user control. Now that we
 
 The Draw route draws a route line on the RouteLayer on the map, so that the user can see the path that he needs to take to reach his final destination. As the user starts moving the routes are recalcualted and redrawn on the map, so that there is a constant feedback to the user on the path that he is taking. Along with the routes we also get a text direction information that describes the direction in which we need to travel. This can be spoken out to the user so that he need not always look at the mobile to find the next immediate action that he needs to perform. Here I have used the Google translate api
 
-    public static string speechUrl = "http://translate.google.com/translate_tts?tl=en&amp;q=";
-    private void SpeakText(string message)
-    {
+```csharp
+public static string speechUrl = "http://translate.google.com/translate_tts?tl=en&amp;q=";
+private void SpeakText(string message)
+{
+```
         // Play the audio
         med1.Source = new Uri(speechUrl + message);
         med1.Play();

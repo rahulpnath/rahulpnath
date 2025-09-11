@@ -3,10 +3,10 @@ title: "Function URLs - Quick and Easy way to Invoke AWS Lambda Functions over H
 slug: "function-urls-in-aws-lambda-dotnet"
 date: "2022-10-25T06:37:22.000Z"
 feature_image: "/images/AWS-Lambda-Function-URLs.png"
-tags: []
+tags: ["AWS","Lambda"]
 ---
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/blog/category/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/posts/category/aws/)._
 
 A Function URL is a dedicated HTTP(S) endpoint for your Lambda function.
 
@@ -29,11 +29,11 @@ Let's first create a new Lambda Function to see Function URLs in action. For thi
 
 ### Create a .NET Lambda Function
 
-Install the AWS Toolkit ([Visual Studio](https://aws.amazon.com/visualstudio/), [Rider](https://aws.amazon.com/rider/), [VS Code](https://aws.amazon.com/visualstudiocode/)) and [set up Credentials for the local development environment](__GHOST_URL__/blog/amazon-credentials-dotnet/). The toolkit helps you quickly develop .NET applications on the AWS infrastructure and deploy them quickly to your AWS Accounts.
+Install the AWS Toolkit ([Visual Studio](https://aws.amazon.com/visualstudio/), [Rider](https://aws.amazon.com/rider/), [VS Code](https://aws.amazon.com/visualstudiocode/)) and [set up Credentials for the local development environment](/posts/amazon-credentials-dotnet/). The toolkit helps you quickly develop .NET applications on the AWS infrastructure and deploy them quickly to your AWS Accounts.
 
 With the AWS Toolkit installed, select the AWS Lambda Lambda Project template from the new project template and choose the Empty Function blueprint. This creates an AWS Lambda function template project with a `Function.cs` class.
 
-To handle requests coming from Function URLs, the Lambda input must be of type `APIGatewayHttpApiV2ProxyRequest`. This is the same input type required when building [HTTP APIs (v2 payload) on Amazon API Gateway](__GHOST_URL__/blog/amazon-api-gateway-http-apis/).
+To handle requests coming from Function URLs, the Lambda input must be of type `APIGatewayHttpApiV2ProxyRequest`. This is the same input type required when building [HTTP APIs (v2 payload) on Amazon API Gateway](/posts/amazon-api-gateway-http-apis/).
 
 Update the input type; for now, we will return the body coming in as part of the request.
 
@@ -46,7 +46,7 @@ Update the input type; for now, we will return the body coming in as part of the
 
 ### Deploy Lambda Function
 
-To publish the Lambda function to an AWS account, you can use the Publish to AWS Lambda option that the AWS Toolkit provides. You can directly publish the new lambda function with your [development environment connected to your AWS account](__GHOST_URL__/blog/amazon-credentials-dotnet/).
+To publish the Lambda function to an AWS account, you can use the Publish to AWS Lambda option that the AWS Toolkit provides. You can directly publish the new lambda function with your [development environment connected to your AWS account](/posts/amazon-credentials-dotnet/).
 
 I prefer to set up an automated build/deploy pipeline to publish to your AWS Account for real-world applications. Check out the below for an example of how to set up a Lambda Function deployment pipeline from GitHub Actions.
 
@@ -96,8 +96,10 @@ To have finer control over the returned HTTP Status code and response content, w
         };
     }
     
-    private static APIGatewayHttpApiV2ProxyResponse BadRequest()
-    {
+```csharp
+private static APIGatewayHttpApiV2ProxyResponse BadRequest()
+{
+```
         return new APIGatewayHttpApiV2ProxyResponse()
         {
             StatusCode = (int)HttpStatusCode.BadRequest

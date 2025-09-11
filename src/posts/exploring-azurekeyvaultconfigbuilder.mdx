@@ -3,14 +3,14 @@ title: "Exploring AzureKeyVaultConfigBuilder"
 slug: "exploring-azurekeyvaultconfigbuilder"
 date: "2018-06-22T00:00:00.000Z"
 feature_image: "/images/AzureKeyVaultConfigBuilder_config.png"
-tags: []
+tags: ["Azure"]
 ---
 
-Over the last weekend, I was playing around with [Visual Studio Connected Services support for Azure Key Vault](__GHOST_URL__/blog/azure-key-vault-as-a-connected-service-in-visual-studio-2017/). The new feature allows seamless integration of ASP.NET Web applications with Azure Key Vault, making it as simple as using the ConfigurationManager to retrieve the Secrets from the Key Vault - just like you would retrieve it from the config file.
+Over the last weekend, I was playing around with [Visual Studio Connected Services support for Azure Key Vault](/posts/azure-key-vault-as-a-connected-service-in-visual-studio-2017/). The new feature allows seamless integration of ASP.NET Web applications with Azure Key Vault, making it as simple as using the ConfigurationManager to retrieve the Secrets from the Key Vault - just like you would retrieve it from the config file.
 
 ![](/images/AzureKeyVaultConfigBuilder_config.png)
 
-In this post, we will look detailed into the [AzureKeyVaultConfigBuilder](https://github.com/aspnet/MicrosoftConfigurationBuilders/tree/master/src/Azure) class that allows the seamless integration provided by Connected Services. As we saw in the previous post when you add [Key Vault as a Connected Service](__GHOST_URL__/blog/azure-key-vault-as-a-connected-service-in-visual-studio-2017/), it modifies the applications configuration file to add in the AzureKeyVaultConfigBuilder references.
+In this post, we will look detailed into the [AzureKeyVaultConfigBuilder](https://github.com/aspnet/MicrosoftConfigurationBuilders/tree/master/src/Azure) class that allows the seamless integration provided by Connected Services. As we saw in the previous post when you add [Key Vault as a Connected Service](/posts/azure-key-vault-as-a-connected-service-in-visual-studio-2017/), it modifies the applications configuration file to add in the AzureKeyVaultConfigBuilder references.
 
 Make sure to update the **_Microsoft.Configuration.ConfigurationBuilders.Azure_** and **_Microsoft.Configuration.ConfigurationBuilders.Base_** Nuget packages to the latest version.
 
@@ -100,12 +100,14 @@ By default, the Key Vault Config Builder is set to preload the available Secrets
 Authentication Modes
 --------------------
 
-The connectionString attribute allows you to specify the authentication mechanism with Key Vault. By default when using the Connected Service to create the key vault it adds the Visual Studio user to the access policies of the Key Vault. When connecting it uses the same. But this does not help you in a large team scenario. Most likely the Vault will be created under your organization subscription and you might want to share the same vault between all developers in the team. You could add the users individually and give them the appropriate access policies, but this might soon become cumbersome for a large team. Instead of using the [Client Id/Secret or Certificate](__GHOST_URL__/blog/authenticating-a-client-application-with-azure-key-vault/) authentication along with [Managed Service Identity](__GHOST_URL__/blog/authenticating-with-azure-key-vault-using-managed-service-identity/) configuration for localhost works the best. The configuration provider will then use the _AzureServicesAuthConnectionString_ value from environment variable to connect to the key vault.
+The connectionString attribute allows you to specify the authentication mechanism with Key Vault. By default when using the Connected Service to create the key vault it adds the Visual Studio user to the access policies of the Key Vault. When connecting it uses the same. But this does not help you in a large team scenario. Most likely the Vault will be created under your organization subscription and you might want to share the same vault between all developers in the team. You could add the users individually and give them the appropriate access policies, but this might soon become cumbersome for a large team. Instead of using the [Client Id/Secret or Certificate](/posts/authenticating-a-client-application-with-azure-key-vault/) authentication along with [Managed Service Identity](/posts/authenticating-with-azure-key-vault-using-managed-service-identity/) configuration for localhost works the best. The configuration provider will then use the _AzureServicesAuthConnectionString_ value from environment variable to connect to the key vault.
 
-    Set AzureServicesAuthConnectionString Environment variable
-    RunAs=App;AppId=AppId;TenantId=TenantId;AppKey=Secret.
-    Or
-    RunAs=App;AppId=AppId;TenantId=TenantId;CertificateThumbprint=Thumbprint;CertificateStoreLocation=CurrentUser
+```bash
+Set AzureServicesAuthConnectionString Environment variable
+RunAs=App;AppId=AppId;TenantId=TenantId;AppKey=Secret.
+Or
+RunAs=App;AppId=AppId;TenantId=TenantId;CertificateThumbprint=Thumbprint;CertificateStoreLocation=CurrentUser
+```
     
 
 As you can see the AzureKeyVaultConfigBuilder does provide good integration with Key Vault and makes using the Key Vault seamless. It does have a few issues, especially around [handling different Secret versions](https://github.com/aspnet/MicrosoftConfigurationBuilders/issues/20), which might be fixed in future releases.

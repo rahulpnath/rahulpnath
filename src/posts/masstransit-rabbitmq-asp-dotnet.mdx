@@ -3,7 +3,7 @@ title: "A Beginner's Guide to MassTransit and RabbitMQ in ASP NET"
 slug: "masstransit-rabbitmq-asp-dotnet"
 date: "2024-09-26T04:56:50.000Z"
 feature_image: "/images/MassTransit---RabbitMQ.png"
-tags: []
+tags: ["RabbitMQ","AWS"]
 ---
 
 MassTransit is a powerful .NET library for building distributed systems.
@@ -27,8 +27,10 @@ Installing and Setting Up MassTransit in ASP NET Core
 
 To install MassTransit with RabbitMQ in an ASP.NET Core application, run the following commands to add the required NuGet packages:
 
-    dotnet add package MassTransit.AspNetCore
-    dotnet add package MassTransit.RabbitMQ
+```bash
+dotnet add package MassTransit.AspNetCore
+dotnet add package MassTransit.RabbitMQ
+```
     
 
 NuGet packages required for MassTransit with RabbitMQ transport.
@@ -82,8 +84,10 @@ To consume a message in MassTransit, Create a consumer class that implements `IC
 
 The `SendNewWeatherDataEmail` class consumes the `WeatherDataAddedEvent` published from our `POST` endpoint.
 
-    public class SendNewWeatherDataEmail: IConsumer<WeatherDataAddedEvent>
-    {
+```csharp
+public class SendNewWeatherDataEmail: IConsumer<WeatherDataAddedEvent>
+{
+```
         public Task Consume(ConsumeContext<WeatherDataAddedEvent> context)
         {
             Console.WriteLine(@$"Sending Email for City {context.Message.City} 
@@ -114,7 +118,7 @@ RabbitMQ is a powerful open-source message broker facilitating communication bet
 
 ![](/images/RabbitMQ-2.png)
 
-](__GHOST_URL__/blog/tag/rabbitmq/)
+](/posts/tag/rabbitmq/)
 
 You can host a RabbitMQ instance in multiple ways. For this blog post, I use an AWS MQ-hosted instance of RabbitMQ.
 
@@ -124,8 +128,10 @@ Creating an AWS MQ hosted instance of RabbitMQ.
 
 The following code in `Program.cs`registers MassTransit and sets up the RabbitMQ transport.
 
-    builder.Services.AddMassTransit(mt =>
-    {
+```javascript
+builder.Services.AddMassTransit(mt =>
+{
+```
         mt.AddConsumer<SendNewWeatherDataEmail>();
         
         var rabbitConfiguration = builder.Configuration

@@ -3,7 +3,7 @@ title: "Rabbit MQ Exchange and Exchange Types: What You Need to Know"
 slug: "rabbitmq-exchanges-dotnet"
 date: "2024-02-28T03:37:58.000Z"
 feature_image: "/images/RabbitMQ---Exchange.png"
-tags: []
+tags: ["RabbitMQ","AWS"]
 excerpt: "Learn about RabbitMQ exchanges, exchange types, and how message routing works in .NET applications using Amazon MQ."
 ---
 
@@ -21,7 +21,7 @@ In this post let's learn
 
 I will use [Amazon MQ](https://aws.amazon.com/amazon-mq/?ref=rahulpnath.com), a managed message broker service that supports ActiveMQ and RabbitMQ engine types to host my RabbitMQ instance. However, you can use [one of the various options that RabbitMQ provides](https://www.rabbitmq.com/download.html?ref=rahulpnath.com) to host your instance,
 
-_This article is sponsored by AWS and is part of my_ [_RabbitMQ Series_](__GHOST_URL__/blog/tag/rabbitmq/)_._
+_This article is sponsored by AWS and is part of my_ [_RabbitMQ Series_](/posts/tag/rabbitmq/)_._
 
 What is A RabbitMQ Exchange?
 ----------------------------
@@ -68,7 +68,7 @@ RabbitMQ is a powerful open-source message broker facilitating communication bet
 
 ![](/images/rabbit-mq-dotnet.png)
 
-](__GHOST_URL__/blog/amazon-mq-rabbitmq-dotnet/)
+](/posts/amazon-mq-rabbitmq-dotnet/)
 
 Exchange and Bindings From a .NET Application
 ---------------------------------------------
@@ -91,8 +91,10 @@ The sender/publisher knows nothing about Queues.
 
 The `BasicPublish` method sends messages to an Exchange. It also supports sending the routing key for a message.
 
-    void SendMessage(IModel channel, string message, string routingKey)
-    {
+```csharp
+void SendMessage(IModel channel, string message, string routingKey)
+{
+```
         var body = Encoding.UTF8.GetBytes(message);
         channel.BasicPublish(exchangeName, routingKey, null, body);
         Console.WriteLine($"[x] Send {message}");
@@ -135,7 +137,7 @@ A Direct Exchange routes messages to queues whose binding key matches the messag
 
 ![](/images/RabbitMQ---Direct-Exchange.png)
 
-](__GHOST_URL__/blog/direct-exchange-rabbitmq-dotnet/)
+](/posts/direct-exchange-rabbitmq-dotnet/)
 
 ### Fanout Exchange
 

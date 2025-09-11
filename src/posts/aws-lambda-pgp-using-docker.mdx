@@ -3,7 +3,7 @@ title: "How To PGP Encrypt An S3 File Using AWS Lambda Running Docker Images"
 slug: "aws-lambda-pgp-using-docker"
 date: "2021-08-12T00:00:00.000Z"
 feature_image: "/images/docker_ship.jpg"
-tags: []
+tags: ["AWS","Lambda"]
 ---
 
 I recently worked on an integration with a Third-Party provider, and it required sending them data files PGP signed and encrypted.
@@ -53,42 +53,50 @@ To generate keys, we can use the `gpg --full-gen-key` command, which will ask fe
     
     OR 
     
-    gpg --batch --full-gen-key Sender # Certificate parameters in the file named Sender
-    gpg --batch --full-gen-key Recipient # Certificate parameters in the file named Recipient
+```powershell
+gpg --batch --full-gen-key Sender # Certificate parameters in the file named Sender
+gpg --batch --full-gen-key Recipient # Certificate parameters in the file named Recipient
+```
     
 
 Here's an example of a file with all the arguments. This is for the `Sender`; you can create one for the Recipient.
 
-    # Sender file
-    %echo Generating a basic OpenPGP key
-    Key-Type: RSA
-    Key-Length: 2048
-    Subkey-Type: RSA
-    Subkey-Length: 2048
-    Name-Real: Sender
-    Name-Comment: Sender
-    Name-Email: sender@email.com
-    Expire-Date: 1y
-    Passphrase: sender_password
-    # Do a commit here, so that we can later print "done" :-)
-    %commit
-    %echo done
+```bash
+# Sender file
+%echo Generating a basic OpenPGP key
+Key-Type: RSA
+Key-Length: 2048
+Subkey-Type: RSA
+Subkey-Length: 2048
+Name-Real: Sender
+Name-Comment: Sender
+Name-Email: sender@email.com
+Expire-Date: 1y
+Passphrase: sender_password
+# Do a commit here, so that we can later print "done" :-)
+%commit
+%echo done
+```
     
 
 The certificates can be exported into private and public key files using the `export` command. You can use this command if you want to share the public key file with the other party.
 
 The below commands exports the Sender certificate. Do the same for the Recipient certificates.
 
-    Export Key
-    gpg --output sender_public.pgp --armor --export sender@email.com
-    // Will prompt for paraphrase
-    gpg --output sender_private.pgp --armor --export-secret-key sender@email.com 
+```powershell
+Export Key
+gpg --output sender_public.pgp --armor --export sender@email.com
+// Will prompt for paraphrase
+gpg --output sender_private.pgp --armor --export-secret-key sender@email.com 
+```
     
 
 To encrypt and sign a plain text file, use the below command, which specifies the Recipient and the sender details, as shown below. It will prompt for the Sender's private key Passphrase (if you haven't noticed, is there in the Sender file we created above, which must be securely stored).
 
-    # Encrypt and Sign
-    gpg --recipient recipient --encrypt --sign --local-user sender --armor PlainFile.txt
+```powershell
+# Encrypt and Sign
+gpg --recipient recipient --encrypt --sign --local-user sender --armor PlainFile.txt
+```
     
 
 By default, the above command creates a file with the same name as the input appended with `.asc` in the end. You can override this if you want.
@@ -113,8 +121,10 @@ The `--homedir` is by default set to _'/tmp_' directory. This is because when ru
 
     private const string Root = "/tmp";
     
-    private async Task RunGpgExternalProcess(string arguments)
-    {
+```csharp
+private async Task RunGpgExternalProcess(string arguments)
+{
+```
         using (System.Diagnostics.Process proc = new System.Diagnostics.Process())
         {
             string result = "";
@@ -153,13 +163,17 @@ The `SaveCertsToDisk` function decodes the base64 encoded string and writes it i
 
 Note in this case, I am only importing the Sender's private key (for signing) and the Recipients Public Key (for encrypting). This is very similar to how it will be in a real-world Sender application.
 
-    private readonly string RecipientPublicKeyFile = $"{Root}/RecipientPublicKey.pgp";
-    private readonly string SenderPrivateKeyFile = $"{Root}/PrivateKey.pgp";
-    private readonly string OriginalFile = $"{Root}/Original.csv";
-    private readonly string OutputFileName = $"{Root}/PGP.csv";
+```csharp
+private readonly string RecipientPublicKeyFile = $"{Root}/RecipientPublicKey.pgp";
+private readonly string SenderPrivateKeyFile = $"{Root}/PrivateKey.pgp";
+private readonly string OriginalFile = $"{Root}/Original.csv";
+private readonly string OutputFileName = $"{Root}/PGP.csv";
+```
     
-    private async Task SaveCertsToDisk()
-    {
+```csharp
+private async Task SaveCertsToDisk()
+{
+```
         logger.LogInformation("Saving GPG Certificates Locally");
         string recipientPublicKey = PgpSettings.RecipientPublicKey.Base64Decode();
         string senderPrivateKey = PgpSettings.SenderPrivateKey.Base64Decode();
@@ -168,8 +182,10 @@ Note in this case, I am only importing the Sender's private key (for signing) an
         logger.LogInformation("Saved GPG Certificates Locally");
     }
     
-    private async Task ImportCertificatesIntoPgp()
-    {
+```csharp
+private async Task ImportCertificatesIntoPgp()
+{
+```
         logger.LogInformation("Importing Certificates into pgp keyring");
         string passphrase = PgpSettings.SenderPassphrase;
         await RunGpgExternalProcess( // Import Private Key into Key Ring
@@ -188,15 +204,19 @@ The code below writes the content into a local file (again inside the _/tmp_ fol
 
 With all the certificates imported into the gpg keyring, we can now use the `--encrypt` and `--sign` method to encrypt the original file. It returns the encrypted content as `byte[]`.
 
-    public async Task<byte[]> Convert(byte[] fileContent)
-    {
+```csharp
+public async Task<byte[]> Convert(byte[] fileContent)
+{
+```
         await SaveCertsToDisk();
         await ImportCertificatesIntoPgp();
         return await PgpEncryptAndSign(fileContent);
     }
     
-    private async Task<byte[]> PgpEncryptAndSign(byte[] fileContent)
-    {
+```csharp
+private async Task<byte[]> PgpEncryptAndSign(byte[] fileContent)
+{
+```
         logger.LogInformation("Starting PGP EncryptAndSign File Contents");
         var senderUserId = PgpSettings.SenderUserId;
         var recipientUserId = PgpSettings.RecipientUserId;
@@ -222,12 +242,14 @@ Learn how to get started with AWS Lambda with .NET Core by building out a simple
 
 ![](/images/aws_lambda.jpg)
 
-](__GHOST_URL__/blog/aws-lambda-net-core)
+](/posts/aws-lambda-net-core)
 
 The `FunctionHandler` method handles `S3Event`, raised based on the events that we listen to on the Lambda (will be set up later when we deploy to Lambda). We first read the file's contents, encrypt it using PGP and upload it back into an S3 bucket (conventionally named with an _'-encrypted_' at the end).
 
-    public async Task FunctionHandler(S3Event evnt, ILambdaContext context)
-    {
+```csharp
+public async Task FunctionHandler(S3Event evnt, ILambdaContext context)
+{
+```
         var s3Event = evnt.Records?[0].S3;
         if (s3Event == null) return;
         var bucketName = s3Event.Bucket.Name;
@@ -259,26 +281,40 @@ The `CMD` instructs the details to the `FunctionHandler` and is the entry point 
 
     FROM public.ecr.aws/lambda/dotnet:core3.1 AS base  
       
-    FROM mcr.microsoft.com/dotnet/sdk:3.1 as build  
-    WORKDIR /src  
-    COPY ["AWSLambdaS3.csproj", "base/"]  
-    RUN dotnet restore "base/AWSLambdaS3.csproj"  
+```bash
+FROM mcr.microsoft.com/dotnet/sdk:3.1 as build  
+WORKDIR /src  
+COPY ["AWSLambdaS3.csproj", "base/"]  
+RUN dotnet restore "base/AWSLambdaS3.csproj"  
+```
       
-    WORKDIR "/src"  
-    COPY . .  
-    RUN dotnet build "AWSLambdaS3.csproj" --configuration Release --output /app/build  
+```bash
+WORKDIR "/src"  
+COPY . .  
+RUN dotnet build "AWSLambdaS3.csproj" --configuration Release --output /app/build  
+```
       
-    FROM build AS publish  
-    RUN dotnet publish "AWSLambdaS3.csproj" \  
+```bash
+FROM build AS publish  
+RUN dotnet publish "AWSLambdaS3.csproj" \  
+```
                 --configuration Release \
                 --framework netcoreapp3.1 \
                 --self-contained false \   
                 --output /app/publish
       
-    FROM base AS final  
-    WORKDIR /var/task  
-    COPY --from=publish /app/publish .  
-    CMD ["AWSLambdaS3::AWSLambdaS3.Function::FunctionHandler"]
+```bash
+```bash
+```
+```bash
+FROM base AS final
+```
+```bash
+WORKDIR /var/task
+```
+COPY --from=publish /app/publish .  
+CMD ["AWSLambdaS3::AWSLambdaS3.Function::FunctionHandler"]
+```
     
 
 Packaging & Publishing - Manually
@@ -302,10 +338,12 @@ It logs into our private ECR repository using the AWS CLI, and then builds, tags
 
 You can find more details about it [here](https://docs.aws.amazon.com/AmazonECR/latest/userguide/getting-started-cli.html).
 
-    aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 189107071895.dkr.ecr.ap-southeast-2.amazonaws.com
-    docker build -t rahulpnath-test .
-    docker tag rahulpnath-test:latest 189107071895.dkr.ecr.ap-southeast-2.amazonaws.com/rahulpnath-test:latest
-    docker push 189107071895.dkr.ecr.ap-southeast-2.amazonaws.com/rahulpnath-test:latest
+```bash
+aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 189107071895.dkr.ecr.ap-southeast-2.amazonaws.com
+docker build -t rahulpnath-test .
+docker tag rahulpnath-test:latest 189107071895.dkr.ecr.ap-southeast-2.amazonaws.com/rahulpnath-test:latest
+docker push 189107071895.dkr.ecr.ap-southeast-2.amazonaws.com/rahulpnath-test:latest
+```
     
 
 If you get an _ERROR \[internal\] load metadata for public.ecr.aws/lambda/dotnet:core3.1, with a 40 Forbidden,_ you have to [login to the public repository](https://docs.aws.amazon.com/AmazonECR/latest/public/public-registries.html#public-registry-auth) as well.

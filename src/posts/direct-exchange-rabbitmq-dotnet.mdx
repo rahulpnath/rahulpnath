@@ -3,7 +3,7 @@ title: "RabbitMQ Direct Exchange Explained"
 slug: "direct-exchange-rabbitmq-dotnet"
 date: "2024-03-17T18:56:05.000Z"
 feature_image: "/images/RabbitMQ---Direct-Exchange.png"
-tags: []
+tags: ["RabbitMQ","AWS"]
 ---
 
 In RabbitMQ messages are published to an Exchange.
@@ -22,7 +22,7 @@ In this blog post, let's understand
 
 I will use [Amazon MQ](https://aws.amazon.com/amazon-mq/?ref=rahulpnath.com), a managed message broker service that supports ActiveMQ and RabbitMQ engine types to host my RabbitMQ instance. However, you can use [one of the various options that RabbitMQ provides](https://www.rabbitmq.com/download.html?ref=rahulpnath.com) to host your instance,
 
-_AWS sponsors this article and is part of my_ [_RabbitMQ Series_](__GHOST_URL__/blog/tag/rabbitmq/)_._
+_AWS sponsors this article and is part of my_ [_RabbitMQ Series_](/posts/tag/rabbitmq/)_._
 
 What is a Direct Exchange in RabbitMQ?
 --------------------------------------
@@ -77,7 +77,7 @@ RabbitMQ is a powerful open-source message broker facilitating communication bet
 
 ![](/images/rabbit-mq-dotnet.png)
 
-](__GHOST_URL__/blog/amazon-mq-rabbitmq-dotnet/)
+](/posts/amazon-mq-rabbitmq-dotnet/)
 
 ### Create RabbitMQ Direct Exchange From .NET
 
@@ -87,19 +87,25 @@ Exchanges are created using the Channel.
 
 The `ExchangeDeclare` the method takes in an exchange name and its type. Below is an example of creating a RabbitMQ Direct Exchange in .NET.
 
-    var factory = new ConnectionFactory()
-    {
+```csharp
+var factory = new ConnectionFactory()
+{
+```
         Uri = new Uri("YOUR RABBIT INSTANCE URI"),
         Port = 5671,
         UserName = "<USERNAME FROM CONFIGURATION FILE>",
         Password = "<PASSWORD FROM CONFIGURATION FILE>"
     };
     
-    using var connection = factory.CreateConnection();
-    using var channel = connection.CreateModel();
+```csharp
+using var connection = factory.CreateConnection();
+using var channel = connection.CreateModel();
+```
     
-    var exchangeName = "weather_direct";
-    channel.ExchangeDeclare(exchangeName, ExchangeType.Direct);
+```csharp
+var exchangeName = "weather_direct";
+channel.ExchangeDeclare(exchangeName, ExchangeType.Direct);
+```
 
 When sending a message, the sender specifies the Exchange and routing key..
 
@@ -113,22 +119,30 @@ Messages are routed to Queues from Exchanges using the Binding information.
 
 To create a Queue, use the `QueueDeclare` method. It will create a new Queue only if one doesn't exist with the same name.
 
-    var factory = new ConnectionFactory()
-    {
+```csharp
+var factory = new ConnectionFactory()
+{
+```
         Uri = new Uri("YOUR RABBIT INSTANCE URI"),
         Port = 5671,
         UserName = "<USERNAME FROM CONFIGURATION FILE>",
         Password = "<PASSWORD FROM CONFIGURATION FILE>"
     };
     
-    using var connection = factory.CreateConnection();
-    using var channel = connection.CreateModel();
+```csharp
+using var connection = factory.CreateConnection();
+using var channel = connection.CreateModel();
+```
     
-    var queueName = "nsw";
-    channel.QueueDeclare(queueName, false, false, false, null);
+```csharp
+var queueName = "nsw";
+channel.QueueDeclare(queueName, false, false, false, null);
+```
     
-    var routingKey = "sydney";
-    channel.QueueBind(queueName, "weather_direct", routingKey);
+```csharp
+var routingKey = "sydney";
+channel.QueueBind(queueName, "weather_direct", routingKey);
+```
 
 Using the `QueueBind` method on the channel, we can bind the Queue with the Exchange and specify the routing key.
 
@@ -138,7 +152,9 @@ Since an Exchange and Queue can have multiple Bindings, we can add more bindings
 
 E.g., The below code registers all weather updates for the city of Wollongong to be also sent to the same `nsw` queue.
 
-    var routingKey1 = "wollongong";
-    channel.QueueBind(queueName, "weather_direct", routingKey1);
+```csharp
+var routingKey1 = "wollongong";
+channel.QueueBind(queueName, "weather_direct", routingKey1);
+```
 
 Similarly, you can create multiple Queues as required and associate different Binding.

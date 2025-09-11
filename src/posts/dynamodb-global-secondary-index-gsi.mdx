@@ -3,10 +3,10 @@ title: "Exploring Global Secondary Index: Advanced Querying in DynamoDB From .NE
 slug: "dynamodb-global-secondary-index-gsi"
 date: "2023-06-21T20:01:27.000Z"
 feature_image: "/images/DynamoDB-GSI.png"
-tags: []
+tags: ["AWS","DynamoDB"]
 ---
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 Amazon DynamoDB provides fast access to items in a table by specifying primary key values.
 
@@ -37,7 +37,7 @@ Learn how to get started with AWS DynamoDB with .NET Core by updating the defaul
 
 ![](/images/aws_dynamodb.jpg)
 
-](__GHOST_URL__/blog/aws-dynamodb-net-core/)
+](/posts/aws-dynamodb-net-core/)
 
 Create a DynamoDB GSI
 ---------------------
@@ -120,7 +120,7 @@ When reading data from a DynamoDB table, by default, it returns all of the attri
 
 ![](/images/DynamoDB-Projection-Expressions.png)
 
-](__GHOST_URL__/blog/dynamodb-projection-expressions/)
+](/posts/dynamodb-projection-expressions/)
 
 💡
 
@@ -152,15 +152,17 @@ Querying is an essential operation in DynamoDB. It allows you to filter and sele
 
 ![](/images/DynamoDB-Querying-new.png)
 
-](__GHOST_URL__/blog/dynamodb-querying-dotnet/)
+](/posts/dynamodb-querying-dotnet/)
 
 Using the `IAmazonDynamoDB` and the `QueryAsync` method you can specify the `IndexName` on the `QueryRequest` class.
 
 With that specified the rest of the properties are exactly as you would query a normal DynamoDB table.
 
-    [HttpGet("gsi-query")]
-    public async Task<IEnumerable<WeatherForecastListItem>> GetUsingGSIQuery(DateTime startDate)
-    {
+```csharp
+[HttpGet("gsi-query")]
+public async Task<IEnumerable<WeatherForecastListItem>> GetUsingGSIQuery(DateTime startDate)
+{
+```
         var request = new QueryRequest()
         {
             TableName = nameof(WeatherForecast),
@@ -197,7 +199,7 @@ DynamoDB charges for reading, writing, and storing data in your DynamoDB tables.
 
 ![](/images/DynamoDB-Pagination.png)
 
-](__GHOST_URL__/blog/dynamodb-pagination/)
+](/posts/dynamodb-pagination/)
 
 Designing DynamoDB GSI
 ----------------------

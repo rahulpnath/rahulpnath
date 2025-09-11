@@ -3,7 +3,7 @@ title: "A Step-by-Step Guide to AWS Message Processing with Amazon SQS in .NET"
 slug: "aws-message-processing-framework"
 date: "2024-11-08T06:35:29.000Z"
 feature_image: "/images/AWS-Message-Processing-Fwk--1-.png"
-tags: []
+tags: ["AWS"]
 ---
 
 The AWS Message Processing Framework for .NET is an AWS-native toolkit for building .NET applications with messaging services like SQS and EventBridge.
@@ -20,7 +20,7 @@ Let's explore how to get started using the AWS Message Processing Framework for 
 
 __This framework is currently in pre-release, and some of its functionalities may change.__
 
-Thanks to AWS for sponsoring this post in my [.NET on AWS Series](__GHOST_URL__/blog/tag/aws/)
+Thanks to AWS for sponsoring this post in my [.NET on AWS Series](/posts/tag/aws/)
 
 Setting Up AWS Message Processing Framework in a .NET App
 ---------------------------------------------------------
@@ -47,12 +47,14 @@ Learn how to get started with Amazon SQS and use it from a .NET Application. We 
 
 ![](/images/queue.jpg)
 
-](__GHOST_URL__/blog/amazon-sqs/)
+](/posts/amazon-sqs/)
 
 For a quick recap, below is how you send messages using the default .NET Client for Amazon SQS.
 
-    public async Task Post(WeatherForecast data)
-    {
+```csharp
+public async Task Post(WeatherForecast data)
+{
+```
         var client = new AmazonSQSClient();
         var request = new SendMessageRequest()
         {
@@ -129,8 +131,10 @@ The AWS.Messaging framework provides a `IMessageHandler<>` generic interface to 
 
 Below is an example message handler that handles `WeatherForecastAddedEvent` what we sent earlier.
 
-    class WeatherForecastAddedEventHandler: IMessageHandler<WeatherForecastAddedEvent>
-    {
+```csharp
+class WeatherForecastAddedEventHandler: IMessageHandler<WeatherForecastAddedEvent>
+{
+```
         public Task<MessageProcessStatus> HandleAsync(
             MessageEnvelope<WeatherForecastAddedEvent> messageEnvelope, 
             CancellationToken token = new CancellationToken())
@@ -159,8 +163,10 @@ We also need to set up the Message Poller that automatically polls for messages 
 
 This is again done using the same `AddAWSMessageBus` extension method we used to set up the `ISQSPublisher`.
 
-    builder.Services.AddAWSMessageBus((builder) =>
-    {
+```javascript
+builder.Services.AddAWSMessageBus((builder) =>
+{
+```
         var weatherDataQueue = "<YOUR QUEUE URL>";
         builder.AddMessageHandler<WeatherForecastAddedEventHandler, WeatherForecastAddedEvent>(
             nameof(WeatherForecastAddedEvent));
@@ -175,10 +181,12 @@ If an exception is thrown when processing messages, the message is put back into
 
 By default, for AWS SQS, this is 30 seconds. However, you can adjust this at the queue or subscriber level.
 
-    builder.AddSQSPoller(weatherDataQueue, options =>
-    {
+```javascript
+builder.AddSQSPoller(weatherDataQueue, options =>
+{
+```
         options.VisibilityTimeout = 5;
         options.VisibilityTimeoutExtensionThreshold = 2;
     });
 
-For transient errors, message processing can succeed in subsequent retries. You can also set up a [Dead Letter Queue](__GHOST_URL__/blog/amazon-sqs/#dead-letter-queue) to hold messages that fail to be processed for code/business-level errors or exceptions.
+For transient errors, message processing can succeed in subsequent retries. You can also set up a [Dead Letter Queue](/posts/amazon-sqs/#dead-letter-queue) to hold messages that fail to be processed for code/business-level errors or exceptions.

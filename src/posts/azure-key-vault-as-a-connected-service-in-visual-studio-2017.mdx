@@ -3,10 +3,10 @@ title: "Azure Key Vault As A Connected Service in Visual Studio 2017"
 slug: "azure-key-vault-as-a-connected-service-in-visual-studio-2017"
 date: "2018-06-15T00:00:00.000Z"
 feature_image: "/images/keyVault_connectedService.png"
-tags: []
+tags: ["Azure"]
 ---
 
-Visual Studio (VS) now supports adding [Azure Key Vault](__GHOST_URL__/tag/azure-key-vault/) as a [Connected Service](https://docs.microsoft.com/en-us/azure/key-vault/vs-key-vault-add-connected-service), for Web Projects ( ASP.NET Core or any ASP.NET project). Enabling this from the Connected Service makes it easier for you to get started with Azure Key Vault. Below are the prerequisites to use the Connected Service feature
+Visual Studio (VS) now supports adding [Azure Key Vault](/blog/tag/azure-key-vault/) as a [Connected Service](https://docs.microsoft.com/en-us/azure/key-vault/vs-key-vault-add-connected-service), for Web Projects ( ASP.NET Core or any ASP.NET project). Enabling this from the Connected Service makes it easier for you to get started with Azure Key Vault. Below are the prerequisites to use the Connected Service feature
 
 <iframe src="https://www.youtube.com/embed/S7EPrlpPqXw" />
 
@@ -33,26 +33,34 @@ In short, VS adds
 *   Adds in the Keyvault Url details
 *   In ASP.NET Web project VS modifies the configuration file to add in the AzureKeyVaultConfigBuilder as shown below.
 
-    <configuration>
-    <configSections>
-    <section
+```html
+```xml
+```
+<configuration>
+<configSections>
+<section
+```
           name="configBuilders"
           type="System.Configuration.ConfigurationBuildersSection, System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
           restartOnExternalChanges="false"
           requirePermission="false" />
-    </configSections>
-    <configBuilders>
-    <builders>
-    <add
+```typescript
+</configSections>
+<configBuilders>
+<builders>
+<add
+```
           name="AzureKeyVault"
           vaultName="webapplication-47-dev-kv"
           type="Microsoft.Configuration.ConfigurationBuilders.AzureKeyVaultConfigBuilder, Microsoft.Configuration.ConfigurationBuilders.Azure, Version=1.0.0.0, Culture=neutral"
           vaultUri="https://WebApplication-47-dev-kv.vault.azure.net" />
-    </builders>
-    </configBuilders>
+```typescript
+</builders>
+</configBuilders>
+```
     
 
-To start using Azure Key Vault from your application we first need to add some Secrets to the Key Vault created by Visual Studio. You can add a secret to the portal using multiple ways, the most straightforward being [using the Azure Portal](__GHOST_URL__/blog/managing-key-vault-through-azure-portal/). Once you add the Secret to the Key Vault, update the configuration file with the Secret names. Below is how you would do for an ASP.NET Web Project. (_MySecret_ and _VersionedSecret_ keys)
+To start using Azure Key Vault from your application we first need to add some Secrets to the Key Vault created by Visual Studio. You can add a secret to the portal using multiple ways, the most straightforward being [using the Azure Portal](/posts/managing-key-vault-through-azure-portal/). Once you add the Secret to the Key Vault, update the configuration file with the Secret names. Below is how you would do for an ASP.NET Web Project. (_MySecret_ and _VersionedSecret_ keys)
 
 Make sure to add **configBuilders="AzureKeyVault"** to the appSettings tag. This tells the Configuraion Manager to use the configured AzureKeyVaultConfigBuilder
 
@@ -80,10 +88,10 @@ When VS creates the Vault, it adds in the user logged into VS to the Access Poli
 Secrets and Versioning
 ----------------------
 
-The [AzureKeyVaultConfigBuilder](https://github.com/aspnet/MicrosoftConfigurationBuilders/tree/master/src/Azure) requests to get all the Secrets in the Key Vault at application startup using the [Secrets endoint](https://docs.microsoft.com/en-us/rest/api/keyvault/getsecrets/getsecrets). This call returns all the Secrets in the Key Vault. For whatever keys in the AppSettings that has a match with a Secret in the vault, a request is made to get the [Secret details](https://docs.microsoft.com/en-us/rest/api/keyvault/getsecret/getsecret), which returns the actual Secret value for the keys. Below are the traces of the calls going out captured using [Fiddler](__GHOST_URL__/blog/fiddler-free-web-debugging-proxy/).
+The [AzureKeyVaultConfigBuilder](https://github.com/aspnet/MicrosoftConfigurationBuilders/tree/master/src/Azure) requests to get all the Secrets in the Key Vault at application startup using the [Secrets endoint](https://docs.microsoft.com/en-us/rest/api/keyvault/getsecrets/getsecrets). This call returns all the Secrets in the Key Vault. For whatever keys in the AppSettings that has a match with a Secret in the vault, a request is made to get the [Secret details](https://docs.microsoft.com/en-us/rest/api/keyvault/getsecret/getsecret), which returns the actual Secret value for the keys. Below are the traces of the calls going out captured using [Fiddler](/posts/fiddler-free-web-debugging-proxy/).
 
 ![AzureKeyVaultConfigBuilder Fiddler Traces ](/images/keyVault_connectedService_requests.png)
 
 It looks like at the moment the AzureKeyVaultConfigBuilder get only the latest version of the Secrets. As you can tell from one of my Secret names (VersionedSecret), I have created two versions for the Secret, and the config builder picks the latest version. I don't see a way right now whereby I can specify a specific secret version.
 
-The Visual Studio Connected Services makes it easy to get started with Azure Key Vault and move your secrets to a more secure store, than having it around in your [configuration files](__GHOST_URL__/blog/keeping-sensitive-configuration-data-out-of-source-control/).
+The Visual Studio Connected Services makes it easy to get started with Azure Key Vault and move your secrets to a more secure store, than having it around in your [configuration files](/posts/keeping-sensitive-configuration-data-out-of-source-control/).

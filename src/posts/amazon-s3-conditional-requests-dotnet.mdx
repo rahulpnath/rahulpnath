@@ -3,7 +3,7 @@ title: "Exploring Amazon S3 Conditional Operations From .NET Application"
 slug: "amazon-s3-conditional-requests-dotnet"
 date: "2024-10-04T05:19:16.000Z"
 feature_image: "/images/Copy-of-Amazon-S3-Versioning.png"
-tags: []
+tags: ["AWS"]
 excerpt: "Learn how to use Amazon S3 conditional requests in .NET applications to ensure data consistency, prevent conflicts, and maintain integrity with conditional reads and writes."
 ---
 
@@ -25,7 +25,7 @@ By specifying conditions you can avoid accidental overwrites, stale reads etc he
 
 Let’s explore both Conditional Reads and Conditional Writes in Amazon S3 and how to use them when building .NET applications.
 
-This article is sponsored by AWS and is part of my [.NET on AWS Series](__GHOST_URL__/blog/tag/aws/).
+This article is sponsored by AWS and is part of my [.NET on AWS Series](/posts/tag/aws/).
 
 Amazon S3 Conditional Writes From .NET
 --------------------------------------
@@ -42,13 +42,15 @@ When making the API request, specify the `If-None-Match` HTTP header with the va
 
 To use this from the .NET AWS S3 SDK, specify the `IfNoneMatch` property on the `PutObjectRequest` as shown below.
 
-    await s3Client.PutObjectAsync(new PutObjectRequest()
-    {
+```csharp
+await s3Client.PutObjectAsync(new PutObjectRequest()
+{
         BucketName = "<bucket-name>",
         Key = request.File.FileName,
         InputStream = request.File.OpenReadStream(),
         IfNoneMatch = "*"
     }, cancellationToken);
+```
 
 If a file with the same name exists in the bucket, the `PutObjectRequest` will fail with an exception - _Amazon.S3.AmazonS3Exception: At least one of the pre-conditions you specified did not hold_
 
@@ -68,7 +70,7 @@ Amazon S3 versioning is a powerful feature that allows you to preserve, retrieve
 
 ![](/images/Enable-S3-Versioning.png)
 
-](__GHOST_URL__/blog/amazon-s3-versioning-dotnet/)
+](/posts/amazon-s3-versioning-dotnet/)
 
 Conditional Requests work with versioning-enabled S3 buckets, too.
 
@@ -100,12 +102,14 @@ Below are the various HTTP headers supported with conditional reads.
 
 To use this from the .NET AWS S3 SDK, specify the `IfNoneMatch` property on the `GetObjectRequest` as shown below.
 
-    var file = await s3Client.GetObjectAsync(new GetObjectRequest()
-    {
+```csharp
+var file = await s3Client.GetObjectAsync(new GetObjectRequest()
+{
         BucketName = "user-service-large-messages",
         Key = fileName,
         EtagToMatch = etag
     });
+```
 
 The above code returns a file only if the ETag value provided matches that on S3.
 

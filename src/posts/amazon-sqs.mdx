@@ -3,10 +3,12 @@ title: "Amazon SQS For the .NET Developer: How to Easily Get Started"
 slug: "amazon-sqs"
 date: "2022-05-12T00:00:00.000Z"
 feature_image: "/images/queue.jpg"
-tags: []
+tags: ["AWS"]
+excerpt: "Learn how to get started with Amazon SQS and use it from a .NET Application. We will learn how to send and receive messages, important properties,and concepts that you need to know when using SQS."
+
 ---
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 Amazon Simple Queue Service (SQS) is a fully managed message queuing service that decouples applications and helps build distributed software systems.
 
@@ -58,15 +60,19 @@ In these cases, it’s good to decouple the endpoint from the actual processing 
 
 A Queue comes in handy for these scenarios. We can accept an incoming request and offload that as a message to the Queue for background processing.
 
-    [HttpPost]
-    public async Task Post(WeatherForecast data)
-    {
+```csharp
+[HttpPost]
+public async Task Post(WeatherForecast data)
+{
+```csharp
+```csharp
         var client = new AmazonSQSClient();
         var request = new SendMessageRequest()
         {
             MessageBody = JsonSerializer.Serialize(data),
             QueueUrl = "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo"
         };
+```
     
         var result = await client.SendMessageAsync(request);
     }
@@ -96,12 +102,16 @@ E.g., let’s say we want to send an email or a notification after 5 minutes, or
 
 We can use the `DelaySeconds` property on the Message object in these cases. It is the length of time, in seconds (0-900 seconds), to delay the specific message.
 
-    var request = new SendMessageRequest()
-    {
+```csharp
+var request = new SendMessageRequest()
+{
+```html
+```csharp
         QueueUrl = "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo",
         MessageBody = JsonSerializer.Serialize(data),
         DelaySeconds = 10
     };
+```
     
 
 Messages with a `DelaySecond` specified are available for processing in the Queue only after the delay period.
@@ -125,13 +135,16 @@ Background Tasks in ASP NET Core allow to run tasks in the background. For scena
 
 You are limited with scaling these services, so keep that in mind when picking a Background Job to process a queue message.
 
-    public class WeatherForecastProcessor : BackgroundService
-    {
+```csharp
+public class WeatherForecastProcessor : BackgroundService
+{
+```csharp
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Console.WriteLine("Starting Weather Forecast Processor");
             var client = new AmazonSQSClient();
     
+```csharp
             while (!stoppingToken.IsCancellationRequested)
             {
                 var request = new ReceiveMessageRequest()
@@ -141,12 +154,15 @@ You are limited with scaling these services, so keep that in mind when picking a
                 var response = await client.ReceiveMessageAsync(request);
                 foreach(var message in response.Messages)
                 {
+```
                     Console.WriteLine("New message received");
                     Console.WriteLine(message.Body);
+```code
                 }
             }
         }
     }
+```
     
 
 The `WeatherForecastProcessor` is a simple Background Task that polls the Queue using the same `AmazonSQSClient` for messages. It uses the `ReceiveMessageAsync` method to retrieve messages from the queue.
@@ -159,11 +175,15 @@ When reading messages from the Queue, a few properties are essential to understa
 
 The `MaxNumberOfMessages` property specifies the maximum number of messages to be returned in a request made to the Queue. It takes a value between 1 and 10 with the default of 1.
 
-    var request = new ReceiveMessageRequest()
-    {
+```csharp
+var request = new ReceiveMessageRequest()
+{
+```csharp
+```code
         QueueUrl = "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo",
         MaxNumberOfMessages = 5,
     };
+```
     
 
 Amazon SQS does not return messages more than the count specified, hence the name `MaxNumberOfMessages`. It can return fewer messages if there are not enough messages in the Queue.
@@ -176,11 +196,15 @@ However, the Queue has a built-in wait mechanism, which can be specified using t
 
 If it finds the required number of messages, it returns early. If there are no new messages during the wait time, it returns an empty response after the wait time expires.
 
-    var request = new ReceiveMessageRequest()
-    {
+```csharp
+var request = new ReceiveMessageRequest()
+{
+```csharp
+```code
         QueueUrl = "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo",
         WaitTimeSeconds = 10,
     };
+```
     
 
 `WaitTimeSeconds` can take a value between 0 and 20 seconds, and setting it enables the use of [Short/Long Polling in SQS](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-short-and-long-polling.html). By default the value is 0, and this is referred to as **Short Polling.** When the value is greater than 0, it’s called Long Polling.
@@ -191,11 +215,15 @@ The ‘_Receive message wait time_’ property can be set at the Queue level to 
 
 When a message is read from the queue for processing, it is only temporarily hidden. The `VisibilityTimeout` property specifies the time for which it’s hidden. It takes a value (in seconds) between 0 and 12 hours.
 
-    var request = new ReceiveMessageRequest()
-    {
+```csharp
+var request = new ReceiveMessageRequest()
+{
+```
+```code
         QueueUrl = "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo",
         VisibilityTimeout = 20,
     };
+```
     
 
 By default, this is 30 seconds, which means when a message is read from the Queue by one consumer, it will be hidden for 30 seconds from other consumers. If the consumer fails to process the message and delete the message (which will see later), the message will be made available in the Queue again after 30 seconds.
@@ -233,10 +261,12 @@ To remove the message from the Queue, we need to delete the message from the que
 
 The `ReceiptHandle` is a unique identifier associated with receiving a message. Each time you receive a message (even if the same queue message is received again), the ReceiptHandle will be different.
 
-    await client.DeleteMessageAsync(
-        "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo",
-        message.ReceiptHandle);
-    
+
+```csharp
+await client.DeleteMessageAsync(
+    "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo",
+    message.ReceiptHandle);
+```
 
 Once deleted, the message is removed from the SQS Queue and is no longer available for processing.
 

@@ -3,10 +3,12 @@ title: "Amazon S3 and AWS Lambda Triggers in .NET"
 slug: "amazon-s3-lambda-triggers-dotnet"
 date: "2022-09-12T00:00:00.000Z"
 feature_image: "/images/amazon-s3-lambda-triggers-dotnet.jpg"
-tags: []
+tags: ["AWS","Lambda"]
+excerpt: "Amazon S3 raises event notifications when Objects are created and modified. Learn how to use this to trigger Lambda Functions in .NET and the different configuration associated with processing the notification messages."
+
 ---
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 Amazon Simple Storage Service (S3) is an object storage service that allows you to store any data.
 
@@ -20,9 +22,11 @@ For example - When a user uploads a profile picture image, we can store the file
 
 You will learn:
 
+```code
 *   Build and set up a Lambda Function to handle S3 event notification.
 *   Different Lambda trigger configurations.
 *   Exception handling when processing S3 Event Notifications.
+```
 
 [
 
@@ -34,7 +38,7 @@ Learn how to get started with Amazon S3 from a .NET Core application. We will le
 
 ![](/images/storage-box.jpg)
 
-](__GHOST_URL__/blog/amazon-s3-dotnet)
+](/posts/amazon-s3-dotnet)
 
 S3 Event Notification Types and Destinations
 --------------------------------------------
@@ -45,9 +49,11 @@ Amazon S3 supports notifications for different types and destinations to publish
 
 Below are the [Notification Types](https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-how-to-event-types-and-destinations.html#supported-notification-event-types) supported by Amazon S3.
 
+```sql
 *   **s3:TestEvent →** Test notification event created when notification is enabled on S3
 *   **s3:ObjectCreated: →** Object created or updated events. The \* can also be replaced by _PUT_, _POST_, or _COPY_ if you want to listen to specific operations on S3.
 *   **s3:ObjectRemoved: →** Objects are removed from S3. The \* can be replaced by _Delete_ or _DeleteMarkerCreated._
+```
 
 ### Event Destinations
 
@@ -56,9 +62,9 @@ Amazon S3 can send event notifications to different destinations. Amazon SNS, Am
 Build and Deploy .NET Lambda Function
 -------------------------------------
 
-[AWS Lambda](__GHOST_URL__/blog/aws-lambda-net-core/) is Amazon’s answer to serverless computing services. It allows running code with zero administration of the infrastructure that the code is running on.
+[AWS Lambda](/posts/aws-lambda-net-core/) is Amazon’s answer to serverless computing services. It allows running code with zero administration of the infrastructure that the code is running on.
 
-Make sure to install the AWS Toolkit ([Visual Studio](https://aws.amazon.com/visualstudio/), [Rider](https://aws.amazon.com/rider/), [VS Code](https://aws.amazon.com/visualstudiocode/)) and [set up Credentials for the local development environment](__GHOST_URL__/blog/amazon-credentials-dotnet/).  This helps you quickly develop a .NET application on the AWS infrastructure and deploy them quickly to your AWS Accounts.
+Make sure to install the AWS Toolkit ([Visual Studio](https://aws.amazon.com/visualstudio/), [Rider](https://aws.amazon.com/rider/), [VS Code](https://aws.amazon.com/visualstudiocode/)) and [set up Credentials for the local development environment](/posts/amazon-credentials-dotnet/).  This helps you quickly develop a .NET application on the AWS infrastructure and deploy them quickly to your AWS Accounts.
 
 [
 
@@ -70,17 +76,21 @@ Learn how to get started with AWS Lambda with .NET Core by building out a simple
 
 ![](/images/aws_lambda.jpg)
 
-](__GHOST_URL__/blog/aws-lambda-net-core)
+](/posts/aws-lambda-net-core)
 
 With the AWS Toolkit installed, select the AWS Lambda Lambda Project template from the new project template and choose the S3 blueprint. This creates an AWS Lambda function template project with a `Function.cs` class with everything required to handle S3 events, as shown below.
 
-    public class Function
-    {
+```csharp
+public class Function
+{
+```csharp
+```code
         public async Task<string?> FunctionHandler(S3Event evnt, ILambdaContext context)
         {
             var s3Event = evnt.Records?[0].S3;
             if(s3Event == null)
             {
+```
                 return null;
             }
     
@@ -89,23 +99,27 @@ With the AWS Toolkit installed, select the AWS Lambda Lambda Project template fr
                 var response = await this.S3Client.GetObjectMetadataAsync(s3Event.Bucket.Name, s3Event.Object.Key);
                             context.Logger.LogInformation(response.Headers.ContentType);
                 return response.Headers.ContentType;
+```code
             }
             catch(Exception e)
             {
+```
                 context.Logger.LogInformation($"Error getting object {s3Event.Object.Key} from bucket {s3Event.Bucket.Name}. Make sure they exist and your bucket is in the same region as this function.");
                 context.Logger.log information(e.Message);
                 context.Logger.log information(e.StackTrace);
                 throw;
+```code
             }
         }
     }
+```
     
 
 The `S3Event` class represents the S3 event notification and contains the S3 object information and associated metadata for the event.
 
 ### Deploy Lambda Function
 
-To publish the Lambda function to the AWS account, you can use the Publish to AWS Lambda option that the AWS Toolkit provides. You can directly publish the new lambda function with your [development environment connected to your AWS account](__GHOST_URL__/blog/amazon-credentials-dotnet/).
+To publish the Lambda function to the AWS account, you can use the Publish to AWS Lambda option that the AWS Toolkit provides. You can directly publish the new lambda function with your [development environment connected to your AWS account](/posts/amazon-credentials-dotnet/).
 
 I prefer to set up an automated build/deploy pipeline to publish to your AWS Account for real-world applications. Check out the below for an example of how to set up a Lambda Function deployment pipeline from GitHub Actions.
 
@@ -154,12 +168,16 @@ On receiving the notification, Lambda functions use the `AmazonS3Client` to get 
 
 If required, you can update the Function handler code to read the file's contents, as shown below.
 
-    var file = await this.S3Client.GetObjectAsync(s3Event.Bucket.Name, s3Event.Object.Key);
-    using var reader = new StreamReader(file.ResponseStream);
-    var fileContents = await reader.ReadToEndAsync();
+```csharp
+var file = await this.S3Client.GetObjectAsync(s3Event.Bucket.Name, s3Event.Object.Key);
+using var reader = new StreamReader(file.ResponseStream);
+var fileContents = await reader.ReadToEndAsync();
+```javascript
     
-    context.Logger.LogInformation(fileContents);
-    
+
+```
+context.Logger.LogInformation(fileContents);
+```
 
 The file contents can be used for business processing or other application-related functionality in a real-world scenario.
 
@@ -192,11 +210,15 @@ To simulate an exception in processing in our simple S3 Lambda Handler, let’s 
 
 If the file name contains the word ‘Exception,’ the function handler will throw an exception. This makes it easy to simulate an exception condition.
 
-    public async Task<string?> FunctionHandler(S3Event event, ILambdaContext context)
-    {
+```csharp
+public async Task<string?> FunctionHandler(S3Event event, ILambdaContext context)
+{
+```
+```csharp
         var s3Event = evnt.Records?[0].S3;
         if (s3Event == null)
         {
+```
             return null;
         }
     

@@ -3,7 +3,7 @@ title: ".Net Core Web App and Azure AD Security Groups Role Based Access"
 slug: "dot-net-core-api-and-azure-ad-groups-based-access"
 date: "2018-12-11T00:00:00.000Z"
 feature_image: "/images/azure_ad_Groups.png"
-tags: []
+tags: ["Azure","Dotnet"]
 ---
 
 Getting your application to provide capabilities based on the role of the User using the system is a common thing. When using Azure Active Directory (AD), the Security Groups feature allows organizing users of your system into different roles. In the applications that we build, the group information can be used to enable/disable functionality. For, e.g., if your application has the functionality to add new users you might want to restrict this to only users belonging to the administrator role.
@@ -43,8 +43,10 @@ Now that we have all the groups and associated configuration setup, we can wire 
 
 We have an _IsMemberOfGroupRequirement_ class to represent the requirement for all the groups, the _IsMemberOfGroupHandler_ that implements how to validate a group requirement. The Handler reads the current user's claims and checks it contains the objectId associated with the Group as a claim. If a match is found the requirement check is marked as a success. Since we want the request to continue to match for any other group requirements the requirement is not failed explicitly.
 
-    public class IsMemberOfGroupRequirement : IAuthorizationRequirement
-    {
+```csharp
+public class IsMemberOfGroupRequirement : IAuthorizationRequirement
+{
+```
         public readonly string GroupId ;
         public readonly string GroupName ;
     
@@ -55,8 +57,10 @@ We have an _IsMemberOfGroupRequirement_ class to represent the requirement for a
         }
     }
     
-    public class IsMemberOfGroupHandler : AuthorizationHandler<IsMemberOfGroupRequirement>
-    {
+```csharp
+public class IsMemberOfGroupHandler : AuthorizationHandler<IsMemberOfGroupRequirement>
+{
+```
         protected override Task HandleRequirementAsync(
             AuthorizationHandlerContext context, IsMemberOfGroupRequirement requirement)
         {
@@ -74,8 +78,10 @@ We have an _IsMemberOfGroupRequirement_ class to represent the requirement for a
 
 Registering the policies for all the groups in the application's configuration file and the handler can be done as below. Looping through all the groups in the config we create a policy for each with the associated GroupName. It allows us to use the GroupName as the policy name at places where we want to restrict features for users belonging to that group.
 
-    services.AddAuthorization(options =>
-    {
+```javascript
+services.AddAuthorization(options =>
+{
+```
         var adGroupConfig = new List<AdGroupConfig>();
         _configuration.Bind("AdGroups", adGroupConfig);
     
@@ -91,10 +97,12 @@ Registering the policies for all the groups in the application's configuration f
 
 Using the policy is now as simple as decorating your controllers with the Authorize attribute and providing the required Policy names on it as shown below.
 
-    [Authorize(Policy = "Admin")]
-    [ApiController]
-    public partial class AddUsersController : ControllerBase
-    {
+```json
+[Authorize(Policy = "Admin")]
+[ApiController]
+public partial class AddUsersController : ControllerBase
+{
+```
         ....
     }
     

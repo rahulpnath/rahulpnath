@@ -3,7 +3,9 @@ title: "Deploying a .NET Web API on Amazon ECS: A Step-by-Step Guide"
 slug: "amazon-ecs-dotnet-api-hosting"
 date: "2024-07-29T06:41:31.000Z"
 feature_image: "/images/ECS-ASP-NET.png"
-tags: []
+tags: ["AWS"]
+excerpt: "Let's learn some of the core concepts of ECS, while deploying an ASP NET Web API application on Amazon ECS using Fargate.  we will explore some key components of ECS, including task definitions, tasks, services clusters, etc."
+
 ---
 
 Amazon Elastic Container Service (ECS) is a fully managed container orchestration service that helps you to more efficiently deploy, manage, and scale containerized applications.
@@ -16,7 +18,7 @@ In this post, we will explore some key components of ECS, including task definit
 
 We will deploy a simple ASP NET Web API application to ECS using Visual Studio and the AWS Toolkit.
 
-Thank you AWS for sponsoring this post in the [ECS Series](__GHOST_URL__/blog/tag/ecs/).
+Thank you AWS for sponsoring this post in the [ECS Series](/posts/tag/ecs/).
 
 ECS Core Concepts
 -----------------
@@ -82,7 +84,7 @@ Learn different ways to set up and manage credentials and sensitive information 
 
 ![](/images/secure-key.jpg)
 
-](__GHOST_URL__/blog/amazon-credentials-dotnet/)
+](/posts/amazon-credentials-dotnet/)
 
 Choose ASP NET Core App to Amazon ECS using the AWS Fargate option from the list presented to deploy the API to ECS.
 
@@ -94,11 +96,14 @@ The Toolkit also provides an option to Edit the default settings using the Edit 
 
 We need to provide a valid health check endpoint URL in the settings. We first need to enable health checks in our ASP NET application.
 
-    builder.Services.AddHealthChecks();
-    
-    var app = builder.Build();
-    
-    app.MapHealthChecks("/healthz");
+
+```csharp
+builder.Services.AddHealthChecks();
+
+var app = builder.Build();
+
+app.MapHealthChecks("/healthz");
+```
 
 Add the above code to your `Program.cs` to enable health check endpoints. This add an endpoint at the `/healthz` URL.
 

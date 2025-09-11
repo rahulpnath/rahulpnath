@@ -3,7 +3,7 @@ title: "Semantic Comparison: Improve Test Assertions"
 slug: "semantic-comparison-improve-test-assertions"
 date: "2017-06-20T00:00:00.000Z"
 feature_image: "/images/testing.jpg"
-tags: []
+tags: ["Testing"]
 ---
 
 One of the traits of a good unit test is to have just [one Assert statement.](http://osherove.com/blog/2005/4/14/try-to-avoid-multiple-asserts-in-a-single-unit-test.html).
@@ -21,11 +21,13 @@ Many times we end up needing to assert on more than one properties or behavior. 
 
 **Example 1:** In the below test we have a _Name_ class that represents FirstName and LastName of a user. It exposes a _Parse_ method to make it easy for us to create a Name object from a string. Below are some tests for the Parse method. The test has multiple assertions to confirm that the first and last name properties get set as expected.
 
-    [Theory]
-    [InlineData("Rahul", "Rahul", "")]
-    [InlineData("Rahul Nath", "Rahul", "Nath")]
-    [InlineData("Rahul P Nath", "Rahul", "P Nath")]
-    public void FirstNameOnlyProvidedResultsInFirstNameSet(
+```json
+[Theory]
+[InlineData("Rahul", "Rahul", "")]
+[InlineData("Rahul Nath", "Rahul", "Nath")]
+[InlineData("Rahul P Nath", "Rahul", "P Nath")]
+public void FirstNameOnlyProvidedResultsInFirstNameSet(
+```
        string name,
        string expFirstName,
        string expLastName)
@@ -39,8 +41,10 @@ Many times we end up needing to assert on more than one properties or behavior. 
 
 **Example 2:** The below test is for the _Controller_ class to confirm that the _CustomerViewModel_ passed to the _Post_ method on the controller saves the _Customer_ to the repository. The assert statement includes multiple properties of the customer object, which is just a shorthand version of writing multiple such assert statements on each of those properties.
 
-    [Theory, AutoWebData]
-    public void PostSavesToRepository(
+```csharp
+[Theory, AutoWebData]
+public void PostSavesToRepository(
+```
         CustomerViewModel model,
         [Frozen]Mock<ICustomerRepository> customerRepository,
         CustomerController sut)
@@ -59,10 +63,12 @@ Many times we end up needing to assert on more than one properties or behavior. 
 
 **Example 3:** The below test ensures that all properties are set when transforming from DTO to domain entity (or any such object transformations at system boundaries). The test asserts on every property of the class.
 
-    //  Comparing different object types
-    [Theory]
-    [AutoMoqData]
-    public void AllowanceToDomainModelMapsAllProperties(
+```json
+//  Comparing different object types
+[Theory]
+[AutoMoqData]
+public void AllowanceToDomainModelMapsAllProperties(
+```
         Persistence.Allowance allowance,
         int random)
     {
@@ -81,7 +87,7 @@ Many times we end up needing to assert on more than one properties or behavior. 
 Semantic Comparison Library
 ---------------------------
 
-[Semantic Comparison](https://www.nuget.org/packages/SemanticComparison/) is a library that allows deep comparison of similar looking objects. Originally part of [AutoFixture](__GHOST_URL__/blog/autofixture-make-your-unit-tests-robust/) library, it is also available as a separate [Nuget package](https://www.nuget.org/packages/SemanticComparison/).
+[Semantic Comparison](https://www.nuget.org/packages/SemanticComparison/) is a library that allows deep comparison of similar looking objects. Originally part of [AutoFixture](/posts/autofixture-make-your-unit-tests-robust/) library, it is also available as a separate [Nuget package](https://www.nuget.org/packages/SemanticComparison/).
 
 > _SemanticComparison makes it easier to compare instances of various objects to each other. Instead of performing a normal equality comparison, SemanticComparison compares objects that look semantically similar - even if they are of different types_
 
@@ -89,13 +95,15 @@ Using SemanticComparison, we can compare two objects and compare their propertie
 
 ### Refactoring Tests
 
-**Example 1:** The _Name_ is a perfect case for being a [Value Object](__GHOST_URL__/blog/thinking-beyond-primitive-values-value-objects/). In this case, the class will override Equals, and it will be easier for us to write the tests. Converting to a Value Object is one of the cases where we [use tests as a feedback to improve code](__GHOST_URL__/blog/tests-as-a-feedback-tool/). But in cases where you do not have the control over the class or do not want to make it a value object, we can use SemanticComparison to help check for equality as shown below.
+**Example 1:** The _Name_ is a perfect case for being a [Value Object](/posts/thinking-beyond-primitive-values-value-objects/). In this case, the class will override Equals, and it will be easier for us to write the tests. Converting to a Value Object is one of the cases where we [use tests as a feedback to improve code](/posts/tests-as-a-feedback-tool/). But in cases where you do not have the control over the class or do not want to make it a value object, we can use SemanticComparison to help check for equality as shown below.
 
-    [Theory]
-    [InlineData("Rahul", "Rahul", "")]
-    [InlineData("Rahul Nath", "Rahul", "Nath")]
-    [InlineData("Rahul P Nath", "Rahul", "P Nath")]
-    public void FirstNameOnlyProvidedResultsInFirstNameSet(
+```json
+[Theory]
+[InlineData("Rahul", "Rahul", "")]
+[InlineData("Rahul Nath", "Rahul", "Nath")]
+[InlineData("Rahul P Nath", "Rahul", "P Nath")]
+public void FirstNameOnlyProvidedResultsInFirstNameSet(
+```
        string name,
        string expFirstName,
        string expLastName)
@@ -113,8 +121,10 @@ Using SemanticComparison, we can compare two objects and compare their propertie
 
 **Example 2:** Using SemanticComparison we can remove the need of asserting on each of the properties. In the below case since the Customer Id is set to a new Guid in the ToCustomer method, I ignore the Id property from the comparison using _Without_. When the _expected_ objects gets compared against the _actual_ all properties except _Id_ will be compared for equality. Any number of properties can be excluded by chaining multiple _Without_ methods.
 
-    [Theory, AutoWebData]
-    public void PostSavesToRepository(
+```csharp
+[Theory, AutoWebData]
+public void PostSavesToRepository(
+```
         CustomerViewModel model,
         [Frozen]Mock<ICustomerRepository> customerRepository,
         CustomerController sut)
@@ -135,10 +145,12 @@ Using SemanticComparison, we can compare two objects and compare their propertie
 
 **Example 3:** Using SemanticComparison we can remove the asserts on every property and also set custom comparisons. The StartDate and EndDate on the persistence entity are converted into a DateRange object (Period). By using the _With_ method in combination with the _EqualsWhen_ method we can set custom comparison behavior that needs to be performed when comparing objects. The same test will hold true even if we add new properties and will force mapping to be updated if any of the property mappings is missed. Here we also see how SemanticComparison can compare two different types.
 
-    // Comparing different object types
-    [Theory]
-    [AutoMoqData]
-    public void AllowanceToDomainModelMapsAllProperties(
+```json
+// Comparing different object types
+[Theory]
+[AutoMoqData]
+public void AllowanceToDomainModelMapsAllProperties(
+```
         Persistence.Allowance allowance,
         int random)
     {

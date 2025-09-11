@@ -3,7 +3,7 @@ title: ".http Files Explained: Boost Your ASP NET Core API Development Workflow"
 slug: "http-files-asp-net-core-dotnet"
 date: "2024-07-01T06:43:32.000Z"
 feature_image: "/images/http-files.png"
-tags: []
+tags: ["Dotnet"]
 ---
 
 .http files provide an easy way to invoke API endpoints without leaving your IDE.
@@ -20,7 +20,7 @@ In this post, let’s
 
 <iframe src="https://www.youtube.com/embed/Q5WGYq9L3FQ?feature=oembed" />
 
-I will use an API built over [AWS DynamoDB](__GHOST_URL__/blog/amazon-dynamodb-dotnet-developer/), and [AWS Lambda to host the API](__GHOST_URL__/blog/asp-net-core-on-aws-lambda/).
+I will use an API built over [AWS DynamoDB](/posts/amazon-dynamodb-dotnet-developer/), and [AWS Lambda to host the API](/posts/asp-net-core-on-aws-lambda/).
 
 However, using .http files is not limited by where and how you decide to host your APIs as we will see in this video.
 
@@ -60,22 +60,28 @@ Multiple requests are separated by '###'.
 
 Below is a sample .http file with two `GET` requests to an API endpoint with some headers.
 
-    GET https://localhost:7128/weatherforecast/Brisbane
-    Accept: application/json
-    Custom: MyTestHeader
+```yaml
+GET https://localhost:7128/weatherforecast/Brisbane
+Accept: application/json
+Custom: MyTestHeader
+```
     
-    ###
-    GET https://localhost:7128/weatherforecast/Brisbane/19-Jun-2024
-    Accept: application/json
+```bash
+###
+GET https://localhost:7128/weatherforecast/Brisbane/19-Jun-2024
+Accept: application/json
+```
 
 Header attributes must be defined immediately after the request line without any blank lines. Each header attribute is specified on its line.
 
 For `POST` request, the body is specified after a blank line, as shown below.
 
-    ###
-    POST https://localhost:7128/weatherforecast/
-    Accept: application/json
-    Content-Type: application/json
+```bash
+###
+POST https://localhost:7128/weatherforecast/
+Accept: application/json
+Content-Type: application/json
+```
     
     {
         "cityName": "Brisbane",
@@ -92,9 +98,11 @@ Variables can be referenced in requests by wrapping the variable name in double 
 
     @baseUrl =  https://localhost:7128
     
-    GET {{baseUrl}}/weatherforecast/Brisbane
-    Accept: application/json
-    Custom: MyTestHeader
+```yaml
+GET {{baseUrl}}/weatherforecast/Brisbane
+Accept: application/json
+Custom: MyTestHeader
+```
 
 The code above defines a variable `baseUrl` along with its value, which is then used to build the URL for the HTTP requests.
 
@@ -195,7 +203,7 @@ This blog post is a collection of other posts that covers various aspects of Ama
 
 ![](/images/Amazon-DynamoDB.png)
 
-](__GHOST_URL__/blog/amazon-dynamodb-dotnet-developer/)
+](/posts/amazon-dynamodb-dotnet-developer/)
 
 For the API endpoint's test environment, I am hosting the API on AWS Lambda, as explained in this blog post and accompanying video.
 
@@ -209,12 +217,14 @@ This article is sponsored by AWS and is part of my AWS Series. AWS Lambda is a c
 
 ![](/images/AWS-Lambda-Function-URLs-Auth.png)
 
-](__GHOST_URL__/blog/asp-net-core-on-aws-lambda/)
+](/posts/asp-net-core-on-aws-lambda/)
 
     var builder = WebApplication.CreateBuilder(args);
     
-    builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
-    builder.Services.AddSingleton<IDynamoDBContext>(new DynamoDBContext(new AmazonDynamoDBClient()));
+```csharp
+builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
+builder.Services.AddSingleton<IDynamoDBContext>(new DynamoDBContext(new AmazonDynamoDBClient()));
+```
     
     var app = builder.Build();
     

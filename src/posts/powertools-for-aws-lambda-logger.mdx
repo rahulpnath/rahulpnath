@@ -3,7 +3,7 @@ title: "How To Easily Get Started with AWS Lambda Logging in .NET using Powertoo
 slug: "powertools-for-aws-lambda-logger"
 date: "2023-11-16T23:24:18.000Z"
 feature_image: "/images/Powertools---Logging.png"
-tags: []
+tags: ["AWS","Lambda"]
 ---
 
 Powertools for AWS Lambda (.NET) Logging utility provides a Lambda-optimized logger to output JSON logs.
@@ -14,7 +14,7 @@ Some of the key features of the Logger utility include capturing key fields from
 
 In this blog post, let's learn how to get started with the Powertools for Lambda Logging utility when building Lambda Functions in .NET.
 
-_This article is sponsored by AWS and is part of my_ [_AWS Series_](__GHOST_URL__/tag/aws/)_._
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
 
 Setting Up AWS Powertools Lambda Logging Utility
 ------------------------------------------------
@@ -31,8 +31,10 @@ This makes it easy to filter out logs based on your Lambda Handler if you have m
 
 This is set either using an Environment Variable (`POWERTOOLS_SERVICE_NAME`) or using an `Logging` attribute on the Lambda Function Handler, as shown below.
 
-    [Logging(LogEvent = true, Service = "GetWeather")]
-    public async Task<List<WeatherForecast>> GetWeather(
+```csharp
+[Logging(LogEvent = true, Service = "GetWeather")]
+public async Task<List<WeatherForecast>> GetWeather(
+```
         APIGatewayHttpApiV2ProxyRequest request, ILambdaContext context)
     {
      ...
@@ -61,8 +63,10 @@ The below code shows examples of using both ways to log information statements.
 
     public Function() => _logger = Logger.Create<Function>();
     
-    [Logging(LogEvent = true, Service = "GetWeather", CorrelationIdPath = "/Headers/correlation-id")]
-    public async Task<List<WeatherForecast>> GetWeather(
+```csharp
+[Logging(LogEvent = true, Service = "GetWeather", CorrelationIdPath = "/Headers/correlation-id")]
+public async Task<List<WeatherForecast>> GetWeather(
+```
         APIGatewayHttpApiV2ProxyRequest request, ILambdaC
     {
         Logger.LogInformation("Getting Weather data");
@@ -194,7 +198,7 @@ The Lambda Lifecycle affects the way we write out Function code. Learn some of t
 
 ![](/images/Lambda-Lifecycle-2.png)
 
-](__GHOST_URL__/blog/lambda-lifecycle-and-net/)
+](/posts/lambda-lifecycle-and-net/)
 
 Things to be aware of
 ---------------------

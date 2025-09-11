@@ -3,13 +3,15 @@ title: "Windows Phone Series – Jump Lists"
 slug: "windows-phone-series-jump-lists"
 date: "2013-08-25T04:23:00.000Z"
 feature_image: "/images/wp_jumplist_items.png"
-tags: []
+tags: ["Dotnet"]
 ---
 
 One of the best things about the windows phone is that way you can navigate large lists of data.  Jumplist provides an easy and fast way to navigate large data, just like we do in the contacts hub or the apps collection. It would be great to have this behaviour even in the apps that we develop so that we can give a consistent experience to our application users. Jumplist can be implemented using LongListSelector, which is part of the [Windows Phone toolkit](http://phone.codeplex.com/) for Windows phone 7. With Windows Phone 8 this is included along with the sdk. Implementing jump list with the longlistselector is easy enough, that you can get this into your application in a few minutes. Lets see how. If you are already using a listbox then you should be changing it to a longlistselector or if you are already using that, then you might be using it in the “ungrouped mode”, by setting IsFlatList=”True”. Change this to False.
 
-    <toolkit:LongListSelector Name="allPersons" IsFlatList="False" >
-    </toolkit:LongListSelector>
+```typescript
+<toolkit:LongListSelector Name="allPersons" IsFlatList="False" >
+</toolkit:LongListSelector>
+```
     
 
 We need to specify a few templates for the date to be rendered to our needs as shown below. In this example we would be looking at a contacts sample.

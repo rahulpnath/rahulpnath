@@ -3,7 +3,7 @@ title: "Why Dead Letter Queues Are a Must-Have for Reliable Messaging Systems"
 slug: "why-dead-letter-queues-are-a-must-have-for-reliable-messaging-systems"
 date: "2024-12-30T05:37:03.000Z"
 feature_image: "/images/Dead-Letter-Queue.png"
-tags: []
+tags: ["Messaging","AWS"]
 ---
 
 Have you ever wondered what happens to messages that repeatedly fail to process in your application queues?
@@ -35,14 +35,16 @@ The AWS Message Processing Framework for .NET is an AWS-native toolkit for build
 
 ![](/images/AWS-Message-Processing-Fwk--1-.png)
 
-](__GHOST_URL__/blog/aws-message-processing-framework/)
+](/posts/aws-message-processing-framework/)
 
 The `WeatherForecastAddedEventHandler` processes messaging coming into Amazon SQS. If the message content has the word 'Exception' it throws an exception in the handler.
 
 Otherwise it successfully processes and removes the message from the Queue.
 
-    class WeatherForecastAddedEventHandler: IMessageHandler<WeatherForecastAddedEvent>
-    {
+```csharp
+class WeatherForecastAddedEventHandler: IMessageHandler<WeatherForecastAddedEvent>
+{
+```
         public Task<MessageProcessStatus> HandleAsync(
             MessageEnvelope<WeatherForecastAddedEvent> messageEnvelope, CancellationToken token = default)
         {

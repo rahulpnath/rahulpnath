@@ -3,7 +3,8 @@ title: "How To Create An ARM Template For Cosmos DB"
 slug: "cosmos-arm-template"
 date: "2020-11-05T00:00:00.000Z"
 feature_image: "/images/arm_template.png"
-tags: []
+tags: ["Azure"]excerpt: "Learn how to create an ARM template to deploy Azure Cosmos DB with dynamic containers. With this template you can keep adding containers as you build the application."
+
 ---
 
 ARM Templates always overwhelmed me for its size and various attributes and values. After having discovered the ways to author them, these are less intimidating than before.
@@ -74,74 +75,79 @@ Now that we have the account created let's create the database. using the `arm-c
 
 Here is how the template looks so far
 
-    {
-      "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-      "contentVersion": "1.0.0.0",
-      "parameters": {
-        "location": {
-          "type": "string",
-          "defaultValue": "[resourceGroup().location]",
-          "metadata": {
-            "description": "Location for the Cosmos DB account."
-          }
-        },
-        "accountName": {
-          "type": "string",
-          "defaultValue": "[concat('sql-', uniqueString(resourceGroup().id))]",
-          "metadata": {
-            "description": "Cosmos Account Name"
-          }
-        },
-        "databaseName": {
-          "type": "string",
-          "defaultValue": "myDatabase",
-          "metadata": {
-            "description": "Database name"
-          }
-        }
-      },
-      "resources": [
-        {
-          "name": "[parameters('accountName')]",
-          "type": "Microsoft.DocumentDB/databaseAccounts",
-          "apiVersion": "2019-12-12",
-          "location": "[parameters('location')]",
-          "kind": "GlobalDocumentDB",
-          "properties": {
-            "consistencyPolicy": {
-              "defaultConsistencyLevel": "Eventual",
-              "maxStalenessPrefix": 1,
-              "maxIntervalInSeconds": 5
-            },
-            "locations": [
-              {
-                "locationName": "[parameters('location')]",
-                "failoverPriority": 0
-              }
-            ],
-            "databaseAccountOfferType": "Standard",
-            "enableAutomaticFailover": false
-          }
-        },
-        {
-          "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases",
-          "name": "[concat( parameters('accountName'), '/sql/', parameters('databaseName'))]",
-          "apiVersion": "2016-03-31",
-          "dependsOn": [
-            "[resourceId('Microsoft.DocumentDB/databaseAccounts/', parameters('accountName'))]"
-          ],
-          "properties": {
-            "resource": {
-              "id": "[parameters('databaseName')]"
-            },
-            "options": {
-              "throughput": 400
-            }
-          }
-        }
-      ]
+
+```css
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for the Cosmos DB account."
+      }
+    },
+    "accountName": {
+      "type": "string",
+      "defaultValue": "[concat('sql-', uniqueString(resourceGroup().id))]",
+      "metadata": {
+        "description": "Cosmos Account Name"
+      }
+    },
+    "databaseName": {
+      "type": "string",
+      "defaultValue": "myDatabase",
+      "metadata": {
+        "description": "Database name"
+      }
     }
-    
+  },
+  "resources": [
+
+```css
+{
+  "name": "[parameters('accountName')]",
+  "type": "Microsoft.DocumentDB/databaseAccounts",
+  "apiVersion": "2019-12-12",
+  "location": "[parameters('location')]",
+  "kind": "GlobalDocumentDB",
+  "properties": {
+    "consistencyPolicy": {
+      "defaultConsistencyLevel": "Eventual",
+      "maxStalenessPrefix": 1,
+      "maxIntervalInSeconds": 5
+    },
+    "locations": [
+      {
+        "locationName": "[parameters('location')]",
+        "failoverPriority": 0
+      }
+    ],
+    "databaseAccountOfferType": "Standard",
+    "enableAutomaticFailover": false
+  }
+},
+{
+  "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases",
+  "name": "[concat( parameters('accountName'), '/sql/', parameters('databaseName'))]",
+  "apiVersion": "2016-03-31",
+  "dependsOn": [
+    "[resourceId('Microsoft.DocumentDB/databaseAccounts/', parameters('accountName'))]"
+  ],
+  "properties": {
+    "resource": {
+      "id": "[parameters('databaseName')]"
+    },
+    "options": {
+      "throughput": 400
+    }
+  }
+}
+  ]
+```
+}
+```css
 
 Adding Dynamic Containers
 -------------------------
@@ -180,31 +186,33 @@ In the containers section of the resources, the copy section can be used as belo
 
 In the example below, the container name and the partition key is set using that. This section is repeated based on the number of objects in the `containers` parameter - `"count": "[length(parameters('containers'))]"`
 
-    {
-      "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
-      "name": "[concat(parameters('accountName'), '/sql/', parameters('databaseName'), '/', parameters('containers')[copyIndex()].name)]",
-      "copy": {
-        "name": "ContainerCopy",
-        "count": "[length(parameters('containers'))]"
+
+```css
+{
+  "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
+  "name": "[concat(parameters('accountName'), '/sql/', parameters('databaseName'), '/', parameters('containers')[copyIndex()].name)]",
+  "copy": {
+    "name": "ContainerCopy",
+    "count": "[length(parameters('containers'))]"
+  },
+  "apiVersion": "2016-03-31",
+  "dependsOn": [
+    "[resourceId('Microsoft.DocumentDB/databaseAccounts/apis/databases', parameters('accountName'), 'sql', parameters('databaseName'))]"
+  ],
+  "properties": {
+    "resource": {
+      "id": "[parameters('containers')[copyIndex()].name]",
+      "partitionKey": {
+        "paths": ["[parameters('containers')[copyIndex()].partitionKey]"],
+        "kind": "hash"
       },
-      "apiVersion": "2016-03-31",
-      "dependsOn": [
-        "[resourceId('Microsoft.DocumentDB/databaseAccounts/apis/databases', parameters('accountName'), 'sql', parameters('databaseName'))]"
-      ],
-      "properties": {
-        "resource": {
-          "id": "[parameters('containers')[copyIndex()].name]",
-          "partitionKey": {
-            "paths": ["[parameters('containers')[copyIndex()].partitionKey]"],
-            "kind": "hash"
-          },
-          "indexingPolicy": {
-            "indexingMode": "consistent"
-          }
-        }
+      "indexingPolicy": {
+        "indexingMode": "consistent"
       }
     }
-    
+  }
+}
+```sql
 
 **ARM Template Parameters File**
 --------------------------------
@@ -219,31 +227,33 @@ It supports creating a new parameter file or choosing an existing one from disk.
 
 Below is the parameter file for the Cosmos ARM template we created. You can name this however you like; I have it as _azuredeploy.parameters.json_
 
-    {
-      "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
-      "contentVersion": "1.0.0.0",
-      "parameters": {
-        "accountName": {
-          "value": "uniquecosmosaccountname"
+
+```css
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "accountName": {
+      "value": "uniquecosmosaccountname"
+    },
+    "databaseName": {
+      "value": "MyDatabase"
+    },
+    "containers": {
+      "value": [
+        {
+          "name": "MyContainer1",
+          "partitionKey": "/partitionKey1"
         },
-        "databaseName": {
-          "value": "MyDatabase"
-        },
-        "containers": {
-          "value": [
-            {
-              "name": "MyContainer1",
-              "partitionKey": "/partitionKey1"
-            },
-            {
-              "name": "MyContainer2",
-              "partitionKey": "/partitionKey2"
-            }
-          ]
+        {
+          "name": "MyContainer2",
+          "partitionKey": "/partitionKey2"
         }
-      }
+      ]
     }
-    
+  }
+}
+```sql
 
 **Deploying ARM Template**
 --------------------------
@@ -254,9 +264,11 @@ If you prefer to use the UI, the Azure Portal allows this under the '[Deploy a c
 
 Alternatively, you can use [PowerShell scripts](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-powershell?WT.mc_id=AZ-MVP-5003875) or Azure CLI to deploy too. Below is an example of using the CLI to deploy.
 
-    az login
-    az group create --name "Delete" --location "Australia East"
-    az deployment group create --resource-group Delete --template-file .\azuredeploy.json --parameters azuredeploy.parameters.json
+```powershell
+az login
+az group create --name "Delete" --location "Australia East"
+az deployment group create --resource-group Delete --template-file .\azuredeploy.json --parameters azuredeploy.parameters.json
+```
     
 
 When executing deployment scripts, you can choose [mode](https://docs.microsoft.com/en-us/cli/azure/group/deployment?view=azure-cli-latest?WT.mc_id=AZ-MVP-5003875#az_group_deployment_create-optional-parameters) between 'Incremental' or 'Complete'. By default, it is Incremental, which only adds resources to resource groups. So if a resource already exists, it skips and goes to the next resource in the template.

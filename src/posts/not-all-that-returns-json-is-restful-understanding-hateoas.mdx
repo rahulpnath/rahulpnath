@@ -3,12 +3,12 @@ title: "Not All That Returns JSON is RESTful: Understanding HATEOAS"
 slug: "not-all-that-returns-json-is-restful-understanding-hateoas"
 date: "2014-11-10T01:38:56.000Z"
 feature_image: "/images/not_restful.png"
-tags: []
+tags: ["Programming"]
 ---
 
 Though [REST](http://en.wikipedia.org/wiki/Representational_state_transfer) has been around for a very long time, it never came into highlight as RPC/SOAP was what used commonly when building services, abstracting away all the goodness of the underlying protocol(mostly HTTP) and building messages over it, to perform client-server communication. HTTP, an Application layer protocol was used just as a transport protocol, tunneling these messages through them.
 
-It's not long back that we saw a new technology stack come up in ASP.Net, which redefined the way we were building services - [WCF to Web API](__GHOST_URL__/blog/wcf-to-asp-net-web-api/). This was a major shift from the RPC/SOAP style of programming to the REST architectural pattern. The main things that changed as for a developer was to start returning JSON/XML instead of SOAP messages, use HTTP verbs for performing actions instead of the explicitly defined contracts and use a http client to invoke the services instead of a proxy. Thats where we (at least I) were or rather are at. But was this really what we wanted to achieve?
+It's not long back that we saw a new technology stack come up in ASP.Net, which redefined the way we were building services - [WCF to Web API](/posts/wcf-to-asp-net-web-api/). This was a major shift from the RPC/SOAP style of programming to the REST architectural pattern. The main things that changed as for a developer was to start returning JSON/XML instead of SOAP messages, use HTTP verbs for performing actions instead of the explicitly defined contracts and use a http client to invoke the services instead of a proxy. Thats where we (at least I) were or rather are at. But was this really what we wanted to achieve?
 
 [![It's not RESTful](/images/not_restful.png)](http://geek-and-poke.com/geekandpoke/2013/6/14/insulting-made-easy)
 
@@ -32,8 +32,10 @@ Now we really know that we do not want smart clients, at least not clients this 
 
 Let us take an example on how a message would be in a non-hypermedia api and a RESTful api.
 
-    // Smart Client Messages
-    {
+```json
+// Smart Client Messages
+{
+```
       "account": {
         "name": "Rest",
         "accountnumber": "12345",
@@ -42,8 +44,10 @@ Let us take an example on how a message would be in a non-hypermedia api and a R
     }
     
 
-    // HATEOAS Messages
-    {
+```json
+// HATEOAS Messages
+{
+```
       "account": {
         "name": "Rest",
         "accountnumber": "9963",

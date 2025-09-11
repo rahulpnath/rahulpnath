@@ -3,7 +3,7 @@ title: "Improving Queries Using Local Secondary Index in DynamoDB with .NET"
 slug: "local-secondary-index-dynamodb"
 date: "2023-06-27T04:48:19.000Z"
 feature_image: "/images/DynamoDB-LSI.png"
-tags: []
+tags: ["AWS","DynamoDB"]
 ---
 
 Amazon DynamoDB provides fast access to items in a table by specifying primary key values.
@@ -14,7 +14,7 @@ A Local Secondary Index  (LSI) is an index that has the same partition key as t
 
 <iframe src="https://www.youtube.com/embed/tr1evCdgk3o?feature=oembed" />
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 In this post, I’ll show you how to
 
@@ -35,7 +35,7 @@ Learn how to get started with AWS DynamoDB with .NET Core by updating the defaul
 
 ![](/images/aws_dynamodb.jpg)
 
-](__GHOST_URL__/blog/aws-dynamodb-net-core/)
+](/posts/aws-dynamodb-net-core/)
 
 DynamoDB Local Secondary Index (LSI)
 ------------------------------------
@@ -139,17 +139,19 @@ Querying is an essential operation in DynamoDB. It allows you to filter and sele
 
 ![](/images/DynamoDB-Querying-new.png)
 
-](__GHOST_URL__/blog/dynamodb-querying-dotnet/)
+](/posts/dynamodb-querying-dotnet/)
 
-Querying using Local Secondary Index, is very similar to using a Global Secondary Index, which we have seen before when [Exploring Global Secondary Index: Advanced Querying in DynamoDB From .NET](__GHOST_URL__/blog/dynamodb-global-secondary-index-gsi/)
+Querying using Local Secondary Index, is very similar to using a Global Secondary Index, which we have seen before when [Exploring Global Secondary Index: Advanced Querying in DynamoDB From .NET](/posts/dynamodb-global-secondary-index-gsi/)
 
 Using the `IAmazonDynamoDB` and the `QueryAsync` method you can specify the `IndexName` on the `QueryRequest` class.
 
 With that specified the rest of the properties are exactly as you would query a normal DynamoDB table.
 
-    [HttpGet("lsi-query")]
-    public async Task<IEnumerable<WeatherForecastTable>> GetUsingLSIQuery(string cityName, int minTemperature)
-    {
+```csharp
+[HttpGet("lsi-query")]
+public async Task<IEnumerable<WeatherForecastTable>> GetUsingLSIQuery(string cityName, int minTemperature)
+{
+```
         var request = new QueryRequest()
         {
             TableName = nameof(WeatherForecastTable),
@@ -187,7 +189,7 @@ When reading data from a DynamoDB table, by default, it returns all of the attri
 
 ![](/images/DynamoDB-Projection-Expressions.png)
 
-](__GHOST_URL__/blog/dynamodb-projection-expressions/)
+](/posts/dynamodb-projection-expressions/)
 
 By specifying the `ProjectionExpression` property in the `QueryRequest` you can specify the specific attributes to be returned in the query result.
 
@@ -195,9 +197,11 @@ Below I have selected additional properties that are not available on the Index.
 
 However, since I am querying a Local Secondary Index, it will automatically fill in the missing attributes by fetching the missing data from the base table.  
 
-    [HttpGet("lsi-query")]
-    public async Task<IEnumerable<WeatherForecastTable>> GetUsingLSIQuery(string cityName, int minTemperature)
-    {
+```csharp
+[HttpGet("lsi-query")]
+public async Task<IEnumerable<WeatherForecastTable>> GetUsingLSIQuery(string cityName, int minTemperature)
+{
+```
         var request = new QueryRequest()
         {
             TableName = nameof(WeatherForecastTable),

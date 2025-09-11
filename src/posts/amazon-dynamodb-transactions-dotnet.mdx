@@ -3,7 +3,9 @@ title: "Beyond CRUD: Leveraging DynamoDB Transactions for Complex Operations in 
 slug: "amazon-dynamodb-transactions-dotnet"
 date: "2024-08-06T06:09:38.000Z"
 feature_image: "/images/DynamoDB-Transactions-2.png"
-tags: []
+tags: ["AWS","DynamoDB"]
+excerpt: "Amazon DynamoDB Transactions simplifies the developer experience of making all-or-nothing changes to multiple items within and across tables. In this post, let's learn about TransactWriteItems and how to use them when building .NET applications."
+
 ---
 
 Amazon DynamoDB Transactions simplifies the developer experience of making all-or-nothing changes to multiple items within and across tables.
@@ -25,23 +27,25 @@ The function can handle 100 distinct items in one or more DynamoDB tables within
 
 Below is a sample code in .NET to invoke the `TransactWriteItemsAsync` method on the low-level `AmazonDynamoDBClient`.
 
-    var request = new TransactWriteItemsRequest()
-    {
+```csharp
+var request = new TransactWriteItemsRequest()
+{
         TransactItems = items,
         ReturnConsumedCapacity = ReturnConsumedCapacity.TOTAL
-    };
-    try
-    {
+};
+try
+{
         var response = await dynamoDbClient.TransactWriteItemsAsync(request);
-    }
-    catch (TransactionCanceledException ex)
-    {
+}
+catch (TransactionCanceledException ex)
+{
         Console.WriteLine("Transaction was cancelled. Reason: " + ex.Message);
-    }
-    catch (Exception ex)
-    {
+}
+catch (Exception ex)
+{
         Console.WriteLine("An error occurred: " + ex.Message);
     }
+```
 
 The `TransactItems` is a `List<TransactWriteItem>` that contains the individual items in the transaction.
 
@@ -83,8 +87,9 @@ In this case, we have two operations:
 *   Update → Update ProductCatalog to reduce the available quantity based on the order quantity
 *   Put → Create a new Order and ensure that the `OrderId` is unique and does not already exist.
 
-    new TransactWriteItem
-    {
+```csharp
+new TransactWriteItem
+{
         Update = new Update
         {
             TableName = "ProductCatalog",
@@ -98,9 +103,9 @@ In this case, we have two operations:
                 {":orderQuantity", new AttributeValue {N = orderQuantity.ToString()}}
             }
         }
-    },
-    new TransactWriteItem
-    {
+},
+new TransactWriteItem
+{
         Put = new Put
         {
             TableName = "Orders",
@@ -114,6 +119,7 @@ In this case, we have two operations:
             ConditionExpression = "attribute_not_exists(OrderId)"
         }
     }
+```
 
 With the above code, we can ensure that creating an Order and reducing the inventory count happens in one request transaction.
 
@@ -133,12 +139,13 @@ DynamoDB Condition Expressions allow specifying constraints when writing data to
 
 ![](/images/DynamoDB-Condition-Expressions.png)
 
-](__GHOST_URL__/blog/dynamodb-condition-expressions-dotnet/)
+](/posts/dynamodb-condition-expressions-dotnet/)
 
 We can add a `ConditionExpression` to our Update request on the ProductCatalog to achieve this.
 
-    new TransactWriteItem()
-    {
+```csharp
+new TransactWriteItem()
+{
         Update = new Update()
         {
             TableName = "ProductCatalog",
@@ -154,7 +161,7 @@ We can add a `ConditionExpression` to our Update request on the ProductCatalog t
             }
         }
     },
-
+```
 The Condition Expression ensures that the Quantity in the database must be greater than or equal to the quantity of items in the order.
 
 If this condition is not met when executing the transaction, the transaction will fail as a whole and throw a `TransactionCanceledException`.
@@ -165,8 +172,9 @@ Until now, we have been creating Orders without ensuring a valid customer exists
 
 To fix this and ensure a valid customer exists, we can add a `ConditionCheck` transaction item to our list of `TransactWriteItem` collection.
 
-    new TransactWriteItem
-    {
+```csharp
+new TransactWriteItem
+{
         ConditionCheck = new ConditionCheck
         {
             TableName = "Customers",
@@ -177,7 +185,7 @@ To fix this and ensure a valid customer exists, we can add a `ConditionCheck` tr
             ConditionExpression = "attribute_exists(CustomerId)"
         }
     },
-
+```
 The above code adds a condition check to ensure the CustomerId exists in the Customers table.
 
 If a valid customer does not exists it will throw an exception and the whole transaction will fail.
@@ -197,13 +205,14 @@ For `TransactWriteItems`, if the initial call is successful, subsequent calls wi
 
 The initial call consumes write capacity units. Subsequent calls with the same token consume only the read capacity units needed to verify the item.
 
-    var request = new TransactWriteItemsRequest()
-    {
+```csharp
+var request = new TransactWriteItemsRequest()
+{
         TransactItems = items,
         ReturnConsumedCapacity = ReturnConsumedCapacity.TOTAL,
         ClientRequestToken = orderId
     };
-
+```
 A client token is valid for 10 minutes after the initial request finishes.
 
 Reusing the token after this period or changing any other request parameter within the 10-minute window will result in an `IdempotentParameterMismatch` exception.

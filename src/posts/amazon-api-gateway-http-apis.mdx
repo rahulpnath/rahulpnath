@@ -3,10 +3,12 @@ title: "Amazon API Gateway for the .NET Developer - How To Build HTTP APIs"
 slug: "amazon-api-gateway-http-apis"
 date: "2022-02-10T00:00:00.000Z"
 feature_image: "/images/learning_code.jpg"
-tags: []
+tags: ["AWS"]
+excerpt: "Learn how to get started with API Gateway by building an HTTP API backed by AWS Lambda running on .NET Core. We will see how to create different HTTP endpoints, connect them to lambda functions, send and receive data, set up stages, and more."
+
 ---
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 Amazon API Gateway is a fully managed service that helps developers build and maintain APIs at any scale. The Gateway act as a ‘front door’ to your business data and backend services.
 
@@ -44,17 +46,16 @@ Supported Integration types when building HTTP APIs on Amazon API Gateway (api-g
 
 For this example, we will integrate with AWS Lambda Functions to send and receive data from our API endpoints.
 
-[
 
-AWS Lambda For The .NET Developer: How To Easily Get Started
+<PostCard
+  href="/posts/aws-lambda-net-core"
+  title="AWS Lambda For The .NET Developer: How To Easily Get Started"
+  description="Learn how to get started with AWS Lambda using .NET Core, while building and deploying a simple function. Also set up a local development environment with the AWS Toolkit."
+  authorImg="/images/favicon.ico"
+  author="Rahul Pulikkot Nath"
+  cover="/images/aws_lambda.jpg"
+/>
 
-Learn how to get started with AWS Lambda with .NET Core by building out a simple function and deploying to AWS. We will also see how to set up local development environment using the AWS Toolkit.
-
-![](/images/favicon.ico)Rahul NathRahul Pulikkot Nath
-
-![](/images/aws_lambda.jpg)
-
-](__GHOST_URL__/blog/aws-lambda-net-core)
 
 To quickly create and deploy AWS Lambda Function use the templates provided with the [AWS Toolkit for Visual Studio](https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.AWSToolkitforVisualStudio2022) (Other IDE’s also have their implementation of this toolkit).
 
@@ -63,30 +64,31 @@ Let’s create a new function to return us some `WeatherData` as shown below (it
 ```csharp
 public class Function
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+private static readonly string[] Summaries = new[]
+{
+    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+};
 
-    public List<WeatherForecast> FunctionHandler(
-                    APIGatewayProxyRequest input, ILambdaContext context)
-    {
-        Console.WriteLine(JsonSerializer.Serialize(input));
-       
-        var rng = new Random();
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            City = $"{cityName}-test",
-            Date = DateTime.Now.AddDays(index),
-            TemperatureC = rng.Next(-20, 55),
-            Summary = Summaries[rng.Next(Summaries.Length)]
-        })
-        .ToList();
-    }
+public List<WeatherForecast> FunctionHandler(
+                APIGatewayProxyRequest input, ILambdaContext context)
+{
+
+Console.WriteLine(JsonSerializer.Serialize(input));
+   
+var rng = new Random();
+return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+{
+
+City = $"{cityName}-test",
+Date = DateTime.Now.AddDays(index),
+TemperatureC = rng.Next(-20, 55),
+Summary = Summaries[rng.Next(Summaries.Length)]
+})
+.ToList();
+}
 }
 ```
-
-Since this function takes in input from API Gateway, it uses `APIGatewayProxyRequest` from the _Amazon.Lambda.APIGatewayEvents_ [nuget package.](https://www.nuget.org/packages/Amazon.Lambda.APIGatewayEvents/) You can run the Function code locally using Mock Lambda Test Tool [as you have seen earlier here.](__GHOST_URL__/blog/aws-lambda-net-core/#mock-lambda-test-tool)
+Since this function takes in input from API Gateway, it uses `APIGatewayProxyRequest` from the _Amazon.Lambda.APIGatewayEvents_ [nuget package.](https://www.nuget.org/packages/Amazon.Lambda.APIGatewayEvents/) You can run the Function code locally using Mock Lambda Test Tool [as you have seen earlier here.](/posts/aws-lambda-net-core/#mock-lambda-test-tool)
 
 To quickly deploy this function to our AWS account, use the ‘Publish To AWS Lambda..' option from right-clicking the project in Visual Studio. The AWS Toolkit provides this option. _In a real-world application, you can set up a build-deploy pipeline to automatically deploy any time a change is made to your source code repository._
 
@@ -130,20 +132,19 @@ I’ve updated the function handler to retrieve the `cityName`. If passed in as 
 ```csharp
 public List<WeatherForecast> FunctionHandler(APIGatewayProxyRequest input, ILambdaContext context)
 {
-    Console.WriteLine(JsonSerializer.Serialize(input));
-    string cityName = null;
-    input.QueryStringParameters?.TryGetValue("cityName", out cityName);
-    cityName = cityName ?? "Brisbane";
-
-    var rng = new Random();
-    return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-    {
-        City = cityName,
-        Date = DateTime.Now.AddDays(index),
-        TemperatureC = rng.Next(-20, 55),
-        Summary = Summaries[rng.Next(Summaries.Length)]
-    })
-    .ToList();
+Console.WriteLine(JsonSerializer.Serialize(input));
+string cityName = null;
+input.QueryStringParameters?.TryGetValue("cityName", out cityName);
+cityName = cityName ?? "Brisbane";
+var rng = new Random();
+return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+{
+City = cityName,
+Date = DateTime.Now.AddDays(index),
+TemperatureC = rng.Next(-20, 55),
+Summary = Summaries[rng.Next(Summaries.Length)]
+})
+.ToList();
 }
 ```
 
@@ -181,19 +182,17 @@ It retrieves the `cityName` from the _PathParameters_ property and sets it on th
 
 ```csharp
 public APIGatewayProxyResponse FunctionHandlerPost(
-    APIGatewayProxyRequest input, ILambdaContext context)
+APIGatewayProxyRequest input, ILambdaContext context)
 {
-    var data = JsonSerializer.Deserialize<WeatherForecast>(input.Body);
-
-    string cityName = "Brisbane";
-    input.PathParameters?.TryGetValue("cityName", out cityName);
-
-    data.City = cityName;
-    return new APIGatewayProxyResponse()
-    {
-        Body = JsonSerializer.Serialize(data),
-        StatusCode = (int)HttpStatusCode.OK
-    };
+var data = JsonSerializer.Deserialize<WeatherForecast>(input.Body);
+string cityName = "Brisbane";
+input.PathParameters?.TryGetValue("cityName", out cityName);
+data.City = cityName;
+return new APIGatewayProxyResponse()
+{
+Body = JsonSerializer.Serialize(data),
+StatusCode = (int)HttpStatusCode.OK
+};
 }
 ```
 

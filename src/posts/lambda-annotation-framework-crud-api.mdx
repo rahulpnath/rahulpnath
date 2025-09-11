@@ -3,14 +3,14 @@ title: "Serverless API Development Made Easy: Using AWS Lambda Annotations for C
 slug: "lambda-annotation-framework-crud-api"
 date: "2023-08-30T04:58:30.000Z"
 feature_image: "/images/Lambda-Annotation-Framework---CRUD.png"
-tags: []
+tags: ["AWS","Lambda"]
 ---
 
-The [Lambda Annotations Framework](__GHOST_URL__/blog/aws-lambda-annotation-framework/) is a programming model that makes it easier to build AWS Lambda Functions using .NET.
+The [Lambda Annotations Framework](/posts/aws-lambda-annotation-framework/) is a programming model that makes it easier to build AWS Lambda Functions using .NET.
 
 The framework uses C# custom attributes and Source Generators to translate annotated Lambda functions to the regular Lambda programming model.
 
-In a [previous post](__GHOST_URL__/blog/aws-lambda-annotation-framework/), we learned how to get started with using the Annotations Framework and how it compares to using the default Lambda Programming model. The Annotations Framework removes boilerplate code required to integrate with API Gateway.
+In a [previous post](/posts/aws-lambda-annotation-framework/), we learned how to get started with using the Annotations Framework and how it compares to using the default Lambda Programming model. The Annotations Framework removes boilerplate code required to integrate with API Gateway.
 
 <iframe src="https://www.youtube.com/embed/Zx6JpVKUoLQ?feature=oembed" />
 
@@ -18,7 +18,7 @@ In this post, let’s learn how to set up a basic CRUD (Create, Read, Update, an
 
 We will use DynamoDB as our data store for this example and we will also learn how to set up the DynamoDB Table and Role Permissions via the same CloudFormation template that the Annotations framework generates.
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 Create and Update API Endpoint
 ------------------------------
@@ -39,15 +39,19 @@ Make sure the template path does not have a leading slash on it.
 
 We also have specified a custom IAM Role Name as part of the `Role` parameter in the `LambdaFunction` attribute. More on this later.
 
-    [LambdaFunction(Role = "@OrdersApiLambdaExecutionRole")]
-    [HttpApi(LambdaHttpMethod.Post, template: "/orders")]
-    public async Task PostOrder([FromBody] Order order, ILambdaContext context)
-    {
+```json
+[LambdaFunction(Role = "@OrdersApiLambdaExecutionRole")]
+[HttpApi(LambdaHttpMethod.Post, template: "/orders")]
+public async Task PostOrder([FromBody] Order order, ILambdaContext context)
+{
+```
         await _dynamodbContext.SaveAsync(order);
     }
     
-    public class Order
-    {
+```csharp
+public class Order
+{
+```
         public string OrderId { get; set; }
         public decimal Total { get; set; }
         public DateTime CreatedDate { get; set; }
@@ -66,7 +70,7 @@ This blog post is a collection of other posts that covers various aspects of Ama
 
 ![](/images/Amazon-DynamoDB.png)
 
-](__GHOST_URL__/blog/amazon-dynamodb-dotnet-developer)
+](/posts/amazon-dynamodb-dotnet-developer)
 
 For the DynamoDBContext save to work, we need to make sure the Table is set up and the Lambda Function has appropriate access to the table.
 
@@ -191,10 +195,12 @@ Read API Endpoint
 
 To set up the Read API Endpoint, all we need to do is create another Function in the same class and add the `LambdaFunction` and `HttpApi` attribute. Since this is a GET, it specifies the appropriate `LambdaHttpMethod` on it.
 
-    [LambdaFunction(Role = "@OrdersApiLambdaExecutionRole")]
-    [HttpApi(LambdaHttpMethod.Get, "/orders/{orderId}")]
-    public async Task<Order> GetOrder(string orderId, ILambdaContext context)
-    {
+```csharp
+[LambdaFunction(Role = "@OrdersApiLambdaExecutionRole")]
+[HttpApi(LambdaHttpMethod.Get, "/orders/{orderId}")]
+public async Task<Order> GetOrder(string orderId, ILambdaContext context)
+{
+```
         return await _dynamodbContext.LoadAsync<Order>(orderId);
     }
 
@@ -209,10 +215,12 @@ Delete API Endpoint
 
 Very similar to the Get API Endpoint, we can add a new Function for the Delete endpoint.
 
-    [LambdaFunction(Role = "@OrdersApiLambdaExecutionRole")]
-    [HttpApi(LambdaHttpMethod.Delete, "/orders/{orderId}")]
-    public async Task DeleteOrder(string orderId, ILambdaContext context)
-    {
+```csharp
+[LambdaFunction(Role = "@OrdersApiLambdaExecutionRole")]
+[HttpApi(LambdaHttpMethod.Delete, "/orders/{orderId}")]
+public async Task DeleteOrder(string orderId, ILambdaContext context)
+{
+```
         await _dynamodbContext.DeleteAsync<Order>(orderId);
     }
 

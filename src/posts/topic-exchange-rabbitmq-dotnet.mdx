@@ -3,12 +3,12 @@ title: "RabbitMQ Topic Exchange Explained"
 slug: "topic-exchange-rabbitmq-dotnet"
 date: "2024-04-15T05:53:17.000Z"
 feature_image: "/images/RabbitMQ---Topic-Exchange.png"
-tags: []
+tags: ["RabbitMQ","AWS"]
 ---
 
 An Exchange in RabbitMQ is a routing mechanism to send messages to queues.
 
-RabbitMQ supports four Exchange Types: Topic Exchange, [**Direct Exchange**](__GHOST_URL__/blog/direct-exchange-rabbitmq-dotnet/)**,** [Fanout Exchange](__GHOST_URL__/blog/fanout-exchange-rabbitmq-dotnet/), [Headers Exchange](__GHOST_URL__/blog/headers-exchange-rabbitmq-dotnet/).
+RabbitMQ supports four Exchange Types: Topic Exchange, [**Direct Exchange**](/posts/direct-exchange-rabbitmq-dotnet/)**,** [Fanout Exchange](/posts/fanout-exchange-rabbitmq-dotnet/), [Headers Exchange](/posts/headers-exchange-rabbitmq-dotnet/).
 
 In this blog post, let's understand
 
@@ -20,7 +20,7 @@ In this blog post, let's understand
 
 I use [Amazon MQ](https://aws.amazon.com/amazon-mq/?ref=rahulpnath.com), a managed message broker service that supports ActiveMQ and RabbitMQ engine types, to host my RabbitMQ instance. However, you can use [one of the various options that RabbitMQ provides](https://www.rabbitmq.com/download.html?ref=rahulpnath.com) to host your instance,
 
-_This article is sponsored by AWS and is part of my_ [_RabbitMQ Series_](__GHOST_URL__/blog/tag/rabbitmq/)_._
+_This article is sponsored by AWS and is part of my_ [_RabbitMQ Series_](/posts/tag/rabbitmq/)_._
 
 What is a RabbitMQ Topic Exchange?
 ----------------------------------
@@ -74,7 +74,7 @@ RabbitMQ is a powerful open-source message broker facilitating communication bet
 
 ![](/images/rabbit-mq-dotnet.png)
 
-](__GHOST_URL__/blog/amazon-mq-rabbitmq-dotnet/)
+](/posts/amazon-mq-rabbitmq-dotnet/)
 
 ### Create and Send Messages to RabbitMQ Topic Exchange From .NET
 
@@ -82,24 +82,32 @@ Exchanges are created using the Channel.
 
 The `ExchangeDeclare` the method takes in an exchange name and its type. Below is an example of creating a RabbitMQ Topic Exchange in .NET.
 
-    var factory = new ConnectionFactory()
-    {
+```csharp
+var factory = new ConnectionFactory()
+{
+```
         Uri = new Uri("YOUR RABBIT INSTANCE URI"),
         Port = 5671,
         UserName = "<USERNAME FROM CONFIGURATION FILE>",
         Password = "<PASSWORD FROM CONFIGURATION FILE>"
     };
     
-    using var connection = factory.CreateConnection();
-    using var channel = connection.CreateModel();
+```csharp
+using var connection = factory.CreateConnection();
+using var channel = connection.CreateModel();
+```
     
-    var exchangeName = "weather_topic";
-    channel.ExchangeDeclare(exchangeName, ExchangeType.Topic);
+```csharp
+var exchangeName = "weather_topic";
+channel.ExchangeDeclare(exchangeName, ExchangeType.Topic);
+```
 
 When sending a message, the sender specifies the Exchange and the routing key.
 
-    var body = Encoding.UTF8.GetBytes(message);
-    channel.BasicPublish(exchangeName, routingKey, null, body);
+```csharp
+var body = Encoding.UTF8.GetBytes(message);
+channel.BasicPublish(exchangeName, routingKey, null, body);
+```
 
 ### Set up Binding on RabbitMQ Topic Exchange From .NET
 
@@ -107,20 +115,26 @@ Messages are routed to Queues from Exchanges using the Binding information.
 
 To create a Queue, use the `QueueDeclare` method. It will create a new Queue only if one doesn't exist with the same name.
 
-    var factory = new ConnectionFactory()
-    {
+```csharp
+var factory = new ConnectionFactory()
+{
+```
         Uri = new Uri("YOUR RABBIT INSTANCE URI"),
         Port = 5671,
         UserName = "<USERNAME FROM CONFIGURATION FILE>",
         Password = "<PASSWORD FROM CONFIGURATION FILE>"
     };
     
-    using var connection = factory.CreateConnection();
-    using var channel = connection.CreateModel();
+```csharp
+using var connection = factory.CreateConnection();
+using var channel = connection.CreateModel();
+```
     
-    var queueName = "nsw";
-    channel.QueueDeclare(queueName, false, false, false, null);
-    channel.QueueBind(queueName, "weather_topic", "aus.nsw.*");
+```csharp
+var queueName = "nsw";
+channel.QueueDeclare(queueName, false, false, false, null);
+channel.QueueBind(queueName, "weather_topic", "aus.nsw.*");
+```
 
 The above code sets up a queue `nsw` with a binding on the `weather_topic` exchange with a binding key `aus.nws.*` that filters all messages for NSW state in Australia.
 
@@ -130,9 +144,11 @@ AWS MQ RabbitMQ Management Console shows a Topic Exchange with the two bindings 
 
 To set up a Queue to capture all messages to Australia, let's create a new queue `aus` with the binding using the # (hash) wildcard, as shown below.
 
-    var queueName = "aus";
-    channel.QueueDeclare(queueName, false, false, false, null);
-    channel.QueueBind(queueName, "weather_topic", "aus.#");
+```csharp
+var queueName = "aus";
+channel.QueueDeclare(queueName, false, false, false, null);
+channel.QueueBind(queueName, "weather_topic", "aus.#");
+```
 
 Whenever a message comes to the exchange for any state in Australia, a copy gets routed to the `aus` queue. Similarly, when a message arrives for any city in `nsw`, a copy gets sent to both `aus` and `nsw` queue.
 

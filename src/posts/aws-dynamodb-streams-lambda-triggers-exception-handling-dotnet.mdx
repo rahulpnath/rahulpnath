@@ -3,15 +3,15 @@ title: "How to Handle Exceptions When Processing DynamoDB Stream Events in .NET 
 slug: "aws-dynamodb-streams-lambda-triggers-exception-handling-dotnet"
 date: "2022-08-31T00:00:00.000Z"
 feature_image: "/images/aws-lambda-dynamodb-streams-trigger-exception-handling-dotnet.jpg"
-tags: []
+tags: ["AWS","DynamoDB","Lambda"]
 excerpt: "Learn how to use Amazon CloudWatch when building .NET applications. We will learn how to write logs into CloudWatch, filter the logs, some good practices when logging, learn about Log Analytics, and see how we can filter and view logs across multiple applications."
 ---
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 DynamoDB Streams capture a time-ordered sequence of events in any DynamoDB table.
 
-In a previous blog post, [DynamoDB Streams and AWS Lambda Trigger in .NET](__GHOST_URL__/blog/aws-dynamodb-streams-lambda-triggers-dotnet/), we learned how to set up DynamoDB Stream on a DynamoDB table and wire up a Lambda Function written in .NET to respond to stream record events.
+In a previous blog post, [DynamoDB Streams and AWS Lambda Trigger in .NET](/posts/aws-dynamodb-streams-lambda-triggers-dotnet/), we learned how to set up DynamoDB Stream on a DynamoDB table and wire up a Lambda Function written in .NET to respond to stream record events.
 
 A _stream record_ contains information about a data modification to a single item in a DynamoDB table. _Shards_ in DynamoDB streams is a collection of stream records.
 
@@ -36,7 +36,7 @@ Simulating Exception in .NET Lambda Function
 
 To test the above configurations, let’s simulate an exception in our .NET Lambda Function.
 
-Below I have modified the Lambda Function [from our previous blog post](__GHOST_URL__/blog/aws-dynamodb-streams-lambda-triggers-dotnet/), which listens to changes in my User table, to check if the user’s Name property contains the word ‘Error’. And if it does, I throw an exception.
+Below I have modified the Lambda Function [from our previous blog post](/posts/aws-dynamodb-streams-lambda-triggers-dotnet/), which listens to changes in my User table, to check if the user’s Name property contains the word ‘Error’. And if it does, I throw an exception.
 
 ```csharp
 foreach (var record in dynamoEvent.Records)
@@ -101,7 +101,7 @@ Learn how to get started with Amazon SNS and use it from a .NET application. We 
 
 ![](/images/amazon-sns.jpg)
 
-](__GHOST_URL__/blog/amazon-sns)
+](/posts/amazon-sns)
 
 Stream Event Integration Patterns
 ---------------------------------

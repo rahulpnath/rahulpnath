@@ -3,7 +3,7 @@ title: "5 Ways to Handle Application Configuration & Secrets With Azure 🔐"
 slug: "handling-application-configuration"
 date: "2021-10-25T00:00:00.000Z"
 feature_image: "/images/secret.jpg"
-tags: []
+tags: ["Azure","Dotnet"]
 ---
 
 Handing application configuration can be tricky.
@@ -90,10 +90,12 @@ The below `MyConfigController` exposes all the configuration values under the De
 
 **NOTE:** _This Endpoint is for demo purposes only and do not add such an endpoint to your real-world application. It's a recipe for disaster._
 
-    [ApiController]
-    [Route("[controller]")]
-    public class MyConfigController: ControllerBase
-    {
+```json
+[ApiController]
+[Route("[controller]")]
+public class MyConfigController: ControllerBase
+{
+```
         public MyConfigController(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -151,7 +153,7 @@ Values set in the App Settings is usually made available as environment values w
 3\. Azure Key Vault
 -------------------
 
-Azure Key Vault is a cloud-hosted service for managing cryptographic keys and secrets like connection strings, API keys, and similar sensitive information. Key Vault provides centralized storage for application secrets. Check out [my posts on Key Vault](__GHOST_URL__/tag/azure-key-vault/) if you are new to Azure Key Vault and want to learn more.
+Azure Key Vault is a cloud-hosted service for managing cryptographic keys and secrets like connection strings, API keys, and similar sensitive information. Key Vault provides centralized storage for application secrets. Check out [my posts on Key Vault](/blog/tag/azure-key-vault/) if you are new to Azure Key Vault and want to learn more.
 
 You can integrate with Key Vault in two ways
 
@@ -168,7 +170,7 @@ Access secrets in Azure Key Vault from .Net Core and learn how to elegantly hand
 
 ![](/images/pfx_security.jpg)
 
-](__GHOST_URL__/blog/connect-net-core-to-azure-key-vault-in-ten-minutes)
+](/posts/connect-net-core-to-azure-key-vault-in-ten-minutes)
 
 4\. Azure App Configuration
 ---------------------------
@@ -215,7 +217,7 @@ Azure Identity library provides Azure Active Directory token authentication supp
 
 ![](/images/pfx_security.jpg)
 
-](__GHOST_URL__/blog/defaultazurecredential-from-azure-sdk)
+](/posts/defaultazurecredential-from-azure-sdk)
 
 The `DefaultAzureCredential` gets the token based on the environment the application is running. The following credential types if enabled will be tried, in order - EnvironmentCredential, ManagedIdentityCredential, SharedTokenCacheCredential, InteractiveBrowserCredential.
 

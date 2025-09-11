@@ -3,7 +3,7 @@ title: "DynamoDB Zero-ETL Integration With Amazon OpenSearch Service"
 slug: "dynamodb-etl-opensearch-amazon"
 date: "2024-11-29T06:39:33.000Z"
 feature_image: "/images/DynamoDB-Zero-ETL.png"
-tags: []
+tags: ["AWS","DynamoDB"]
 ---
 
 How do you do a full-text search on the data in your DynamoDB database?
@@ -77,8 +77,10 @@ It also provides a default template schema that you can use as a starting point 
 
 The pipeline configuration consists of two parts - the Source and the Sink.
 
-    version: "2"
-    dynamodb-pipeline:
+```yaml
+version: "2"
+dynamodb-pipeline:
+```
       source:
        ...
        

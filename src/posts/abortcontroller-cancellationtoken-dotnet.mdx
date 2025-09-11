@@ -3,7 +3,8 @@ title: "Escaping the Cancel Button Trap: AbortController and CancellationToken i
 slug: "abortcontroller-cancellationtoken-dotnet"
 date: "2024-08-02T06:53:00.000Z"
 feature_image: "/images/Cancel-Button-Trap.png"
-tags: []
+tags: ["Dotnet"]
+excerpt: "Canceling a long-running process from a UI form doesn't mean the server has stopped processing the work. Let's learn how to use AbortController and CancellationTokens to help cancel a task all the way down when building ASP NET applications."
 ---
 
 _Imagine this.._
@@ -26,7 +27,7 @@ Depending on the kind of work, this could be more than inefficient—it could al
 
 So, how do you let the user cancel this work and ensure it gets canceled on the server?
 
-Thanks to AWS for sponsoring this post in my [ASP NET Series](__GHOST_URL__/blog/tag/asp-net/).
+Thanks to AWS for sponsoring this post in my [ASP NET Series](/posts/tag/asp-net/).
 
 The Example Scenario
 --------------------
@@ -51,7 +52,7 @@ Learn how to get started with Amazon S3 from a .NET Core application. We will le
 
 ![](/images/storage-box.jpg)
 
-](__GHOST_URL__/blog/amazon-s3-dotnet/)
+](/posts/amazon-s3-dotnet/)
 
 The Cancel Button Trap on the UI
 --------------------------------
@@ -60,30 +61,33 @@ The UI shown above calls the below `POST /upload-large-file` endpoint, when the 
 
 The code uses the .NET [Amazon S3 SDK](https://www.nuget.org/packages/AWSSDK.S3) to upload the file to S3 storage.
 
-    app.MapPost("/upload-large-file", async (
-            [FromForm] FileUploadRequest request, 
-            CancellationToken cancellationToken) =>
+
+```csharp
+app.MapPost("/upload-large-file", async (
+        [FromForm] FileUploadRequest request, 
+        CancellationToken cancellationToken) =>
+    {
+        try
         {
-            try
+            var s3Client = new AmazonS3Client();
+            await s3Client.PutObjectAsync(new PutObjectRequest()
             {
-                var s3Client = new AmazonS3Client();
-                await s3Client.PutObjectAsync(new PutObjectRequest()
-                {
-                    BucketName = "user-service-large-messages",
-                    Key = $"{Guid.NewGuid()} - {request.File.FileName}",
-                    InputStream = request.File.OpenReadStream()
-                }, cancellationToken);
-                await PerformAdditionalTasks(CancellationToken.None);
-                return Results.Ok();
-            }
-            catch (OperationCanceledException e)
-            {
-                return Results.StatusCode(499);
-            }
-        })
-        .WithName("UploadLargeFile")
-        .DisableAntiforgery()
-        .WithOpenApi();
+                BucketName = "user-service-large-messages",
+                Key = $"{Guid.NewGuid()} - {request.File.FileName}",
+                InputStream = request.File.OpenReadStream()
+            }, cancellationToken);
+            await PerformAdditionalTasks(CancellationToken.None);
+            return Results.Ok();
+        }
+        catch (OperationCanceledException e)
+        {
+            return Results.StatusCode(499);
+        }
+    })
+    .WithName("UploadLargeFile")
+    .DisableAntiforgery()
+    .WithOpenApi();
+```
 
 The HTTP Endpoint takes in a CancellationToken as part of its parameters.
 
@@ -101,16 +105,19 @@ Imagine having a long-running request triggered by a user on your server. But th
 
 ![](/images/Cancellation-Token.png)
 
-](__GHOST_URL__/blog/cancellation-token-dotnet/)
+](/posts/cancellation-token-dotnet/)
 
 When the file uploaded is large, it takes time to upload it to S3.
 
 If the user cancels the operation midway during the upload to S3 using the Cancel button, the underlying API request is not automatically cancelled.
 
-    const response = await fetch('https://localhost:44367/upload-large
-            method: 'POST',
-            body: formData
-        });
+
+```csharp
+const response = await fetch('https://localhost:44367/upload-large
+        method: 'POST',
+        body: formData
+    });
+```
 
 The file will continue to be uploaded to S3, and additional steps will be performed.
 
@@ -129,8 +136,9 @@ _The_ [_AbortController_](https://developer.mozilla.org/en-US/docs/Web/API/Abort
 
 We pass in the AbortSignal as a request option whenever a fetch request is made. This allows us to invoke the `Abort` function on the `AbortController` and also have the associated fetch request aborted.
 
-    abortController = new AbortController();
-    try {
+```csharp
+abortController = new AbortController();
+try {
         const response = await fetch('https://localhost:44367/upload-large
             method: 'POST',
             body: formData,
@@ -145,11 +153,13 @@ We pass in the AbortSignal as a request option whenever a fetch request is made.
     }
     
     ...
-    
-    cancelBtn.addEventListener('click', () => {
-        abortController.abort();
-        ...
-    });
+```    
+```css
+cancelBtn.addEventListener('click', () => {
+    abortController.abort();
+    ...
+});
+```
 
 When `abort()` is called, the fetch throws `DOMException` named `AbortError`.
 

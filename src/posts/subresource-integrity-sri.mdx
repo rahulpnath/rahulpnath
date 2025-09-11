@@ -3,10 +3,10 @@ title: "Subresource Integrity (SRI)"
 slug: "subresource-integrity-sri"
 date: "2018-08-28T00:00:00.000Z"
 feature_image: "/images/sri.png"
-tags: []
+tags: ["Programming"]
 ---
 
-_This article is part of a series of articles - [Ok I have got HTTPS! What Next?](__GHOST_URL__/blog/ok-i-have-got-https-what-next/). In this post, we explore how to use Subresource Integrity and the issues it solves._
+_This article is part of a series of articles - [Ok I have got HTTPS! What Next?](/posts/ok-i-have-got-https-what-next/). In this post, we explore how to use Subresource Integrity and the issues it solves._
 
 [Subresource Integrity (SRI)](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) is a security feature that enables browsers to verify that files they fetch (for example, from a CDN) are delivered without unexpected manipulation. It works by allowing you to provide a cryptographic hash that a fetched file must match.
 
@@ -36,7 +36,9 @@ For third-party libraries (js and CSS) referred via CDN, you can grab the script
 
 When referring third party libraries via CDN its [good to fall back to a local copy](https://www.hanselman.com/blog/CDNsFailButYourScriptsDontHaveToFallbackFromCDNToLocalJQuery.aspx). In cases where the CDN is unreachable or the integrity check fails it can fall back to a local copy. I chose to include the integrity attribute on the fallback copy as well.
 
-    <script>
+```html
+<script>
+```
       window.jQuery ||
         document.write(
           '<script src="{{ root_url }}/javascripts/libs/jquery/jquery-2.0.3.min.js" crossorigin="anonymous" integrity="sha256-ruuHogwePywKZ7bI1vHGGs7ScbBLhkNUcSSeRjhSUko=">\x3C/script>',
@@ -50,7 +52,7 @@ For application specific javascript files, you need to generate the hash everyti
 
 ### Inline JavaScript
 
-_The [integrity](https://html.spec.whatwg.org/multipage/scripting.html#attr-script-integrity) attribute must not be specified when embedding a module script or when the src attribute is not specified._ This means that SRI cannot be used for inline javascript. Even though inline javascript should be avoided, there still are scenarios where you might use that or have dynamically generated javascript. In these cases, we can use [nonce](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src) attribute on script tag and whitelist that nonce in the [CSP Headers](__GHOST_URL__/blog/http-content-security-policy-csp/).
+_The [integrity](https://html.spec.whatwg.org/multipage/scripting.html#attr-script-integrity) attribute must not be specified when embedding a module script or when the src attribute is not specified._ This means that SRI cannot be used for inline javascript. Even though inline javascript should be avoided, there still are scenarios where you might use that or have dynamically generated javascript. In these cases, we can use [nonce](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src) attribute on script tag and whitelist that nonce in the [CSP Headers](/posts/http-content-security-policy-csp/).
 
 > **nonce-<base64-value>**  
 > _A whitelist for specific inline scripts using a cryptographic nonce (number used once). The server must generate a unique nonce value each time it transmits a policy. It is critical to provide an unguessable nonce, as bypassing a resource’s policy is otherwise trivial. See unsafe inline script for example. Specifying nonce makes a modern browser ignore 'unsafe-inline' which could still be set for older browsers without nonce support._
@@ -67,8 +69,10 @@ For the jquery fallback above we need a nonce attribute since this is loaded inl
 
 We can then specify this nonce on the CSP headers for the script-src. The nonce value can be anything that is base64 encoded.
 
-    <!-- Web.config CSP header -->
-    <add
+```typescript
+<!-- Web.config CSP header -->
+<add
+```
       name="Content-Security-Policy"
       value="default-src 'self';script-src c.disquscdn.com 'self' 'nonce-anF1ZXJ5ZmFsbGJhY2s=' 'nonce-ZGlzcXVzc2NyaXB0'; />
     

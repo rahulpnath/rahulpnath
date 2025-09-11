@@ -3,7 +3,7 @@ title: "Simulating Different Scenarios Using Fake JSON Server API"
 slug: "simulating-different-api-scenarios-using-json-server"
 date: "2020-04-21T00:00:00.000Z"
 feature_image: ""
-tags: []
+tags: ["Testing"]
 excerpt: "Learn how to simulate different API scenarios using Fake JSON Server, enabling robust testing and demoing of edge cases in your applications."
 ---
 
@@ -13,13 +13,13 @@ _How do you demo these different API scenarios to someone?_
 
 The pages and components of our application have different states. Most of these states depend on the data returned from the server via the API. Often it's hard to simulate the different scenarios for the API, and we stick with the 'happy path scenario' - the one that happens most of the time. Writing code or testing for the happy path scenario is easy, as the API endpoint is most likely to behave that way. It is tricky to develop or test the edge case scenarios and are often ignored or left untested.
 
-Let's take an example of a simple list page of Quotes. Some of the scenarios for this endpoint are - no quotes available, some quotes available, request to server errors, and more. The 'happy path scenario' here is some quotes existing, and most of our development and testing will be against that. It will be good if we can simulate different application scenarios using a [FAKE JSON Server API](__GHOST_URL__/blog/setting-up-a-fake-rest-api-using-json-server/). It will allow us to simulate any use case or scenario that we want, allowing us to write code for it. Not to mention that testing, demoing, and writing automated tests all becomes easier.
+Let's take an example of a simple list page of Quotes. Some of the scenarios for this endpoint are - no quotes available, some quotes available, request to server errors, and more. The 'happy path scenario' here is some quotes existing, and most of our development and testing will be against that. It will be good if we can simulate different application scenarios using a [FAKE JSON Server API](/posts/setting-up-a-fake-rest-api-using-json-server/). It will allow us to simulate any use case or scenario that we want, allowing us to write code for it. Not to mention that testing, demoing, and writing automated tests all becomes easier.
 
 <iframe src="https://www.youtube.com/embed/eUDi-DjU2Ko" />
 
   
 
-In this post, we will look at how to [set up a fake JSON Server API](__GHOST_URL__/blog/setting-up-a-fake-rest-api-using-json-server/) to return data based on scenarios we specify. This post describes an approach that you can adapt to your application and the scenarios you have. If you are new to setting up a fake API, check out how to [Set up Up A Fake REST API Using JSON Server](__GHOST_URL__/blog/setting-up-a-fake-rest-api-using-json-server/)
+In this post, we will look at how to [set up a fake JSON Server API](/posts/setting-up-a-fake-rest-api-using-json-server/) to return data based on scenarios we specify. This post describes an approach that you can adapt to your application and the scenarios you have. If you are new to setting up a fake API, check out how to [Set up Up A Fake REST API Using JSON Server](/posts/setting-up-a-fake-rest-api-using-json-server/)
 
 Specifying Scenarios to JSON Server
 -----------------------------------
@@ -44,11 +44,13 @@ Below are some sample values that the header can have for our quote list scenari
 
     // Different options that the scenarios header can have
     
-    scenarios: "open" // Only Quotes in open status
-    scenarios: "draft phone" // All quotes in draft and has a phone
-    scenarios: "error-quotes" // Server error getting the quotes
-    scenarios: "no-quotes" // Empty list of quotes
-    sceanrios: "" // All quotes
+```yaml
+scenarios: "open" // Only Quotes in open status
+scenarios: "draft phone" // All quotes in draft and has a phone
+scenarios: "error-quotes" // Server error getting the quotes
+scenarios: "no-quotes" // Empty list of quotes
+sceanrios: "" // All quotes
+```
     
 
 ### Organizing Scenarios and Mock Data in JSON Server
@@ -86,8 +88,10 @@ For, e.g., when the scenario header is _'draft phone'_ only the quotes that have
 
 The quote type is now an [Intersection Type](https://www.typescriptlang.org/docs/handbook/advanced-types.html#intersection-types)\- (QuoteDto & `Scenarios<QuoteScenario>`)\[\] - that combines multiple types into one. This allows us to maintain type safety for the mock data, while also adding the new scenario property. To avoid typos on the scenarios, we have type safe scenarios list as shown below.
 
-    export type QuoteScenario = "phone" | "no-phone" | "draft" | "open";
-    export type UserScenario = "admin" | "salesrep";
+```typescript
+export type QuoteScenario = "phone" | "no-phone" | "draft" | "open";
+export type UserScenario = "admin" | "salesrep";
+```
     
     export interface Scenarios<T> {
       scenarios: T[];
@@ -122,8 +126,10 @@ For an API request, we first filter out the scenarios in the header that apply t
       }
     };
     
-    // filter scenarios header based no the endpoint url
-    export const scenariosForEndpoint = {
+```javascript
+// filter scenarios header based no the endpoint url
+export const scenariosForEndpoint = {
+```
       "/api/quotes": ["phone", "no-phone", "draft", "open", "no-quotes"],
       "/api/users": ["admin", "salesrep", "no-user"],
     };
@@ -192,12 +198,16 @@ Invoking Scenarios
 
 When requesting the API, pass the scenarios header to activate the different scenarios. Based on the values in the scenarios header, JSON Server will filter out the response data. Below is a sample request made with 'draft' in scenarios header, and it returns only quotes that have the 'draft' scenarios applied to it.
 
-    GET http://localhost:5000/api/quotes HTTP/1.1
-    Host: localhost:5000
-    scenarios: draft
+```yaml
+GET http://localhost:5000/api/quotes HTTP/1.1
+Host: localhost:5000
+scenarios: draft
+```
     
-    HTTP/1.1 200 OK
-    [
+```json
+HTTP/1.1 200 OK
+[
+```
       {
         "id": "1",
         "scenarios": [
@@ -223,6 +233,6 @@ When requesting the API, pass the scenarios header to activate the different sce
     ]
     
 
-To test edge case scenarios, it's now about adding the appropriate scenario header to the API request and adding the proper data to the mock JSON server. Passing the proper header when making the API request allows us to develop/test against these scenarios quickly. [In a follow-up post](__GHOST_URL__/blog/simulating-different-ui-scenarios-during-fronend-development/), we will see how we can use this in our front end app development and automated tests.
+To test edge case scenarios, it's now about adding the appropriate scenario header to the API request and adding the proper data to the mock JSON server. Passing the proper header when making the API request allows us to develop/test against these scenarios quickly. [In a follow-up post](/posts/simulating-different-ui-scenarios-during-fronend-development/), we will see how we can use this in our front end app development and automated tests.
 
 Hope this helps you set up the different scenarios for your API.

@@ -3,7 +3,8 @@ title: "How To Automatically Deploy ARM Templates To Azure Cosmos Emulator"
 slug: "cosmos-emulator-arm-templates"
 date: "2020-11-12T00:00:00.000Z"
 feature_image: "/images/build_automation.jpg"
-tags: []
+tags: ["Azure"]excerpt: "Azure Cosmos Emulator does not support ARM templates. Learn how you can automatically create Database and Containers from an ARM Template to support a seamless development experience."
+
 ---
 
 The [Azure Cosmos Emulator](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator?tabs=cli%2Cssl-netstd21&WT.mc_id=AZ-MVP-5003875)provides a local environment that emulates the Cosmos DB service. Having the Emulator running on your local development machine helps to develop and test your application easily. You no longer need to create an Azure subscription or incur any costs for your local development. If you haven't downloaded it before, you can \[download the [Azure Cosmos emulator](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator?tabs=cli%2Cssl-netstd21#download-the-emulator&WT.mc_id=AZ-MVP-5003875) here. There are a few differences between the Emulator and the cloud service, and you can [read about it in detail here](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator?tabs=cli%2Cssl-netstd21#differences-between-the-emulator-and-the-cloud-service&WT.mc_id=AZ-MVP-5003875). Currently, the Emulator can run only on Windows. If you are using Linux or Mac, you will have to either use the Azure Cosmos DB or run the Emulator in a [Windows Virtual machine](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator?tabs=cli%2Cssl-netstd21#run-on-linux-macos&WT.mc_id=AZ-MVP-5003875)
@@ -13,7 +14,7 @@ The [Azure Cosmos Emulator](https://docs.microsoft.com/en-us/azure/cosmos-db/loc
 ARM Templates and Multiple Containers
 -------------------------------------
 
-I showed you [how to set up Azure ARM templates to deploy Cosmos DB](__GHOST_URL__/blog/cosmos-arm-template/) in an earlier post.
+I showed you [how to set up Azure ARM templates to deploy Cosmos DB](/posts/cosmos-arm-template/) in an earlier post.
 
 > ARM Template is a JSON file that defines infrastructure using a declarative syntax and helps automate creating Azure resources.
 
@@ -29,7 +30,7 @@ Learn how to create an ARM template to deploy Azure Cosmos DB with dynamic conta
 
 ![](/images/arm_template.png)
 
-](__GHOST_URL__/blog/cosmos-arm-template)
+](/posts/cosmos-arm-template)
 
 The above works well when working with Cosmos DB on Azure!
 
@@ -61,10 +62,12 @@ To start with, let’s create a new DOT NET Console application. We will use thi
 
 The application uses the below NuGet packages to access the configuration file and interact with the Cosmos Emulator.
 
-    Install-Package Azure.Cosmos -Version 4.0.0-preview3
-    Install-Package Microsoft.Extensions.Configuration
-    Install-Package Microsoft.Extensions.Configuration.Json
-    Install-Package Microsoft.Extensions.Configuration.Binder
+```powershell
+Install-Package Azure.Cosmos -Version 4.0.0-preview3
+Install-Package Microsoft.Extensions.Configuration
+Install-Package Microsoft.Extensions.Configuration.Json
+Install-Package Microsoft.Extensions.Configuration.Binder
+```sql
     
 
 Below is the [gist of the application](https://github.com/rahulpnath/Blog/blob/master/CosmosEmulator/src/CosmosEmulator.ArmTemplate/Program.cs)
@@ -73,8 +76,10 @@ Below is the [gist of the application](https://github.com/rahulpnath/Blog/blob/m
 *   Reads the Cosmos Configuration from the [config file](https://github.com/rahulpnath/Blog/blob/master/CosmosEmulator/src/CosmosEmulator.ArmTemplate/appsettings.json) (expects a specific format for the configuration, which you can change to match your needs)
 *   Uses the `CosmosClient` to create the Database (if not exists) and the Containers from the ARM template file by specifying the name and partition key (if you need more properties, you can add that to the ARM template parameters and extend the code.)
 
-    static async Task Main(string[] args)
-    {
+```csharp
+static async Task Main(string[] args)
+{
+```csharp
         // Get all Containers defined in ARM Template
         var containers = await GetContainersFromTemplate(@"deploy\azuredeploy.parameters.json");
     
@@ -116,14 +121,16 @@ It looks like below in Visual Studio Solution Explorer (Note the file icon is di
 
 The `appsettings.json` has the below configuration for Cosmos Emulator. The Emulator supports a [single fixed account and a well-known authentication key as it's primary key.](https://docs.microsoft.com/bs-latn-ba/Azure/cosmos-db/local-emulator?tabs=cli%2Cssl-netstd21&WT.mc_id=AZ-MVP-5003875#authenticate-requests). By default, it runs on `localhost:8081`
 
-    {
-      "Cosmos": {
-        "EndpointUrl": "https://localhost:8081",
-        "PrimaryKey": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-        "DatabaseName": "MyDatabase"
-      }
-    }
-    
+
+```css
+{
+  "Cosmos": {
+    "EndpointUrl": "https://localhost:8081",
+    "PrimaryKey": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+    "DatabaseName": "MyDatabase"
+  }
+}
+```
 
 If your application uses a different style configuration, update the `GetCosmosConfig` method to match the configuration style.
 

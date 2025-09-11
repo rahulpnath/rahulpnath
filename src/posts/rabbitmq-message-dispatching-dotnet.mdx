@@ -3,7 +3,7 @@ title: "Efficient Message Distribution with RabbitMQ: Understanding Round Robin 
 slug: "rabbitmq-message-dispatching-dotnet"
 date: "2024-02-14T02:48:41.000Z"
 feature_image: "/images/RabbitMQ---Message-Dispatching.png"
-tags: []
+tags: ["RabbitMQ","AWS"]
 excerpt: "Understand RabbitMQ message dispatching modes—Round Robin and Fair Dispatch—and how to efficiently distribute tasks across workers in .NET applications."
 ---
 
@@ -15,7 +15,7 @@ In this post, let’s learn the two message dispatch modes in RabbitMQ and how i
 
 <iframe src="https://www.youtube.com/embed/HRudM2WTXHM?feature=oembed" />
 
-_This article is sponsored by AWS and is part of my_ [_RabbitMQ Series_](__GHOST_URL__/blog/tag/rabbitmq/)_._
+_This article is sponsored by AWS and is part of my_ [_RabbitMQ Series_](/posts/tag/rabbitmq/)_._
 
 For this post, I will use [Amazon MQ](https://aws.amazon.com/amazon-mq/), a managed message broker service that supports ActiveMQ and RabbitMQ engine types.
 
@@ -31,7 +31,7 @@ RabbitMQ is a powerful open-source message broker facilitating communication bet
 
 ![](/images/rabbit-mq-dotnet.png)
 
-](__GHOST_URL__/blog/amazon-mq-rabbitmq-dotnet/)
+](/posts/amazon-mq-rabbitmq-dotnet/)
 
 The main idea of using a work queue is to offload resource-intensive tasks to a different process in the background or to be scheduled. This removes the need to wait for the task to be completed on synchronous application interaction points.
 
@@ -42,8 +42,10 @@ Rabbit MQ and .NET Consumer
 
 Below is a sample .NET consumer that pulls work from a RabbitMQ (in my case, one hosted on Amazon MQ).
 
-    consumer.Received += (model, ea) =>
-    {
+```javascript
+consumer.Received += (model, ea) =>
+{
+```
         var body = ea.Body.ToArray();
         var message = Encoding.UTF8.GetString(body);
         Console.WriteLine($"[x] Received message {message}");
@@ -123,7 +125,7 @@ Delivery processing acknowledgements from consumers are referred to as acknowled
 
 ![](/images/_RabbitMQ---ACK.png)
 
-](__GHOST_URL__/blog/rabbitmq-consumer-ack-dotnet/)
+](/posts/rabbitmq-consumer-ack-dotnet/)
 
 We saw that with Automatic acknowledgment mode, messages are considered to be successfully delivered as soon as they are sent.
 

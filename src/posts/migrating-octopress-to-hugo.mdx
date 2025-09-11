@@ -3,26 +3,26 @@ title: "Migrating Octopress To Hugo"
 slug: "migrating-octopress-to-hugo"
 date: "2019-01-12T00:00:00.000Z"
 feature_image: "/images/bloggingSchedule_writedaily.jpg"
-tags: []
+tags: ["Programming","Blogging"]
 ---
 
-I have been on [Octopress blogging platform for around 5 years](__GHOST_URL__/blog/static-generator-is-all-a-blog-needs-moving-to-octopress/) and was fairly happy with it. I had [optimized Octopress workflow for new posts](__GHOST_URL__/blog/optimizing-octopress-workflow-for-new-posts/), [set it up for continuous delivery](__GHOST_URL__/blog/continuos-delivery-of-octopress-blog-using-travisci-and-docker/) and also [enabled scheduling posts in the future](__GHOST_URL__/blog/automatic-deployment-of-future-posts-with-octopress/).
+I have been on [Octopress blogging platform for around 5 years](/posts/static-generator-is-all-a-blog-needs-moving-to-octopress/) and was fairly happy with it. I had [optimized Octopress workflow for new posts](/posts/optimizing-octopress-workflow-for-new-posts/), [set it up for continuous delivery](/posts/continuos-delivery-of-octopress-blog-using-travisci-and-docker/) and also [enabled scheduling posts in the future](/posts/automatic-deployment-of-future-posts-with-octopress/).
 
-I have been wanting to migrate off Octopress since a while (reasons below) but have been putting it off since I did not want to go through [another migration pain](__GHOST_URL__/blog/own-your-urls/). Now that it is all done, the migration was not as hard as I thought. In this post I will walk through the reasons of migrating away from Octopress, the actual migration steps involved and tweaking the default Hugo settings/theme and workflow to get what I wanted.
+I have been wanting to migrate off Octopress since a while (reasons below) but have been putting it off since I did not want to go through [another migration pain](/posts/own-your-urls/). Now that it is all done, the migration was not as hard as I thought. In this post I will walk through the reasons of migrating away from Octopress, the actual migration steps involved and tweaking the default Hugo settings/theme and workflow to get what I wanted.
 
 Reasons To Migrate
 ------------------
 
 *   **No Longer Maintained:** [Octopress](http://octopress.org/) is no longer maintained by anyone and it's hard to keep up with all the dependent library updates and ruby version changes. I have my [builds breaking randomly](https://travis-ci.org/rahulpnath/rahulpnath.com-old/builds/470281590) for dependent package updates and it was not something I liked dealing with.
-*   **Terribly Slow:** To build by full site Octopress takes around 2 minutes. Since I have modified my workflow to [build only the draft posts when in local](__GHOST_URL__/blog/optimizing-octopress-workflow-for-new-posts/) I usually don't have to wait that long, but still it's slow.
+*   **Terribly Slow:** To build by full site Octopress takes around 2 minutes. Since I have modified my workflow to [build only the draft posts when in local](/posts/optimizing-octopress-workflow-for-new-posts/) I usually don't have to wait that long, but still it's slow.
 
 These two reasons were pressing enough to migrate off Octopress. Hugo was the natural choice for its speed and community and is the next highest rated after Jekyll(/Octopress). I also chose to migrate away from Azure Hosting and use Netlify to host this blog.
 
-**Why Netlify?**With Octopress I had my [build pipeline](__GHOST_URL__/blog/continuos-delivery-of-octopress-blog-using-travisci-and-docker/) push the generated site contents back into GitHub (to a separate branch) and then have Azure deploy that branch automatically using Github trigger. If I were to remain on Azure, I would have to do almost the same. Netlify comes with a [hugo template](https://gohugo.io/hosting-and-deployment/hosting-on-netlify/). The template is automatically detected when pointed to your repository and sets up all that is required to deploy the generated static content. All I had to update was to set the correct Build Environment Variable for HUGO\_VERSION.
+**Why Netlify?**With Octopress I had my [build pipeline](/posts/continuos-delivery-of-octopress-blog-using-travisci-and-docker/) push the generated site contents back into GitHub (to a separate branch) and then have Azure deploy that branch automatically using Github trigger. If I were to remain on Azure, I would have to do almost the same. Netlify comes with a [hugo template](https://gohugo.io/hosting-and-deployment/hosting-on-netlify/). The template is automatically detected when pointed to your repository and sets up all that is required to deploy the generated static content. All I had to update was to set the correct Build Environment Variable for HUGO\_VERSION.
 
 > [Netlify](https://gohugo.io/hosting-and-deployment/hosting-on-netlify/) can host your Hugo site with CDN, continuous deployment, 1-click HTTPS, an admin GUI, and its own CLI.
 
-I moved this site over to [HTTPS](__GHOST_URL__/blog/ok-i-have-got-https-what-next/) a while back and had been using Cloudflare's Shared SSL. Moving over to the free [Let's Encrypt](https://letsencrypt.org/) certificate required [additional setup on Azure](https://letsencrypt.org/). Netlify takes out all this complexity and handles this all for you in the background. Once you set up a [custom domain](https://www.netlify.com/docs/custom-domains/), it's provisioned with a [Let's Encrypt](https://www.netlify.com/blog/2016/01/15/free-ssl-on-custom-domains/) certificate.
+I moved this site over to [HTTPS](/posts/ok-i-have-got-https-what-next/) a while back and had been using Cloudflare's Shared SSL. Moving over to the free [Let's Encrypt](https://letsencrypt.org/) certificate required [additional setup on Azure](https://letsencrypt.org/). Netlify takes out all this complexity and handles this all for you in the background. Once you set up a [custom domain](https://www.netlify.com/docs/custom-domains/), it's provisioned with a [Let's Encrypt](https://www.netlify.com/blog/2016/01/15/free-ssl-on-custom-domains/) certificate.
 
 Migration
 ---------

@@ -3,7 +3,7 @@ title: "ReactJS: Setting up the Environment"
 slug: "reactjs-setting-up-the-environment"
 date: "2016-05-12T04:27:36.000Z"
 feature_image: "/images/react_vscode_intellisense.png"
-tags: []
+tags: ["Programming"]
 ---
 
 _This post helps setting up the development environment for React on VS Code using Browserify and Gulp_
@@ -17,9 +17,17 @@ Package Manager for External Dependencies
 
 One of the first things we need when starting with a fresh project on React, is the React library itself. I use Node Package Manager(npm) for managing all my code and development dependencies. Use the below commands to set up the [npm configuration (_package.json_)](https://docs.npmjs.com/cli/init) and install the latest version of React library.
 
-    npm init
-    npm i --save react
-    npm i --save react-dom
+```bash
+```bash
+```
+```bash
+npm init
+```
+```bash
+npm i --save react
+```
+npm i --save react-dom
+```
     
 
 > _When installing npm packages use [\--save](https://docs.npmjs.com/files/package.json#dependencies) if it needs to be deployed with the application and use [\--save-dev](https://docs.npmjs.com/files/package.json#devdependencies) for a package added to support development._
@@ -31,11 +39,15 @@ JavaScript development experience is better when you have _[jsconfig.json](https
 
 ![Visual Studio code jsconfig balloon notification](/images/vscode_jsconfig_balloon.png)
 
+```bash
 Intellisense for libraries is available through type definition files, usually available in the [DefinitelyTyped](http://definitelytyped.org/) [repository](https://github.com/DefinitelyTyped/DefinitelyTyped). With npm, you can manage these definition files using the [TypeScript Definition Manager (typings)](https://github.com/typings/typings) package. To get started install the typings package and support for node packages. Now you can use [typings](https://github.com/typings/typings/blob/master/docs/commands.md) to manage all the typescript definitions and use it for getting IntelliSense support. Once you have the correct type definitions installed for the packages you use, VSCode will show IntelliSense as shown below.
+```
 
-    npm i --save-dev typings
-    typings install --ambient node
-    typings install --save-dev gulp
+```bash
+npm i --save-dev typings
+typings install --ambient node
+typings install --save-dev gulp
+```
     
 
 ![Visual Studio code Intellisense](/images/react_vscode_intellisense.png)
@@ -62,11 +74,15 @@ Let's save the above into _[components/helloworld.js](https://github.com/rahulpn
 
     'use strict';
     
-    import React from 'react';
-    import ReactDOM from 'react-dom';
-    import HelloWorld from './components/helloworld';
+```javascript
+import React from 'react';
+import ReactDOM from 'react-dom';
+import HelloWorld from './components/helloworld';
+```
     
-    ReactDOM.render(<HelloWorld message="Hello World From React" />, document.getElementById('app'));
+```html
+ReactDOM.render(<HelloWorld message="Hello World From React" />, document.getElementById('app'));
+```
     
 
 For completeness below is how the _[Index.html](https://github.com/rahulpnath/Blog/blob/master/React_Template/src/Index.html)_ looks
@@ -91,7 +107,7 @@ If you now manually copy over the HTML file into the _dest_ folder and open it f
 
 ### Automating Build and More
 
-I definitely did not want to keep running the above command and copy the HTML(/CSS) files, every time I make a change, to see the output - so automating it was very much required. What I would essentially like to have is every time I make a change on any of the files in the project, the build to trigger and output the updated application into the _dest_ folder and automatically refreshing the browser so that I can see the changes (near) real-time. I chose to use [Gulp](http://gulpjs.com/) as this is popular and I have had some [experience using it before](__GHOST_URL__/blog/organizing-tests-into-test-suites-for-visual-studio/).
+I definitely did not want to keep running the above command and copy the HTML(/CSS) files, every time I make a change, to see the output - so automating it was very much required. What I would essentially like to have is every time I make a change on any of the files in the project, the build to trigger and output the updated application into the _dest_ folder and automatically refreshing the browser so that I can see the changes (near) real-time. I chose to use [Gulp](http://gulpjs.com/) as this is popular and I have had some [experience using it before](/posts/organizing-tests-into-test-suites-for-visual-studio/).
 
 ### **[gulpfile.js](https://github.com/rahulpnath/Blog/blob/master/React_Template/gulpfile.js)**
 
@@ -158,6 +174,6 @@ With the default gulp task running, either using [VSCode Task Runner](https://co
 
 _If you find any package details missing see the [package.json](https://github.com/rahulpnath/Blog/blob/master/React_Template/package.json) file._
 
-You can find the hello world project template [here](https://github.com/rahulpnath/Blog/tree/master/React_Template). The repository size is a bit high as I have [included the npm packages](__GHOST_URL__/blog/checking-in-package-dependencies-into-source-control/) (_node\_modules_) in the repository, which you would have anyways downloaded when doing a '[npm install](https://docs.npmjs.com/cli/install)'.
+You can find the hello world project template [here](https://github.com/rahulpnath/Blog/tree/master/React_Template). The repository size is a bit high as I have [included the npm packages](/posts/checking-in-package-dependencies-into-source-control/) (_node\_modules_) in the repository, which you would have anyways downloaded when doing a '[npm install](https://docs.npmjs.com/cli/install)'.
 
 Hope this helps you to get started with React!

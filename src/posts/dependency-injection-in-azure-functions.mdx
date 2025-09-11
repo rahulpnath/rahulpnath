@@ -3,7 +3,8 @@ title: "How To Setup Dependency Injection With Azure Functions ⚡"
 slug: "dependency-injection-in-azure-functions"
 date: "2022-01-06T00:00:00.000Z"
 feature_image: "/images/laptop_developer.jpg"
-tags: []
+tags: ["Azure"]excerpt: "Learn how to set up Dependency Injection in Azure Functions using .NET ."
+
 ---
 
 Dependency Injection (DI) is a technique to achieve Inversion of Control (also known as IoC) between classes and their dependencies.
@@ -12,26 +13,30 @@ Azure Functions supports Dependency Injection pattern.
 
 With DI, you can segregate responsibilities into different classes and inject them into your main Function class. DI helps write loosely coupled code and improved maintainability, testability, and reusability.
 
-If you are new to building Azure Functions, check out my [Azure Functions ⚡ For The .NET Developer](__GHOST_URL__/blog/getting-started-with-azure-functions/) post to quickly get started. I’ll continue using the sample Function I used there and extend it to support Dependency Injection.
+If you are new to building Azure Functions, check out my [Azure Functions ⚡ For The .NET Developer](/posts/getting-started-with-azure-functions/) post to quickly get started. I’ll continue using the sample Function I used there and extend it to support Dependency Injection.
 
 <iframe src="https://www.youtube.com/embed/m\_jrALXcrXc" />
 
 Setting Up Azure Function Dependency Injection
 ----------------------------------------------
 
-The Azure Functions we [wrote earlier](__GHOST_URL__/blog/getting-started-with-azure-functions/) logs to the console. Say we want to do some business-related processing every time we get a message in the queue.
+The Azure Functions we [wrote earlier](/posts/getting-started-with-azure-functions/) logs to the console. Say we want to do some business-related processing every time we get a message in the queue.
 
 Let’s add a new class, `MessageProcessor`, to process this message. It implements the `IMessageProcessor` interface, which has the `Process` function that takes in the string message and does some processing.
 
 The implementation currently checks if the message contains ‘exception’ and throws a code exception. This might do more valuable and relevant business checks and processes in your real-world applications.
 
-    public interface IMessageProcessor
-    {
+```typescript
+public interface IMessageProcessor
+{
+```csharp
         void Process(string message);
     }
     
-    public class MessageProcessor : IMessageProcessor
-    {
+```csharp
+public class MessageProcessor : IMessageProcessor
+{
+```csharp
         public void Process(string message)
         {
             if (message.Contains("exception")) 
@@ -40,12 +45,14 @@ The implementation currently checks if the message contains ‘exception’ and 
     }
     
 
-The default Function class created by the Visual Studio template (in the [previous example](__GHOST_URL__/blog/getting-started-with-azure-functions/)) is a static method in a static class.
+The default Function class created by the Visual Studio template (in the [previous example](/posts/getting-started-with-azure-functions/)) is a static method in a static class.
 
 To support Dependency Injection via the constructor, we need the class to be instantiated with a constructor. So let’s update the `Function1` from the previous example to be non-static. Let’s also update the name of the class to be `ProcessWeatherDataFunction`.
 
-    public class ProcessWeatherDataFunction
-    {
+```csharp
+public class ProcessWeatherDataFunction
+{
+```csharp
         private readonly IMessageProcessor messageProcessor;
     
         public ProcessWeatherDataFunction(IMessageProcessor messageProcessor)
@@ -81,9 +88,11 @@ To set up the Startup class, we need to make sure,
 
 The below class is a sample Startup class that also registers the `IMessageProcessor` into the ServiceCollection used for Functions.
 
-    [assembly: FunctionsStartup(typeof(WeatherDataIngestor.Startup))]
-    namespace WeatherDataIngestor
-    {
+```json
+[assembly: FunctionsStartup(typeof(WeatherDataIngestor.Startup))]
+namespace WeatherDataIngestor
+{
+```csharp
         public class Startup : FunctionsStartup
         {
             public override void Configure(IFunctionsHostBuilder builder)
@@ -105,14 +114,22 @@ The `Run` method in our Azure Function, `ProcessWeatherDataFunction` has the `IL
 
 However, we can inject an ILogger instance via the constructor using the ServiceCollection that we set up earlier. To do this, we need to move the ILogger to the constructor.
 
-    public ProcessWeatherDataFunction(
-        IMessageProcessor messageProcessor, 
-        ILogger<ProcessWeatherDataFunction> log)
-    {
-        this.messageProcessor = messageProcessor;
-        this.log = log;
-    }
-    
+
+```csharp
+public ProcessWeatherDataFunction(
+
+```html
+IMessageProcessor messageProcessor, 
+ILogger<ProcessWeatherDataFunction> log)
+```
+{
+
+```
+this.messageProcessor = messageProcessor;
+this.log = log;
+```
+}
+```typescript
 
 The above code injects in an instance of the `ILogger<ProcessWeatherDataFunction>` where the generic class type represents the category name used when logging.
 
@@ -120,8 +137,10 @@ The above code injects in an instance of the `ILogger<ProcessWeatherDataFunction
 
 To register logging related services, in the `Startup` class, invoke the `AddLogging` method as shown below.
 
-    public override void Configure(IFunctionsHostBuilder builder)
-    {
+```csharp
+public override void Configure(IFunctionsHostBuilder builder)
+{
+```javascript
         builder.Services.AddTransient<IMessageProcessor, MessageProcessor>();
         builder.Services.AddLogging();
     }
@@ -144,13 +163,17 @@ It has a `Write` method defined, which simply takes in a logger instance. A rand
 
 The value of the Guide will help us determine if it’s the same instance or a new instance that gets injected into when an instance of this class is requested for.
 
-    public interface ITransientService
-    {
+```typescript
+public interface ITransientService
+{
+```csharp
         void Write(string message);
     }
     
-    public class TransientService : ITransientService
-    {
+```csharp
+public class TransientService : ITransientService
+{
+```csharp
         private readonly ILogger<TransientService> logger;
         public TransientService(ILogger<TransientService> logger)
         {
@@ -169,19 +192,30 @@ Similar to the above, I have also added the `IScopedService` and `ISingletonServ
 
 Update the `MessageProcessor` class and use the `Write` method to log to the console. As shown below, the Process method calls the Write method of each lifetime-specific interface. It specifies the message as ‘Message Processor’ to indicate the source class it is getting used from.
 
-    public MessageProcessor(
-        ITransientService transientService, 
-        ISingletonService singletonService,
-        IScopedService scopedService,
-        IOptions<MyConfigOptions> configOptions)
-    {
-        this.transientService = transientService;
-        this.singletonService = singletonService;
-        this.scopedService = scopedService;
-        this.configOptions = configOptions;
-    }
-    public void Process(string message)
-    {
+
+```csharp
+public MessageProcessor(
+
+```csharp
+ITransientService transientService, 
+ISingletonService singletonService,
+IScopedService scopedService,
+IOptions<MyConfigOptions> configOptions)
+```
+{
+
+```
+this.transientService = transientService;
+this.singletonService = singletonService;
+this.scopedService = scopedService;
+this.configOptions = configOptions;
+```
+```
+```csharp
+}
+public void Process(string message)
+{
+```csharp
         if (message.Contains("exception")) 
             throw new Exception("Exception found in message");
     
@@ -193,8 +227,10 @@ Update the `MessageProcessor` class and use the `Write` method to log to the con
 
 To understand Lifetimes well, we need more dependencies that use these same services. This will help us understand how new dependencies are created when multiple instances of the dependency are requested from the DI container. Let’s add `AnotherDependency` to simulate this.
 
-    public class AnotherDependency : IAnotherDependency
-    {
+```csharp
+public class AnotherDependency : IAnotherDependency
+{
+```csharp
         private readonly ITransientService transientService;
         private readonly ISingletonService singletonService;
         private readonly IScopedService scopedService;
@@ -220,29 +256,46 @@ To understand Lifetimes well, we need more dependencies that use these same serv
 
 Update the Function class to take the `AnotherDependency` in the constructor.
 
-    public ProcessWeatherDataFunction(
-        IMessageProcessor messageProcessor, 
-        IAnotherDependency anotherDependency,
-        ILogger<ProcessWeatherDataFunction> log)
-    {  ... }
-    
-    [FunctionName("ProcessWeatherData")]
-    public void Run(
+
+```csharp
+public ProcessWeatherDataFunction(
+
+```html
+IMessageProcessor messageProcessor, 
+IAnotherDependency anotherDependency,
+ILogger<ProcessWeatherDataFunction> log)
+```
+{  ... }
+```
+```csharp
+[FunctionName("ProcessWeatherData")]
+public void Run(
+```csharp
         [QueueTrigger("add-weatherdata", Connection = "WeatherDataQueue")]string myQueueItem)
-    {
-        messageProcessor.Process(myQueueItem);
-        anotherDependency.Process(myQueueItem);
-    
-        log.LogInformation($"C# Queue trigger function processed: {myQueueItem}");
-    }
-    
+
+```javascript
+{
+
+```
+messageProcessor.Process(myQueueItem);
+anotherDependency.Process(myQueueItem);
+```
+
+
+```javascript
+log.LogInformation($"C# Queue trigger function processed: {myQueueItem}");
+```
+}
+```sql
 
 With all the new dependencies wired up, let’s update the `Startup` class to wire up the new interfaces. Use the appropriate extension methods - [AddTransient](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.servicecollectionserviceextensions.addtransient?view=dotnet-plat-ext-6.0&WT.mc_id=AZ-MVP-5003875), [AddScoped](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.servicecollectionserviceextensions.addscoped?view=dotnet-plat-ext-6.0&WT.mc_id=AZ-MVP-5003875), [AddSingleton](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.servicecollectionserviceextensions.addsingleton?view=dotnet-plat-ext-6.0&WT.mc_id=AZ-MVP-5003875) - to register the new dependencies as shown below.
 
-    builder.Services.AddTransient<ITransientService, TransientService>();
-    builder.Services.AddScoped<IScopedService, ScopedService>();
-    builder.Services.AddSingleton<ISingletonService, SingletonService>();
-    builder.Services.AddTransient<IAnotherDependency, AnotherDependency>();
+```typescript
+builder.Services.AddTransient<ITransientService, TransientService>();
+builder.Services.AddScoped<IScopedService, ScopedService>();
+builder.Services.AddSingleton<ISingletonService, SingletonService>();
+builder.Services.AddTransient<IAnotherDependency, AnotherDependency>();
+```sql
     
 
 Run both applications. When the Azure Function host (console application running on the local machine) starts up, it will invoke the `Startup` class and register all dependencies. The methods in the `Startup` class are called only once.
@@ -260,8 +313,10 @@ By default, the template for Azure Functions does not support `appsettings.json`
 
 To register different Configuration sources, we can override `ConfigureAppConfiguration` from the `FunctionsStartup` that we inherited from in our `Startup` class.
 
-    public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
-    {
+```csharp
+public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
+{
+```csharp
         base.ConfigureAppConfiguration(builder);
     
         var context = builder.GetContext();
@@ -283,34 +338,43 @@ The above override sets up the ConfigurationBuilder to use the _appsettings.json
 
 Once set up, we can also use [Options Pattern](https://www.youtube.com/watch?v=SizJCLcjbOA) within our Azure Functions. We can create a custom class to represent the config data, and dependency inject into our Function classes and dependencies for a configuration like below.
 
-    {
-      "MyConfig": {
-        "Url": "http://testapi.com",
-        "Secret": ""
-      }
-    }
-    
+
+```css
+{
+  "MyConfig": {
+    "Url": "http://testapi.com",
+    "Secret": ""
+  }
+}
+```html
 
 The code below in the `Startup` class, wires up the class `MyConfigOptions` into the Service Collection and makes it available to be dependency injected as shown below in `MessageProcessor` as `IOptions<MyConfigOptions>`
 
-    public class MyConfigOptions
-    {
+```csharp
+public class MyConfigOptions
+{
+```csharp
         public string Url { get; set; }
         public string Secret { get; set; }
     }
     
     ...
     
-    builder.Services.AddOptions<MyConfigOptions>()
-        .Configure<IConfiguration>((settings, configuration) =>
-        {
-            configuration.GetSection("MyConfig").Bind(settings);
-        });
-    
-    ...
-    
-    public MessageProcessor(IOptions<MyConfigOptions> configOptions) {...}
-    
+
+```csharp
+builder.Services.AddOptions<MyConfigOptions>()
+    .Configure<IConfiguration>((settings, configuration) =>
+
+```css
+{
+    configuration.GetSection("MyConfig").Bind(settings);
+});
+```
+
+...
+
+public MessageProcessor(IOptions<MyConfigOptions> configOptions) {...}
+```
 
 Azure Functions by default also supports [Secrets Manager](https://www.youtube.com/watch?v=PkLLP2tcd28) if you want to store sensitive information on local development environment machines. You can right-click (in Visual Studio) on the project, enable ‘Manage User Secrets’ in the menu, and set the sensitive configuration in the secrets.json file.
 

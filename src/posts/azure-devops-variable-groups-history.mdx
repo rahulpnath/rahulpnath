@@ -3,7 +3,7 @@ title: "Enable History for Azure DevOps Variable Groups Using Azure Key Vault"
 slug: "azure-devops-variable-groups-history"
 date: "2019-06-12T00:00:00.000Z"
 feature_image: "/images/devops_variable_groups_key_vault.jpg"
-tags: []
+tags: ["DevOps","Azure"]
 ---
 
 **_Using Key Vault via Variable Group does not snapshot configuration values from the vault. When a deployment is triggered the latest value from the Key Vault is used._**
@@ -12,7 +12,7 @@ A couple of weeks back, I accidentally deleted an Azure DevOps Variable Group at
 
 {{< tweet 1130369563135160320>}}
 
-In this post, let us see how we can link secrets from Key Vault to DevOps Variable Groups and how it helps us from accidental deletes and similar mistakes. Check out my video on [Getting started with Key Vault](https://www.youtube.com/watch?v=51Qmk3TQJ44) and other [related articles](__GHOST_URL__/tag/azure-key-vault/) if you are new to Key Vault.
+In this post, let us see how we can link secrets from Key Vault to DevOps Variable Groups and how it helps us from accidental deletes and similar mistakes. Check out my video on [Getting started with Key Vault](https://www.youtube.com/watch?v=51Qmk3TQJ44) and other [related articles](/blog/tag/azure-key-vault/) if you are new to Key Vault.
 
 > [Azure Key Vault](https://azure.microsoft.com/en-au/services/key-vault/) enables safeguard cryptographic keys and secrets used by the application. It increases security and control over keys and passwords.
 
@@ -36,7 +36,7 @@ Create an Azure Key Vault for each environment to manage Secrets for that enviro
 Version History for Variable Changes
 ------------------------------------
 
-Key Vault supports versioning and creates a new version of an object (key/secret/certificate) each time it is updated. This helps keep track of previous values. You can set expiry/activation dates on the secret if applicable. Further, by having [Expiry Notification for Azure Key Vault](__GHOST_URL__/blog/expiry-notification-for-azure-key-vault-keys-and-secrets/) set up, you can stay on top of rotating your secrets/certificates on time. The Variable Group refers only to the Secret names in the Key Vault. The secret names are the same as what is in the application configuration file. Every time a release is deployed, it reads the latest value of the Secret from the associated Key Vault and uses that for the deployment. This is different from when defining the variables directly as part of the group, where the variables are snapshot at the time of release.
+Key Vault supports versioning and creates a new version of an object (key/secret/certificate) each time it is updated. This helps keep track of previous values. You can set expiry/activation dates on the secret if applicable. Further, by having [Expiry Notification for Azure Key Vault](/posts/expiry-notification-for-azure-key-vault-keys-and-secrets/) set up, you can stay on top of rotating your secrets/certificates on time. The Variable Group refers only to the Secret names in the Key Vault. The secret names are the same as what is in the application configuration file. Every time a release is deployed, it reads the latest value of the Secret from the associated Key Vault and uses that for the deployment. This is different from when defining the variables directly as part of the group, where the variables are snapshot at the time of release.
 
 > For every deployment, the latest version of the Secret is read from the associated Key Vault.
 

@@ -3,7 +3,7 @@ title: "Being Explicit About Time when Handling Multiple Timezone"
 slug: "being-explicit-about-time-when-handling-multiple-timezone"
 date: "2016-03-25T06:41:03.000Z"
 feature_image: "/images/timezone.jpg"
-tags: []
+tags: ["Programming"]
 ---
 
 _This article is to put my thoughts together on a possible solution. Challenges of real world implementation are yet to be discovered._
@@ -26,8 +26,10 @@ DateTime and DateTimeOffset have by default time zones attached to it and it mig
 
 A common scenario in the current application is user selects a date time in the UI using a date picker, which gets send to the server as a string. This value flows through the entire system and is used to populate external systems. The problem here is that the time zone of the date time is not clear. The developer might treat this as UTC time, system local time or even time local to the location in context. This gives different results to the end user and puts the system in an inconsistent state.
 
-    public string GetAvailability(string locationCode, DateTime? dateTime)
-    {
+```csharp
+public string GetAvailability(string locationCode, DateTime? dateTime)
+{
+```
        // Code to Get as on date
     }
     
@@ -39,10 +41,12 @@ Being Explicit Using Value Objects
 
 > _The issue in dealing with time is about not being explicit. It's a good idea to tie your domain concept (location in this case) and time together_
 
-Since time is always tied to a location (_SYD, TRV, SEA_) it's better to keep these together. Though DateTimeOffset and DateTime already has a timezone information attached it does not fit well into the domain, it makes more sense to have a [Value Object](__GHOST_URL__/blog/thinking-beyond-primitive-values-value-objects/) encapsulating time and location. Timezone by itself is less likely to fit into a domain unless time zones are a domain concept. Most likely the domain would be dealing with a location, place, airport, station etc which falls under a timezone. So it's a good idea to tie your domain concept and the time together. Only for the creation of the Value Object, we need the location after which it is the date time it represents that is relevant. But if by default you want to get back the date time for the same location it was created for, then location can be saved along with the Value Object. In our case, we always want to show the time at the location, so I am keeping it in the Value Object.
+Since time is always tied to a location (_SYD, TRV, SEA_) it's better to keep these together. Though DateTimeOffset and DateTime already has a timezone information attached it does not fit well into the domain, it makes more sense to have a [Value Object](/posts/thinking-beyond-primitive-values-value-objects/) encapsulating time and location. Timezone by itself is less likely to fit into a domain unless time zones are a domain concept. Most likely the domain would be dealing with a location, place, airport, station etc which falls under a timezone. So it's a good idea to tie your domain concept and the time together. Only for the creation of the Value Object, we need the location after which it is the date time it represents that is relevant. But if by default you want to get back the date time for the same location it was created for, then location can be saved along with the Value Object. In our case, we always want to show the time at the location, so I am keeping it in the Value Object.
 
-    public class LocationDateTime
-    {
+```csharp
+public class LocationDateTime
+{
+```
         public Location Location { get; private set; }
         public DateTime DateTimeInUTC { get; private set; }
         public DateTimeOffset DateTimeAtLocation { get; private set; }
@@ -101,8 +105,10 @@ The Value Object mandates that all date time gets tracked as UTC and allows conv
 
 All occurrences of datetime in model classes can now be replaced with custom datetime value object. This makes creating a date explicit and mandates developers to make a decision on the location of datetime.
 
-    public string Get(string locationCode, DateTime? dateTimeAtLocation)
-    {
+```csharp
+public string Get(string locationCode, DateTime? dateTimeAtLocation)
+{
+```
         var location = GetLocation(locationCode);
         var locationDateTime = LocationDateTime.AtLocation(dateTimeAtLocation, location);
         // Code to Get as on date
@@ -118,8 +124,10 @@ Depending on the use case there will be a lot of ways you want to create the val
 
 As [Uncle Bob](https://twitter.com/unclebobmartin) points out in [Agile Principles, Patterns, and Practices in C#](http://www.amazon.in/gp/product/0131857258/ref=as_li_tl?ie=UTF8&camp=3626&creative=24822&creativeASIN=0131857258&linkCode=as2&tag=rahulpnath-21&linkId=VVMXRINDZWYFRWP4), interfaces should be closer to the client. [Factories are nothing but an interface](http://blog.ploeh.dk/2014/12/24/placement-of-abstract-factories/), so it should be defined closer to where it's consumed. Creating a LocationDateTime is always tied to a DateTime object. Using [Extension Methods](https://msdn.microsoft.com/en-AU/library/bb383977.aspx) in C#, I have defined an extension on DateTime to create a LocationDateTime object.
 
-    public static LocationDateTime ToLocationDateTime(this DateTime dateTime, Location location)
-    {
+```csharp
+public static LocationDateTime ToLocationDateTime(this DateTime dateTime, Location location)
+{
+```
         if (dateTime == null)
             return null;
     

@@ -3,10 +3,10 @@ title: "Why Should You Care About Lambda Lifecycle As A .NET Developer?"
 slug: "lambda-lifecycle-and-net"
 date: "2023-02-16T07:40:14.000Z"
 feature_image: "/images/Lambda-Lifecycle-2.png"
-tags: []
+tags: ["AWS","Lambda"]
 ---
 
-_This article is sponsored by AWS and is part of my_ [_AWS Series_](__GHOST_URL__/tag/aws/)_._
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
 
 I made a terrible mistake when I first started using AWS Lambda Functions.
 
@@ -44,8 +44,10 @@ Especially when using .NET, where you define the Function code within a Class. I
 
 Let’s consider a simple AWS Lambda Function code, as shown below.
 
-    public class Function
-    {
+```csharp
+public class Function
+{
+```
         public int Count { get; set; }
         public Function()
         {
@@ -90,8 +92,10 @@ New instances are also automatically created when Lambda receives more requests 
 
 Let’s simulate the Function doing some work by adding a Thread sleep to our code, as shown below.
 
-    public string FunctionHandler(string input, ILambdaContext context)
-    {
+```csharp
+public string FunctionHandler(string input, ILambdaContext context)
+{
+```
         Count++;
         Thread.Sleep(1000 * 5);
         return $"{input} - {Count}";

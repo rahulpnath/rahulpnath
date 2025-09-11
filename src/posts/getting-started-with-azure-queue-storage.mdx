@@ -3,7 +3,7 @@ title: "Azure Queue Storage For The .NET Developer: How To Easily Get Started"
 slug: "getting-started-with-azure-queue-storage"
 date: "2021-11-23T00:00:00.000Z"
 feature_image: "/images/laptop_developer.jpg"
-tags: []
+tags: ["Azure"]
 ---
 
 Queues are a mechanism to decouple applications. It allows us to create a backlog of work to be asynchronously processed.
@@ -55,9 +55,11 @@ Let's assume we now need to POST new weather data to our application. But adding
 
 For now, let's use the `QueueClient` and the Connection string to connect to the Queue Storage. Using the `SendMessageAsync` method, we can send messages to the Queue.
 
-    [HttpPost]
-    public async Task Post([FromBody]WeatherForecast weatherForecast, CancellationToken cancellationToken)
-    {
+```csharp
+[HttpPost]
+public async Task Post([FromBody]WeatherForecast weatherForecast, CancellationToken cancellationToken)
+{
+```
         var connectionString = "<Connection String>"
         var queueName = "add-weatherdata";
         var client = new QueueClient(connectionString, queueName);
@@ -87,8 +89,10 @@ Reading Messages
 
 Messages dropped into the Queue can be picked up by another application to process. Below I have a simple Background Task that runs every 10 seconds and reads a message from the Queue.
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
+```csharp
+protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+{
+```
         while (!stoppingToken.IsCancellationRequested)
         {
             _logger.LogInformation("Reading from queue");
@@ -166,7 +170,7 @@ Azure Identity library provides Azure Active Directory token authentication supp
 
 ![](/images/pfx_security.jpg)
 
-](__GHOST_URL__/blog/defaultazurecredential-from-azure-sdk)
+](/posts/defaultazurecredential-from-azure-sdk)
 
 To enable Managed Identity connection on Azure Queue, head over to the Azure portal and add a new role assignment under the '_Access Control (IAM)_' section. You can grant access to individuals, groups, or application identities to connect to the Queue Storage.
 
@@ -176,11 +180,13 @@ azure\_queue\_iam\_role\_assignment.jpg
 
 ![Access Control (IAM) Enable Storage Queue Data Contributor Role to access Queue.](/images/azure_queue_iam_role_assignment.jpg)
 
-The below code no longer uses a Connection String to connect to the Azure Queue. When [running on the local machine](__GHOST_URL__/blog/azure-managed-service-identity-and-local-development/), it can automatically pick up the user logged in to Visual Studio or other supported IDE's. If the application is running in Azure infrastructure, enable Identity on the resource and grant it permissions using the Access Control (IAM).
+The below code no longer uses a Connection String to connect to the Azure Queue. When [running on the local machine](/posts/azure-managed-service-identity-and-local-development/), it can automatically pick up the user logged in to Visual Studio or other supported IDE's. If the application is running in Azure infrastructure, enable Identity on the resource and grant it permissions using the Access Control (IAM).
 
-    var credential = new DefaultAzureCredential();
-    var queueUri = new Uri("https://youtubestoragetest.queue.core.windows.net/myqueue");
-    return new QueueClient(queueUri, credential);
+```csharp
+var credential = new DefaultAzureCredential();
+var queueUri = new Uri("https://youtubestoragetest.queue.core.windows.net/myqueue");
+return new QueueClient(queueUri, credential);
+```
     
 
 I hope this helps you to get started with Azure Queue Storage and build disconnected applications.

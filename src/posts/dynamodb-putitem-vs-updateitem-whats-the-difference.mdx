@@ -3,10 +3,10 @@ title: "DynamoDB UpdateItem vs. PutItem in .NET - Which One Should You Use?"
 slug: "dynamodb-putitem-vs-updateitem-whats-the-difference"
 date: "2023-06-07T20:18:57.000Z"
 feature_image: "/images/DynamoDB-UpdateItem-vs-Put.png"
-tags: []
+tags: ["AWS","DynamoDB"]
 ---
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 DynamoDB provides two primary methods to write/modify data in a table: `PutItem` and `UpdateItem`.
 
@@ -32,7 +32,7 @@ Learn how to get started with AWS DynamoDB with .NET Core by updating the defaul
 
 ![](/images/aws_dynamodb.jpg)
 
-](__GHOST_URL__/blog/aws-dynamodb-net-core/)
+](/posts/aws-dynamodb-net-core/)
 
 DynamoDB PutItem
 ----------------
@@ -57,9 +57,11 @@ The below code shows a simple example of `PutItemRequest` to add or replace an i
 
 I am using the `Document.FromJson` helper method from the DynamoDB Document model to create the Item from a `JSON` string.
 
-    [HttpPost("put-item-request")]
-    public async Task PutItemRequest(WeatherForecast data)
-    {
+```csharp
+[HttpPost("put-item-request")]
+public async Task PutItemRequest(WeatherForecast data)
+{
+```
         var item = Document.FromJson(JsonSerializer.Serialize(data));
     
         await _amazonDynamoDbClient.PutItemAsync(new PutItemRequest()
@@ -108,8 +110,8 @@ However, you need to have the whole item every time you make a `PuteItem` reques
 
 You can use Condition Expressions or the DynamoDBVersion tag to ensure data consistency when updating data in DynamoDB. Check out the below two blog posts for more details on that.
 
-*   [How to Implement Optimistic Locking in .NET for Amazon DynamoDB](__GHOST_URL__/blog/dynamodb-optimistic-locking/)
-*   [How to Ensure Data Consistency with DynamoDB Condition Expressions From .NET Applications](__GHOST_URL__/blog/dynamodb-condition-expressions-dotnet/)
+*   [How to Implement Optimistic Locking in .NET for Amazon DynamoDB](/posts/dynamodb-optimistic-locking/)
+*   [How to Ensure Data Consistency with DynamoDB Condition Expressions From .NET Applications](/posts/dynamodb-condition-expressions-dotnet/)
 
 DynamoDB UpdateItem
 -------------------
@@ -133,9 +135,11 @@ You can find more details on each of these [request parameters here](https://doc
 
 The below code shows a simple example of `UpdateItem` request. The `UpdateExpression` sets up the `Summary` property.
 
-    [HttpPost("update-item-request")]
-    public async Task UpdateIfLatest(string cityName, string dateTime, string summary)
-    {
+```csharp
+[HttpPost("update-item-request")]
+public async Task UpdateIfLatest(string cityName, string dateTime, string summary)
+{
+```
         await _amazonDynamoDbClient.UpdateItemAsync(new UpdateItemRequest()
         {
             TableName = nameof(WeatherForecast),

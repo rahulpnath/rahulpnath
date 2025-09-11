@@ -3,7 +3,7 @@ title: "How To Easily Log Metrics Data From AWS Lambda Using Powertools Library"
 slug: "metrics-aws-lambda-powertools"
 date: "2023-11-27T04:09:04.000Z"
 feature_image: "/images/Powertools---Metrics.png"
-tags: []
+tags: ["AWS","Lambda"]
 ---
 
 Metrics are data about the performance of your applications. By default, many AWS services provide free metrics for the resources.
@@ -16,7 +16,7 @@ The Powertools Lambda Metrics library makes publishing custom metrics from your 
 
 In this blog post, let's learn how to easily integrate with Amazon CloudWatch Metrics and start publishing custom metrics from your .NET AWS Lambda Function.
 
-_This article is sponsored by AWS and is part of my_ [_AWS Series_](__GHOST_URL__/tag/aws/)_._
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
 
 Amazon CloudWatch Concepts
 --------------------------
@@ -47,8 +47,10 @@ The `MetricsAttribute` provides a few properties that affect the metrics data th
 *   **CaptureColdStart** → Captures cold start metrics for Lambda function. False by default
 *   **RaiseOnEmptyMetrics** → Raised error when no metrics are raised. False by default.
 
-    [Metrics(Namespace = "WeatherWiz", Service = "WeatherService")]
-    public async Task<List<WeatherForecast>> GetWeather(
+```csharp
+[Metrics(Namespace = "WeatherWiz", Service = "WeatherService")]
+public async Task<List<WeatherForecast>> GetWeather(
+```
         string cityName, ILambdaContext context)
     {
         Metrics.AddMetric("GetWeather", 1, MetricUnit.Count);
@@ -89,8 +91,10 @@ The metrics class also provides the `AddDimension` method that you can use to ad
       Metrics.SetDefaultDimensions(_defaultDimensions);
       Metrics.AddDimension("City", cityName);
     
-    ...
-    if (cityName == "Brisbane")
+```csharp
+...
+if (cityName == "Brisbane")
+```
         Metrics.AddDimension("Conditional", cityName);
     }
 

@@ -3,7 +3,7 @@ title: "Learn How AWS Lambda Annotations Framework Makes API Gateway Integration
 slug: "aws-lambda-annotation-framework"
 date: "2023-08-28T06:56:57.000Z"
 feature_image: "/images/Lambda-Annotation-Framework---Introduction.png"
-tags: []
+tags: ["AWS","Lambda"]
 ---
 
 The [Lambda Annotations Framework](https://github.com/aws/aws-lambda-dotnet/blob/master/Libraries/src/Amazon.Lambda.Annotations/README.md) is a programming model that makes it easier to build AWS Lambda Functions using .NET.
@@ -14,7 +14,7 @@ The framework uses C# custom attributes and Source Generators to translate annot
 
 <iframe src="https://www.youtube.com/embed/qWxjCkqX\_lM?feature=oembed" />
 
-_This article is sponsored by AWS and is part of my [AWS Series](__GHOST_URL__/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 In this blog post let's learn what the Lambda Annotation Framework aims to solve and how it compares with older ways of building Lambda Functions. We will see this through an example of creating a simple API endpoint.
 
@@ -23,7 +23,7 @@ First, we will build this using the traditional integration with API Gateway wit
 API Endpoint Using Lambda Programming Model
 -------------------------------------------
 
-There are [several ways to build APIs](__GHOST_URL__/blog/aws-lambda-dotnet-developer/#building-apis-with-aws-lambda) on AWS Lambda, including using API Gateway, Function URLs, and hosting ASP.NET Core Applications.
+There are [several ways to build APIs](/posts/aws-lambda-dotnet-developer/#building-apis-with-aws-lambda) on AWS Lambda, including using API Gateway, Function URLs, and hosting ASP.NET Core Applications.
 
 Below is a sample Lambda Function `MathPlus` that integrates with API Gateway to add two numbers.
 
@@ -44,8 +44,10 @@ It expects the numbers to add as path variables - `/{a}/{b}`
         return OkResult(sum);
     }
     
-    private static APIGatewayProxyResponse OkResult(int sum)
-    {
+```csharp
+private static APIGatewayProxyResponse OkResult(int sum)
+{
+```
         return new APIGatewayProxyResponse
         {
             StatusCode = (int)HttpStatusCode.OK,
@@ -57,8 +59,10 @@ It expects the numbers to add as path variables - `/{a}/{b}`
         };
     }
     
-    private static APIGatewayProxyResponse BadRequest()
-    {
+```csharp
+private static APIGatewayProxyResponse BadRequest()
+{
+```
         return new APIGatewayProxyResponse
         {
             StatusCode = (int)HttpStatusCode.BadRequest
@@ -94,15 +98,17 @@ The `LambdaFunction` attribute is used the decorate a .NET Function as a Lambda 
 
 Depending on the type of API we are building in API Gateway, we can use the `RestApi` or the `HttpApi` attribute.
 
-*   `RestApi` → Configures Lambda Function to be called from [API Gateway REST API](__GHOST_URL__/blog/amazon-api-gateway-rest-api-introduction/).
-*   `HttpApi` → Configures Lambda Function to be called from [API Gateway HTTP API](__GHOST_URL__/blog/amazon-api-gateway-http-apis/).
+*   `RestApi` → Configures Lambda Function to be called from [API Gateway REST API](/posts/amazon-api-gateway-rest-api-introduction/).
+*   `HttpApi` → Configures Lambda Function to be called from [API Gateway HTTP API](/posts/amazon-api-gateway-http-apis/).
 
 The below Function implements the same API endpoint to add two numbers using the Annotations Framework.
 
-    [LambdaFunction]
-    [HttpApi(LambdaHttpMethod.Get, "/add/{a}/{b}")]
-    public int Add(int a, int b, ILambdaContext lambdaContext)
-    {
+```csharp
+[LambdaFunction]
+[HttpApi(LambdaHttpMethod.Get, "/add/{a}/{b}")]
+public int Add(int a, int b, ILambdaContext lambdaContext)
+{
+```
         return a + b;
     }
 

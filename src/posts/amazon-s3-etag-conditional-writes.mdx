@@ -3,7 +3,9 @@ title: "How to Prevent Amazon S3 Object Overwrites with Conditional Writes in .N
 slug: "amazon-s3-etag-conditional-writes"
 date: "2024-11-29T19:57:21.000Z"
 feature_image: "/images/S3-Etags.png"
-tags: []
+tags: ["AWS"]
+excerpt: "Amazon S3 now supports ETags for conditional writes, allowing you to check if an object has been modified before updating it. This feature helps prevent accidental overwrites when multiple users simultaneously write to the same object. Let's learn how to use this from a .NET application."
+
 ---
 
 Amazon S3 now supports **ETags** for conditional writes, allowing you to check if an object has been modified before updating it.
@@ -16,7 +18,7 @@ This feature helps prevent accidental overwrites when multiple users simultaneou
 
 In this post, we’ll explore how to use ETags with S3’s `PutObject` API requests and ways you can enforce this on your existing S3 buckets.
 
-AWS sponsors this article, which is part of my [.NET on AWS Series](__GHOST_URL__/blog/tag/aws/).
+AWS sponsors this article, which is part of my [.NET on AWS Series](/posts/tag/aws/).
 
 [
 
@@ -28,7 +30,7 @@ Learn how to get started with Amazon S3 from a .NET Core application. We will le
 
 ![](/images/storage-box-1.jpg)
 
-](__GHOST_URL__/blog/amazon-s3-dotnet/)
+](/posts/amazon-s3-dotnet/)
 
 Prevent S3 Object Overwrites With Conditional Writes
 ----------------------------------------------------
@@ -52,7 +54,7 @@ Amazon S3 now supports conditional requests. You can use conditional requests to
 
 ![](/images/Copy-of-Amazon-S3-Versioning.png)
 
-](__GHOST_URL__/blog/amazon-s3-conditional-requests-dotnet/)
+](/posts/amazon-s3-conditional-requests-dotnet/)
 
 What is an ETag of An S3 Object
 -------------------------------
@@ -78,23 +80,26 @@ Make sure you have the latest [AWS S3 Nuget package](https://www.nuget.org/packa
 
 The below API request creates a `PutObjectRequest` and passes an ETag value as part of the `IfMatch` property.
 
-    app.MapPost("/upload-file-with-etag", async (
-        [FromForm] FileUploadRequest request,
-        string ? etag,
-        IAmazonS3 s3Client,
-        CancellationToken cancellationToken) => {
-        await s3Client.PutObjectAsync(new PutObjectRequest() {
-          BucketName = "user-service-large-messages",
-            Key = request.File.FileName,
-            InputStream = request.File.OpenReadStream(),
-            IfMatch = etag
-        }, cancellationToken);
-    
-        return Results.Ok();
-      })
-      .WithName("UploadFileWithEtag")
-      .DisableAntiforgery()
-      .WithOpenApi();
+
+```csharp
+app.MapPost("/upload-file-with-etag", async (
+    [FromForm] FileUploadRequest request,
+    string ? etag,
+    IAmazonS3 s3Client,
+    CancellationToken cancellationToken) => {
+    await s3Client.PutObjectAsync(new PutObjectRequest() {
+      BucketName = "user-service-large-messages",
+        Key = request.File.FileName,
+        InputStream = request.File.OpenReadStream(),
+        IfMatch = etag
+    }, cancellationToken);
+
+    return Results.Ok();
+  })
+  .WithName("UploadFileWithEtag")
+  .DisableAntiforgery()
+  .WithOpenApi();
+```
 
 When performing the request, if the ETag value passed on the request matches the current ETag property on the S3 object, the request succeeds and updates the object content appropriately.
 
@@ -102,23 +107,26 @@ If the ETag value passed on the request does not match the ETag value on the Obj
 
 Any time you read an object from S3, you must pass around the Etag value and ensure it's available when you upload the object.
 
-    app.MapGet("/get-file-and-etag", async (
-        string fileName,
-        IAmazonS3 s3Client) => {
-        var file = await s3Client.GetObjectAsync(new GetObjectRequest() {
-          BucketName = "user-service-large-messages",
-            Key = fileName,
-        });
-    
-        using
-        var reader = new StreamReader(file.ResponseStream);
-        var contents = await reader.ReadToEndAsync();
-        return new {
-          file.Key, contents, file.ETag
-        };
-      })
-      .WithName("GetFileAndETag")
-      .WithOpenApi();
+
+```csharp
+app.MapGet("/get-file-and-etag", async (
+    string fileName,
+    IAmazonS3 s3Client) => {
+    var file = await s3Client.GetObjectAsync(new GetObjectRequest() {
+      BucketName = "user-service-large-messages",
+        Key = fileName,
+    });
+
+    using
+    var reader = new StreamReader(file.ResponseStream);
+    var contents = await reader.ReadToEndAsync();
+    return new {
+      file.Key, contents, file.ETag
+    };
+  })
+  .WithName("GetFileAndETag")
+  .WithOpenApi();
+```
 
 The above code shows how you can get the `Etag` value when reading an object from S3.
 
@@ -139,18 +147,21 @@ Here is the [list of condition keys](https://docs.aws.amazon.com/service-authori
 
 We can use the `s3:if-match` condition key to enforce that it is always present on a `PutObject` request.
 
-    {
-      "Sid": "EnforceETagIsPresentAlways",
-      "Effect": "Deny",
-      "Principal": "*",
-      "Action": "s3:PutObject",
-      "Resource": "arn:aws:s3:::user-service-large-messages/*",
-      "Condition": {
-        "Null": {
-          "s3:if-match": "true"
-        }
-      }
+
+```css
+{
+  "Sid": "EnforceETagIsPresentAlways",
+  "Effect": "Deny",
+  "Principal": "*",
+  "Action": "s3:PutObject",
+  "Resource": "arn:aws:s3:::user-service-large-messages/*",
+  "Condition": {
+    "Null": {
+      "s3:if-match": "true"
     }
+  }
+}
+```
 
 The above policy applies the `Deny` effect on any `s3:PutObject` Action on the specific bucket resource if the `s3:if-match` condition key is `Null`.
 
