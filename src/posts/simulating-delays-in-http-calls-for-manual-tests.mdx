@@ -1,11 +1,12 @@
 ---
 title: "Simulating delays in HTTP Calls For Manual Tests"
-slug: "simulating-delays-in-http-calls-for-manual-tests"
-date: "2017-01-09T00:00:00.000Z"
-feature_image: "/images/fiddler_delay.png"
-tags: ["Testing"]
+slug: simulating-delays-in-http-calls-for-manual-tests
+date: 2017-01-09T00:00:00.000Z
+feature_image: /images/fiddler_delay.png
+excerpt: This post shows how to simulate delays in HTTP calls using Fiddler.
+tags:
+  - Testing
 ---
-
 At one of my clients, we were facing an issue of missing some part of a form data when processing a _Submit_ request on the form. As per the current design, the form autosaves data to the database as and when user types in. When the user finally submits the form to be processed the Controller gets all the relevant data from the database and sends for processing. But we noticed that the processing requests missed parts of data in the request send for processing even though the database had those values. This was a clear case where the forms submit request got processed even before all the forms data was saved. The UI was enabling the Submit button right after all the UI validations were made and asynchronously firing off saves to the database.
 
 Let's not go into the design discussion of whether the UI should be sending in all the data to be processed as part of the Submit request as opposed to just sending a reference id and have the controller get all the data from the database (which it is currently doing). The quick fix for this problem was to enable the submit button only after all the asynchronous save requests (the ones for autosave) came back with a success response. The fix was simple but testing this was a challenge.
@@ -14,10 +15,9 @@ Let's not go into the design discussion of whether the UI should be sending in a
 
 When using automated tests there are a lot of frameworks that can help delay requests. But in this case, we were relying on manual tests.
 
-Using Fiddler to Delay Requests
--------------------------------
+## Using Fiddler to Delay Requests
 
-[Fiddler](http://www.telerik.com/fiddler) is an HTTP debugging proxy server application, that captures HTTP and HTTPS traffic and displays to the user. It is one of the [tools that I use almost every other day](/posts/tools-that-I-use/). In Fiddler, we can create rules on web requests and modify how they are handled and responded. Most of the functionality is available under the [AutoResponder](http://docs.telerik.com/fiddler/KnowledgeBase/AutoResponder#latency) tab. We had seen earlier how to [compose web requests and also simulate error conditions in Fiddler](/posts/using-fiddler-to-help-in-manual-testing/). Here we will see how to use Fiddler to delay request/response time. In Fiddler, we can either delay the request itself being sent to the server or delay the handover of response back to the calling application once it is received from the server.
+[Fiddler](http://www.telerik.com/fiddler) is an HTTP debugging proxy server application, that captures HTTP and HTTPS traffic and displays to the user. It is one of the [tools that I use almost every other day](/blog/tools-that-I-use/). In Fiddler, we can create rules on web requests and modify how they are handled and responded. Most of the functionality is available under the [AutoResponder](http://docs.telerik.com/fiddler/KnowledgeBase/AutoResponder#latency) tab. We had seen earlier how to [compose web requests and also simulate error conditions in Fiddler](/blog/using-fiddler-to-help-in-manual-testing/). Here we will see how to use Fiddler to delay request/response time. In Fiddler, we can either delay the request itself being sent to the server or delay the handover of response back to the calling application once it is received from the server.
 
 ### Delay
 

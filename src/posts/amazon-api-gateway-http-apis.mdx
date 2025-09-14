@@ -1,29 +1,29 @@
 ---
 title: "Amazon API Gateway for the .NET Developer - How To Build HTTP APIs"
-slug: "amazon-api-gateway-http-apis"
-date: "2022-02-10T00:00:00.000Z"
-feature_image: "/images/learning_code.jpg"
-tags: ["AWS"]
-excerpt: "Learn how to get started with API Gateway by building an HTTP API backed by AWS Lambda running on .NET Core. We will see how to create different HTTP endpoints, connect them to lambda functions, send and receive data, set up stages, and more."
-
+slug: amazon-api-gateway-http-apis
+date: 2022-02-10T00:00:00.000Z
+feature_image: /images/learning_code.jpg
+excerpt: >-
+  Learn how to get started with API Gateway by building an HTTP API backed by
+  AWS Lambda running on .NET Core. We will see how to create different HTTP
+  endpoints, connect them to lambda functions, send and receive data, set up
+  stages, and more.
+tags:
+  - AWS
 ---
-
 _This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 Amazon API Gateway is a fully managed service that helps developers build and maintain APIs at any scale. The Gateway act as a ‘front door’ to your business data and backend services.
 
 API Gateway is often mentioned along with Serverless technologies, especially AWS Lambda since it makes it very easy to expose the Function over an HTTP endpoint.
 
-HTTP APIs are the latest set of services provided which are designed for low-latency, cost-effective integrations with different AWS services. Compared to the previous generation REST APIs it has a lot of advantages. However, there are also certain missing features. So before you dive in [make sure HTTP APIs are the right choice for you](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html) (which most of the time will be ).
+HTTP APIs are the latest set of services provided which are designed for low-latency, cost-effective integrations with different AWS services. Compared to the previous generation REST APIs it has a lot of advantages. However, there are also certain missing features. So before you dive in [make sure HTTP APIs are the right choice for you](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html) (which most of the time will be )."
 
-<div>
-    <iframe src="https://www.youtube.com/embed/43DQm2ObWSU" />
-</div>
+<iframe src="https://www.youtube.com/embed/43DQm2ObWSU" />
 
 In this post, let’s learn how to set up an HTTP API in Amazon API Gateway connect it to an AWS Lambda Function built on .NET Core. We will explore the different commonly required features that you are used to when building APIs.
 
-Creating API Gateway
---------------------
+## Creating API Gateway
 
 First, head over to the AWS Portal under Amazon API Gateway to create a new HTTP API.
 
@@ -35,8 +35,7 @@ Give an API name of your choice. I’ll choose `youtube-demo`. Skip through the 
 
 To set up Routes, we first need backend services to which we can integrate them. So let’s get started building some backend services to provide us with data.
 
-Backend Services - AWS Lambda
------------------------------
+## Backend Services - AWS Lambda
 
 API Gateways support multiple integration types that can serve the data. Below are the ones supported at the time of writing this article.
 
@@ -46,16 +45,15 @@ Supported Integration types when building HTTP APIs on Amazon API Gateway (api-g
 
 For this example, we will integrate with AWS Lambda Functions to send and receive data from our API endpoints.
 
-
-<PostCard
-  href="/posts/aws-lambda-net-core"
+<BlogLink
+  href="/blog/aws-lambda-net-core"
   title="AWS Lambda For The .NET Developer: How To Easily Get Started"
-  description="Learn how to get started with AWS Lambda using .NET Core, while building and deploying a simple function. Also set up a local development environment with the AWS Toolkit."
-  authorImg="/images/favicon.ico"
-  author="Rahul Pulikkot Nath"
-  cover="/images/aws_lambda.jpg"
+  description="Learn how to get started with AWS Lambda with .NET Core by building out a simple function and deploying to AWS. We will also see how to set up local development environment using the AWS Toolkit."
+  authorImage="/images/favicon.ico"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/aws_lambda.jpg"
 />
-
 
 To quickly create and deploy AWS Lambda Function use the templates provided with the [AWS Toolkit for Visual Studio](https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.AWSToolkitforVisualStudio2022) (Other IDE’s also have their implementation of this toolkit).
 
@@ -64,31 +62,31 @@ Let’s create a new function to return us some `WeatherData` as shown below (it
 ```csharp
 public class Function
 {
-private static readonly string[] Summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    private static readonly string[] Summaries = new[]
+    {
+        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+    };
 
-public List<WeatherForecast> FunctionHandler(
-                APIGatewayProxyRequest input, ILambdaContext context)
-{
-
-Console.WriteLine(JsonSerializer.Serialize(input));
-   
-var rng = new Random();
-return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-{
-
-City = $"{cityName}-test",
-Date = DateTime.Now.AddDays(index),
-TemperatureC = rng.Next(-20, 55),
-Summary = Summaries[rng.Next(Summaries.Length)]
-})
-.ToList();
+    public List<WeatherForecast> FunctionHandler(
+                    APIGatewayProxyRequest input, ILambdaContext context)
+    {
+        Console.WriteLine(JsonSerializer.Serialize(input));
+       
+        var rng = new Random();
+        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        {
+            City = $"{cityName}-test",
+            Date = DateTime.Now.AddDays(index),
+            TemperatureC = rng.Next(-20, 55),
+            Summary = Summaries[rng.Next(Summaries.Length)]
+        })
+        .ToList();
+    }
 }
-}
+
 ```
-Since this function takes in input from API Gateway, it uses `APIGatewayProxyRequest` from the _Amazon.Lambda.APIGatewayEvents_ [nuget package.](https://www.nuget.org/packages/Amazon.Lambda.APIGatewayEvents/) You can run the Function code locally using Mock Lambda Test Tool [as you have seen earlier here.](/posts/aws-lambda-net-core/#mock-lambda-test-tool)
+
+Since this function takes in input from API Gateway, it uses `APIGatewayProxyRequest` from the _Amazon.Lambda.APIGatewayEvents_ [nuget package.](https://www.nuget.org/packages/Amazon.Lambda.APIGatewayEvents/) You can run the Function code locally using Mock Lambda Test Tool [as you have seen earlier here.](/blog/aws-lambda-net-core/#mock-lambda-test-tool)
 
 To quickly deploy this function to our AWS account, use the ‘Publish To AWS Lambda..' option from right-clicking the project in Visual Studio. The AWS Toolkit provides this option. _In a real-world application, you can set up a build-deploy pipeline to automatically deploy any time a change is made to your source code repository._
 
@@ -96,8 +94,7 @@ To quickly deploy this function to our AWS account, use the ‘Publish To AWS La
 
 Once deployed to the AWS account, we can use this Function to serve our API Gateway endpoint.
 
-Routes and Integration
-----------------------
+## Routes and Integration
 
 [Routes](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-routes.html) direct API requests to backend resources.
 
@@ -132,20 +129,22 @@ I’ve updated the function handler to retrieve the `cityName`. If passed in as 
 ```csharp
 public List<WeatherForecast> FunctionHandler(APIGatewayProxyRequest input, ILambdaContext context)
 {
-Console.WriteLine(JsonSerializer.Serialize(input));
-string cityName = null;
-input.QueryStringParameters?.TryGetValue("cityName", out cityName);
-cityName = cityName ?? "Brisbane";
-var rng = new Random();
-return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-{
-City = cityName,
-Date = DateTime.Now.AddDays(index),
-TemperatureC = rng.Next(-20, 55),
-Summary = Summaries[rng.Next(Summaries.Length)]
-})
-.ToList();
+    Console.WriteLine(JsonSerializer.Serialize(input));
+    string cityName = null;
+    input.QueryStringParameters?.TryGetValue("cityName", out cityName);
+    cityName = cityName ?? "Brisbane";
+
+    var rng = new Random();
+    return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+    {
+        City = cityName,
+        Date = DateTime.Now.AddDays(index),
+        TemperatureC = rng.Next(-20, 55),
+        Summary = Summaries[rng.Next(Summaries.Length)]
+    })
+    .ToList();
 }
+
 ```
 
 Once deployed to AWS Function, you can pass in the city name parameter along with the API Request → `GET /weather-forecast?cityName=Sydney`
@@ -182,18 +181,21 @@ It retrieves the `cityName` from the _PathParameters_ property and sets it on th
 
 ```csharp
 public APIGatewayProxyResponse FunctionHandlerPost(
-APIGatewayProxyRequest input, ILambdaContext context)
+    APIGatewayProxyRequest input, ILambdaContext context)
 {
-var data = JsonSerializer.Deserialize<WeatherForecast>(input.Body);
-string cityName = "Brisbane";
-input.PathParameters?.TryGetValue("cityName", out cityName);
-data.City = cityName;
-return new APIGatewayProxyResponse()
-{
-Body = JsonSerializer.Serialize(data),
-StatusCode = (int)HttpStatusCode.OK
-};
+    var data = JsonSerializer.Deserialize<WeatherForecast>(input.Body);
+
+    string cityName = "Brisbane";
+    input.PathParameters?.TryGetValue("cityName", out cityName);
+
+    data.City = cityName;
+    return new APIGatewayProxyResponse()
+    {
+        Body = JsonSerializer.Serialize(data),
+        StatusCode = (int)HttpStatusCode.OK
+    };
 }
+
 ```
 
 If you are using Publish from Visual Studio, make sure to update the function name and also the Handler function in the publish options dialog.
@@ -206,12 +208,11 @@ Setting up Lambda integration for POST endpoint api-gateway-http-api-create-lamb
 
 Once set up, we can successfully send POST requests to the new endpoint and see it in action.
 
-Stages
-------
+## Stages
 
 Stages in API Gateway are a logical reference to the lifecycle of your API. You can use this to differentiate between different development lifecycle (dev, test, staging, prod, etc.).
 
-When creating the API Gateway, a _$default_ stage is automatically created. This stage is served from the base of the APIs URL. For a new stage, it will have the base URL followed by the stage name - `https://{api_id}.execute-api.{region}.amazonaws.com/{stageName}`
+When creating the API Gateway, a _$default_ stage is automatically created. This stage is served from the base of the APIs URL. For a new stage, it will have the base URL followed by the stage name - _https://{api\_id}.execute-api.{region}.amazonaws.com/{stageName}_
 
 Under Deploy → Stages, you can create a new stage for the API.
 
@@ -233,10 +234,9 @@ To map different lambda functions based on the stage, we first need to create a 
 
 We can use this new stage variable when defining integration. Edit the existing lambda integration, and instead of explicitly selecting the lambda function from the drop-down, we can specify the ARN to the lambda. We can use the stage variable to build up the lambda function name.
 
-
 In the below example, I have used the following format to pick the appropriate `get-weather-forecast` lambda function based on the stage.
 
-`arn:aws:lambda:ap-southeast-2:aws-account-id:function:get-weather-forecast${stageVariables.env}`
+_arn:aws:lambda:ap-southeast-2:aws-account-id:function:get-weather-forecast${stageVariables.env}_
 
 In our example, since we have the `env` variable set to ‘_\-test_’ for the test stage, it will pick up the _get-weather-forecast-dev_ lambda function for that stage. Since there is no _env_ variable for the default stage, it will pick up the _get-weather-forecast_ lambda.
 
@@ -246,10 +246,9 @@ With the lambda function automatically determined based on the stage, we need to
 
 Navigate to the Lambda function; choose Add Permission under Configuration → Permissions → Resource-Based Policy → Policy statement. To give access to API Gateway, select _AWS Service_ and select Gateway API. Give a unique StatementId and specify the Source ARN and the Action.
 
-
 The Source ARN needs the API Gateway endpoint details that will be accessing this lambda function. Based on the stage and the Action type, you can specify it as below.
 
-`arn:aws:execute-api:ap-southeast-2:AWS-ACCOUNT-ID:API-ID/_/_/weather-forecast/{cityName}`
+_arn:aws:execute-api:ap-southeast-2:AWS-ACCOUNT-ID:API-ID/_/_/weather-forecast/{cityName}_
 
 The first wildcard \* stands for stage and the second for the HTTP VERB.
 

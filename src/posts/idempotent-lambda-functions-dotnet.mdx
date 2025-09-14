@@ -1,11 +1,15 @@
 ---
 title: "How To Easily Make Your .NET AWS Lambda Function Idempotent"
-slug: "idempotent-lambda-functions-dotnet"
-date: "2023-12-04T06:18:54.000Z"
-feature_image: "/images/Powertools---Idempotency.png"
-tags: ["AWS","Lambda"]
+slug: idempotent-lambda-functions-dotnet
+date: 2023-12-04T00:00:00.000Z
+feature_image: /images/Powertools---Idempotency.png
+excerpt: >-
+  Let's learn how to get started using the Powertools Idempotency package, some
+  key features, and how it easily fits into your existing Lambda Functions.
+tags:
+  - AWS
+  - Lambda
 ---
-
 Idempotency refers to the property of a function that produces the same result regardless of how many times it is executed with the same input parameters.
 
 Idempotency is particularly important in distributed systems, where messages may be retried due to failures, timeouts, or other issues. Idempotency ensures the system remains consistent without unintended side effects, even if a request is duplicated or repeated.
@@ -18,8 +22,7 @@ In this blog post, let's learn how to get started using the Powertools Idempoten
 
 _This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
 
-.NET Lambda Function and Powertools Idempotency Package
--------------------------------------------------------
+## .NET Lambda Function and Powertools Idempotency Package
 
 The Lambda Powertools Idempotency utility prevents the function handler from executing more than once for the same event payload during a specified period while ensuring it returns the same result.
 
@@ -31,19 +34,20 @@ To start using the Idempotency utility, let's first install the NuGet package - 
 
 Once installed, we only need to add the `Idempotent` attribute to our Lambda Function handler endpoint, as shown below.
 
-```json
+```csharp
 [LambdaFunction(Role = "@WeatherApiLambdaExecutionRole")]
 [HttpApi(LambdaHttpMethod.Post, "/weather-forecast")]
 [Idempotent]
 public async Task AddWeatherData([FromBody] WeatherForecast weatherForecast)
 {
-```
-        Console.WriteLine("Running time consuming process");
-        await Task.Delay(TimeSpan.FromSeconds(5));
-        await dynamoDBContext.SaveAsync(weatherForecast);
-    }
+    Console.WriteLine("Running time consuming process");
+    await Task.Delay(TimeSpan.FromSeconds(5));
+    await dynamoDBContext.SaveAsync(weatherForecast);
+}
 
-The Lambda Function sample uses [Lambda Annotations Framework](/posts/lambda-annotation-framework-crud-api/) , which makes it extremely easy to build Lambda Functions in .NET.
+```
+
+The Lambda Function sample uses [Lambda Annotations Framework](/blog/lambda-annotation-framework-crud-api/) , which makes it extremely easy to build Lambda Functions in .NET.
 
 The function is an API endpoint that takes in a `WeatherForecast` data from the body of the API Gateway API request object.
 
@@ -52,10 +56,11 @@ In the Function constructor, you can initialize the Idempotency configuration. T
 ```csharp
 public Functions(IDynamoDBContext dynamoDBContext)
 {
+    this.dynamoDBContext = dynamoDBContext;
+    Idempotency.Configure(builder => builder.UseDynamoDb("IdempotencyTable"));
+}
+
 ```
-        this.dynamoDBContext = dynamoDBContext;
-        Idempotency.Configure(builder => builder.UseDynamoDb("IdempotencyTable"));
-    }
 
 _Ensure that the Lambda Function has appropriate rights to talk to the `IdempotencyTable`._
 
@@ -71,24 +76,24 @@ Idempotency DynamoDB Table with records populated as we make requests in the API
 
 Since the sample function above does not return any value, the data property in the DynamoDB table is empty.
 
-Customizing Idempotency Key
----------------------------
+## Customizing Idempotency Key
 
 The Idempotency package automatically used the first parameter In the above function, it automatically used the first parameter of the Lambda Function as the Idempotency key.
 
 If there is more than one parameter for the Lambda Function, you can explicitly mark the item to use as the Idempotency Key using the `IdempotencyKey` attribute.
 
-```json
+```csharp
 [LambdaFunction(Role = "@WeatherApiLambdaExecutionRole")]
 [HttpApi(LambdaHttpMethod.Post, "/weather-forecast")]
 [Idempotent]
 public async Task AddWeatherData(APIGatewayHttpApiV2ProxyRequest request, [IdempotencyKey][FromBody] WeatherForecast weatherForecast)
 {
+    Console.WriteLine("Running time consuming process");
+    await Task.Delay(TimeSpan.FromSeconds(5));
+    await dynamoDBContext.SaveAsync(weatherForecast);
+}
+
 ```
-        Console.WriteLine("Running time consuming process");
-        await Task.Delay(TimeSpan.FromSeconds(5));
-        await dynamoDBContext.SaveAsync(weatherForecast);
-    }
 
 You can further customize the IdempotencyKey to use specific properties from the object payload.
 
@@ -99,19 +104,19 @@ The code below specifies the `CityName` and `Date` properties to be used for the
 ```csharp
 public Functions(IDynamoDBContext dynamoDBContext)
 {
+    this.dynamoDBContext = dynamoDBContext;
+    Idempotency.Configure(builder =>
+        builder
+        .WithOptions(optionsBuilder => 
+              optionsBuilder.WithEventKeyJmesPath("[CityName, Date]"))
+        .UseDynamoDb("IdempotencyTable"));
+}
+
 ```
-        this.dynamoDBContext = dynamoDBContext;
-        Idempotency.Configure(builder =>
-            builder
-            .WithOptions(optionsBuilder => 
-                  optionsBuilder.WithEventKeyJmesPath("[CityName, Date]"))
-            .UseDynamoDb("IdempotencyTable"));
-    }
 
 Any requests with the same `CityName` and `Date` property will be treated as an idempotent request during the timeout period.
 
-Adding Payload Validation for Idempotency
------------------------------------------
+## Adding Payload Validation for Idempotency
 
 Now, in the case of the WeatherForecast payload, what if the Temperature amount is different between two consecutive requests?
 
@@ -124,15 +129,16 @@ The initialization code below sets up the property validation`TemperatureC` usin
 ```csharp
 public Functions(IDynamoDBContext dynamoDBContext)
 {
+    this.dynamoDBContext = dynamoDBContext;
+    Idempotency.Configure(builder =>
+        builder
+        .WithOptions(optionsBuilder => optionsBuilder
+            .WithEventKeyJmesPath("[CityName, Date]")
+            .WithPayloadValidationJmesPath("TemperatureC"))
+        .UseDynamoDb("IdempotencyTable"));
+}
+
 ```
-        this.dynamoDBContext = dynamoDBContext;
-        Idempotency.Configure(builder =>
-            builder
-            .WithOptions(optionsBuilder => optionsBuilder
-                .WithEventKeyJmesPath("[CityName, Date]")
-                .WithPayloadValidationJmesPath("TemperatureC"))
-            .UseDynamoDb("IdempotencyTable"));
-    }
 
 Any subsequent requests with the same `CityName` and `Date` property, with a different `TemperatureC` property will throw an **`IdempotencyValidationException.`**
 

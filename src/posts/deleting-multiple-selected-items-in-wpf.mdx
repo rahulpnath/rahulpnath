@@ -1,19 +1,20 @@
 ---
 title: "Deleting Multiple Selected Items in WPF"
-slug: "deleting-multiple-selected-items-in-wpf"
-date: "2009-09-11T10:57:00.000Z"
-feature_image: ""
-tags: ["Dotnet"]excerpt: ""
-
+slug: deleting-multiple-selected-items-in-wpf
+date: 2009-09-11
+excerpt: >-
+  Hi, Many a times while using listbox,listview etc there might be a need to delete the multiple selected items. This can be easily achieved by the following piece of code...
+tags:
+  - Dotnet
 ---
-
 Hi, Many a times while using listbox,listview etc there might be a need to delete the multiple selected items. This can be easily achieved by the following piece of code
 
-     While ControlName.SelectedItems.Count &gt; 0 
-       ControlName.Items.Remove(ControlName.SelectedItem)
+```csharp
+ While ControlName.SelectedItems.Count &gt; 0 
+   ControlName.Items.Remove(ControlName.SelectedItem)
 
-```
 End While
+
 ```
 
-Happy Coding :)
+Happy Coding :)"

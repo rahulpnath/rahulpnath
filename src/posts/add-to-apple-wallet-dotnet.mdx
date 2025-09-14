@@ -1,34 +1,31 @@
 ---
 title: "Add to Apple Wallet from Your .NET Application: A Step-by-Step Guide"
-slug: "add-to-apple-wallet-dotnet"
-date: "2023-10-09T06:49:50.000Z"
-feature_image: "/images/Add-To-Apple-Wallet.png"
-tags: ["Dotnet","AWS"]
-excerpt: "The iOS Wallet app allows users to manage payment cards, boarding passes, tickets, gift cards, and other passes. Let's learn how to set up, build, and distribute Apple Wallet passes from a .NET application."
-
+slug: add-to-apple-wallet-dotnet
+date: 2023-10-09
+feature_image: /images/Add-To-Apple-Wallet.png
+excerpt: >-
+  The iOS Wallet app allows users to manage payment cards, boarding passes, tickets, gift cards, and other passes. Let's learn how to set up, build, and distribute Apple Wallet passes from a .NET application.
+tags:
+  - Dotnet
+  - AWS
 ---
-
 I recently worked on the 'Add to Apple Wallet' functionality at work, allowing the addition of Event tickets to Apple Wallet.
 
 The iOS Wallet app allows users to manage payment cards, boarding passes, tickets, gift cards, and other passes.
 
 The Wallet Pass is time and location enabled, so passes can be configured to display on the user’s device at the appropriate moment. Passes can also be updated with push notifications making it easy to notify users if details change.
 
-<div>
 <iframe src="https://www.youtube.com/embed/mcR08yyFpaU?feature=oembed" />
-</div>
-
 
 In this blog post, let's learn how you can set up, build, and distribute Apple Wallet passes using .NET application.
 
 I will use an AWS Lambda Function to host the API endpoint for distributing the pass files. However, you can use your existing application hosting mechanism for this.
 
-_This article is sponsored by AWS and is part of my [_AWS Series_](/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [_AWS Series_](/tag/aws/)._
 
-Apple Wallet Passes
--------------------
+## Apple Wallet Passes
 
-[Apple Wallet Passes](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/PassKit_PG/Creating.html#//apple_ref/doc/uid/TP40012195-CH4-SW1) are created as a package/bundle, containing a `pass.json` file that defines the pass, and image assets such as the logo and the icon.
+[Apple Wallet Passes](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/PassKit_PG/Creating.html#/apple_ref/doc/uid/TP40012195-CH4-SW1) are created as a package/bundle, containing a `pass.json` file that defines the pass, and image assets such as the logo and the icon.
 
 The `pass.json` file contains the information that identifies the pass, the text information, and details shown on the pass in the Wallet app.
 
@@ -38,8 +35,7 @@ The below image shows the files inside a sample pass file. It has the `pass.json
 
 Imaging showing the files inside a pass file. It contains the pass.json file, along with the icon and logo images, the manifest file and the signature file for the pass contents.
 
-Generating Wallet Passes Using .NET
------------------------------------
+## Generating Wallet Passes Using .NET
 
 To generate Apple Wallet Pass files from .NET applications, you can use the [dotnet-passbook](https://github.com/tomasmcguinness/dotnet-passbook) NuGet package.
 
@@ -50,21 +46,22 @@ The `PassGenerator` converts these requests into a byte array, which represents 
 ```csharp
 public async Task<APIGatewayHttpApiV2ProxyResponse> GetAppleWalletPasses()
 {
-        var eventId = Guid.NewGuid();
-        var eventName = "YouTube Demo Event";
-        var venueName = "YouTube Online";
-        var eventDate = DateTime.Now.AddDays(55);
-    
-        var icon = await _appleWalletConfiguration.GetIcon();
-        var logo = await _appleWalletConfiguration.GetLogo();
-    
-        var request = GeneratePassRequest(Guid.NewGuid().ToString(), eventId, icon, logo, eventName, eventDate, venueName, "Subscriber");
+    var eventId = Guid.NewGuid();
+    var eventName = "YouTube Demo Event";
+    var venueName = "YouTube Online";
+    var eventDate = DateTime.Now.AddDays(55);
 
-        var generator = new PassGenerator();
-        var requests = new List<PassGeneratorRequest>() { request };
-        var pass = generator.Generate(requests);
+    var icon = await _appleWalletConfiguration.GetIcon();
+    var logo = await _appleWalletConfiguration.GetLogo();
+
+    var request = GeneratePassRequest(Guid.NewGuid().ToString(), eventId, icon, logo, eventName, eventDate, venueName, "Subscriber");
+
+    var generator = new PassGenerator();
+    var requests = new List<PassGeneratorRequest>() { request };
+    var pass = generator.Generate(requests);
+}
+
 ```
-    
 
 The `PassGeneratorRequest` identifies one pass that will be added to the Apple Wallet. If you have multiple passes to be added in the same bundle, create multiple `PassGeneratorRequest`.
 
@@ -73,36 +70,37 @@ The below code shows a sample `PassGeneratorRequest` that adds a pass with a `Ev
 ```csharp
 var request = new PassGeneratorRequest
 {
-        Style = PassStyle.EventTicket,
-        PassTypeIdentifier = _appleWalletConfiguration.PassTypeIdentifier,
-        SerialNumber = serialNumber,
-        GroupingIdentifier = eventId.ToString(),
-        BackgroundColor = "#823EB7",
-        LabelColor = "#000000",
-        ForegroundColor = "#ffffff",
-        Images =
-        {
-            {PassbookImage.Icon, icon},
-            {PassbookImage.Icon2X, icon},
-            {PassbookImage.Icon3X, icon},
-            {PassbookImage.Logo, logo},
-            {PassbookImage.Logo2X, logo},
-            {PassbookImage.Logo3X, logo},
-        },
-        Description = eventName,
-        OrganizationName = "Rahul",
-        RelevantDate = eventDate,
-        ExpirationDate = eventDate.AddDays(1),
-        AppleWWDRCACertificate = _appleWalletConfiguration.AppleWWDRCACertificate(),
-        PassbookCertificate = _appleWalletConfiguration.PassbookCertificate()
+    Style = PassStyle.EventTicket,
+    PassTypeIdentifier = _appleWalletConfiguration.PassTypeIdentifier,
+    SerialNumber = serialNumber,
+    GroupingIdentifier = eventId.ToString(),
+    BackgroundColor = "#823EB7",
+    LabelColor = "#000000",
+    ForegroundColor = "#ffffff",
+    Images =
+    {
+        {PassbookImage.Icon, icon},
+        {PassbookImage.Icon2X, icon},
+        {PassbookImage.Icon3X, icon},
+        {PassbookImage.Logo, logo},
+        {PassbookImage.Logo2X, logo},
+        {PassbookImage.Logo3X, logo},
+    },
+    Description = eventName,
+    OrganizationName = "Rahul",
+    RelevantDate = eventDate,
+    ExpirationDate = eventDate.AddDays(1),
+    AppleWWDRCACertificate = _appleWalletConfiguration.AppleWWDRCACertificate(),
+    PassbookCertificate = _appleWalletConfiguration.PassbookCertificate()
 };
 request.AddHeaderField(new StandardField("time", eventDate.ToShortTimeString(),
-        eventDate.ToShortDateString()));
+    eventDate.ToShortDateString()));
 request.AddPrimaryField(new StandardField("name", null, eventName));
 request.AddSecondaryField(new StandardField("venue", "Venue", venueName));
 request.AddAuxiliaryField(new StandardField("ticketType", "Ticket Type", ticketType));
 request.AddBackField(new StandardField("ticketHolderName-back", "Ticket holder", "Rahul Nath"));
 request.AddBackField(new StandardField("ticketType-back", "Ticket Type", ticketType));
+
 ```
 
 For information on the different fields, the pass styles available, and what each property represents check out the [Wallet Guidelines](https://developer.apple.com/design/human-interface-guidelines/wallet) and the [documentation](https://developer.apple.com/documentation/walletpasses/pass).
@@ -113,8 +111,8 @@ To generate Apple Wallet Passes, you need to register with the Apple Developer P
 
 You need two certificates
 
-*   Your application/company Passbook certificate along with its password
-*   Apple WWDR (WorldWide Developer Relations) certificate
+-   Your application/company Passbook certificate along with its password
+-   Apple WWDR (WorldWide Developer Relations) certificate
 
 You can find the full instructions to generate the certificates in the dotnet-passbook NuGet package [documentation here](https://github.com/tomasmcguinness/dotnet-passbook#certificates).
 
@@ -125,27 +123,27 @@ I chose to store the certificate files as base64 encoded string which can be con
 ```csharp
 public class AppleWalletConfiguration
 {
-        public string WWDRCertificateBase64 { get; set; }
-        public string PassTypeIdentifier { get; set; }
-        public string PassbookCertificateBase64 { get; set; }
-        public string PassbookPassword { get; set; }
-        public string IconUrl { get; set; }
-        public string LogoUrl { get; set; }
-    
-        public X509Certificate2 AppleWWDRCACertificate() =>
-            new(Convert.FromBase64String(WWDRCertificateBase64));
-    
-        public X509Certificate2 PassbookCertificate() =>
-            new(Convert.FromBase64String(PassbookCertificateBase64), PassbookPassword);
-    
-        public async Task<byte[]> GetLogo() => await LogoUrl.GetBytesAsync();
-    
-        public async Task<byte[]> GetIcon() => await IconUrl.GetBytesAsync();
+    public string WWDRCertificateBase64 { get; set; }
+    public string PassTypeIdentifier { get; set; }
+    public string PassbookCertificateBase64 { get; set; }
+    public string PassbookPassword { get; set; }
+    public string IconUrl { get; set; }
+    public string LogoUrl { get; set; }
+
+    public X509Certificate2 AppleWWDRCACertificate() =>
+        new(Convert.FromBase64String(WWDRCertificateBase64));
+
+    public X509Certificate2 PassbookCertificate() =>
+        new(Convert.FromBase64String(PassbookCertificateBase64), PassbookPassword);
+
+    public async Task<byte[]> GetLogo() => await LogoUrl.GetBytesAsync();
+
+    public async Task<byte[]> GetIcon() => await IconUrl.GetBytesAsync();
 }
+
 ```
 
-Distributing Wallet Pass Files Using .NET
------------------------------------------
+## Distributing Wallet Pass Files Using .NET
 
 To distribute the Wallet Pass Files generated, you can host this in an API endpoint and share the link via email, a button on a web page, or an app.
 
@@ -153,48 +151,46 @@ You can host this along with your other application code on the Cloud or your ow
 
 For this post, I'll host this AWS Lambda, as it's a quick and easy way to host such kind of API endpoints. Using the latest Lambda Annotations Framework makes it even easier to create and host API endpoints.
 
-[
+<BlogLink
+  href="/blog/lambda-annotation-framework-crud-api/"
+  title="Serverless API Development Made Easy: Using AWS Lambda Annotations for CRUD"
+  description="Learn how to create a CRUD API Endpoint using AWS Lambda, API Gateway and the Annotations Framework. See how the Lambda Annotations framework does all the heavy lifting for us, and makes it easier to develop APIs."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/Lambda-Annotation-Framework---CRUD.png"
+/>
 
-Serverless API Development Made Easy: Using AWS Lambda Annotations for CRUD
-
-Learn how to create a CRUD API Endpoint using AWS Lambda, API Gateway and the Annotations Framework. See how the Lambda Annotations framework does all the heavy lifting for us, and makes it easier to develop APIs.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/Lambda-Annotation-Framework---CRUD.png)
-
-](/posts/lambda-annotation-framework-crud-api/)
-
-All we need to do is add the [Lambda Annotation Framework](/posts/aws-lambda-annotation-framework/) NuGet package and wrap our Pass Generation function with the `LambdaFunction` attribute. Since this is going to be exposed as an API will also add the `HttpApi` attribute and specify the route and the method `Get`.
+All we need to do is add the [Lambda Annotation Framework](/blog/aws-lambda-annotation-framework/) NuGet package and wrap our Pass Generation function with the `LambdaFunction` attribute. Since this is going to be exposed as an API will also add the `HttpApi` attribute and specify the route and the method `Get`.
 
 ```csharp
 [LambdaFunction(Policies = "AWSLambdaBasicExecutionRole")]
 [HttpApi(LambdaHttpMethod.Get, "/apple-wallet")]
 public async Task<APIGatewayHttpApiV2ProxyResponse> GetAppleWalletPasses()
 {
-        var eventId = Guid.NewGuid();
-        var eventName = "YouTube Demo Event";
-        ...
-        var generator = new PassGenerator();
-        var requests = new List<PassGeneratorRequest>() { request };
-        var pass = generator.Generate(requests);
-    
-        return new APIGatewayHttpApiV2ProxyResponse()
-        {
-            Body = Convert.ToBase64String(pass),
-            IsBase64Encoded = true,
-            StatusCode = 200,
-            Headers = new Dictionary<string, string>
-            {
-                { "Content-Type", "application/vnd.apple.pkpasses" },
-                { "Content-Disposition", "attachment; filename=tickets.pkpasses.zip; filename*=UTF-8''tickets.pkpasses.zip" }
-            }
-        };
-    }
-```
-    
+    var eventId = Guid.NewGuid();
+    var eventName = "YouTube Demo Event";
+    ...
+    var generator = new PassGenerator();
+    var requests = new List<PassGeneratorRequest>() { request };
+    var pass = generator.Generate(requests);
 
-The `HttpApi` attribute allows us to expose the Lambda Function over a [Lambda Function URL](/posts/function-urls-in-aws-lambda-dotnet/) or an [HTTP API Gateway endpoint](/posts/amazon-api-gateway-http-apis/).
+    return new APIGatewayHttpApiV2ProxyResponse()
+    {
+        Body = Convert.ToBase64String(pass),
+        IsBase64Encoded = true,
+        StatusCode = 200,
+        Headers = new Dictionary<string, string>
+        {
+            { "Content-Type", "application/vnd.apple.pkpasses" },
+            { "Content-Disposition", "attachment; filename=tickets.pkpasses.zip; filename*=UTF-8''tickets.pkpasses.zip" }
+        }
+    };
+}
+
+```
+
+The `HttpApi` attribute allows us to expose the Lambda Function over a [Lambda Function URL](/blog/function-urls-in-aws-lambda-dotnet/) or an [HTTP API Gateway endpoint](/blog/amazon-api-gateway-http-apis/).
 
 Both of these mechanisms expect binary content to be encoded as base64 string, with the appropriate HTTP headers set. To achieve this we can use the `APIGatewayHttpApiV2ProxyResponse` object as shown above.
 

@@ -1,11 +1,16 @@
 ---
 title: "Is AWS Lambda SnapStart Right for Your Workload?"
-slug: "when-to-use-aws-lambda-snapstart"
-date: "2025-02-11T06:08:34.000Z"
-feature_image: "/images/Lambda-SnapStart-For-You-.png"
-tags: ["AWS","Lambda"]
+slug: when-to-use-aws-lambda-snapstart
+date: 2025-02-11T00:00:00.000Z
+feature_image: /images/Lambda-SnapStart-For-You-.png
+excerpt: >-
+  AWS Lambda SnapStart replaces Init Duration with Restore Duration. Is it just
+  a name change, or does it truly reduce cold starts?
+    In this post, we explore its impact, when it matters, and when to use it for your AWS functions.
+tags:
+  - AWS
+  - Lambda
 ---
-
 AWS Lambda SnapStart replaces the Init Duration with a Restore Duration.
 
 One could argue that this is merely a name change and that cold starts remain an issue.
@@ -14,24 +19,21 @@ One could argue that this is merely a name change and that cold starts remain an
 
 In this post, let's explore whether this is true, under what circumstances, and when you should consider Lambda SnapStart for your AWS Functions.
 
-Thanks to AWS for sponsoring this article in my [AWS Lambda Series.](/posts/tag/lambda/)
+Thanks to AWS for sponsoring this article in my [AWS Lambda Series.](/blog/tag/lambda/)
 
-What is AWS Lambda SnapStart?
------------------------------
+## What is AWS Lambda SnapStart?
 
 If you are entirely new to AWS Lambda SnapStart, I highly recommend checking out the blog post below to get you up to speed.
 
-[
-
-Getting Started with AWS Lambda SnapStart: A Beginner’s Guide
-
-AWS Lambda SnapStart is a performance optimization that speeds up startup times for Lambda Functions, typically with no changes to your function code. Let’s learn how to enable it on your existing functions, how it works under the hood and make sure your Lambda Functions are SnapStart ready.
-
-![](/images/logo-512x512-18.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/Lambda-SnapStart.png)
-
-](/posts/aws-lambda-snapstart/)
+<BlogLink
+  href="/blog/aws-lambda-snapstart/"
+  title="Getting Started with AWS Lambda SnapStart: A Beginner’s Guide"
+  description="AWS Lambda SnapStart is a performance optimization that speeds up startup times for Lambda Functions, typically with no changes to your function code. Let’s learn how to enable it on your existing functions, how it works under the hood and make sure your Lambda Functions are SnapStart ready."
+  authorImage="/images/logo-512x512-18.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/Lambda-SnapStart.png"
+/>
 
 _AWS_ [_Lambda SnapStart_](https://docs.aws.amazon.com/lambda/latest/dg/snapstart.html) _is a performance optimization that speeds up startup times for Lambda Functions, typically with no changes to your function code._
 
@@ -51,8 +53,7 @@ However, it does show a 'Restore Duration' now, which we will explore shortly.
 
 > **Restore Duration** is the time Lambda requires to resume an execution environment from a cached snapshot. It includes:
 
-Restore Duration vs Init Duration - AWS Lambda SnapStart
---------------------------------------------------------
+## Restore Duration vs Init Duration - AWS Lambda SnapStart
 
 One could argue that the Restore Duration replaces the Init Duration with AWS Lambda SnapStart.
 
@@ -78,7 +79,7 @@ The impact of SnapStart varies depending on the function’s Init Duration.
 
 Let's compare two workloads—one with an Init Duration in milliseconds and another in seconds—to see how SnapStart affects startup performance in each case.
 
-Below are the CloudWatch LogInsights logs showing the Restore Duration and Init Duration for the function we built in the [Getting Started with AWS Lambda SnapStart](/posts/aws-lambda-snapstart/).
+Below are the CloudWatch LogInsights logs showing the Restore Duration and Init Duration for the function we built in the [Getting Started with AWS Lambda SnapStart](/blog/aws-lambda-snapstart/).
 
 Before enabling SnapStart, the function has an average Init duration of ~550ms.
 
@@ -96,22 +97,23 @@ __Enabling SnapStart on a Function when the Init Duration is already in millisec
 
 I modified the same function to introduce a further delay in the constructor to simulate a more significant Init Duration.
 
-It now has a 5-second delay, which could be the case for some of your production workloads, especially if you are [hosting a full ASP.NET API](/posts/asp-net-core-on-aws-lambda/) or similar workloads.
+It now has a 5-second delay, which could be the case for some of your production workloads, especially if you are [hosting a full ASP.NET API](/blog/asp-net-core-on-aws-lambda/) or similar workloads.
 
 ```csharp
 public Function()
 {
+    _configuration = ReadConfigFromS3();
+
+    SnapshotRestore.RegisterAfterRestore(() =>
+    {
+        _constructorId = Guid.NewGuid();
+        return ValueTask.CompletedTask;
+    });
+
+    Task.Delay(TimeSpan.FromSeconds(5)).Wait();
+}
+
 ```
-        _configuration = ReadConfigFromS3();
-    
-        SnapshotRestore.RegisterAfterRestore(() =>
-        {
-            _constructorId = Guid.NewGuid();
-            return ValueTask.CompletedTask;
-        });
-    
-        Task.Delay(TimeSpan.FromSeconds(5)).Wait();
-    }
 
 ⚠️
 
@@ -125,8 +127,7 @@ However, with Lambda SnapStart enabled, the Restore Duration averages ~350m,s, s
 
 Enabling SnapStart is beneficial in scenarios like this, where the Init Duration is significant (in seconds).
 
-How Lambda SnapStart Improves Scalability
------------------------------------------
+## How Lambda SnapStart Improves Scalability
 
 By improving startup times, SnapStart helps reduce the number of execution environments (and thus cold starts) required as your function scales.
 

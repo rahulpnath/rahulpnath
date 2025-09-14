@@ -1,17 +1,20 @@
 ---
 title: "Efficient File Bundling in ASP NET: A Guide to Streaming ZIP Archives"
-slug: "stream-zip-files-asp-dotnet"
-date: "2024-07-10T10:03:28.000Z"
-feature_image: "/images/Stream-Zip-Files-in-ASP-NET.png"
-tags: ["AWS","Dotnet"]
+slug: stream-zip-files-asp-dotnet
+date: 2024-07-10
+feature_image: /images/Stream-Zip-Files-in-ASP-NET.png
+excerpt: >-
+  Bundling files into a zip archive for downloading via an API endpoint is a common requirement for many applications. Let's learn how to stream zip archive files from ASP NET API Endpoint to the end user.
+tags:
+  - Dotnet
+  - AWS
 ---
-
 Bundling files into a zip archive for downloading via an API endpoint is a common requirement for many applications.
 
 In this post, we will learn
 
-*   Bundle files into a ZIP archive
-*   Send ZIP files over an ASP NET API endpoint.
+-   Bundle files into a ZIP archive
+-   Send ZIP files over an ASP NET API endpoint.
 
 <iframe src="https://www.youtube.com/embed/U0uyhX4JX8w?feature=oembed" />
 
@@ -19,10 +22,9 @@ We’ll explore two approaches: the first is simple but inefficient, and the sec
 
 For the demo, I’ll store the files in Amazon S3, which I will retrieve, zip, and send back to the user. The same approach applies if you’re streaming files from a disk or any other cloud storage.
 
-Thank you to AWS for sponsoring this video; it’s part of my [ASP NET Series](/posts/tag/asp-net/).
+Thank you to AWS for sponsoring this video; it’s part of my [ASP NET Series](/blog/tag/asp-net/).
 
-Bundle Files into Zip Archive in .NET
--------------------------------------
+## Bundle Files into Zip Archive in .NET
 
 The [System.IO.Compression Namespace](https://learn.microsoft.com/en-us/dotnet/api/system.io.compression) contains classes that provide classes for basic compression and decompression services in .NET.
 
@@ -36,17 +38,15 @@ For this demo, I have them coming from Aamzon S3.
 
 Amazon Simple Storage Service (S3) is an object storage service that provides a scalable and secure storage infrastructure.
 
-[
-
-Amazon S3 For the .NET Developer: How to Easily Get Started
-
-Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/storage-box.jpg)
-
-](/posts/amazon-s3-dotnet/)
+<BlogLink
+  href="/blog/amazon-s3-dotnet/"
+  title="Amazon S3 For the .NET Developer: How to Easily Get Started"
+  description="Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/storage-box.jpg"
+/>
 
 The code below shows an example of how you can build a Zip archive using the ZipArchive class in .NET.
 
@@ -61,29 +61,24 @@ As we read the file contents from the S3 bucket, we write that to the archive as
 ```csharp
 var bucketName = "myapp-data-files";
 var listObjects = await amazonS3Client
-```
-        .ListObjectsV2Async(new ListObjectsV2Request() {BucketName = bucketName});
-    
-```csharp
+    .ListObjectsV2Async(new ListObjectsV2Request() {BucketName = bucketName});
+
 var zipStream = new MemoryStream();
 using var zipArchive = new ZipArchive(
-```
-        zipStream, ZipArchiveMode.Create, leaveOpen: true);
-        
-```csharp
+    zipStream, ZipArchiveMode.Create, leaveOpen: true);
+    
 foreach (var s3Object in listObjects.S3Objects)
 {
-```
-        var file = await amazonS3Client
-            .GetObjectAsync(s3Object.BucketName, s3Object.Key);
-        var entry = zipArchive.CreateEntry(file.Key);
-        await using var entryStream = entry.Open();
-        await file.ResponseStream.CopyToAsync(entryStream);
-    }
-    
-```csharp
+    var file = await amazonS3Client
+        .GetObjectAsync(s3Object.BucketName, s3Object.Key);
+    var entry = zipArchive.CreateEntry(file.Key);
+    await using var entryStream = entry.Open();
+    await file.ResponseStream.CopyToAsync(entryStream);
+}
+
 zipArchive.Dispose();
 zipStream.Seek(0, SeekOrigin.Begin);
+
 ```
 
 Once all the files are written into the `ZipArchive` we can dispose of the instance and use the underlying `MemoryStream` instance for the Zip archive contents.
@@ -92,24 +87,26 @@ Once all the files are written into the `ZipArchive` we can dispose of the insta
 
 It's important to call the __Dispose__ method on the ZipArchive, which will also flush all its contents to the underlying Stream. If not you can run into scenarios where the ZipArchive is created with no files inside it.
 
-Send Zip Archive Using Memory Stream in ASP NET
------------------------------------------------
+## Send Zip Archive Using Memory Stream in ASP NET
 
 Now that the files are nicely zipped up let's send this back to a user using an ASP NET HTTP API Endpoint.
 
 Below is a simple minimal API endpoint that uses our above function to create an in-memory `zipStream` instance.
 
-    app.MapGet("/download-zip", async (IAmazonS3 amazonS3Client
-        {
-            var zipStream = GetZipStream(amazonS3Client);
-            
-            return Results.File(
-                zipStream,
-                contentType: "application/octet-stream",
-                fileDownloadName: "Files.zip");
-        })
-        .WithName("DownloadZip")
-        .WithOpenApi();
+```csharp
+app.MapGet("/download-zip", async (IAmazonS3 amazonS3Client
+    {
+        var zipStream = GetZipStream(amazonS3Client);
+        
+        return Results.File(
+            zipStream,
+            contentType: "application/octet-stream",
+            fileDownloadName: "Files.zip");
+    })
+    .WithName("DownloadZip")
+    .WithOpenApi();
+
+```
 
 It uses the stream to create a File response using the `Results` class and specifies the `ContentType` and also the `fileDownloadName` (which sets the `Content-Disposition` response header).
 
@@ -129,22 +126,20 @@ Again, depending on the file size and the number of files the server has to retr
 
 Without proper UI feedback, the User could also navigate away or cancel the requests, thinking the application is not responding or has crashed.
 
-[
+<BlogLink
+  href="/blog/cancellation-token-dotnet/"
+  title="A .NET Programmer’s Guide to CancellationToken"
+  description="Imagine having a long-running request triggered by a user on your server. But the user is no longer interested in the result and has navigated away from the page. However, the server is still processing that request and utilizing resources until you come along and implement Cancellation Tokens in the"
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/Cancellation-Token.png"
+/>
 
-A .NET Programmer’s Guide to CancellationToken
-
-Imagine having a long-running request triggered by a user on your server. But the user is no longer interested in the result and has navigated away from the page. However, the server is still processing that request and utilizing resources until you come along and implement Cancellation Tokens in the
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/Cancellation-Token.png)
-
-](/posts/cancellation-token-dotnet/)
-
-Stream ZipArchive in ASP NET API
---------------------------------
+## Stream ZipArchive in ASP NET API
 
   
+
 To improve the user experience and application memory usage, we can stream data from our server to the client as we read files from S3 or whatever the source of the file stream is.
 
 In this scenario, the server is not interested in the file's actual contents and is only interested in sending it straight to the user.
@@ -155,27 +150,30 @@ The [BodyWriter property](https://learn.microsoft.com/en-us/dotnet/api/microsoft
 
 [_System.IO.Pipelines_](https://learn.microsoft.com/en-us/dotnet/standard/io/pipelines) _is a library designed to facilitate high-performance I/O in. NET. It targets the .NET Standard and works on all .NET implementations._
 
-    app.MapGet("/stream-zip", async (IAmazonS3 amazonS3Client, HttpResponse httpResponse) =>
+```csharp
+app.MapGet("/stream-zip", async (IAmazonS3 amazonS3Client, HttpResponse httpResponse) =>
+    {
+        var bucketName = "myapp-data-files";
+        var listObjects = await amazonS3Client
+            .ListObjectsV2Async(new ListObjectsV2Request() {BucketName = bucketName});
+        
+        httpResponse.ContentType = "application/octet-stream";
+        httpResponse.Headers.Append(
+            "Content-Disposition", "attachment; filename=StreamFile.zip");
+        
+        var zipStream = httpResponse.BodyWriter.AsStream();
+        using var zipArchive = new ZipArchive(
+            zipStream, ZipArchiveMode.Create, leaveOpen: true);
+        foreach (var s3Object in listObjects.S3Objects)
         {
-            var bucketName = "myapp-data-files";
-            var listObjects = await amazonS3Client
-                .ListObjectsV2Async(new ListObjectsV2Request() {BucketName = bucketName});
-            
-            httpResponse.ContentType = "application/octet-stream";
-            httpResponse.Headers.Append(
-                "Content-Disposition", "attachment; filename=StreamFile.zip");
-            
-            var zipStream = httpResponse.BodyWriter.AsStream();
-            using var zipArchive = new ZipArchive(
-                zipStream, ZipArchiveMode.Create, leaveOpen: true);
-            foreach (var s3Object in listObjects.S3Objects)
-            {
-                var file = await amazonS3Client.GetObjectAsync(s3Object.BucketName, s3Object.Key);
-                var entry = zipArchive.CreateEntry(file.Key);
-                await using var entryStream = entry.Open();
-                await file.ResponseStream.CopyToAsync(entryStream);
-            }
-        })
+            var file = await amazonS3Client.GetObjectAsync(s3Object.BucketName, s3Object.Key);
+            var entry = zipArchive.CreateEntry(file.Key);
+            await using var entryStream = entry.Open();
+            await file.ResponseStream.CopyToAsync(entryStream);
+        }
+    })
+
+```
 
 Now, instead of creating a new MemoryStream instance, we use the `BodyWriter` as a stream instance that the ZipArchive can directly write to.
 

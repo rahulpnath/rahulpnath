@@ -1,11 +1,14 @@
 ---
 title: "DynamoDB Zero-ETL Integration With Amazon OpenSearch Service"
-slug: "dynamodb-etl-opensearch-amazon"
-date: "2024-11-29T06:39:33.000Z"
-feature_image: "/images/DynamoDB-Zero-ETL.png"
-tags: ["AWS","DynamoDB"]
+slug: dynamodb-etl-opensearch-amazon
+date: 2024-11-29
+feature_image: /images/DynamoDB-Zero-ETL.png
+excerpt: >-
+  Let's learn how to set up the DynamoDB Zero ETL plugin for OpenSearch, a fully managed, no-code setup for ingesting data into Amazon OpenSearch Service.
+tags:
+  - AWS
+  - DynamoDB
 ---
-
 How do you do a full-text search on the data in your DynamoDB database?
 
 The simple answer is...
@@ -24,8 +27,7 @@ With DynamoDB’s Zero ETL integration, you can seamlessly index the data in Ama
 
 In this blog post, let's learn how to set up the DynamoDB zero-ETL integration with Amazon OpenSearch Service.
 
-DynamoDB Plugin for OpenSearch Ingestion
-----------------------------------------
+## DynamoDB Plugin for OpenSearch Ingestion
 
 The Amazon DynamoDB zero-ETL plugin for OpenSearch is a fully managed, no-code setup for ingesting data into Amazon OpenSearch Service.
 
@@ -41,8 +43,8 @@ Point-in-time recovery turned on for DynamoDB table under Backups in AWS Console
 
 Before setting up the plugin, ensure that you have
 
-*   Turned on Point-In-Time Recovery (PITR) on DynamoDB Table
-*   Turned on DynamoDB Streams with '**New and old images**' option
+-   Turned on Point-In-Time Recovery (PITR) on DynamoDB Table
+-   Turned on DynamoDB Streams with '**New and old images**' option
 
 ![](/images/image-9.png)
 
@@ -56,8 +58,7 @@ __The DynamoDB Zero ETL plugin does not perform read/write operations on the tab
 
 For syncing real-time changes to items in the DynamoDB table, the plugin uses DynammoDB Streams to get notified of data changes and sync them to OpenSearch.
 
-Setting Up DynamoDB Plugin For OpenSearch
------------------------------------------
+## Setting Up DynamoDB Plugin For OpenSearch
 
 To create a new ingestion pipeline, navigate to DynamoDB under AWS Console.
 
@@ -80,12 +81,13 @@ The pipeline configuration consists of two parts - the Source and the Sink.
 ```yaml
 version: "2"
 dynamodb-pipeline:
+  source:
+   ...
+   
+  sink:
+   ...
+
 ```
-      source:
-       ...
-       
-      sink:
-       ...
 
 The source sets up the configuration details for the DynamoDB, S3 Export, and associated roles and regions.
 
@@ -99,20 +101,23 @@ For the source, we must specify the DynamoDB Table arn, the S3 bucket details to
 
 Below, I am using the DynamoDB table `Event` and an S3 bucket `event-data-ingestion`.
 
-    source:
-      dynamodb:
-        acknowledgments: true
-        tables:
-          - table_arn: "arn:aws:dynamodb:ap-southeast-2:123456789012:table/Event"
-            stream:
-              start_position: "LATEST"
-            export:
-              s3_bucket: "event-data-ingestion"
-              s3_region: "ap-southeast-2"
-              s3_prefix: "ddb-to-opensearch-export/"
-        aws:
-          sts_role_arn: "arn:aws:iam::123456789012:role/event-pipeline-etl-role"
-          region: "ap-southeast-2"
+```yaml
+source:
+  dynamodb:
+    acknowledgments: true
+    tables:
+      - table_arn: "arn:aws:dynamodb:ap-southeast-2:123456789012:table/Event"
+        stream:
+          start_position: "LATEST"
+        export:
+          s3_bucket: "event-data-ingestion"
+          s3_region: "ap-southeast-2"
+          s3_prefix: "ddb-to-opensearch-export/"
+    aws:
+      sts_role_arn: "arn:aws:iam::123456789012:role/event-pipeline-etl-role"
+      region: "ap-southeast-2"
+
+```
 
 I've also specified the Role ARN to use for the pipeline. More on the IAM Role setup below.
 
@@ -120,26 +125,29 @@ I've also specified the Role ARN to use for the pipeline. More on the IAM Role s
 
 The sink configuration section sets up the OpenSearch details - the host URL, the index name, the id for the index item (derived from the Dynamodb item using its primary key), etc.
 
-      sink:
-        - opensearch:
-            hosts: [ "https://search-myyoutubedoman-ocn5kk4bjel4ba4m2chmyt4c5a.ap-southeast-2.es.amazonaws.com" ]
-            index: "event-data-index"
-            index_type: custom
-            document_id: "${getMetadata(\"primary_key\")}"
-            action: "${getMetadata(\"opensearch_action\")}"
-            document_version: "${getMetadata(\"document_version\")}"
-            document_version_type: "external"
-            flush_timeout: -1
-            aws:
-              sts_role_arn: "arn:aws:iam::123456789012:role/event-pipeline-etl-role"
-              region: "ap-southeast-2"
-              serverless: false
-            dlq:
-              s3:
-                bucket: "event-data-ingestion"
-                key_path_prefix: "dynamodb-pipeline/dlq"
-                region: "ap-southeast-2"
-                sts_role_arn: "arn:aws:iam::123456789012:role/event-pipeline-etl-role"
+```yaml
+  sink:
+    - opensearch:
+        hosts: [ "https://search-myyoutubedoman-ocn5kk4bjel4ba4m2chmyt4c5a.ap-southeast-2.es.amazonaws.com" ]
+        index: "event-data-index"
+        index_type: custom
+        document_id: "${getMetadata(\"primary_key\")}"
+        action: "${getMetadata(\"opensearch_action\")}"
+        document_version: "${getMetadata(\"document_version\")}"
+        document_version_type: "external"
+        flush_timeout: -1
+        aws:
+          sts_role_arn: "arn:aws:iam::123456789012:role/event-pipeline-etl-role"
+          region: "ap-southeast-2"
+          serverless: false
+        dlq:
+          s3:
+            bucket: "event-data-ingestion"
+            key_path_prefix: "dynamodb-pipeline/dlq"
+            region: "ap-southeast-2"
+            sts_role_arn: "arn:aws:iam::123456789012:role/event-pipeline-etl-role"
+
+```
 
 We can also set `dlq` configuration element, which points to an S3 bucket, where any items that throw an error during the sync will be moved.
 

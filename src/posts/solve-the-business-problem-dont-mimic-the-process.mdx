@@ -1,11 +1,14 @@
 ---
-title: "Solve the Business Problem, Don't Mimic The Process"
-slug: "solve-the-business-problem-dont-mimic-the-process"
-date: "2016-12-06T00:00:00.000Z"
-feature_image: "/images/business_problem_automation.jpg"
-tags: ["Thoughts","Programming"]
+title: Solve the Business Problem, Don't Mimic The Process
+slug: solve-the-business-problem-dont-mimic-the-process
+date: 2016-12-06
+feature_image: /images/business_problem_automation.jpg
+excerpt: >-
+  Describes on the importance of seeing the computing problems attached to a business problems when automating business processes.
+tags:
+  - Thoughts
+  - Programming
 ---
-
 [![Business Problem Automation](/images/business_problem_automation.jpg)](http://www.dhc-gmbh.com/en/kompetenzen/business-process-management/)
 
 While working with clients I often get into conversations with the domain experts and people involved directly with the business. The discussions usually happen around what the process they are currently doing and how to automate those. Knowing the business process is helpful but getting influenced by that to design the solution is often not effective. Recently our team was in a conversation with a domain expert for a new feature request.
@@ -13,26 +16,22 @@ While working with clients I often get into conversations with the domain expert
 The series of events mentioned below were modified to fit into the conversational style used in the post.
 
 > **\*Domain Expert** We need to charge customers a processing fee if they pay using an electronic payment method. Depending on the type of card (mastercard, visa etc) the processing charge percentage differs. The processing fees are always charged in the subsequent billing period after their current payment. For e.g. if a customer pays 1000$ for the month of November, then his December bill will have 2% card processing charge in the December invoice\*
-
 > **\*Team** That sounds easy, think we have enough details to get started on this. Thank you.\*
-
 > **\*Domain Expert** Perfect. Ahhh... Before you go, I think this can be a [hangfire job](http://hangfire.io/) that runs on 29 every month, a few days before the billing date, 3rd, and generate these charges for the client. This is what we do manually at present. (And walks off)\*
-
 > **\*Team** Discussing amongst themselves the team agreed that creating a recurring job is the way to go. Based on the assumption that this job will be run only once a month, the job was to read all the invoices from 29th of the previous month till 28th of the current month and charge the clients. The meeting was dismissed and off went everyone busy to get the new feature out\*
 
 ### Business has Exceptions
 
 Problems started coming up the immediate month of feature deployment. Below is the sequence of events that happened.
 
-*   **29th** : Nice work, team! The processing charges have been applied as expected.
-*   **30th** : Some of the invoices have wrong data. We have deleted them. Can you run the job?
-*   **2nd** : A few of our clients (as usual) paid late and we need to charge their processing fees. Can you run the job?
-*   **15th** : One of our clients is ending tomorrow, so we need to send them an invoice and it should include the processing fees for their last payment. Can you run the job?
+-   **29th** : Nice work, team! The processing charges have been applied as expected.
+-   **30th** : Some of the invoices have wrong data. We have deleted them. Can you run the job?
+-   **2nd** : A few of our clients (as usual) paid late and we need to charge their processing fees. Can you run the job?
+-   **15th** : One of our clients is ending tomorrow, so we need to send them an invoice and it should include the processing fees for their last payment. Can you run the job?
 
 But wait! We had decided that we will run this job only once a month and that is the only time we need to process the charges. We cannot run that job over and over again.
 
 > _What I’ve noticed over the years is that our users find very creative ways to achieve their business objectives despite the limitations of the system that they’re working with. We developers ultimately see these as requirements, but they are better interpreted as **workarounds**._
-
 > **_\- [Udi Dahan](http://udidahan.com/2013/04/28/queries-patterns-and-search-food-for-thought/)_**
 
 The business was right when it said that _'This is what we do manually at present._ What they did not say though is that there were always exceptions. And in these cases, they did the same process, but just for those exceptions. Business process mostly will be around the majority of the cases and the exceptions always get handled ad-hoc. So for the business it's always that which takes a good part of their time that matters more.

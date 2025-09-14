@@ -1,12 +1,15 @@
 ---
 title: ".NET DynamoDB SDK: Understanding Table Name Conventions and DynamoDBTable Attribute"
-slug: "dynamodb-net-table"
-date: "2023-07-12T02:06:51.000Z"
-feature_image: "/images/DynamoDB-Table-Name-Conventions.png"
-tags: ["AWS","DynamoDB"]
+slug: dynamodb-net-table
+date: 2023-07-12
+feature_image: /images/DynamoDB-Table-Name-Conventions.png
+excerpt: >-
+  The DynamoDB .NET SDK by default uses conventions to determine the Table name. However, it supports different options to configure and customize the name. Learn how to achieve this in this post.
+tags:
+  - AWS
+  - DynamoDB
 ---
-
-The [.NET DynamoDB SDK](https://www.nuget.org/packages/AWSSDK.DynamoDBv2) by default uses conventions to resolve Table Names.
+The [.NET DynamoDB SDK](https://www.nuget.org/packages/AWSSDK.DynamoDBv2) by default uses conventions to resolve Table Names."
 
 The name of the class used in the DynamoDB SDK operations is used as the Table Name by default. For example, if the class is `WeatherForecast`, the DynamoDB SDK by default looks for a table with the name 'WeatherForecast'.
 
@@ -14,51 +17,50 @@ However, there are ways you can customize this name and override it based on you
 
 <iframe src="https://www.youtube.com/embed/Ib0rzQHV7hE?feature=oembed" />
 
-_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
 In this blog post, let's explore
 
-*   Default Table Name Convention Used By DynamoDB .NET
-*   Configuring DynamoDB Table Name Conventions with .NET
-*   DynamoDBTableAttribute
+-   Default Table Name Convention Used By DynamoDB .NET
+-   Configuring DynamoDB Table Name Conventions with .NET
+-   DynamoDBTableAttribute
 
 If you are new to DynamoDB, I highly recommend checking out my Getting Started with AWS DynamoDB For the .NET Developer blog post below, where I also show you how to set up the table used in this blog post.
 
-[
+<BlogLink
+  href="/blog/aws-dynamodb-net-core/"
+  title="AWS DynamoDB For The .NET Developer: How To Easily Get Started"
+  description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/aws_dynamodb.jpg"
+/>
 
-AWS DynamoDB For The .NET Developer: How To Easily Get Started
-
-Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/aws_dynamodb.jpg)
-
-](/posts/aws-dynamodb-net-core/)
-
-Default Table Name Convention Used By DynamoDB .NET
----------------------------------------------------
+## Default Table Name Convention Used By DynamoDB .NET
 
 When using any of the methods on the `DynamoDBContext` object on the .NET DynamoDB SDK, you need to pass in a .NET type, as shown below.
 
-    return await _dynamoDbContext.LoadAsync<WeatherForecast>(cityName, date);
-    
-    await _dynamoDbContext
-         .QueryAsync<WeatherForecast>(cityName).GetRemainingAsync();
-         
-     await _dynamoDbContext
-         .QueryAsync<WeatherForecast>(
-         	cityName,
-         	QueryOperator.GreaterThan, new object[] { startDate })
-         .GetRemainingAsync();
-         
-    await _dynamoDbContext.SaveAsync<WeatherForecast>(data);
-                   
+```csharp
+return await _dynamoDbContext.LoadAsync<WeatherForecast>(cityName, date);
+
+await _dynamoDbContext
+     .QueryAsync<WeatherForecast>(cityName).GetRemainingAsync();
+     
+ await _dynamoDbContext
+     .QueryAsync<WeatherForecast>(
+     	cityName,
+     	QueryOperator.GreaterThan, new object[] { startDate })
+     .GetRemainingAsync();
+     
+await _dynamoDbContext.SaveAsync<WeatherForecast>(data);
+               
+
+```
 
 By default, the SDK uses the `nameof(WeatherForecast)` to automatically determine the DynamoDB Table Name.
 
-Configuring DynamoDB Table Name Conventions with .NET
------------------------------------------------------
+## Configuring DynamoDB Table Name Conventions with .NET
 
 Based on your team, application, and AWS account setup you might at times need to override the table names.
 
@@ -80,15 +82,16 @@ We can use the `TableNamePrefix` property on the configuration, to append the co
 
 The below code configures it to '_test\__' when the application is running in the test environment.
 
-    var dynamoDbClient = new AmazonDynamoDBClient(
-    	FallbackCredentialsFactory.GetCredentials(), RegionEndpoint.APSoutheast2);
-    
-    var dynamoDBContext = new DynamoDBContext(
-        dynamoDbClient, new DynamoDBContextConfig() {TableNamePrefix = "test_"});
-    
-```typescript
+```csharp
+var dynamoDbClient = new AmazonDynamoDBClient(
+	FallbackCredentialsFactory.GetCredentials(), RegionEndpoint.APSoutheast2);
+
+var dynamoDBContext = new DynamoDBContext(
+    dynamoDbClient, new DynamoDBContextConfig() {TableNamePrefix = "test_"});
+
 builder.Services.AddSingleton<IAmazonDynamoDB>(dynamoDbClient);
 builder.Services.AddSingleton<IDynamoDBContext>(dynamoDBContext);
+
 ```
 
 The prefix value by itself can come from the [application configuration file](https://youtu.be/5GlgHV_12-k).
@@ -99,22 +102,24 @@ The Table Name conventions can be overridden at individual operation levels as w
 
 The below code specifies the `TableNamePrefix` and also the `OverrideTableName` properties on the `DynamoDBOperationConfig` object.
 
-    return await _dynamoDbContext
-        .QueryAsync<WeatherForecastTable>(
-            cityName,
-            new DynamoDBOperationConfig()
-            {
-                TableNamePrefix = "test_", 
-                OverrideTableName = "WeatherForecastTable"
-            })
-        .GetRemainingAsync();
+```csharp
+return await _dynamoDbContext
+    .QueryAsync<WeatherForecastTable>(
+        cityName,
+        new DynamoDBOperationConfig()
+        {
+            TableNamePrefix = "test_", 
+            OverrideTableName = "WeatherForecastTable"
+        })
+    .GetRemainingAsync();
+
+```
 
 This overrides the convention-based table name from the type and uses the value specified in the `OverrideTableName` property and also prefixes it with the value in the `TableNamePrefix`.
 
 If there is a prefix specified at the global level it gets overridden in this case by the one at the operation level. However, you cannot override it to be null or empty at the operation level, if you already specified one at the global level.
 
-DynamoDBTableAttribute
-----------------------
+## DynamoDBTableAttribute
 
 In cases where you want to use a different name for the table outside of the default convention (based on the type name), across all operations on that type, you can use the `DynamoDBTableAttribute`.
 
@@ -124,11 +129,12 @@ The [DynamoDBTable attribute](https://docs.aws.amazon.com/amazondynamodb/latest/
 [DynamoDBTable("WeatherForecastTable")]
 public class WeatherForecastTable
 {
+   public string CityName { get; set; }
+   public DateTime Date { get; set; }
+   ...
+}
+
 ```
-       public string CityName { get; set; }
-       public DateTime Date { get; set; }
-       ...
-    }
 
 Any time you use this type with the `DynamoDBContext`, it uses the name from the `DynamoDBTable` attribute if specified on the type.
 

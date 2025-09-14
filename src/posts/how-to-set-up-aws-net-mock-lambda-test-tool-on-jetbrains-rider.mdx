@@ -1,25 +1,28 @@
 ---
 title: "How To Set Up AWS .NET Mock Lambda Test Tool on JetBrains Rider"
-slug: "how-to-set-up-aws-net-mock-lambda-test-tool-on-jetbrains-rider"
-date: "2023-06-28T01:28:22.000Z"
-feature_image: "/images/Rider---Mock-Lambda-Tool.png"
-tags: ["AWS","Lambda"]
+slug: how-to-set-up-aws-net-mock-lambda-test-tool-on-jetbrains-rider
+date: 2023-06-28T00:00:00.000Z
+feature_image: /images/Rider---Mock-Lambda-Tool.png
+excerpt: >-
+  Learn how to setup .NET Mock Lambda Test Tool to work with JetBrains Rider
+  IDE.
+tags:
+  - AWS
+  - Lambda
 ---
-
 _This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
-The [AWS .NET Mock Lambda Test Tool](https://github.com/aws/aws-lambda-dotnet/tree/master/Tools/LambdaTestTool#the-aws-net-mock-lambda-test-tool-preview) is used to test and debug AWS Lambda functions on your local development machine.
+The [AWS .NET Mock Lambda Test Tool](https://github.com/aws/aws-lambda-dotnet/tree/master/Tools/LambdaTestTool#the-aws-net-mock-lambda-test-tool-preview) is used to test and debug AWS Lambda functions on your local development machine."
 
 Based on the IDE you use for your development you can attach it to the lambda test tool and debug and step through the function code. When using Visual Studio the default Lambda Function template has everything set up and ready to use with the Lambda test tool.
 
 However, this is not the case if you are using the JetBrains Rider.
 
-<iframe src="https://www.youtube.com/embed/oAXB\_QB3jAk?feature=oembed" />
+<iframe src="https://www.youtube.com/embed/oAXB_QB3jAk?feature=oembed" />
 
 In this post, let’s quickly learn how to set up JetBrains Rrider to work with the .NET Mock Lambda test tool.
 
-AWS .NET Mock Lambda Test Tool
-------------------------------
+## AWS .NET Mock Lambda Test Tool
 
 The Mock Lambda Tool helps test the Lambda function locally without deploying it to an AWS environment.
 
@@ -29,10 +32,12 @@ _**Note:** This tool is not a local Lambda environment. This tool is optimized f
 
 The tool is available as a .NET Global tools and can be installed via command line from NuGet. You can find more installation instructions [here](https://github.com/aws/aws-lambda-dotnet/tree/master/Tools/LambdaTestTool#installing-and-running).
 
-    dotnet tool install -g Amazon.Lambda.TestTool-6.0
+```bash
+dotnet tool install -g Amazon.Lambda.TestTool-6.0
 
-Setting Up JetBrains Rider With Mock Lambda Test Tool
------------------------------------------------------
+```
+
+## Setting Up JetBrains Rider With Mock Lambda Test Tool
 
 You can find the official instructions to set up the mock lambda test tool with JetBrains Rider [here](https://github.com/aws/aws-lambda-dotnet/tree/master/Tools/LambdaTestTool#configure-for-jetbrains-rider).
 
@@ -48,6 +53,7 @@ JetBrains Rider uses [run/debug configurations](https://www.jetbrains.com/help/r
 ![Adding a .NET Executable type run/debug configuration in JetBrains Rider.](/images/image-15.png)
 
 3\.  Specify the 'Exe path' for the configuration → This is the path to the global Mock Lambda Test tool dll (`Amazon.Lambda.TestTool.BlazorTester.dll`).  
+
 You can find the DLL in the `/.dotnet/tools` folder where the global tools are installed.
 
 4\.  Specify the 'Working Directory' → This is the root of the AWS Lambda Function Project.
@@ -66,20 +72,23 @@ Below is a sample `run.xml` file with the Mock Lambda Test Tool configuration.
 
 Since it uses a relative path to the .NET mock lambda test tool and the project folder, this will work fine on any machine as long as they have the mock tool installed.
 
-    <component name="ProjectRunConfigurationManager">
-      <configuration default="false" name="Mock Lambda Test Tool" type="RunExe" factoryName=".NET Executable">
-        <option name="EXE_PATH" value="$USER_HOME$/.dotnet/tools/.store/amazon.lambda.testtool-6.0/0.12.2/amazon.lambda.testtool-6.0/0.12.2/tools/net6.0/any/Amazon.Lambda.TestTool.BlazorTester.dll" />
-        <option name="PROGRAM_PARAMETERS" value="" />
-        <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Rider.lambda/src/Rider.lambda/" />
-        <option name="PASS_PARENT_ENVS" value="1" />
-        <option name="USE_EXTERNAL_CONSOLE" value="0" />
-        <option name="USE_MONO" value="0" />
-        <option name="RUNTIME_ARGUMENTS" value="" />
-        <method v="2">
-          <option name="Build Solution" enabled="true" />
-        </method>
-      </configuration>
-    </component>
+```xml
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Mock Lambda Test Tool" type="RunExe" factoryName=".NET Executable">
+    <option name="EXE_PATH" value="$USER_HOME$/.dotnet/tools/.store/amazon.lambda.testtool-6.0/0.12.2/amazon.lambda.testtool-6.0/0.12.2/tools/net6.0/any/Amazon.Lambda.TestTool.BlazorTester.dll" />
+    <option name="PROGRAM_PARAMETERS" value="" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Rider.lambda/src/Rider.lambda/" />
+    <option name="PASS_PARENT_ENVS" value="1" />
+    <option name="USE_EXTERNAL_CONSOLE" value="0" />
+    <option name="USE_MONO" value="0" />
+    <option name="RUNTIME_ARGUMENTS" value="" />
+    <method v="2">
+      <option name="Build Solution" enabled="true" />
+    </method>
+  </configuration>
+</component>
+
+```
 
 ### Using launchsettings.json File
 
@@ -87,16 +96,19 @@ Visual Studio by default uses the `launcsettings.json` file to store the mock la
 
 Below are the default settings when creating an AWS Lambda project in Visual Studio.
 
-    {
-      "profiles": {
-        "Mock Lambda Test Tool": {
-          "commandName": "Executable",
-          "commandLineArgs": "--port 5050",
-          "workingDirectory": ".\\bin\\$(Configuration)\\net6.0",
-          "executablePath": "%USERPROFILE%\\.dotnet\\tools\\dotnet-lambda-test-tool-6.0.exe"
-        }
-      }
+```json
+{
+  "profiles": {
+    "Mock Lambda Test Tool": {
+      "commandName": "Executable",
+      "commandLineArgs": "--port 5050",
+      "workingDirectory": ".\\bin\\$(Configuration)\\net6.0",
+      "executablePath": "%USERPROFILE%\\.dotnet\\tools\\dotnet-lambda-test-tool-6.0.exe"
     }
+  }
+}
+
+```
 
 This automatically sets up the .NET Mock Lambda Test tool and is automatically launched as soon as you run the application.
 
@@ -106,16 +118,19 @@ However, we can slightly modify this (or add a new profile) to work with JetBrai
 
 Instead of running the `dotnet-lambda-test-tool-6.0.exe` directly, we can run it as a dotnet application just like we set up the .NET Executable run/debug configuration in the previous method.
 
-    {
-      "profiles": {
-        "Mock Lambda Test Tool (Rider)": {
-          "commandName": "Executable",
-          "commandLineArgs": "%USERPROFILE%/.dotnet/tools/.store/amazon.lambda.testtool-6.0/0.12.2/amazon.lambda.testtool-6.0/0.12.2/tools/net6.0/any/Amazon.Lambda.TestTool.BlazorTester.dll --port 5050",
-          "workingDirectory": "$(ProjectDir)",
-          "executablePath": "dotnet"
-        }
-      }
+```json
+{
+  "profiles": {
+    "Mock Lambda Test Tool (Rider)": {
+      "commandName": "Executable",
+      "commandLineArgs": "%USERPROFILE%/.dotnet/tools/.store/amazon.lambda.testtool-6.0/0.12.2/amazon.lambda.testtool-6.0/0.12.2/tools/net6.0/any/Amazon.Lambda.TestTool.BlazorTester.dll --port 5050",
+      "workingDirectory": "$(ProjectDir)",
+      "executablePath": "dotnet"
     }
+  }
+}
+
+```
 
 The above profile uses the `dotnet` executable and launches the Mock Lamba Test Tool ( `Amazon.Lambda.TestTool.BlazorTester.dll`) on port 5050.
 

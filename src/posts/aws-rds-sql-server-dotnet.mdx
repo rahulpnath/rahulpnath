@@ -1,12 +1,14 @@
 ---
 title: "AWS RDS and .NET: Step-by-Step Guide for SQL Server Setup"
-slug: "aws-rds-sql-server-dotnet"
-date: "2024-08-08T05:24:21.000Z"
-feature_image: "/images/RDS-SQL-Server--1-.png"
-tags: ["AWS"]
+slug: aws-rds-sql-server-dotnet
+date: 2024-08-08
+feature_image: /images/RDS-SQL-Server--1-.png
+excerpt: >-
+  Amazon Relational Database Service (RDS) is a managed database service on AWS Cloud. RDS provides different database engines; in this post, we will focus on SQL Server. We will set up a Microsoft SQL Server database on RDS and connect to it from a .NET application.
+tags:
+  - AWS
 ---
-
-Amazon Relational Database Service ([RDS](https://aws.amazon.com/rds/)) is a managed database service on AWS Cloud.
+Amazon Relational Database Service ([RDS](https://aws.amazon.com/rds/)) is a managed database service on AWS Cloud."
 
 RDS provides different database engines; this post will focus on SQL Server.
 
@@ -16,10 +18,9 @@ We will set up a Microsoft SQL Server database on RDS and connect to it from a .
 
 RDS for SQL Server makes setting up, operating, and scaling SQL Server deployments in AWS easy.
 
-AWS sponsors this post, which is part of my [AWS Series.](/posts/tag/aws/)
+AWS sponsors this post, which is part of my [AWS Series.](/blog/tag/aws/)
 
-Setting Up AWS RDS SQL Server Instance
---------------------------------------
+## Setting Up AWS RDS SQL Server Instance
 
 Let's create our first RDS instance running SQL Server.
 
@@ -89,8 +90,7 @@ Create the database!
 
 RDS SQL Server database
 
-Connecting To AWS RDS SQL Server using Azure Data Studio
---------------------------------------------------------
+## Connecting To AWS RDS SQL Server using Azure Data Studio
 
 To interact with RDS SQL Server instance you can use various IDEs, such as [SSMS](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16), [Azure Data Studio](https://azure.microsoft.com/en-au/products/data-studio), [Jetbrains DataGrip](https://www.jetbrains.com/datagrip/), etc.
 
@@ -106,8 +106,7 @@ Below, I am using Azure Data Studio to connect to it, and here's how adding a ne
 
 Azure Data Studio connect to RDS SQL Server
 
-Connecting to AWS RDS SQL Server from .NET Application
-------------------------------------------------------
+## Connecting to AWS RDS SQL Server from .NET Application
 
 To connect to the RDS instance from a .NET application, we can use the [SqlConnection class](https://learn.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlconnection?view=netframework-4.8.1).
 
@@ -115,18 +114,21 @@ I also use [Dapper](https://www.learndapper.com/), a lightweight ORM framework t
 
 The code below shows the updated ASP NET API Controller, which talks to the RDS database to retrieve weather data information.
 
-    string connectionString = builder.Configuration.GetConnectionString("RDSConnectionString");
-    
-    app.MapGet("/weatherforecast", async () =>
-        {
-            using var connection = new SqlConnection(connectionString);
-            var forecasts = await connection
-                .QueryAsync<WeatherForecast>(
-                     "SELECT Date, TemperatureC, Summary FROM WeatherForecasts");
-            
-            return Results.Ok(forecasts);
-        })
-        .WithName("GetWeatherForecast")
-        .WithOpenApi();
+```csharp
+string connectionString = builder.Configuration.GetConnectionString("RDSConnectionString");
+
+app.MapGet("/weatherforecast", async () =>
+    {
+        using var connection = new SqlConnection(connectionString);
+        var forecasts = await connection
+            .QueryAsync<WeatherForecast>(
+                 "SELECT Date, TemperatureC, Summary FROM WeatherForecasts");
+        
+        return Results.Ok(forecasts);
+    })
+    .WithName("GetWeatherForecast")
+    .WithOpenApi();
+
+```
 
 _I created a database and a table with some dummy weather forecast data for this to work!_

@@ -1,11 +1,17 @@
 ---
 title: "BatchWriteItem Operations In DynamoDB Using .NET"
-slug: "dynamodb-batchwrite"
-date: "2023-08-14T02:35:05.000Z"
-feature_image: "/images/DynamoDB-BatchWrite.png"
-tags: ["AWS","DynamoDB"]
+slug: dynamodb-batchwrite
+date: 2023-08-14T00:00:00.000Z
+feature_image: /images/DynamoDB-BatchWrite.png
+excerpt: >-
+  Amazon DynamoDB's BatchWriteItem functionality allows you to insert multiple
+  items to one or more DynamoDB tables using a single API call. This feature is
+  particularly useful for scenarios involving data ingestion, bulk updates, or
+  data cleanup tasks.
+tags:
+  - AWS
+  - DynamoDB
 ---
-
 Amazon DynamoDB's [BatchWriteItem](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html) functionality provides a streamlined approach to perform multiple write operations on one or more DynamoDB tables using a single API call.
 
 Using BatchWriteItem you can bundle multiple operations into a single batch,  and significantly reduce the number of API calls and network overhead, leading to improved performance and reduced costs.
@@ -18,11 +24,10 @@ _This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)
 
 In this article, we will learn, how to
 
-*   Batch Write Using High-Level API (DynamoDBContext)
-*   Batch Write Using Low-Level API (AmazonDynamoDBClient)
+-   Batch Write Using High-Level API (DynamoDBContext)
+-   Batch Write Using Low-Level API (AmazonDynamoDBClient)
 
-DynamoDB BatchWriteItem
------------------------
+## DynamoDB BatchWriteItem
 
 The `BatchWriteItem` operation can insert/remove multiple items in one or more DynamoDB tables.
 
@@ -32,8 +37,7 @@ DynamoDB `BatchWriteItem` can be performed using the High-Level API (using the `
 
 Let's explore these methods and how to perform the operations on single and multiple tables.
 
-Batch Write Using High-Level .NET API (DynamoDBContext)
--------------------------------------------------------
+## Batch Write Using High-Level .NET API (DynamoDBContext)
 
 The `DynamoDBContext` is the High-Level API provided in the .NET SDK and abstracts over the Low-Level API. It makes it easier to work with DynamoDB by giving rich .NET classes to interact with.
 
@@ -47,13 +51,14 @@ In the below example, it takes a list of `WeatherForecast` data, which will be i
 [HttpPost("batch-write")]
 public async Task PostBatch(List<WeatherForecast> batch)
 {
+    foreach (var data in batch)
+        data.Date = data.Date.Date;
+    var batchWrite = _dynamoDbContext.CreateBatchWrite<WeatherForecast>();
+    batchWrite.AddPutItems(batch);
+    await batchWrite.ExecuteAsync();
+}
+
 ```
-        foreach (var data in batch)
-            data.Date = data.Date.Date;
-        var batchWrite = _dynamoDbContext.CreateBatchWrite<WeatherForecast>();
-        batchWrite.AddPutItems(batch);
-        await batchWrite.ExecuteAsync();
-    }
 
 The `BatchWrite` instance has the `AddPutItems` method to specify the items to be inserted into the table as part of the batch operation.
 
@@ -65,17 +70,15 @@ Each `BatchWrite` instance represents a batch operation on a single DynamoDB tab
 
 The DynamoDBContext uses the table name conventions to determine the table name to perform the queries on.
 
-[
-
-.NET DynamoDB SDK: Understanding Table Name Conventions and DynamoDBTable Attribute
-
-The DynamoDB .NET SDK by default uses conventions to determine the Table name. However, it supports different options to configure and customize the name. Learn how to achieve this in this post.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/DynamoDB-Table-Name-Conventions.png)
-
-](/posts/dynamodb-net-table/)
+<BlogLink
+  href="/blog/dynamodb-net-table/"
+  title=".NET DynamoDB SDK: Understanding Table Name Conventions and DynamoDBTable Attribute"
+  description="The DynamoDB .NET SDK by default uses conventions to determine the Table name. However, it supports different options to configure and customize the name. Learn how to achieve this in this post."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/DynamoDB-Table-Name-Conventions.png"
+/>
 
 To insert data into multiple tables, we need to create multiple instances of the `BatchWrite` type passing in the appropriate .NET types.
 
@@ -85,29 +88,28 @@ The below code invokes the `CreateBatchWrite` on two different types, representi
 [HttpPost("batch-write-multiple-tables")]
 public async Task PostBatchMulti(BatchWriteData batchItems)
 {
-```
-        foreach (var data in batchItems.Batch1)
-            data.Date = data.Date.Date;
-        var batchWrite1 = _dynamoDbContext.CreateBatchWrite<WeatherForecast>();
-        batchWrite1.AddPutItems(batchItems.Batch1);
-    
-        foreach (var data in batchItems.Batch2)
-            data.Date = data.Date.Date;
-        var batchWrite2 = _dynamoDbContext
-                    .CreateBatchWrite<WeatherForecastTable>();
-        batchWrite2.AddPutItems(batchItems.Batch2);
-    
-        var batches = batchWrite1.Combine(batchWrite2);
-        await batches.ExecuteAsync();
-    }
-    
-```csharp
+    foreach (var data in batchItems.Batch1)
+        data.Date = data.Date.Date;
+    var batchWrite1 = _dynamoDbContext.CreateBatchWrite<WeatherForecast>();
+    batchWrite1.AddPutItems(batchItems.Batch1);
+
+    foreach (var data in batchItems.Batch2)
+        data.Date = data.Date.Date;
+    var batchWrite2 = _dynamoDbContext
+                .CreateBatchWrite<WeatherForecastTable>();
+    batchWrite2.AddPutItems(batchItems.Batch2);
+
+    var batches = batchWrite1.Combine(batchWrite2);
+    await batches.ExecuteAsync();
+}
+
 public class BatchWriteData
 {
+    public List<WeatherForecast> Batch1 { get; set; }
+    public List<WeatherForecastTable> Batch2 { get; set; }    
+}
+
 ```
-        public List<WeatherForecast> Batch1 { get; set; }
-        public List<WeatherForecastTable> Batch2 { get; set; }    
-    }
 
 The multiple instances of `BatchWrite` can then be combined into a single `MultiBatchWrite` instance using the `Conbine` method as shown above.
 
@@ -121,12 +123,14 @@ The `DynamoDBContext` also has the function `CreateMultiTableBatchWrite` that ca
 
 As shown below, you can pass in the batch instances as a params object into the function to create  the same `MultipBatchWrite` instance and perform the execute action on it.
 
-    var batches = _dynamoDbContext
-           .CreateMultiTableBatchWrite(batchWrite1, batchWrite2);
-    await batches.ExecuteAsync();
+```csharp
+var batches = _dynamoDbContext
+       .CreateMultiTableBatchWrite(batchWrite1, batchWrite2);
+await batches.ExecuteAsync();
 
-Batch Write Using Low-Level .NET API (AmazonDynamoDBClient)
------------------------------------------------------------
+```
+
+## Batch Write Using Low-Level .NET API (AmazonDynamoDBClient)
 
 When using the High-Level API it abstracts away a lot of the complexities of the underlying Low-Level API.
 
@@ -146,31 +150,32 @@ It has multiple overloads and one of them uses the `BatchWriteItemRequest` as sh
 [HttpPost("batch-write-client")]
 public async Task PostBatchClient(List<WeatherForecast> batch)
 {
-```
-        foreach (var data in batch)
-            data.Date = data.Date.Date;
-            
-        var batchWriteRequest = new BatchWriteItemRequest
+    foreach (var data in batch)
+        data.Date = data.Date.Date;
+        
+    var batchWriteRequest = new BatchWriteItemRequest
+    {
+        RequestItems = new Dictionary<string, List<WriteRequest>>
         {
-            RequestItems = new Dictionary<string, List<WriteRequest>>
             {
-                {
-                    nameof(WeatherForecast),
-                    batch.Select(data =>
-                        new WriteRequest(new PutRequest(Document
-                            .FromJson(JsonSerializer.Serialize(
-                                data,
-                                new JsonSerializerOptions()
-                                {
-                                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-                                }))
-                            .ToAttributeMap()))).ToList()
-                }
+                nameof(WeatherForecast),
+                batch.Select(data =>
+                    new WriteRequest(new PutRequest(Document
+                        .FromJson(JsonSerializer.Serialize(
+                            data,
+                            new JsonSerializerOptions()
+                            {
+                                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                            }))
+                        .ToAttributeMap()))).ToList()
             }
-        };
-        var response = await _amazonDynamoDbClient
-                   .BatchWriteItemAsync(batchWriteRequest);
-    }
+        }
+    };
+    var response = await _amazonDynamoDbClient
+               .BatchWriteItemAsync(batchWriteRequest);
+}
+
+```
 
 The `RequestItems` takes the collection of items to insert as a `WriteRequest` object, which again takes a `PutRequest` instance as shown above.
 
@@ -185,12 +190,13 @@ To perform a batch write on multiple tables using the .NET Low-Level `AmazonDyna
 ```csharp
 var batchWriteRequest = new BatchWriteItemRequest
 {
+    RequestItems = new Dictionary<string, List<WriteRequest>>
+    {
+        {nameof(WeatherForecast), <itemsToInsert>},
+        {nameof(WeatherForecastTable), <itemsToInsert>}
+    }
+};
+
 ```
-        RequestItems = new Dictionary<string, List<WriteRequest>>
-        {
-            {nameof(WeatherForecast), <itemsToInsert>},
-            {nameof(WeatherForecastTable), <itemsToInsert>}
-        }
-    };
 
 When processing the `UnprocessedItems` from a batch write response, it's recommended to perform the subsequent request after a random back-off time. You can read more about the recommended practices [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Programming.Errors.html#Programming.Errors.BatchOperations).

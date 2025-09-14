@@ -1,11 +1,17 @@
 ---
 title: "How to Implement Optimistic Locking in .NET for Amazon DynamoDB"
-slug: "dynamodb-optimistic-locking"
-date: "2023-05-02T19:41:10.000Z"
-feature_image: "/images/DynamoDB-Optimistic-Locking.png"
-tags: ["AWS","DynamoDB"]
+slug: dynamodb-optimistic-locking
+date: 2023-05-02T00:00:00.000Z
+feature_image: /images/DynamoDB-Optimistic-Locking.png
+excerpt: >-
+  Optimistic locking is an approach that allows multiple users to access and
+  modify the same data concurrently while preventing conflicts and maintaining
+  consistency. When building your applications, let’s learn how to set up
+  Optimistic Locking with objects in the DynamoDB table.
+tags:
+  - AWS
+  - DynamoDB
 ---
-
 _This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
 
 It is essential to ensure data consistency when multiple users or applications access the same data simultaneously.
@@ -18,8 +24,7 @@ In this post, let’s learn how to set up Optimistic Locking with objects in the
 
 I will be using the .NET programming language for the application code.
 
-Optimistic Locking
-------------------
+## Optimistic Locking
 
 > _Optimistic locking_ is a strategy to ensure that the client-side item that you are updating (or deleting) is the same as the item in the data store.
 
@@ -31,8 +36,7 @@ For example, Let’s say you retrieve an item from the database table and displa
 
 When User 1 saves the data, it might accidentally overwrite the changes User 2 made. So when User 1 makes the update, it should fail and force them to get the latest data along with changes User 2 made and then reapply these changes to the new version of the object.
 
-Amazon DynamoDB Optimistic Locking
-----------------------------------
+## Amazon DynamoDB Optimistic Locking
 
 Condition Expressions allow us to achieve optimistic locking when working with DynamoDB tables.
 
@@ -45,8 +49,7 @@ To use conditional writes for optimistic locking in DynamoDB, you can follow the
 3.  Modify the item and increment the version number.
 4.  When writing the item back into DynamoDB, specify a `ConditionExpression` to check the Version number attribute in the table matches the version number retrieved in step 2. If the condition is not met, the update will not be applied, and the user can be notified to refresh the data and try again.
 
-.NET and DynamoDB Optimistic Locking
-------------------------------------
+## .NET and DynamoDB Optimistic Locking
 
 When using the Object persistence model, which is the high-level API using the `DynamoDBContext` in the .NET SDK, Optimistic Locking support is available out of the box.
 
@@ -55,17 +58,17 @@ To use this feature, all you need to do is add a new property and assign the `Dy
 ```csharp
 public class WeatherForecast
 {
+    public string CityName { get; set; }
+    public DateTime Date { get; set; }
+    public int TemperatureC { get; set; }
+    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    public string? Summary { get; set; }
+
+    [DynamoDBVersion]
+    public int? Version { get; set; }
+}
+
 ```
-        public string CityName { get; set; }
-        public DateTime Date { get; set; }
-        public int TemperatureC { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-        public string? Summary { get; set; }
-    
-        [DynamoDBVersion]
-        public int? Version { get; set; }
-    }
-    
 
 When you first save the object, `DynamoDBContext` assigns a version number and increments this value each time you update the item. It also automatically adds the `ConditionExpression` check when saving the item to ensure optimistic concurrency.
 
@@ -79,15 +82,16 @@ To disable Optimistic Locking checking when using `DynamoDBContext` along with V
 [HttpPost("post-skip-versioning")]
 public async Task PostSkipVersion(WeatherForecast data)
 {
+    data.Date = data.Date.Date;
+    await _dynamoDbContext.SaveAsync(
+        data,
+        new DynamoDBOperationConfig()
+        {
+            SkipVersionCheck = true
+        });
+}
+
 ```
-        data.Date = data.Date.Date;
-        await _dynamoDbContext.SaveAsync(
-            data,
-            new DynamoDBOperationConfig()
-            {
-                SkipVersionCheck = true
-            });
-    }
 
 As shown above, this is done as part of the `DynamoDBOperationConfig` object, that's passed as an optional parameter along with the `SaveAsync` call on `DynamoDBContext`.
 
@@ -97,56 +101,54 @@ You can also set this property at the DynamoDBContext level, which applies to al
 
 The `Delete` method on `DynamoDBContext` has two overloads
 
-*   Takes just the key values → Hash and Range key
-*   Takes the whole item to delete.
+-   Takes just the key values → Hash and Range key
+-   Takes the whole item to delete.
 
 When using the overload that takes only the keys, it does not know anything about the version and ignores it when deleting the object.
 
 When passing the whole item to the Delete function, the operation succeeds only if the version number matches the server.
 
-.NET AmazonDynamoDBClient and Optimistic Locking
-------------------------------------------------
+## .NET AmazonDynamoDBClient and Optimistic Locking
 
 When using the Low-level API, `AmazonDynamoDBClient`, to interact with DynamoDB, we can explicitly add `ConditionExpression` to achieve Optimistic Locking.
 
 If you are new to condition Expressions, check out my blog post and the associated video in the link below.
 
-[
-
-How to Ensure Data Consistency with DynamoDB Condition Expressions From .NET Applications
-
-Condition Expressions allow specifying constraints when writing data to an Amazon DynamoDB table. It allows you to specify a Boolean expression that must be true for the operation to proceed. Let’s learn from Condition Expressions and how to use it from .NET
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/DynamoDB-Condition-Expressions.png)
-
-](/posts/dynamodb-condition-expressions-dotnet/)
+<BlogLink
+  href="/blog/dynamodb-condition-expressions-dotnet/"
+  title="How to Ensure Data Consistency with DynamoDB Condition Expressions From .NET Applications"
+  description="Condition Expressions allow specifying constraints when writing data to an Amazon DynamoDB table. It allows you to specify a Boolean expression that must be true for the operation to proceed. Let’s learn from Condition Expressions and how to use it from .NET"
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/DynamoDB-Condition-Expressions.png"
+/>
 
 Below is an example `UpdateItemRequest` which sets the `ConditionExpression` that checks the version number on the DynamoDB server item is the same as that when we retrieved the item for the update.
 
 ```csharp
 var updateItemRequest = new UpdateItemRequest
 {
+    TableName = "TableName",
+    Key = new Dictionary<string, AttributeValue>
+    {
+        { "id", new AttributeValue { S = "Id" } }
+    },
+    UpdateExpression = "set #myAttr = :newValue, #version = :newVersion",
+    ConditionExpression = "#version = :oldVersion",
+    ExpressionAttributeNames = new Dictionary<string, string>
+    {
+        { "#myAttr", "myAttribute" },
+        { "#version", "version" }
+    },
+    ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+    {
+        { ":newValue", new AttributeValue { S = item.MyAttribute } },
+        { ":oldVersion", new AttributeValue { N = version.ToString() } },
+        { ":newVersion", new AttributeValue { N = item.Version.ToString() } }
+    }
+};
+
 ```
-        TableName = "TableName",
-        Key = new Dictionary<string, AttributeValue>
-        {
-            { "id", new AttributeValue { S = "Id" } }
-        },
-        UpdateExpression = "set #myAttr = :newValue, #version = :newVersion",
-        ConditionExpression = "#version = :oldVersion",
-        ExpressionAttributeNames = new Dictionary<string, string>
-        {
-            { "#myAttr", "myAttribute" },
-            { "#version", "version" }
-        },
-        ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-        {
-            { ":newValue", new AttributeValue { S = item.MyAttribute } },
-            { ":oldVersion", new AttributeValue { N = version.ToString() } },
-            { ":newVersion", new AttributeValue { N = item.Version.ToString() } }
-        }
-    };
 
 If the versions match, our update goes through and also sets the new version number. Any other user/application updating the item must retrieve the item/version number before making an update.

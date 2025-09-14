@@ -1,11 +1,17 @@
 ---
 title: "Improving Query Performance in DynamoDB with Sparse Indexes and .NET"
-slug: "dynamodb-sparse-index-dotnet"
-date: "2023-07-11T03:06:33.000Z"
-feature_image: "/images/DynamoDB-Sparse-Index.png"
-tags: ["AWS","DynamoDB"]
+slug: dynamodb-sparse-index-dotnet
+date: 2023-07-11T00:00:00.000Z
+feature_image: /images/DynamoDB-Sparse-Index.png
+excerpt: >-
+  A Sparse Index is a special type of Index, where the Index does not have an
+  entry for every item in the base table. Sparse Indexes optimize storage and
+  performance by selectively including only a subset of items from the base
+  table. Learn how to use this to your advantage.
+tags:
+  - AWS
+  - DynamoDB
 ---
-
 A DynamoDB Sparse Index is a Secondary Index in Amazon DynamoDB that contains a subset of the items from the base table.
 
 Both the Global and Local Secondary Index in DynamoDB is by default sparse. DynamoDB writes an entry into the index only if the Index key values are present. A Sparse Index is a special type of Index, where the Index does not have an entry for every item in the base table.
@@ -18,29 +24,26 @@ _This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)
 
 In this post, let’s learn more about,
 
-*   DynamoDB Sparse Index
-*   How to create a DynamoDB Sparse Index
-*   Populate a DynamoDB Sparse Index
-*   Query a DynamoDB Sparse Index
+-   DynamoDB Sparse Index
+-   How to create a DynamoDB Sparse Index
+-   Populate a DynamoDB Sparse Index
+-   Query a DynamoDB Sparse Index
 
 _The sample code below is on the `WeatherForecast` table, which has `CityName` and `Date` as the hash and range key, respectively._
 
 If you are new to DynamoDB, I highly recommend checking out my Getting Started with AWS DynamoDB For the .NET Developer blog post below, where I also show you how to set up the table used in this blog post.
 
-[
+<BlogLink
+  href="/blog/aws-dynamodb-net-core/"
+  title="AWS DynamoDB For The .NET Developer: How To Easily Get Started"
+  description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Pulikkot Nath"
+  authorTitle="Rahul Nath"
+  featureImage="/images/aws_dynamodb.jpg"
+/>
 
-AWS DynamoDB For The .NET Developer: How To Easily Get Started
-
-Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/aws_dynamodb.jpg)
-
-](/posts/aws-dynamodb-net-core/)
-
-Creating a DynamoDB Sparse Index
---------------------------------
+## Creating a DynamoDB Sparse Index
 
 [For any item in a table,](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-indexes-general-sparse-indexes.html) DynamoDB writes a corresponding index entry **only if the index sort key value is present in the item**. If the sort key doesn't appear in every table item, the index is said to be sparse.
 
@@ -52,8 +55,8 @@ You can create a Local Secondary Index only at the time of DynamoDB table creati
 
 You can find more information on Index Creation in the below two blog posts.
 
-*   [Exploring Global Secondary Index: Advanced Querying in DynamoDB From .NET](/posts/dynamodb-global-secondary-index-gsi/)
-*   [Improving Queries Using Local Secondary Index in DynamoDB with .NET](/posts/local-secondary-index-dynamodb/)  
+-   [Exploring Global Secondary Index: Advanced Querying in DynamoDB From .NET](/blog/dynamodb-global-secondary-index-gsi/)
+-   [Improving Queries Using Local Secondary Index in DynamoDB with .NET](/blog/local-secondary-index-dynamodb/)  
     
 
 > The difference with Sparse Index is with the key selection for the DynamoDB table Index.
@@ -72,8 +75,7 @@ This Sparse Index allows us to get all the cities that had extreme weather condi
 
 ![](/images/image-1.png)
 
-Populating DynamoDB Sparse Index From .NET
-------------------------------------------
+## Populating DynamoDB Sparse Index From .NET
 
 Based on the programming language you are using to write the DynamoDB items you can conditionally populate the `IsExtermeWeatherConditions` property on the WeatherForecast object.
 
@@ -82,16 +84,16 @@ When using the .NET programming language this is easily done by specifying the `
 ```csharp
 public class WeatherForecastTable
 {
+    public string CityName { get; set; }
+    public DateTime Date { get; set; }
+    public int TemperatureC { get; set; }
+    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    public string Summary { get; set; }
+    public bool? IsExtremeWeatherConditions { get; set; }
+    ...
+}
+
 ```
-        public string CityName { get; set; }
-        public DateTime Date { get; set; }
-        public int TemperatureC { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-        public string Summary { get; set; }
-        public bool? IsExtremeWeatherConditions { get; set; }
-        ...
-    }
-    
 
 When using the `DynamoDBContext` to save the item to the table, it includes the `IsExtermeWeatherConditions` property only if it has a value specified. It ignores the property if it's set to `NULL`.
 
@@ -101,8 +103,7 @@ Based on the application you are building, you can choose the property and type 
 
 Only items that have the `IsExtermeWeatherConditions` property set on the base table item is copied over to the Index - `Date-IsExtremeWeatherConditions-index`
 
-Querying DynamoDB Sparse Index From .NET
-----------------------------------------
+## Querying DynamoDB Sparse Index From .NET
 
 Since a Sparse Index is a special type of Index, querying it is similar to querying any other Index.
 
@@ -114,28 +115,29 @@ Since `Date` is a reserved keyword in DynamoDB it passes it as a parameterized k
 [HttpGet("gsi-query-sparse-index")]
 public async Task<IEnumerable<ExtremeWeatherForecastListItem>> GetExtremeWeatherConditionsUsingSparseGSIQuery(DateTime startDate)
 {
-```
-        var request = new QueryRequest()
+    var request = new QueryRequest()
+    {
+        TableName = nameof(WeatherForecastTable),
+        IndexName = "Date-IsExtremeWeatherConditions-index",
+        KeyConditionExpression = "#Date = :startDate",
+        ExpressionAttributeNames = new Dictionary<string, string>()
         {
-            TableName = nameof(WeatherForecastTable),
-            IndexName = "Date-IsExtremeWeatherConditions-index",
-            KeyConditionExpression = "#Date = :startDate",
-            ExpressionAttributeNames = new Dictionary<string, string>()
-            {
-                {"#Date", "Date"}
-            },
-            ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
-            {
-                {":startDate", new AttributeValue(startDate.ToString(AWSSDKUtils.ISO8601DateFormat))},
-            },
-        };
-    
-        var response = await _amazonDynamoDbClient.QueryAsync(request);
-    
-        return response.Items
-            .Select(Document.FromAttributeMap)
-            .Select(_dynamoDbContext.FromDocument<WeatherForecastListItem>);
-    }
+            {"#Date", "Date"}
+        },
+        ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
+        {
+            {":startDate", new AttributeValue(startDate.ToString(AWSSDKUtils.ISO8601DateFormat))},
+        },
+    };
+
+    var response = await _amazonDynamoDbClient.QueryAsync(request);
+
+    return response.Items
+        .Select(Document.FromAttributeMap)
+        .Select(_dynamoDbContext.FromDocument<WeatherForecastListItem>);
+}
+
+```
 
 The above query returns all the items for the specified date that had extreme weather conditions.
 

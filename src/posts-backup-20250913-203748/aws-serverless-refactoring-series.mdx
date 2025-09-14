@@ -1,0 +1,49 @@
+---
+title: >-
+  AWS Serverless Refactoring Series: How to Improve the Maintainability of
+  Project
+slug: aws-serverless-refactoring-series
+date: '2021-05-03'
+feature_image: /images/aws_serverless_refactor.jpg
+excerpt: >-
+  Let's look at different design patterns and principles we can apply to make
+  the default AWS Serverless Application Template cleaner and easier to
+  maintain.
+tags:
+  - AWS
+---
+The AWS Serverless Application Template that comes with the AWS Toolkit is poorly structured.
+
+Serverless Applications. The `Functions.cs` file in the template has the whole application in it; interacts with AWS infrastructure, has domain logic, and interacts with DynamoDB. For a template, it is ok; but for your real-world applications, you can do better.
+
+In the <BlogLink
+  href="/blog/aws-serverless-application"
+  title="Going Serverless on AWS For The .NET Developer: How To Easily Get Started"
+  description="Learn how to get started with AWS Serverless Application using the Serverless Application Model (SAM). The Serverless Application Template available as part of the AWS Toolkit makes it easy to start building Serverless Application."
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/aws_serverless.jpg"
+/>, I showed how to get started with building Serverless Application in AWS. If you are new to AWS Serverless, I recommend reading that and coming back to this post.
+
+Ok, now that you have seen how the AWS Serverless Application Template is structured and works end to end, let's see how we can structure the application for easier maintainability.
+
+This is a series of posts that I will be linking here as and when I publish them.
+
+1.  <BlogLink
+  href="/blog/aws-serverless-refactoring-series-clean-architecture"
+  title="AWS Serverless Refactoring Series: How to Move to Clean Architecture?"
+  description="Learn how to refactor the AWS Serverless Application Template to use Clean Architecture. Following the Dependency Inversion Principle, we will create diferent projects to separate concerns."
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/aws_serverless_refactor_project.jpg"
+/>
+2.  Refactor to 1 of the Most Popular Patterns
+3.  AWS Serverless Refactoring Series: How to Create and Move to Base Handlers?
+
+If you like to watch instead of reading, I've got you covered. Check out the full video here.
+
+<iframe src="https://www.youtube.com/embed/XE1w52pNYr8" />
+
+I hope you enjoy them!

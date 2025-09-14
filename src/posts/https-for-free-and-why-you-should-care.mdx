@@ -1,34 +1,32 @@
 ---
 title: "HTTPS For Free and Why You Should Care"
-slug: "https-for-free-and-why-you-should-care"
-date: "2018-05-19T00:00:00.000Z"
-feature_image: "/images/blog_https.png"
-tags: ["Programming"]
+slug: https-for-free-and-why-you-should-care
+date: 2018-05-19
+feature_image: /images/blog_https.png
+excerpt: >-
+  Upgrade to HTTPS for free
+tags:
+  - Programming
 ---
-
 If you are here and reading this probably you have a website and is serving it over HTTP. If you are unsure of whether your site needs HTTPS or not, don't think twice - **YES, YOUR SITE NEEDS HTTPS**.
 
 If you are not convinced check out [https://doesmysiteneedhttps.com/](https://doesmysiteneedhttps.com/). One of the main reasons that I have seen (including me) why people have shied away from having HTTPS on sites was cost. And this post explains how to get HTTPS for free. But make sure you are getting it for the correct reasons and you know exactly what you are getting
 
 > HTTPS & SSL doesn't mean "trust this." It means "this is private." You may be having a private conversation with Satan.  
-> — Scott Hanselman (@shanselman) [_April 4, 2012_](https://twitter.com/shanselman/status/187572289724887041?ref_src=twsrc%5Etfw)
+— Scott Hanselman (@shanselman) [_April 4, 2012_](https://twitter.com/shanselman/status/187572289724887041?ref_src=twsrc%5Etfw)
 
 Depending on how you are hosting you could possibly take two routes to enable HTTPS on your site. Let's look at them in detail.
 
-Option 1 - Get your Certificate and Add to Your Host
-----------------------------------------------------
+## Option 1 - Get your Certificate and Add to Your Host
 
 If your hosting service already allows you to upload a custom domain certificate, but you were just holding back because of the extra cost of getting a certificate, then head over to [Let's Encrypt](https://letsencrypt.org/) to get your free certificate. Again depending on your hosting provider and the level of access that you have on your web server, Let's Encrypt has [muliple ways](https://letsencrypt.org/getting-started/) on how you can get a certificate.
 
 > [**What does it cost to use Let’s Encrypt? Is it really free?**](https://letsencrypt.org/docs/faq/#general)  
-> _We do not charge a fee for our certificates. Let’s Encrypt is a nonprofit, our mission is to create a more secure and privacy-respecting Web by promoting the widespread adoption of HTTPS. Our services are free and easy to use so that every website can deploy HTTPS._
-
+_We do not charge a fee for our certificates. Let’s Encrypt is a nonprofit, our mission is to create a more secure and privacy-respecting Web by promoting the widespread adoption of HTTPS. Our services are free and easy to use so that every website can deploy HTTPS._
 > _We require support from generous sponsors, grantmakers, and individuals in order to provide our services for free across the globe. If you’re interested in supporting us please consider donating or becoming a sponsor._
-
 > _In some cases, integrators (e.g. hosting providers) will charge a nominal fee that reflects the administrative and management costs they incur to provide Let’s Encrypt certificates._
 
-Option 2 - CloudFlare
----------------------
+## Option 2 - CloudFlare
 
 If you are like me on a shared/cheaper hosting service it is more likely that your hosting plan does not support adding SSL certificates. You will be forced to upgrade to a higher plan to upload a certificate, which in turn will cost you more. In this case, you can use [Cloudflare](https://www.cloudflare.com/), to enable HTTPS for free.
 
@@ -48,8 +46,7 @@ Cloudflare supports [multiple SSL settings](https://support.cloudflare.com/hc/en
 
 You can also choose to enable Cloudflare with Full SSL(Strict) if you have followed Option 1 and have a custom SSL certificate for the domain. This will give you the added benefits that Cloudfare provides.
 
-Enabling HSTS Preload
----------------------
+## Enabling HSTS Preload
 
 Now that you have HTTPS setup on your domain with either of the options above, we can see that the website is now accessible over HTTPS. However, when you make the very first request to the website, the request goes over HTTP which then redirects over to HTTPS, after which the communication happens over a secure channel. However, there is a risk where the very first request can be intercepted and cause undesired behaviour.
 

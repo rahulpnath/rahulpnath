@@ -1,19 +1,24 @@
 ---
 title: "Let Azure Manage The Username and Password Of Your SQL Connection String"
-slug: "azure-sql-server-managed-identity"
-date: "2020-04-16T00:00:00.000Z"
-feature_image: "/images/azure_sql_azure_ad_admin.jpg"
-tags: ["Azure"]
+slug: azure-sql-server-managed-identity
+date: 2020-04-16T00:00:00.000Z
+feature_image: /images/azure_sql_azure_ad_admin.jpg
+excerpt: >-
+  Use Azure Managed Identities feature to connect to Azure SQL. One less
+  sensitive information to manage.
+tags:
+  - Azure
 ---
-
-To connect to a SQL database, we usually use a connection string that has a username and password. We ensure that the connection string is [stored and distributed securely](/posts/keeping-sensitive-configuration-data-out-of-source-control/).
+To connect to a SQL database, we usually use a connection string that has a username and password. We ensure that the connection string is [stored and distributed securely](/blog/keeping-sensitive-configuration-data-out-of-source-control/).
 
 **_However, the problem here is the very existence of having something sensitive to protect._**
 
-    "ConnectionStrings": {
-        "QuotesDatabase": "Server=tcp:quotetest.database.windows.net,1433;Database=quotes;User Id:<UserName>;Password:<YourPasswordHere>"
-      }
-    
+```json
+"ConnectionStrings": {
+    "QuotesDatabase": "Server=tcp:quotetest.database.windows.net,1433;Database=quotes;User Id:<UserName>;Password:<YourPasswordHere>"
+  }
+
+```
 
 <iframe src="https://www.youtube.com/embed/FFBaw-ug2-I" />
 
@@ -23,43 +28,41 @@ In this post, let us look at how we can use Manage Service Identity to connect t
 
 [![](/images/asp_net_core_banner.png)](https://www.youtube.com/playlist?list=PL59L9XrzUa-nqfCHIKazYMFRKapPNI4sP)
 
-Using Azure AD Token to Connect to SQL
---------------------------------------
+## Using Azure AD Token to Connect to SQL
 
-Using the [DefaultAzureCredential from Azure Identity SDK we can retrieve token from Azure AD](/posts/defaultazurecredential-from-azure-sdk/). SqlConnection uses this token for authentication. Below is a sample code where the AccessToken property of the SqlConnection is the Azure AD token.
+Using the [DefaultAzureCredential from Azure Identity SDK we can retrieve token from Azure AD](/blog/defaultazurecredential-from-azure-sdk/). SqlConnection uses this token for authentication. Below is a sample code where the AccessToken property of the SqlConnection is the Azure AD token.
 
-```javascript
+```csharp
 var connectionString = Configuration.GetConnectionString("QuotesDatabase");
 services.AddTransient(a =>
 {
+    var sqlConnection = new SqlConnection(connectionString);
+    var credential = new DefaultAzureCredential();
+    var token = credential
+        .GetToken(new Azure.Core.TokenRequestContext(
+            new[] { "https://database.windows.net/.default" }));
+    sqlConnection.AccessToken = token.Token;
+    return sqlConnection;
+});
+
 ```
-        var sqlConnection = new SqlConnection(connectionString);
-        var credential = new DefaultAzureCredential();
-        var token = credential
-            .GetToken(new Azure.Core.TokenRequestContext(
-                new[] { "https://database.windows.net/.default" }));
-        sqlConnection.AccessToken = token.Token;
-        return sqlConnection;
-    });
-    
 
 When using Entity Framework, we need to use a slight workaround until [EF Core will get full support for Azure AD token access](https://github.com/dotnet/efcore/issues/13261). The easiest way to set up is to set the token for the underlying SqlConnection for EF explicitly. Also, [check out this gist](https://gist.github.com/ChristopherHaws/b1c54b95838f1513bfb74fa1c8e408f3), for a different solution.
 
 ```csharp
 public QuoteContext(DbContextOptions options) : base(options)
 {
-```
-        var conn = (Microsoft.Data.SqlClient.SqlConnection)Database.GetDbConnection();
-        var credential = new DefaultAzureCredential();
-        var token = credential
-                .GetToken(new Azure.Core.TokenRequestContext(
-                    new[] { "https://database.windows.net/.default" }));
-        conn.AccessToken = token.Token;
-    }
-    
+    var conn = (Microsoft.Data.SqlClient.SqlConnection)Database.GetDbConnection();
+    var credential = new DefaultAzureCredential();
+    var token = credential
+            .GetToken(new Azure.Core.TokenRequestContext(
+                new[] { "https://database.windows.net/.default" }));
+    conn.AccessToken = token.Token;
+}
 
-Setting Up SQL Server For Managed Identity
-------------------------------------------
+```
+
+## Setting Up SQL Server For Managed Identity
 
 To manage Azure SQL for AD identities, we need to connect to SQL under the Azure user context. To do this, let us set up an Azure AD user as a SQL admin. It can be done from the Azure Portal under the Azure Directory Admin option for the database server, as shown below.
 
@@ -68,21 +71,28 @@ To manage Azure SQL for AD identities, we need to connect to SQL under the Azure
 Using the SQL AD Admin credentials, you can connect via [SQL Server Management Studio](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver15) or [sqlcmd](https://docs.microsoft.com/en-us/sql/tools/sqlcmd-utility?view=sql-server-ver15) and grant other AD identities access. The below script grants the user 'db\_datareader, db\_datawriter, and db\_ddladmin' access.
 
 ```sql
-CREATE USER [<identity-name>] FROM EXTERNAL PROVIDER;
-ALTER ROLE db_datareader ADD MEMBER [<identity-name>];
-ALTER ROLE db_datawriter ADD MEMBER [<identity-name>];
-ALTER ROLE db_ddladmin ADD MEMBER [<identity-name>];
-GO
-```
-    
 
-`<identity-name>` is the name of the managed identity in Azure AD. For a system-assigned identity, the name is the same as the App Service name. It can also be an Azure AD Group (use the group name in this case). It gives you multiple options on how you want to manage access to the database. For local development, you can either [create a separate AD application and use the ClientId/Secret for EnvironmentCredential](/posts/azure-managed-service-identity-and-local-development/), or add all developers to an Azure AD group and grant the AD group access or explicitly add in each user to the database.
+CREATE USER [<identity-name>] FROM EXTERNAL PROVIDER;
+
+ALTER ROLE db_datareader ADD MEMBER [<identity-name>];
+
+ALTER ROLE db_datawriter ADD MEMBER [<identity-name>];
+
+ALTER ROLE db_ddladmin ADD MEMBER [<identity-name>];
+
+GO
+
+```
+
+`<identity-name>` is the name of the managed identity in Azure AD. For a system-assigned identity, the name is the same as the App Service name. It can also be an Azure AD Group (use the group name in this case). It gives you multiple options on how you want to manage access to the database. For local development, you can either [create a separate AD application and use the ClientId/Secret for EnvironmentCredential](/blog/azure-managed-service-identity-and-local-development/), or add all developers to an Azure AD group and grant the AD group access or explicitly add in each user to the database.
 
 No longer we need any credentials to connect to the SQL database running on Azure. This makes it one less sensitive information to manage for our application.
 
-    "ConnectionStrings": {
-        "QuotesDatabase": "Server=tcp:quotetest.database.windows.net,1433;Database=quotes"
-      }
-    
+```json
+"ConnectionStrings": {
+    "QuotesDatabase": "Server=tcp:quotetest.database.windows.net,1433;Database=quotes"
+  }
+
+```
 
 Hope this helps you!

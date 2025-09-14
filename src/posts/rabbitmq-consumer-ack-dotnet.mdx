@@ -1,18 +1,23 @@
 ---
 title: "Exploring Manual and Automatic Acknowledgment in RabbitMQ with .NET"
-slug: "rabbitmq-consumer-ack-dotnet"
-date: "2024-02-12T06:42:25.000Z"
-feature_image: "/images/_RabbitMQ---ACK.png"
-tags: ["RabbitMQ","AWS"]
+slug: rabbitmq-consumer-ack-dotnet
+date: 2024-02-12T00:00:00.000Z
+feature_image: /images/_RabbitMQ---ACK.png
+excerpt: >-
+  Delivery processing acknowledgements from consumers are referred to as
+  acknowledgements in messaging protocols. Let's learn automatic and manual ack
+  modes in RabbitMQ.
+tags:
+  - AWS
+  - RabbitMQ
 ---
-
 Messages picked up for processing by the consumers are not guaranteed to be successfully processed.
 
 Hence, consumers need a mechanism for processing confirmation.
 
 Delivery processing acknowledgements from consumers are referred to as acknowledgements in messaging protocols.
 
-<iframe src="https://www.youtube.com/embed/jrLbUz\_5Aiw?feature=oembed" />
+<iframe src="https://www.youtube.com/embed/jrLbUz_5Aiw?feature=oembed" />
 
 In this post, let’s learn about different acknowledgement modes and how to use them when working with RabbitMQ from a .NET application.
 
@@ -20,13 +25,12 @@ The concept still applies to other programming languages.
 
 There are two acknowledgement modes supported in RabbitMQ
 
-*   Automatic ACK
-*   Manual ACK
+-   Automatic ACK
+-   Manual ACK
 
-_This article is sponsored by AWS and is part of my_ [_RabbitMQ Series_](/posts/tag/rabbitmq/)_._
+_This article is sponsored by AWS and is part of my_ [_RabbitMQ Series_](/blog/tag/rabbitmq/)_._
 
-Automatic Acknowledgement From .NET Application
------------------------------------------------
+## Automatic Acknowledgement From .NET Application
 
 The message is considered to be successfully delivered immediately after it's sent.
 
@@ -34,7 +38,10 @@ With Automatic ACK mode, there is a higher throughput of messages getting proces
 
 It can also cause the consumer to overload if many messages are in the queue.
 
-    channel.BasicConsume("hello", autoAck: true, consumer);
+```csharp
+channel.BasicConsume("hello", autoAck: true, consumer);
+
+```
 
 When registering the consumer with the RabbitMQ channel, you can specify `autoAck` property `true` to enable automatic acknowledgement, as shown above.
 
@@ -42,26 +49,26 @@ However, when using Automatic acknowledgement, when there are exceptions in mess
 
 The code below throws an exception if the message received contains the word 'exception.' This message is processed and removed from the queue, even though the consumer threw an exception while processing.
 
-```javascript
+```csharp
 consumer.Received += (model, ea) =>
 {
-```
-        var body = ea.Body.ToArray();
-        var message = Encoding.UTF8.GetString(body);
-        Console.WriteLine($"[x] Received message {message}");
-        
-        if (message.Contains("exception"))
-        {
-            Console.WriteLine("Error in processing");
-            throw new Exception("Error in processing");
-        }
-        
-        // Additional processing for this message
-        Console.WriteLine($"Processed message {message}");
-    };
+    var body = ea.Body.ToArray();
+    var message = Encoding.UTF8.GetString(body);
+    Console.WriteLine($"[x] Received message {message}");
+    
+    if (message.Contains("exception"))
+    {
+        Console.WriteLine("Error in processing");
+        throw new Exception("Error in processing");
+    }
+    
+    // Additional processing for this message
+    Console.WriteLine($"Processed message {message}");
+};
 
-Manual Acknowledgement From .NET Application
---------------------------------------------
+```
+
+## Manual Acknowledgement From .NET Application
 
 With Manual Acknowledgement, the consumer explicitly marks a message as processed successfully or failed.
 
@@ -72,35 +79,41 @@ RabbitMQ provides different protocol methods to acknowledge the messages:
 
 To use manual acknowledgement, specify `autoAck` as false when registering a consumer to RabbitMQ using the channel.
 
-    channel.BasicConsume("hello", autoAck: false, consumer);
+```csharp
+channel.BasicConsume("hello", autoAck: false, consumer);
+
+```
 
 ### Delivery Tags
 
 [Delivery Tags](https://www.rabbitmq.com/confirms.html#consumer-acks-delivery-tags) are used to acknowledge deliveries. Every message delivered on a channel has an associated delivery tag.  
   
+
 Delivery tags are scoped to a channel, so the same channel must acknowledge a message using the received tag. Acknowledging messages with a delivery tag from a different channel will cause an exception and close that channel.  
   
+
 Below is the sample code in the RabbitMQ consumer to acknowledge (`BasicAck`) and reject (`BasicReject`) a message based on the consumer logic.
 
-```javascript
+```csharp
 consumer.Received += (model, ea) =>
 {
+    var body = ea.Body.ToArray();
+    var message = Encoding.UTF8.GetString(body);
+    Console.WriteLine($"[x] Received message {message}");
+    
+    if (message.Contains("exception"))
+    {
+        Console.WriteLine("Error in processing");
+        channel.BasicReject(ea.DeliveryTag, false);
+        throw new Exception("Error in processing");
+    }
+    
+    // Additional processing for this message
+    Console.WriteLine($"Processed message {message}");
+    channel.BasicAck(deliveryTag: ea.DeliveryTag, false);
+};
+
 ```
-        var body = ea.Body.ToArray();
-        var message = Encoding.UTF8.GetString(body);
-        Console.WriteLine($"[x] Received message {message}");
-        
-        if (message.Contains("exception"))
-        {
-            Console.WriteLine("Error in processing");
-            channel.BasicReject(ea.DeliveryTag, false);
-            throw new Exception("Error in processing");
-        }
-        
-        // Additional processing for this message
-        Console.WriteLine($"Processed message {message}");
-        channel.BasicAck(deliveryTag: ea.DeliveryTag, false);
-    };
 
 ### Delivery Acknowledgement Timeout
 

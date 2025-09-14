@@ -1,38 +1,38 @@
 ---
 title: "How To Build an API Gateway REST API Using AWS Lambda Proxy Integration?"
-slug: "amazon-api-gateway-rest-api-lambda-proxy-integration"
-date: "2022-07-29T00:00:00.000Z"
-feature_image: "/images/aws_lambda.jpg"
-tags: ["AWS","Lambda"]
-excerpt: "In this post, you will learn how to build a REST API using Amazon API Gateway with AWS Lambda Proxy integration built in .NET Core. Learn how to build and set up the Lambda integration, connect to a DynamoDB database and perform CRUD operations."
-
+slug: amazon-api-gateway-rest-api-lambda-proxy-integration
+date: 2022-07-29T00:00:00.000Z
+feature_image: /images/aws_lambda.jpg
+excerpt: >-
+  In this post, you will learn how to build a REST API using Amazon API Gateway
+  with AWS Lambda Proxy integration built in .NET Core. Learn how to build and
+  set up the Lambda integration, connect to a DynamoDB database and perform CRUD
+  operations.
+tags:
+  - AWS
+  - Lambda
 ---
-
 _This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 Amazon API Gateway is an AWS service for managing APIs at any scale.
 
 Broadly it’s categorized into two products - REST APIs and HTTP APIs. While both allow us to build RESTful APIs, the REST API product in Gateway provides more advanced features and configurations.
 
-<div>
 <iframe src="https://www.youtube.com/embed/13Urq-AqH8M" />
-</div>
 
 REST API supports different integration options to power the APIs we build, and AWS Lambda is one of them.
 
 In a previous blog post, I walked through the different building blocks of the Amazon API Gateway REST API. If you are entirely new to this, I highly recommend checking that out first to understand some of the basic terminologies and features.
 
-[
-
-Amazon API Gateway - Introduction To Building REST APIs
-
-Learn how to build REST API using API Gateway. We will learn the different building blocks of REST APIs, how they connect with each other, and how you can build and configure an API in the AWS Console.
-
-![](/images/favicon.ico)Rahul NathRahul Pulikkot Nath
-
-![](/images/learning_code.jpg)
-
-](/posts/amazon-api-gateway-rest-api-introduction)
+<BlogLink
+  href="/blog/amazon-api-gateway-rest-api-introduction"
+  title="Amazon API Gateway - Introduction To Building REST APIs"
+  description="Learn how to build REST API using API Gateway. We will learn the different building blocks of REST APIs, how they connect with each other, and how you can build and configure an API in the AWS Console."
+  authorImage="/images/favicon.ico"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/learning_code.jpg"
+/>
 
 In this post, we will learn how to build a REST API using Amazon API Gateway with AWS Lambda Proxy integration built in .NET Core.
 
@@ -40,33 +40,19 @@ With Proxy Integration, the HTTP Request coming into the API Gateway is passed a
 
 You will learn:
 
-```sql
-*   Build an AWS Lambda in .NET to handle Amazon API Gateway Request/Response.
-*   Persist data to Amazon DynamoDB and perform Create, Read, Update & Delete (CRUD) operations on the data.
-*   Set up and integrate with AWS Lambda from API Gateway.
-```
+-   Build an AWS Lambda in .NET to handle Amazon API Gateway Request/Response.
+-   Persist data to Amazon DynamoDB and perform Create, Read, Update & Delete (CRUD) operations on the data.
+-   Set up and integrate with AWS Lambda from API Gateway.
 
-Build AWS Lambda
-----------------
+## Build AWS Lambda
 
 Let’s first build out the Lambda function to handle Amazon API Gateway requests/responses.
 
-[
-
-AWS Lambda For The .NET Developer
-
-Learn to build Serverless Applications on AWS
-
-![](/images/apple-touch-icon.png)Udemy
-
-![](/images/4689888_b522_4.jpg)
-
-](https://www.udemy.com/course/aws-lambda-dotnet/?referralCode=981481B991C2890BD448)
+[AWS Lambda For The .NET Developer](https://www.udemy.com/course/aws-lambda-dotnet/?referralCode=981481B991C2890BD448)
 
 The AWS Toolkit extension makes it easy to build AWS applications in .NET core. It’s available on multiple IDEs. You can check out the setup video, available for a free preview on my [Udemy Course here.](https://www.udemy.com/course/aws-lambda-dotnet/?referralCode=981481B991C2890BD448)
 
 Create an Empty Lambda Function from the available Visual Studio templates. To interact with API Gateway Events, we need a NuGet package - [Amazon.Lambda.APIGatewayEvents](https://www.nuget.org/packages/Amazon.Lambda.APIGatewayEvents)
-
 
 ```csharp
 public async Task<APIGatewayProxyResponse> FunctionHandler(
@@ -91,11 +77,12 @@ public async Task<APIGatewayProxyResponse> FunctionHandler(
         Body = "Bad Request"
     };
 }
+
 ```
 
 The above function code connects to the DynamoDB User table and retrieves the User information from the table for the given user id GUID. It extracts the `userId` from the API Gateway request from the query string parameters collection.
 
-Since I have set up the AWS Credentials for my local development environment using configuration files, I don’t have to pass in any credentials explicitly. If you want to set it up for your development environment, check out my blog post on [How To Manage Credentials When Building .NET Application on AWS](/posts/amazon-credentials-dotnet/).
+Since I have set up the AWS Credentials for my local development environment using configuration files, I don’t have to pass in any credentials explicitly. If you want to set it up for your development environment, check out my blog post on [How To Manage Credentials When Building .NET Application on AWS](/blog/amazon-credentials-dotnet/).
 
 The DynamoDB context, by convention, uses the class name, in this case, _User,_ to find the table it needs to read data. For a valid user id, it returns the User object returned from the DynamoDB table back to the caller. The function returns the `APIGatewayProxyResponse` type with the details populated with the appropriate HTTP status code.
 
@@ -135,12 +122,11 @@ It opens the IAM Role, where you can Add additional Permissions to the role.
 
 I have added specific permissions (Read, Put, Update and Delete) for the User table. Provide only the minimum required permissions and explicitly choose the Resources that need access. This follows the [Apply least-privilege permissions](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege) with IAM Policies guidelines.
 
-Integrate API Gateway to Lambda Function
-----------------------------------------
+## Integrate API Gateway to Lambda Function
 
 With the Lambda function up and running in our AWS account, it’s time to integrate it with the AWS API Gateway method integration.
 
-Once you create a new API Gateway REST API, add a User resource and a `GET` method under that. You can follow the steps detailed [in my previous post](/posts/amazon-api-gateway-rest-api-introduction/) to get this setup.
+Once you create a new API Gateway REST API, add a User resource and a `GET` method under that. You can follow the steps detailed [in my previous post](/blog/amazon-api-gateway-rest-api-introduction/) to get this setup.
 
 To set up Lambda integration, select the Lambda function under the Integration Request. Provide the details of the region and the Lambda Function to connect to integrate.
 
@@ -150,8 +136,7 @@ Check the ‘_Use Lambda Proxy Integration_’ option, which turns on Proxy inte
 
 Once you assign the integration to the Lambda function, it will automatically prompt to add permission for the Gateway to invoke the Lambda function. This is required so that API Gateway can invoke/trigger the Lambda Function whenever a request comes to this API Method.
 
-Reuse Lambda For Multiple Methods
----------------------------------
+## Reuse Lambda For Multiple Methods
 
 Each method added in API Gateway needs an associated Lambda function to handle the request.
 
@@ -164,7 +149,6 @@ To reuse the same Lambda function to handle multiple HTTP methods, we can switch
 ### Add POST Endpoint
 
 The main function handler, now takes in the request and uses switch/case on the `HtppMethod` to determine what action to perform. For a `POST` request, it calls the `HandlePost` method.
-
 
 ```csharp
 public async Task<APIGatewayProxyResponse> FunctionHandler(
@@ -198,6 +182,7 @@ private async Task<APIGatewayProxyResponse> HandlePost(
         Body = "Bad Request"
     };
 }
+
 ```
 
 The `HandlePost` function expects the _User_ information to be part of the HttpRequest Body in JSON format. For a valid user, it writes it to the User table in DynamoDB.
@@ -206,8 +191,7 @@ The response for all the requests is still the same `APIGatewayProxyResponse` ty
 
 You can use the Mock Lambda Test tool to test these changes on your development environment and deploy them to the AWS Lambda function same as before.
 
-Deploy API
-----------
+## Deploy API
 
 To interact and make the API callable for your users, you need to Deploy the API to a Stage.
 
@@ -217,7 +201,7 @@ Once deployed, you can use the URL for the API to test the end-end integration. 
 
 ![Amazon API Gateway REST API deployed to a Stage.](/images/api-gateway-rest-api-lambda-proxy-stage.jpg)
 
-But with the current setup, if we deploy the API to two stages, it will still be talking to the same backend integrations - Lambda Function and DynamoDB table. We can solve that using Stage variables and integrate with different backend services based on the stage it’s running on. Read more on this follow up post here on [How To Manage Multiple Stages in Amazon API Gateway REST API?](/posts/amazon-api-gateway-rest-api-multiple-stages/)
+But with the current setup, if we deploy the API to two stages, it will still be talking to the same backend integrations - Lambda Function and DynamoDB table. We can solve that using Stage variables and integrate with different backend services based on the stage it’s running on. Read more on this follow up post here on [How To Manage Multiple Stages in Amazon API Gateway REST API?](/blog/amazon-api-gateway-rest-api-multiple-stages/)
 
 _Full Source code and demo [available here](https://rahulpnath.visualstudio.com/YouTube%20Samples/_git/api-gateway-rest-lambda-proxy-integration)._
 

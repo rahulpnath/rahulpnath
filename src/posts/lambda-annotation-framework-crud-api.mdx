@@ -1,16 +1,19 @@
 ---
 title: "Serverless API Development Made Easy: Using AWS Lambda Annotations for CRUD"
-slug: "lambda-annotation-framework-crud-api"
-date: "2023-08-30T04:58:30.000Z"
-feature_image: "/images/Lambda-Annotation-Framework---CRUD.png"
-tags: ["AWS","Lambda"]
+slug: lambda-annotation-framework-crud-api
+date: 2023-08-30
+feature_image: /images/Lambda-Annotation-Framework---CRUD.png
+excerpt: >-
+  Learn how to create a CRUD API Endpoint using AWS Lambda, API Gateway and the Annotations Framework. See how the Lambda Annotations framework does all the heavy lifting for us, and makes it easier to develop APIs.
+tags:
+  - AWS
+  - Lambda
 ---
-
-The [Lambda Annotations Framework](/posts/aws-lambda-annotation-framework/) is a programming model that makes it easier to build AWS Lambda Functions using .NET.
+The [Lambda Annotations Framework](/blog/aws-lambda-annotation-framework/) is a programming model that makes it easier to build AWS Lambda Functions using .NET.
 
 The framework uses C# custom attributes and Source Generators to translate annotated Lambda functions to the regular Lambda programming model.
 
-In a [previous post](/posts/aws-lambda-annotation-framework/), we learned how to get started with using the Annotations Framework and how it compares to using the default Lambda Programming model. The Annotations Framework removes boilerplate code required to integrate with API Gateway.
+In a [previous post](/blog/aws-lambda-annotation-framework/), we learned how to get started with using the Annotations Framework and how it compares to using the default Lambda Programming model. The Annotations Framework removes boilerplate code required to integrate with API Gateway.
 
 <iframe src="https://www.youtube.com/embed/Zx6JpVKUoLQ?feature=oembed" />
 
@@ -18,10 +21,9 @@ In this post, let’s learn how to set up a basic CRUD (Create, Read, Update, an
 
 We will use DynamoDB as our data store for this example and we will also learn how to set up the DynamoDB Table and Role Permissions via the same CloudFormation template that the Annotations framework generates.
 
-_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
-Create and Update API Endpoint
-------------------------------
+## Create and Update API Endpoint
 
 Let's first create the Create Endpoint for our API.
 
@@ -39,43 +41,38 @@ Make sure the template path does not have a leading slash on it.
 
 We also have specified a custom IAM Role Name as part of the `Role` parameter in the `LambdaFunction` attribute. More on this later.
 
-```json
+```csharp
 [LambdaFunction(Role = "@OrdersApiLambdaExecutionRole")]
 [HttpApi(LambdaHttpMethod.Post, template: "/orders")]
 public async Task PostOrder([FromBody] Order order, ILambdaContext context)
 {
-```
-        await _dynamodbContext.SaveAsync(order);
-    }
-    
-```csharp
+    await _dynamodbContext.SaveAsync(order);
+}
+
 public class Order
 {
+    public string OrderId { get; set; }
+    public decimal Total { get; set; }
+    public DateTime CreatedDate { get; set; }
+}
+
 ```
-        public string OrderId { get; set; }
-        public decimal Total { get; set; }
-        public DateTime CreatedDate { get; set; }
-    }
-    
 
 Using the `DynamoDBContext` we can save the `Order` into the table. If you are new to DynamoDB I highly recommend checking the below blog post to get started.
 
-[
-
-Amazon DynamoDB For The .NET Developer
-
-This blog post is a collection of other posts that covers various aspects of Amazon DynamoDB and other services you can integrate with when building serverless applications.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/Amazon-DynamoDB.png)
-
-](/posts/amazon-dynamodb-dotnet-developer)
+<BlogLink
+  href="/blog/amazon-dynamodb-dotnet-developer"
+  title="Amazon DynamoDB For The .NET Developer"
+  description="This blog post is a collection of other posts that covers various aspects of Amazon DynamoDB and other services you can integrate with when building serverless applications."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/Amazon-DynamoDB.png"
+/>
 
 For the DynamoDBContext save to work, we need to make sure the Table is set up and the Lambda Function has appropriate access to the table.
 
-Setting up DynamoDB Table and IAM Roles via CloudFormation
-----------------------------------------------------------
+## Setting up DynamoDB Table and IAM Roles via CloudFormation
 
 As part of the Lambda Annotations Framework, it auto-generates a `serverless.template` CloudFormation template file.
 
@@ -85,25 +82,28 @@ In our case, we need to set up the DynamoDB Table and the Lambda Access Roles wi
 
 To set up the Order DynamoDB table, let's add the below to the Resources section of the template.
 
-    "OrderTable": {
-      "Type": "AWS::DynamoDB::Table",
-      "Properties": {
-        "AttributeDefinitions": [
-          {
-            "AttributeName": "OrderId",
-            "AttributeType": "S"
-          }
-        ],
-        "KeySchema": [
-          {
-            "AttributeName": "OrderId",
-            "KeyType": "HASH"
-          }
-        ],
-        "TableName": "Order",
-        "BillingMode": "PAY_PER_REQUEST"
+```json
+"OrderTable": {
+  "Type": "AWS::DynamoDB::Table",
+  "Properties": {
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "OrderId",
+        "AttributeType": "S"
       }
-    }
+    ],
+    "KeySchema": [
+      {
+        "AttributeName": "OrderId",
+        "KeyType": "HASH"
+      }
+    ],
+    "TableName": "Order",
+    "BillingMode": "PAY_PER_REQUEST"
+  }
+}
+
+```
 
 It sets up the DynamoDB table with a specific name and also the Keys for the table.
 
@@ -111,43 +111,46 @@ For setting up the Lambda IAM Role, let's use the below template in the Resource
 
 It sets up full access to DynamoDB Order Table. Note I am using the CloudFormation function `Fn::GetAtt` to get the ARN of the DynamoDB Table created in the same template file.
 
-    "OrdersApiLambdaExecutionRole": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
+```json
+"OrdersApiLambdaExecutionRole": {
+  "Type": "AWS::IAM::Role",
+  "Properties": {
+    "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": {
+            "Service": "lambda.amazonaws.com"
+          },
+          "Action": "sts:AssumeRole"
+        }
+      ]
+    },
+    "ManagedPolicyArns": [
+      "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+    ],
+    "Policies": [
+      {
+        "PolicyName": "OrderApiDynamoDBAccessPolicy",
+        "PolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
             {
               "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com"
-              },
-              "Action": "sts:AssumeRole"
+              "Action": "dynamodb:*",
+              "Resource": {
+                "Fn::GetAtt": ["OrderTable", "Arn"]
+              }
             }
           ]
-        },
-        "ManagedPolicyArns": [
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-        ],
-        "Policies": [
-          {
-            "PolicyName": "OrderApiDynamoDBAccessPolicy",
-            "PolicyDocument": {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Action": "dynamodb:*",
-                  "Resource": {
-                    "Fn::GetAtt": ["OrderTable", "Arn"]
-                  }
-                }
-              ]
-            }
-          }
-        ]
+        }
       }
-    }
+    ]
+  }
+}
+
+```
 
 The `LambdaFunction` attribute specifies the `Role` property to use the new IAM role that we just created above.
 
@@ -155,43 +158,45 @@ We use the name `Role = "@OrdersApiLambdaExecutionRole"` to refer to the IAM rol
 
 This generates the below section to the CloudFormation template for the Lambda Function
 
-    "LambdaAnnotationSampleOrderApiFunctionPostOrderGenerated": {
-      "Type": "AWS::Serverless::Function",
-      "Metadata": {
-        "Tool": "Amazon.Lambda.Annotations",
-        "SyncedEvents": [
-          "RootPost"
-        ]
-      },
-      "Properties": {
-        "Runtime": "dotnet6",
-        "CodeUri": ".",
-        "MemorySize": 256,
-        "Timeout": 30,
-        "Role": {
-          "Fn::GetAtt": [
-            "OrdersApiLambdaExecutionRole",
-            "Arn"
-          ]
-        },
-        "PackageType": "Zip",
-        "Handler": "LambdaAnnotationSample.OrderApi::LambdaAnnotationSample.OrderApi.Function_PostOrder_Generated::PostOrder",
-        "Events": {
-          "RootPost": {
-            "Type": "HttpApi",
-            "Properties": {
-              "Path": "/order",
-              "Method": "POST"
-            }
-          }
+```json
+"LambdaAnnotationSampleOrderApiFunctionPostOrderGenerated": {
+  "Type": "AWS::Serverless::Function",
+  "Metadata": {
+    "Tool": "Amazon.Lambda.Annotations",
+    "SyncedEvents": [
+      "RootPost"
+    ]
+  },
+  "Properties": {
+    "Runtime": "dotnet6",
+    "CodeUri": ".",
+    "MemorySize": 256,
+    "Timeout": 30,
+    "Role": {
+      "Fn::GetAtt": [
+        "OrdersApiLambdaExecutionRole",
+        "Arn"
+      ]
+    },
+    "PackageType": "Zip",
+    "Handler": "LambdaAnnotationSample.OrderApi::LambdaAnnotationSample.OrderApi.Function_PostOrder_Generated::PostOrder",
+    "Events": {
+      "RootPost": {
+        "Type": "HttpApi",
+        "Properties": {
+          "Path": "/order",
+          "Method": "POST"
         }
       }
     }
+  }
+}
+
+```
 
 You can deploy the template from the IDE or using the AWS CLI, which will create the Lambda Function, the IAM Role, the API Endpoint and wire up the integration for the route to the Lambda Function on the API Gateway.
 
-Read API Endpoint
------------------
+## Read API Endpoint
 
 To set up the Read API Endpoint, all we need to do is create another Function in the same class and add the `LambdaFunction` and `HttpApi` attribute. Since this is a GET, it specifies the appropriate `LambdaHttpMethod` on it.
 
@@ -200,9 +205,10 @@ To set up the Read API Endpoint, all we need to do is create another Function in
 [HttpApi(LambdaHttpMethod.Get, "/orders/{orderId}")]
 public async Task<Order> GetOrder(string orderId, ILambdaContext context)
 {
+    return await _dynamodbContext.LoadAsync<Order>(orderId);
+}
+
 ```
-        return await _dynamodbContext.LoadAsync<Order>(orderId);
-    }
 
 The function takes in the `orderId` as the parameter, which is bound from the path parameter in the request URL.
 
@@ -210,8 +216,7 @@ You can use the `DynamoDBContext` to retrieve the item from the Table and return
 
 Lambda Annotations will automatically convert this into JSON representation and send it as part of the HTTP response body.
 
-Delete API Endpoint
--------------------
+## Delete API Endpoint
 
 Very similar to the Get API Endpoint, we can add a new Function for the Delete endpoint.
 
@@ -220,14 +225,14 @@ Very similar to the Get API Endpoint, we can add a new Function for the Delete e
 [HttpApi(LambdaHttpMethod.Delete, "/orders/{orderId}")]
 public async Task DeleteOrder(string orderId, ILambdaContext context)
 {
+    await _dynamodbContext.DeleteAsync<Order>(orderId);
+}
+
 ```
-        await _dynamodbContext.DeleteAsync<Order>(orderId);
-    }
 
 It takes the `orderId` from the Path parameter and uses that to delete the item from the DynamoDB table.
 
-Annotations Framework Generated Code
-------------------------------------
+## Annotations Framework Generated Code
 
 The Lambda Annotations Framework uses .NET Source Generators to generate the boilerplate code to interact with the API Gateway.
 

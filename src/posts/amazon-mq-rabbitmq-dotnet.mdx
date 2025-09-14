@@ -1,27 +1,25 @@
 ---
 title: "Amazon MQ RabbitMQ: A Reliable Messaging Solution for Your .NET Projects"
-slug: "amazon-mq-rabbitmq-dotnet"
-date: "2024-01-22T06:51:00.000Z"
-feature_image: "/images/rabbit-mq-dotnet.png"
-tags: ["AWS","RabbitMQ"]
-excerpt: "RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let's learn how to get started using RabbitMQ on Amazon MQ from .NET application."
-
+slug: amazon-mq-rabbitmq-dotnet
+date: 2024-01-22
+feature_image: /images/rabbit-mq-dotnet.png
+excerpt: >-
+  RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let's learn how to get started using RabbitMQ on Amazon MQ from .NET application.
+tags:
+  - AWS
+  - RabbitMQ
 ---
-
 RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications.
 
 It ensures seamless data exchange by enabling asynchronous messaging, making it an essential tool for building scalable and resilient distributed systems.
 
-<div>
 <iframe src="https://www.youtube.com/embed/4DDAGsXrNAQ?feature=oembed" />
-</div>
 
 In this post, we will learn how to set up RabbitMQ and start using it from a .NET application to send and receive messages.
 
-_This article is sponsored by AWS and is part of my_ [_RabbitMQ Series_](/posts/tag/rabbitmq/)_._
+_This article is sponsored by AWS and is part of my_ [_RabbitMQ Series_](/blog/tag/rabbitmq/)_._
 
-Setting Up RabbitMQ
--------------------
+## Setting Up RabbitMQ
 
 RabbitMQ can be hosted through self-hosted deployments, major cloud providers, containerization with Docker and Kubernetes, managed RabbitMQ providers, etc, offering a wide range of options from complete control to fully managed solutions.
 
@@ -45,8 +43,8 @@ Create a new Amazon MQ broker using the RabbitMQ broker type.
 
 It then prompts you to choose the deployment mode.
 
-*   **Single-instance broker** → one broker in one Availability Zone, mainly used for development and testing.
-*   **Cluster deployment** → logical grouping of three RabbitMQ broker nodes behind a Network Load Balancer, each sharing users, queues, and a distributed state across multiple Availability Zones
+-   **Single-instance broker** → one broker in one Availability Zone, mainly used for development and testing.
+-   **Cluster deployment** → logical grouping of three RabbitMQ broker nodes behind a Network Load Balancer, each sharing users, queues, and a distributed state across multiple Availability Zones
 
 ![Choose the deployment mode for Amazon MQ Rabbit broker instance - choose between single instance and cluster.](/images/image-2.png)
 
@@ -66,8 +64,7 @@ Review and create the RabbitMQ broker instance.
 
 RabbitMQ broker instance up and running and the details as from the AWS console.
 
-Creating .NET Application To Send/Receive Messages From RabbitMQ
-----------------------------------------------------------------
+## Creating .NET Application To Send/Receive Messages From RabbitMQ
 
 RabbitMQ is a message broker.
 
@@ -81,50 +78,53 @@ Below is a Powershell script to create the Send and Receive .NET console applica
 
 It creates a solution file, creates a Send console app with the start-up file as `Send.cs` , adds the NuGet package. It also creates a Receive console app with the start-up file `Receive.cs` and the required packages.
 
-```bash
+```powershell
 # Step 1: Create a new .NET solution
+
 dotnet new sln -n rabbitmq-hello-world
 
 # Step 2: Create the 'Send' console application
+
 dotnet new console -n Send
 dotnet add Send/Send.csproj package RabbitMQ.Client
 dotnet sln rabbitmq-hello-world.sln add Send/Send.csproj
 mv Send/Program.cs Send/Send.cs
 
 # Step 3: Create the 'Receive' console application
+
 dotnet new console -n Receive
 dotnet add Receive/Receive.csproj package RabbitMQ.Client
 dotnet sln rabbitmq-hello-world.sln add Receive/Receive.csproj
 mv Receive/Program.cs Receive/Receive.cs
+
 ```
 
-Core Connection Concepts With RabbitMQ
---------------------------------------
+## Core Connection Concepts With RabbitMQ
 
 The two core concepts that you need to know in terms of connecting with RabbitMQ are
 
-*   **Connection:** This represents the TCP connection between your application and the RabbitMQ broker.
-*   **Channels:** A virtual connection within a connection**.** Used for specific tasks like publishing, consuming, and declaring queues and exchanges. Channels help organize and optimize communication between your application and the broker.
+-   **Connection:** This represents the TCP connection between your application and the RabbitMQ broker.
+-   **Channels:** A virtual connection within a connection**.** Used for specific tasks like publishing, consuming, and declaring queues and exchanges. Channels help organize and optimize communication between your application and the broker.
 
 Since it's undesirable to have multiple TCP connections open at the same time from our applications to RabbitMQ, we can create one Connection and then use Channels to open lightweight connections with the broker.
 
 Channels in RabbitMQ support efficient multiplexing, isolation, resource management, concurrency, and performance optimization while still sharing the same underlying TCP connection.
 
-Connecting .NET Application with RabbitMQ
------------------------------------------
+## Connecting .NET Application with RabbitMQ
 
 To connect to RabbitMQ, let's use the `ConnectionFactory` from the `RabbitMQ.Client` NuGet package to create a new TCP Connection.
 
 ```csharp
 var factory = new ConnectionFactory
 {
-        Uri = new Uri("amqps://b-71e1955a-1942-47e2-9e49-xxxxxxxxxxxx.mq.ap-southeast-2.amazonaws.com"),
-        Port = 5671,
-        UserName = "<USERNAME FROM CONFIGURATION FILE>",
-        Password = "<PASSWORD FROM CONFIGURATION FILE>"
+    Uri = new Uri("amqps:/b-71e1955a-1942-47e2-9e49-xxxxxxxxxxxx.mq.ap-southeast-2.amazonaws.com"),
+    Port = 5671,
+    UserName = "<USERNAME FROM CONFIGURATION FILE>",
+    Password = "<PASSWORD FROM CONFIGURATION FILE>"
 };
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
+
 ```
 
 The above code specifies the `Uri` to connect to the RabbitMQ instance in Amazon MQ and specify the username/password we used when configuring the RabbitMQ broker instance.
@@ -139,13 +139,13 @@ We first need to create a Queue to send or receive messages from RabbitMQ.
 
 A Queue in RabbitMQ is a named message buffer that temporarily stores messages sent by producers and delivers them to consumers.
 
-
-```yaml
+```csharp
 channel.QueueDeclare(queue: "hello",
     durable: false,
     exclusive: false,
     autoDelete: false,
     arguments: null);
+
 ```
 
 The above code uses the `QueueDeclare` function on the channel instance to create a simple queue.
@@ -166,22 +166,23 @@ Below we get the message text to send from the console and send it as the messag
 string? message = null;
 do
 {
-        Console.WriteLine("Enter Message. Press [enter] to exit.");
-        message = Console.ReadLine();
-        if (!string.IsNullOrEmpty(message))
-            SendMessage(message, channel);
-    } while (!string.IsNullOrEmpty(message));
-    
+    Console.WriteLine("Enter Message. Press [enter] to exit.");
+    message = Console.ReadLine();
+    if (!string.IsNullOrEmpty(message))
+        SendMessage(message, channel);
+} while (!string.IsNullOrEmpty(message));
+
 void SendMessage(string s, IModel channel)
 {
-        var body = Encoding.UTF8.GetBytes(s);
-    
-        channel.BasicPublish(exchange: string.Empty,
-            routingKey: "hello",
-            basicProperties: null,
-            body: body);
-        Console.WriteLine($" [x] Sent {s}");
-    }
+    var body = Encoding.UTF8.GetBytes(s);
+
+    channel.BasicPublish(exchange: string.Empty,
+        routingKey: "hello",
+        basicProperties: null,
+        body: body);
+    Console.WriteLine($" [x] Sent {s}");
+}
+
 ```
 
 Note that we specify the `exchange` as empty and `routingKey` as the queue name. This uses the [default exchange](https://www.rabbitmq.com/tutorials/amqp-concepts.html#exchange-default) that's available as part of RabbitMQ.
@@ -194,22 +195,25 @@ With the message published successfully we are now ready to add in our first con
 
 The `channel` instance provides a `BasicConsumer` method to register a consumer instance to a queue.
 
-
 ```csharp
+
 Console.WriteLine(" [*] Waiting for messages.");
+
 var consumer = new EventingBasicConsumer(channel);
 consumer.Received += (model, ea) =>
 {
-        var body = ea.Body.ToArray();
-        var message = Encoding.UTF8.GetString(body);
-        Console.WriteLine($" [x] Received {message}");
+    var body = ea.Body.ToArray();
+    var message = Encoding.UTF8.GetString(body);
+    Console.WriteLine($" [x] Received {message}");
 };
 channel.BasicConsume(queue: "hello",
-        autoAck: true,
-        consumer: consumer);
-    
+    autoAck: true,
+    consumer: consumer);
+
 Console.WriteLine(" Press [enter] to exit.");
+
 Console.ReadLine();
+
 ```
 
 The RabbitMQ.Client NuGet package provides a `EventingBasicConsumer` class we can use to handle the message processing.
@@ -220,4 +224,4 @@ The above code sets up the `Received` event handler with the function to process
 
 Send and Receive applications in action, working with Amazon MQ RabbitMQ.
 
-`Send > 'Have a great day 😀'`
+`Send >` 'Have a great day 😀'

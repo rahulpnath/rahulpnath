@@ -1,11 +1,14 @@
 ---
 title: "Setting Up AWS CDK with .NET for Seamless LocalStack and AWS Deployments"
-slug: "cdk-localstack-aws-dotnet"
-date: "2024-11-22T07:04:39.000Z"
-feature_image: "/images/CDK-LocalStack.png"
-tags: ["AWS"]
+slug: cdk-localstack-aws-dotnet
+date: 2024-11-22T00:00:00.000Z
+feature_image: /images/CDK-LocalStack.png
+excerpt: >-
+  Let's learn how to use CDK to deploy and manage resources in both LocalStack
+  and AWS accounts. We will use the same CDK code base to deploy to both.
+tags:
+  - AWS
 ---
-
 Developing and testing AWS applications locally can be challenging without the right tools.
 
 AWS CDK makes deploying and managing resources effortless.
@@ -16,14 +19,13 @@ And when combined with LocalStack, it allows for a smooth local development expe
 
 In this post, we'll explore
 
-*   Setup CDK
-*   Deploy CDK To LocalStack
-*   Deploy CDK to AWS Cloud
+-   Setup CDK
+-   Deploy CDK To LocalStack
+-   Deploy CDK to AWS Cloud
 
-Thanks to AWS for sponsoring this post in my [.NET on AWS Series](/posts/tag/aws/)
+Thanks to AWS for sponsoring this post in my [.NET on AWS Series](/blog/tag/aws/)
 
-Setting up CDK
---------------
+## Setting up CDK
 
 For this post, I will deploy a simple ASP NET Web API application that writes data for DynamoDB and publishes it for SQS.
 
@@ -31,123 +33,117 @@ I also have a Lambda Function that listens for messages on the SQS and is trigge
 
 If you are new to CDK, check out my blog post below to learn some of its core concepts.
 
-[
-
-AWS CDK For The .NET Developer
-
-AWS CDK simplifies Cloud Infrastructure management. CDK lets you define AWS resources using first-class programming concepts. It translates your code into AWS CloudFormation templates, which can be used to provision AWS resources for your application. Let’s get started using .NET and C#.
-
-![](/images/logo-512x512-8.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/AWS-CDK.png)
-
-](/posts/aws-cdk-dotnet/)
+<BlogLink
+  href="/blog/aws-cdk-dotnet/"
+  title="AWS CDK For The .NET Developer"
+  description="AWS CDK simplifies Cloud Infrastructure management. CDK lets you define AWS resources using first-class programming concepts. It translates your code into AWS CloudFormation templates, which can be used to provision AWS resources for your application. Let’s get started using .NET and C#."
+  authorImage="/images/logo-512x512-8.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/AWS-CDK.png"
+/>
 
 The CDK code below sets up the Web API on a Lambda Function, sets up the DynamoDB table and SQS queue, and gives appropriate permissions for the API lambda function.
 
 It also sets up a Lambda Function to listen to SQS messages and the required triggers for invoking the function on a new SQS message.
 
-    var weatherForecastTable = new Table(this, "WeatherForecastData", 
-      new TableProps{...});
 ```csharp
+var weatherForecastTable = new Table(this, "WeatherForecastData", 
+  new TableProps{...});
 var weatherDataQueue = new Queue(this, "WeatherDataQueue", new QueueProps{...});
 var weatherLambdaFunction = new Function(this, "WeatherDataProcessor", 
-```
-        new FunctionProps{});
-    
-```csharp
+    new FunctionProps{});
+
 weatherForecastTable.GrantReadWriteData(weatherLambdaFunction);
 weatherLambdaFunction.AddEventSource(new SqsEventSource(weatherDataQueue));
-```
-    
-```csharp
+
 var environmentVariables = new Dictionary<string, string>();
 var environment = this.Node.TryGetContext("ASPNETCORE_ENVIRONMENT")?.ToString();
 if (!string.IsNullOrEmpty(environment))
 {
-```
-        Console.WriteLine("Setting ASPNETCORE_ENVIRONMENT variable");
-        environmentVariables.Add("ASPNETCORE_ENVIRONMENT", environment);
-```csharp
+    Console.WriteLine("Setting ASPNETCORE_ENVIRONMENT variable");
+    environmentVariables.Add("ASPNETCORE_ENVIRONMENT", environment);
 }
 var apiLambdaFunction = new Function(this, "WeatherForecastApi", new FunctionProps
 {
-```
-        ...
-        Environment = environmentVariables
-    });
-    
-```csharp
+    ...
+    Environment = environmentVariables
+});
+
 var functionUrl = apiLambdaFunction.AddFunctionUrl(new FunctionUrlOptions
 {
-```
-        AuthType = FunctionUrlAuthType.NONE
-    }); 
-    
-```csharp
+    AuthType = FunctionUrlAuthType.NONE
+}); 
+
 new CfnOutput(this, "API FunctionUrl", new CfnOutputProps
 {
-```
-        Value = functionUrl.Url
-    });
-    
-```text
+    Value = functionUrl.Url
+});
+
 weatherForecastTable.GrantReadWriteData(apiLambdaFunction);
 weatherDataQueue.GrantSendMessages(apiLambdaFunction);
+
 ```
 
 Above is the high-level code (only placeholders) to set up our application. The full source code for the CDK Stack can be found [here.](https://github.com/rahulpnath/aws-cdk-github-actions/blob/main/src/WeatherForecast.Cdk/WeatherForecastStack.cs)
 
-Deploy CDK To LocalStack
-------------------------
+## Deploy CDK To LocalStack
 
 LocalStack is a fully functional local AWS cloud stack that lets you emulate AWS services directly on your machine.
 
 If you are new to LocalStack check out the article below to get up and running.
 
-[
-
-How to Use LocalStack for Seamless AWS Development in .NET
-
-LocalStack is a fully functional local AWS cloud stack that lets you emulate AWS services directly on your machine. Let’s learn how to set up and run your .NET application locally on LocalStack.
-
-![](/images/logo-512x512-9.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/LocalStack.png)
-
-](/posts/aws-localstack-dotnet/)
+<BlogLink
+  href="/blog/aws-localstack-dotnet/"
+  title="How to Use LocalStack for Seamless AWS Development in .NET"
+  description="LocalStack is a fully functional local AWS cloud stack that lets you emulate AWS services directly on your machine. Let’s learn how to set up and run your .NET application locally on LocalStack."
+  authorImage="/images/logo-512x512-9.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/LocalStack.png"
+/>
 
 The [aws-cdk-local](https://github.com/localstack/aws-cdk-local) provides a wrapper script `cdklocal` that you can use to deploy CDK resources to localstack.
 
 This can be installed as a npm package.
 
-```powershell
+```bash
 $ npm install -g aws-cdk-local aws-cdk
 ...
 $ cdklocal --version
+
 ```
 
 To deploy CDK onto LocalStack, we first need to bootstrap the account using the same method we use to bootstrap AWS accounts.
 
-    cdklocal bootstrap
+```bash
+cdklocal bootstrap
+
+```
 
 Once bootstrapped, you can deploy a CDK stack using the deploy command
 
-    cdklocal deploy
+```bash
+cdklocal deploy
+
+```
 
 ### Overriding .NET Configuration to run in LocalStack
 
-In the Getting Started with LocalStack article, I showed different ways to [configure .NET app to work with LocalStack](/posts/aws-localstack-dotnet/#configuring-net-app-to-connect-to-localstack).
+In the Getting Started with LocalStack article, I showed different ways to [configure .NET app to work with LocalStack](/blog/aws-localstack-dotnet/#configuring-net-app-to-connect-to-localstack).
 
 When running applications within LocalStack that needs to talk to other resources within LocalStack, you need to make sure that the `ServiceURL` is updated to use the docker special host address - `host.docker.internal`.
 
 Now to make this to work we can add a new appsettings file - `appsettings.LocalStack.json` and add in the configuration as below.
 
-     "AWS": {
-        "Region": "ap-southeast-2",
-        "ServiceURL": "http://host.docker.internal:4566",
-        "AuthenticationRegion": "ap-southeast-2"
-      }
+```json
+ "AWS": {
+    "Region": "ap-southeast-2",
+    "ServiceURL": "http://host.docker.internal:4566",
+    "AuthenticationRegion": "ap-southeast-2"
+  }
+
+```
 
 appsettings.LocalStack.json file
 
@@ -165,28 +161,33 @@ We can use CDK Context to pass in additional parameter when running on local dev
 
 The below CDK code looks for the `ASPNETCORE_ENVIRONMENT` in the context, and if one exists, it adds that value to the Environment Variable for the lambda function.
 
-     var environmentVariables = new Dictionary<string, string>();
-     var environment = this.Node.TryGetContext("ASPNETCORE_ENVIRONMENT")?.ToString();
-     if (!string.IsNullOrEmpty(environment))
-     {
-         Console.WriteLine("Setting ASPNETCORE_ENVIRONMENT variable");
-         environmentVariables.Add("ASPNETCORE_ENVIRONMENT", environment);
-     }
-    
-     var apiLambdaFunction = new Function(this, "WeatherForecastApi", new FunctionProps
-    {
-        ...
-        Environment = environmentVariables
-    });
+```csharp
+ var environmentVariables = new Dictionary<string, string>();
+ var environment = this.Node.TryGetContext("ASPNETCORE_ENVIRONMENT")?.ToString();
+ if (!string.IsNullOrEmpty(environment))
+ {
+     Console.WriteLine("Setting ASPNETCORE_ENVIRONMENT variable");
+     environmentVariables.Add("ASPNETCORE_ENVIRONMENT", environment);
+ }
+
+ var apiLambdaFunction = new Function(this, "WeatherForecastApi", new FunctionProps
+{
+    ...
+    Environment = environmentVariables
+});
+
+```
 
 This ensures that when the application runs within the Lambda Function in LocalStack, it will use the `appsettins.LocalStack.json` file.
 
 You can pass the parameter in `cdklocal` command as below.
 
-    cdklocal deploy -c ASPNETCORE_ENVIRONMENT=LocalStack
+```bash
+cdklocal deploy -c ASPNETCORE_ENVIRONMENT=LocalStack
 
-Deploy CDK to AWS Cloud
------------------------
+```
+
+## Deploy CDK to AWS Cloud
 
 Once you have tested your application end to end on your local development machine on LocalStack, you can easily push it to AWS Cloud.
 

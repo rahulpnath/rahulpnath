@@ -1,27 +1,24 @@
 ---
 title: "Are You Using HttpClient in The Right Way?"
-slug: "are-you-using-httpclient-in-the-right-way"
-date: "2020-10-30T00:00:00.000Z"
-feature_image: "/images/http_client_web.jpg"
-tags: ["Dotnet"]
-excerpt: "If not used correctly it's easy to run into socket exhaustion and DNS related issues with HttpClient in .NET Core. Learn how to identify these issues and how to use HttpClient class in the right way."
-
+slug: are-you-using-httpclient-in-the-right-way
+date: 2020-10-30
+feature_image: /images/http_client_web.jpg
+excerpt: >-
+  If not used correctly it's easy to run into socket exhaustion and DNS related issues with HttpClient in .NET Core. Learn how to identify these issues and how to use HttpClient class in the right way.
+tags:
+  - Dotnet
 ---
-
 When an ASP NET application needs to talk to an external service or API, it needs to make an HTTP Request.
 
 When using [ASP.NET](http://asp.NET) to build an application, HTTP requests is made using an instance of the [HttpClient](https://docs.microsoft.com/en-us/dotnet/api/system.net.http.httpclient?view=netcore-3.1&WT.mc_id=AZ-MVP-5003875) class. An HttpClient class acts as a session to send HTTP Requests. It is a collection of settings applied to all requests executed by that instance.
 
 Using the .NET C# HttpClient might seem straightforward. However, some underlying issues go unnoticed until when the application is under a large load. It is also not the best time for you to figure out these issues.
 
-<div>
-    <iframe src="https://www.youtube.com/embed/bAXZx0zOeCU" />
-</div>
+<iframe src="https://www.youtube.com/embed/bAXZx0zOeCU" />
 
 So let's spend some time now and understand the proper way to use HttpClient class and avoid running into issues with it for your application.
 
-Common Issues When Using C# HttpClient
---------------------------------------
+## Common Issues When Using C# HttpClient
 
 Before we go any further, let's first understand the common issues when using HttpClient and how to uncover them even when running on your local machine without any load.
 
@@ -30,15 +27,12 @@ Below I have a code sample used to talk to an external API, in this case, a [wea
 ```csharp
 using(var httpClient = new HttpClient())
 {
-
-```csharp
-string APIURL = $"http://api.weatherapi.com/v1/current.json?key={API_KEY}&q={cityName}";
-var response =  await httpClient.GetAsync(APIURL);
-return await response.Content.ReadAsStringAsync();
-```
+    string APIURL = $"http://api.weatherapi.com/v1/current.json?key={API_KEY}&q={cityName}";
+    var response =  await httpClient.GetAsync(APIURL);
+    return await response.Content.ReadAsStringAsync();
 }
-```sql
-    
+
+```
 
 It works fine; happy days. Let's move on to the next feature!
 
@@ -70,14 +64,11 @@ private static HttpClient _httpClient;
 public WeatherForecastController(ILogger<WeatherForecastController> logger)
 {
     _logger = logger;
+    if(_httpClient == null)
+        _httpClient =  new HttpClient();
+}
 
 ```
-if(_httpClient == null)
-    _httpClient =  new HttpClient();
-```
-}
-```sql
-    
 
 We can create a new instance of HttpClient and not dispose of for the application lifetime. In this case, we reuse the HttpClient instance, and so only one connection is maintained. It works fine as long as there are no DNS or other network-level changes to the external API's connection. If it happens, we will have to restart our API application to create a new HttpClient instance.
 
@@ -85,8 +76,7 @@ You can [read more about these issues](https://docs.microsoft.com/en-us/dotnet/a
 
 [![](/images/asp_net_core_banner.png)](https://www.youtube.com/playlist?list=PL59L9XrzUa-nqfCHIKazYMFRKapPNI4sP)
 
-Use IHttpClientFactory To Create HttpClient
--------------------------------------------
+## Use IHttpClientFactory To Create HttpClient
 
 Now that we know the issues let’s see how to fix this. The simplest way is to inject the `IHttpClient Factory` and create a new HttpClient instance from it.
 
@@ -94,21 +84,18 @@ Now that we know the issues let’s see how to fix this. The simplest way is to 
 private readonly IHttpClientFactory _httpClientFactory;
 public WeatherForecastController(IHttpClientFactory httpClientFactory)
 {
-         _httpClientFactory = httpClientFactory;
+     _httpClientFactory = httpClientFactory;
 }
 
 [HttpGet]
 public async Task<string> Get(string cityName)
 {
-
-```csharp
-var httpClient = _httpClientFactory.CreateClient();
+  var httpClient = _httpClientFactory.CreateClient();
     string APIURL = $"http://api.weatherapi.com/v1/current.json?key={API_KEY}&q={cityName}";
     ...
-```
 }
-```csharp
-    
+
+```
 
 To enable Dependency Injection of the `IHttpClientFactory` instance we need to make sure to call `services.AddHttpClient()` method in `ConfigureServices` method of `Startup.cs`.
 
@@ -137,20 +124,17 @@ Below we have a client with the name '_weather_,' and it also configures the Bas
 ```csharp
 services.AddHttpClient("weather", c =>
 {
+    c.BaseAddress = new Uri("http://api.weatherapi.com/v1/current.json");
+})
 
 ```
-c.BaseAddress = new Uri("http://api.weatherapi.com/v1/current.json");
-```
-})
-```csharp
-    
 
 In the Controller class, when we need to create a new HttpClient, we can use the name to create a specific client.
 
 ```csharp
-var httpClient = _httpClientFactory.CreateClient("weather");
-```csharp
-    
+  var httpClient = _httpClientFactory.CreateClient("weather");
+
+```
 
 #### [Typed clients](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-3.1&WT.mc_id=AZ-MVP-5003875#typed-clients)
 
@@ -163,53 +147,36 @@ The external API calls are refactored into a separate class (`WeatherService`) f
 ```csharp
 public interface IWeatherService
 {
-
-```csharp
-Task < string > Get(string cityName);
-```
+    Task < string > Get(string cityName);
 }
 
 public class WeatherService: IWeatherService
 {
+    private HttpClient _httpClient;
 
-```csharp
-private HttpClient _httpClient;
-```
+    public WeatherService(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
+    }
 
-
-```csharp
-```csharp
-public WeatherService(HttpClient httpClient)
-{
-    _httpClient = httpClient;
+    public async Task < string > Get(string cityName)
+    {
+        string APIURL = $ "?key={API_KEY}&q={cityName}";
+        var response = await _httpClient.GetAsync(APIURL);
+        return await response.Content.ReadAsStringAsync();
+    }
 }
-```
-
 
 ```
-```csharp
-public async Task < string > Get(string cityName)
-{
-    string APIURL = $ "?key={API_KEY}&q={cityName}";
-    var response = await _httpClient.GetAsync(APIURL);
-    return await response.Content.ReadAsStringAsync();
-}
-```
-}
-```csharp
-    
 
 When adding the new class, `WeatherService` to the Dependency Injection container, we can apply the relevant configuration, as shown below.
 
 ```csharp
 services.AddHttpClient<IWeatherService,WeatherService>(c => {
+      c.BaseAddress = new Uri("http://api.weatherapi.com/v1/current.json");
+})
 
 ```
-c.BaseAddress = new Uri("http://api.weatherapi.com/v1/current.json");
-```
-})
-```csharp
-    
 
 The Controller class can now use the `WeatherService` and call it to get back the relevant data, as shown below.
 
@@ -222,13 +189,10 @@ public WeatherForecastController(IWeatherService weatherService)
 [HttpGet]
 public async Task<string> Get(string cityName)
 {
-
-```csharp
-return await _weatherService.Get(cityName);
-```
+    return await _weatherService.Get(cityName);
 }
+
 ```
-    
 
 By using IHttpClientFactory, we can solve all the initial issues that we saw with instantiating the HttpClient instance directly. After refactoring it to the Typed client consumption pattern, it is also well separated and easier to maintain. It drives us to write cleaner, loosely coupled code.
 
@@ -236,8 +200,6 @@ Are you using HttpClient the right way? Yes, you are now.
 
 **References:**
 
-```bash
-*   [Make HTTP requests using IHttpClientFactory in ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-3.1&WT.mc_id=AZ-MVP-5003875#named-clients)
-*   [Use IHttpClientFactory to implement resilient HTTP requests](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#how-to-use-typed-clients-with-ihttpclientfactory?WT.mc_id=AZ-MVP-5003875)
-*   [You're using HttpClient wrong and it's destabilizing your software](https://aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/)
-```
+-   [Make HTTP requests using IHttpClientFactory in ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-3.1&WT.mc_id=AZ-MVP-5003875#named-clients)
+-   [Use IHttpClientFactory to implement resilient HTTP requests](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#how-to-use-typed-clients-with-ihttpclientfactory?WT.mc_id=AZ-MVP-5003875)
+-   [You're using HttpClient wrong and it's destabilizing your software](https://aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/)

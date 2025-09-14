@@ -1,11 +1,14 @@
 ---
 title: "AWS Lambda and .NET 8: Enhancing Serverless Performance with Native AOT"
-slug: "aws-lambda-dotnet8-aot"
-date: "2024-11-05T04:39:16.000Z"
-feature_image: "/images/Lambda-.NET-8.png"
-tags: ["AWS","Lambda"]
+slug: aws-lambda-dotnet8-aot
+date: 2024-11-05
+feature_image: /images/Lambda-.NET-8.png
+excerpt: >-
+  Let's quickly review what's new and what you need to know when building your Lambda Functions on .NET 8.
+tags:
+  - AWS
+  - Lambda
 ---
-
 It's been a while since AWS Lambda supports .NET 8.
 
 Let's quickly review what's new and what you need to keep in mind when building your Lambda Functions on .NET 8.
@@ -14,65 +17,59 @@ Let's quickly review what's new and what you need to keep in mind when building 
 
 If you are new to AWS Lambda, I highly recommend getting started here 👇
 
-[
+<BlogLink
+  href="/blog/aws-lambda-dotnet-developer/"
+  title="AWS Lambda For The .NET Developer"
+  description="This blog post is a collection of other posts that covers various aspects of AWS Lambda and other services you can integrate with when building serverless applications on Lambda."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/AWS-Lambda.png"
+/>
 
-AWS Lambda For The .NET Developer
+Thanks to AWS for sponsoring this article in my [AWS Lambda Series.](/blog/tag/lambda/)
 
-This blog post is a collection of other posts that covers various aspects of AWS Lambda and other services you can integrate with when building serverless applications on Lambda.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/AWS-Lambda.png)
-
-](/posts/aws-lambda-dotnet-developer/)
-
-Thanks to AWS for sponsoring this article in my [AWS Lambda Series.](/posts/tag/lambda/)
-
-What's New in AWS Lambda and .NET 8?
-------------------------------------
+## What's New in AWS Lambda and .NET 8?
 
 Some of the key updates with AWS Lambda on .NET 8 are listed below.
 
 You can find more details on them in the official documentation [here](https://aws.amazon.com/blogs/compute/introducing-the-net-8-runtime-for-aws-lambda/).
 
-*   **Upgraded OS**  
+-   **Upgraded OS**  
     .NET 8 runtime is built on the minimal container image of Amazon Linux 2023 (AL2023). This makes it a smaller deployment footprint and also updated versions of common libraries such as glibc 2.34 and OpenSSL 3.  
     
-*   **Performance**  
+-   **Performance**  
     Lambda has increased the default memory size in the blueprints and templates from 256 MB to 512 MB for improved performance with .NET 8.  
     
-*   **Native AOT**  
+-   **Native AOT**  
     Allows .NET applications to be pre-compiled to a single binary removing the need for just-in-time (JIT) compilation, enabling native AOT enabled apps to start up faster.  
     
 
 > _With Native AOT, Benchmarks show up to 86% improvement in cold start times by eliminating the JIT compilation_ in the blueprints and templates from 256 MB to 512 MB.
 
-Building Your First .NET 8 AWS Lambda Function
-----------------------------------------------
+## Building Your First .NET 8 AWS Lambda Function
 
-The [AWS Toolkit](/posts/aws-lambda-net-core/#setting-up-first-project) has been updated to create .NET 8 Lambda functions, which makes it easy to create new projects.
+The [AWS Toolkit](/blog/aws-lambda-net-core/#setting-up-first-project) has been updated to create .NET 8 Lambda functions, which makes it easy to create new projects.
 
 It supports different blueprints that you can choose to create your Lambda function. Below is the sample code for an Empty Lambda Function, which generates a simple function that converts a string input to upper case.
 
 ```csharp
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
 namespace hello_dotnet8_lambda;
-```
-    
-```csharp
+
 public class Function
 {
-```
-        public string FunctionHandler(string input, ILambdaContext context)
-        {
-            return input.ToUpper();
-        }
+    public string FunctionHandler(string input, ILambdaContext context)
+    {
+        return input.ToUpper();
     }
+}
 
-You can also use the [Mock Lambda test tool](/posts/aws-lambda-net-core/#mock-lambda-test-tool) to run and test your functions locally.
+```
 
-AWS Lambda and Native AOT with .NET
------------------------------------
+You can also use the [Mock Lambda test tool](/blog/aws-lambda-net-core/#mock-lambda-test-tool) to run and test your functions locally.
+
+## AWS Lambda and Native AOT with .NET
 
 The Toolkit now lists the Native AOT (.NET 8) blueprint type, to create a AOT supported Lambda Function.
 
@@ -89,22 +86,23 @@ The `FunctionHandler` is passed on to the bootstrap code and is executed at runt
 ```csharp
 public class Function
 {
-```
-        private static async Task Main()
-        {
-            Func<string, ILambdaContext, string> handler = FunctionHandler;
-            await LambdaBootstrapBuilder.Create(
-                    handler, 
-                    new SourceGeneratorLambdaJsonSerializer<LambdaFunctionJsonSerializerContext>())
-                .Build()
-                .RunAsync();
-        }
-    
-        public static string FunctionHandler(string input, ILambdaContext context)
-        {
-            return input.ToUpper();
-        }
+    private static async Task Main()
+    {
+        Func<string, ILambdaContext, string> handler = FunctionHandler;
+        await LambdaBootstrapBuilder.Create(
+                handler, 
+                new SourceGeneratorLambdaJsonSerializer<LambdaFunctionJsonSerializerContext>())
+            .Build()
+            .RunAsync();
     }
+
+    public static string FunctionHandler(string input, ILambdaContext context)
+    {
+        return input.ToUpper();
+    }
+}
+
+```
 
 The `csproj` file also has some additional flags set up for Native AOT support. This sets up the Native AOT compile settings for the project file.
 
@@ -118,8 +116,8 @@ The `csproj` file also has some additional flags set up for Native AOT support. 
 <StripSymbols>true</StripSymbols>
 <!-- Trim only trimmable assemblies to reduce size -->
 <TrimMode>partial</TrimMode>
+
 ```
-    
 
 To compile Lambda function using the Native AOT feature, you need to have docker setup.
 
@@ -135,20 +133,22 @@ When publishing from Visual Studio, you can see it using docker to compile the L
 
 In AWS Lambda, the **Init Duration** represents the time taken to initialize the function's runtime environment, which occurs only during a **cold start**—when a new instance of the Lambda function is created
 
-    REPORT RequestId: 5c7c1727-b828-414f-909f-0b6a7c3b1daa Duration: 34.35 ms Billed Duration: 35 ms Memory Size: 512 MB Max Memory Used: 32 MB Init Duration: 109.89 ms
+```txt
+
+REPORT RequestId: 5c7c1727-b828-414f-909f-0b6a7c3b1daa Duration: 34.35 ms Billed Duration: 35 ms Memory Size: 512 MB Max Memory Used: 32 MB Init Duration: 109.89 ms
+
+```
 
 In the example log, an Init Duration of **109.89 ms**, which is significantly lower than a Lambda Function that uses JIT compilation.
 
-You can find the Lambda Init duration in [CloudWatch logs](/posts/amazon-cloudwatch-logs-dotnet/), every time a new instance of the function is created. If that entry is missing, it means you are reusing a Lambda instance.
+You can find the Lambda Init duration in [CloudWatch logs](/blog/amazon-cloudwatch-logs-dotnet/), every time a new instance of the function is created. If that entry is missing, it means you are reusing a Lambda instance.
 
-[
-
-Why Should You Care About Lambda Lifecycle As A .NET Developer?
-
-The Lambda Lifecycle affects the way we write out Function code. Learn some of the dos and don’ts when building Lambda Functions in .NET because of how Lambda initializes the Function classes.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/Lambda-Lifecycle-2.png)
-
-](/posts/lambda-lifecycle-and-net/)
+<BlogLink
+  href="/blog/lambda-lifecycle-and-net/"
+  title="Why Should You Care About Lambda Lifecycle As A .NET Developer?"
+  description="The Lambda Lifecycle affects the way we write out Function code. Learn some of the dos and don’ts when building Lambda Functions in .NET because of how Lambda initializes the Function classes."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/Lambda-Lifecycle-2.png"
+/>

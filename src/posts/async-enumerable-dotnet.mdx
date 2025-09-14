@@ -1,13 +1,14 @@
 ---
 title: "Getting Started with Async Enumerables: A .NET Developer's Guide"
-slug: "async-enumerable-dotnet"
-date: "2024-07-19T03:54:21.000Z"
-feature_image: "/images/AsyncEnumerable--2-.png"
-tags: ["Dotnet","AWS"]
-excerpt: "AsyncEnumerables enhances eumeration of collections with asynchronous capabilities. In this post, let's explore how C# combines 'yield return' with 'async' and 'await' to create efficient asynchronous data streams and how 'await foreach' lets us effortlessly consume them."
-
+slug: async-enumerable-dotnet
+date: 2024-07-19
+feature_image: /images/AsyncEnumerable--2-.png
+excerpt: >-
+  AsyncEnumerables enhances eumeration of collections with asynchronous capabilities. In this post, let's explore how C# combines 'yield return' with 'async' and 'await' to create efficient asynchronous data streams and how 'await foreach' lets us effortlessly consume them.
+tags:
+  - Dotnet
+  - AWS
 ---
-
 Enumeration of collections has been the bread-and-butter of many programs.
 
 But what if we could enhance this familiar concept with asynchronous capabilities?
@@ -26,27 +27,23 @@ While we're using S3 here, AsyncEnumerables aren't limited to AWS. They're helpf
 
 _AWS sponsors this post._
 
-Asynchronous Stream without IAsyncEnumerable
---------------------------------------------
+## Asynchronous Stream without IAsyncEnumerable
 
 Let's explore our use case for getting all first-x product ratings from the S3 bucket a bit further and see it in action.
 
-[
-
-Amazon S3 For the .NET Developer: How to Easily Get Started
-
-Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/storage-box.jpg)
-
-](/posts/amazon-s3-dotnet/)
+<BlogLink
+  href="/blog/amazon-s3-dotnet/"
+  title="Amazon S3 For the .NET Developer: How to Easily Get Started"
+  description="Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/storage-box.jpg"
+/>
 
 The below code uses the `GetAllFileS3Objects` method to loop through the Amazon S3 bucket using the [AWSSDK.S3](https://www.nuget.org/packages/AWSSDK.S3) Nuget package.
 
 Since the S3 SDK returns paged results of objects, the function builds up an internal list of object files before returning the entire collection.
-
 
 ```csharp
 var ratings = await GetAllRatings(client);
@@ -56,48 +53,46 @@ var filteredRatings = ratings
     .Take(50)
     .Select(r => r.Review);
     
+
 Console.WriteLine(string.Join(Environment.NewLine, filteredRatings));
-```
-```csharp
+
 async Task<List<ProductRating>> GetAllRatings(AmazonS3Client s3Client)
 {
-```csharp
-        var s3Objects = await GetAllFileS3Objects(s3Client);
-        var productRatings = new List<ProductRating>();
-        var fileReadCounter = 0;
-        foreach (var s3Object in s3Objects)
-        {
-           var rating = await GetRating(s3Client, s3Object);
-           productRatings.Add(rating);
-           Console.WriteLine("File {0} read {1}", s3Object.Key, ++fileReadCounter);
-        }
-    
-        return productRatings;
+    var s3Objects = await GetAllFileS3Objects(s3Client);
+    var productRatings = new List<ProductRating>();
+    var fileReadCounter = 0;
+    foreach (var s3Object in s3Objects)
+    {
+       var rating = await GetRating(s3Client, s3Object);
+       productRatings.Add(rating);
+       Console.WriteLine("File {0} read {1}", s3Object.Key, ++fileReadCounter);
     }
-    
-```csharp
+
+    return productRatings;
+}
+
 async Task<IEnumerable<S3Object>> GetAllFileS3Objects(AmazonS3Client amazonS3Client)
 {
-```csharp
-        ListObjectsV2Response? s3ObjectsResponse = null;
-        var result = new List<S3Object>();
-        do
+    ListObjectsV2Response? s3ObjectsResponse = null;
+    var result = new List<S3Object>();
+    do
+    {
+        s3ObjectsResponse = await amazonS3Client.ListObjectsV2Async(new ListObjectsV2Request()
         {
-            s3ObjectsResponse = await amazonS3Client.ListObjectsV2Async(new ListObjectsV2Request()
-            {
-                BucketName = bucketName,
-                ContinuationToken = s3ObjectsResponse?.NextContinuationToken,
-                StartAfter = s3ObjectsResponse?.StartAfter
-            });
-    
-    
-            result.AddRange(s3ObjectsResponse.S3Objects);
-            Console.WriteLine("Total Objects retrieved {0}", result.Count);
-        } while (s3ObjectsResponse.IsTruncated);
-    
-        return result;
-    }
-    
+            BucketName = bucketName,
+            ContinuationToken = s3ObjectsResponse?.NextContinuationToken,
+            StartAfter = s3ObjectsResponse?.StartAfter
+        });
+
+
+        result.AddRange(s3ObjectsResponse.S3Objects);
+        Console.WriteLine("Total Objects retrieved {0}", result.Count);
+    } while (s3ObjectsResponse.IsTruncated);
+
+    return result;
+}
+
+```
 
 Iterate over all objects in Amazon S3, build up the whole list of objects before starting any processing over it.
 
@@ -115,13 +110,12 @@ Before proceeding, consider whether you can think some of the high-level problem
 
 Now that you've given it some thought, let's discuss:
 
-*   **Entire list in memory**: We need to build the entire list of S3 objects in memory before starting to process them.
-*   **Time and resource consumption**: Depending on the number and size of the objects in the bucket, this will consume significant time and server resources.
-*   **Potential memory issues**: If the objects are large, you could potentially run into memory issues, which might even bring down the entire application.
-*   **Unnecessary reads**: We only need the first 50 objects that match the criteria. All objects beyond that are read unnecessarily and discarded.
+-   **Entire list in memory**: We need to build the entire list of S3 objects in memory before starting to process them.
+-   **Time and resource consumption**: Depending on the number and size of the objects in the bucket, this will consume significant time and server resources.
+-   **Potential memory issues**: If the objects are large, you could potentially run into memory issues, which might even bring down the entire application.
+-   **Unnecessary reads**: We only need the first 50 objects that match the criteria. All objects beyond that are read unnecessarily and discarded.
 
-Introducing Async Enumerable
-----------------------------
+## Introducing Async Enumerable
 
 Let's see how we can fix some issues by introducing AsyncEnumerables.
 
@@ -144,22 +138,23 @@ The below code now implements `IAsyncEnumerable` for out `GetAllFilesS3Objects` 
 ```csharp
 async IAsyncEnumerable<S3Object> GetAllFileS3Objects(AmazonS3Client amazonS3Client)
 {
-```csharp
-        ListObjectsV2Response? s3ObjectsResponse = null;
-        do
+    ListObjectsV2Response? s3ObjectsResponse = null;
+    do
+    {
+        s3ObjectsResponse = await amazonS3Client.ListObjectsV2Async(new ListObjectsV2Request()
         {
-            s3ObjectsResponse = await amazonS3Client.ListObjectsV2Async(new ListObjectsV2Request()
-            {
-                BucketName = bucketName,
-                ContinuationToken = s3ObjectsResponse?.NextContinuationToken,
-                StartAfter = s3ObjectsResponse?.StartAfter
-            });
-    
-            Console.WriteLine("Total Objects retrieved {0}", s3ObjectsResponse.S3Objects.Count);
-            foreach (var s3Object in s3ObjectsResponse.S3Objects)
-                yield return s3Object;
-        } while (s3ObjectsResponse.IsTruncated);
-    }
+            BucketName = bucketName,
+            ContinuationToken = s3ObjectsResponse?.NextContinuationToken,
+            StartAfter = s3ObjectsResponse?.StartAfter
+        });
+
+        Console.WriteLine("Total Objects retrieved {0}", s3ObjectsResponse.S3Objects.Count);
+        foreach (var s3Object in s3ObjectsResponse.S3Objects)
+            yield return s3Object;
+    } while (s3ObjectsResponse.IsTruncated);
+}
+
+```
 
 The function no longer builds up the internal list of objects but instead `yield` returns the items one by one from the batch response.
 
@@ -180,16 +175,17 @@ However, since enumerating the collection itself has to be an async operation, w
 ```csharp
 async Task<List<ProductRating>> GetAllRatings(AmazonS3Client s3Client)
 {
-```csharp
-        var s3Objects = GetAllFileS3Objects(s3Client);
-        ...
-        await foreach (var s3Object in s3Objects)
-        {
-           ...
-        }
-        
-        return productRatings;
+    var s3Objects = GetAllFileS3Objects(s3Client);
+    ...
+    await foreach (var s3Object in s3Objects)
+    {
+       ...
     }
+    
+    return productRatings;
+}
+
+```
 
 Consuming an asynchronous stream of data using await foreach statement in C#.
 
@@ -202,23 +198,24 @@ That's easily solved by moving down the condition and the filtering below into t
 ```csharp
 async Task<List<ProductRating>> GetAllRatings(AmazonS3Client s3Client)
 {
-```
-        var s3Objects = GetAllFileS3Objects(s3Client);
+    var s3Objects = GetAllFileS3Objects(s3Client);
+    ...
+    
+    await foreach (var s3Object in s3Objects)
+    {
+        var rating = await GetRating(s3Client, s3Object);
         ...
-        
-        await foreach (var s3Object in s3Objects)
-        {
-            var rating = await GetRating(s3Client, s3Object);
-            ...
-            if(rating.Rating == 3)
-                filteredProductRatings.Add(rating);
-                
-            if (filteredProductRatings.Count == 50)
-                return filteredProductRatings;
-        }
-        
-        return filteredProductRatings;
+        if(rating.Rating == 3)
+            filteredProductRatings.Add(rating);
+            
+        if (filteredProductRatings.Count == 50)
+            return filteredProductRatings;
     }
+    
+    return filteredProductRatings;
+}
+
+```
 
 Refactored code to read only the minimum required items from the S3 object to match our required criteria.
 

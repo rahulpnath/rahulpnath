@@ -1,15 +1,19 @@
 ---
 title: "How to Query Secondary Indexes Using DynamoDBContext From the .NET SDK?"
-slug: "dynamodbcontext-and-querying-secondary-indexes"
-date: "2023-07-20T04:46:10.000Z"
-feature_image: "/images/DynamoDBContext-Indexes.png"
-tags: ["AWS","DynamoDB"]
+slug: dynamodbcontext-and-querying-secondary-indexes
+date: 2023-07-20T00:00:00.000Z
+feature_image: /images/DynamoDBContext-Indexes.png
+excerpt: >-
+  Learn how to use the High Level DynamoDBContext API to query Global and Local
+  Secondary Indexes in DynamoDB from .NET applications.
+tags:
+  - AWS
+  - DynamoDB
 ---
-
 DynamoDB supports two types of Secondary indexes
 
-*   [Global Secondary Index (GSI)](/posts/dynamodb-global-secondary-index-gsi/)
-*   [Local Secondary Index (LSI)](/posts/local-secondary-index-dynamodb/)
+-   [Global Secondary Index (GSI)](/blog/dynamodb-global-secondary-index-gsi/)
+-   [Local Secondary Index (LSI)](/blog/local-secondary-index-dynamodb/)
 
 In the earlier posts, we explored how to query the Indexes using the Low-Level API `IAmazonDynamoDB`.
 
@@ -23,20 +27,17 @@ The High-Level API does have limitations with the way it can interact with the I
 
 Check out the blog post below to learn how you can query data from DynamoDB using the .NET SDK.
 
-[
+<BlogLink
+  href="/blog/dynamodb-querying-dotnet/"
+  title="5 Ways To Query Data From Amazon DynamoDB using .NET"
+  description="Querying is an essential operation in DynamoDB. It allows you to filter and select items in your database based on your application and user needs. When moving over to DynamoDB from more traditional relational databases like SQL Server, you must understand the different ways you can retrieve data…"
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Pulikkot Nath"
+  authorTitle="Rahul Nath"
+  featureImage="/images/DynamoDB-Querying-new.png"
+/>
 
-5 Ways To Query Data From Amazon DynamoDB using .NET
-
-Querying is an essential operation in DynamoDB. It allows you to filter and select items in your database based on your application and user needs. When moving over to DynamoDB from more traditional relational databases like SQL Server, you must understand the different ways you can retrieve data…
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/DynamoDB-Querying-new.png)
-
-](/posts/dynamodb-querying-dotnet/)
-
-DynamoDBContext QueryAsync and Indexes
---------------------------------------
+## DynamoDBContext QueryAsync and Indexes
 
 The `IDynamoDBContext` has the `QueryAsync` method, which is used to query objects from DynamoDB.
 
@@ -50,24 +51,24 @@ Querying any of the Indexes, Global Secondary Index, or Local Secondary Index, u
 [HttpGet("dynamodbcontext-query-index")]
 public async Task<IEnumerable<WeatherForecastListItem>> QueryGSIIndexUsingDynamoDBContext(DateTime dateTime)
 {
+    return await _dynamoDbContext
+        .QueryAsync<WeatherForecastListItem>(
+            dateTime.Date,
+            new DynamoDBOperationConfig()
+            {
+                IndexName = "Date-CityName-with-Temp-index",
+                OverrideTableName = nameof(WeatherForecast)
+            })
+        .GetRemainingAsync();
+}
+
 ```
-        return await _dynamoDbContext
-            .QueryAsync<WeatherForecastListItem>(
-                dateTime.Date,
-                new DynamoDBOperationConfig()
-                {
-                    IndexName = "Date-CityName-with-Temp-index",
-                    OverrideTableName = nameof(WeatherForecast)
-                })
-            .GetRemainingAsync();
-    }
 
 All you need to do is to specify the `IndexName` as part of the `DynamoDBOperationConfig`.
 
-You can specify the table name via the `OverriderTableName` property or use the `DynamoDBTable` attribute. Check out the [.NET DynamoDB SDK: Understanding Table Name Conventions and DynamoDBTable Attribute](/posts/dynamodb-net-table/) to learn more.
+You can specify the table name via the `OverriderTableName` property or use the `DynamoDBTable` attribute. Check out the [.NET DynamoDB SDK: Understanding Table Name Conventions and DynamoDBTable Attribute](/blog/dynamodb-net-table/) to learn more.
 
-DynamoDBContext LoadAsync and Indexes
--------------------------------------
+## DynamoDBContext LoadAsync and Indexes
 
 The `DynamoDBContext` has the `LoadAsync` method that is used to load a specific item from the DynamoDB table.
 

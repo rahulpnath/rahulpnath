@@ -1,11 +1,14 @@
 ---
 title: "How To Easily Get Started with AWS Lambda Tracing in .NET using Powertools"
-slug: "powertools-for-aws-lambda-tracing"
-date: "2023-10-17T19:10:46.000Z"
-feature_image: "/images/Powertools---Tracing.png"
-tags: ["AWS","Lambda"]
+slug: powertools-for-aws-lambda-tracing
+date: 2023-10-17T00:00:00.000Z
+feature_image: /images/Powertools---Tracing.png
+excerpt: >-
+  Powertools for AWS Lambda (.NET) Tracing, is an opinionated wrapper for AWS X-Ray .NET SDK, aimed to reduce the overhead of performing common tracing tasks. Let's explore how to easily get started with using the Lambda Powertools Tracing library when building AWS Lambda Functions in .NET.
+tags:
+  - AWS
+  - Lambda
 ---
-
 [Powertools for AWS Lambda (.NET) Tracing](https://docs.powertools.aws.dev/lambda/dotnet/core/tracing/), is an opinionated wrapper for [AWS X-Ray .NET SDK](https://github.com/aws/aws-xray-sdk-dotnet/), aimed to reduce the overhead of performing common tracing tasks.
 
 Some of the key features that the Powertools provides for tracing include attribute annotation, helper methods to easily add annotations and custom segments, capture function responses and exceptions as metadata, etc.
@@ -14,12 +17,11 @@ Some of the key features that the Powertools provides for tracing include attrib
 
 In this blog post, let’s explore how to easily get started with using the Lambda Powertools Tracing library when building AWS Lambda Functions in .NET.
 
-Enabling Lambda Powertools Tracing
-----------------------------------
+## Enabling Lambda Powertools Tracing
 
 To see the Lambda Powertools Tracing library in action, let's first create a Lambda Function.
 
-Let's use the [AWS Lambda Annotations Library](/posts/aws-lambda-annotation-framework/) to quickly create an API Endpoint using Lambda backend.
+Let's use the [AWS Lambda Annotations Library](/blog/aws-lambda-annotation-framework/) to quickly create an API Endpoint using Lambda backend.
 
 To an empty Lambda function project add `Amazon.Lambda.Annotations`, `Amazon.Lambda.APIGatewayEvents` and `AWS.Lambda.Powertools.Tracing` NuGet packages.
 
@@ -27,24 +29,24 @@ To enable Tracing all we need to do is add the `Tracing` attribute to the requir
 
 For this function to write to AWS Cloudwatch and AWS X-Ray it needs the appropriate permissions. The `AWSXRayDaemonWriteAccess` and `AWSLambdaBasicExecutionRole` are in-built role policies that give the required permissions.
 
-```json
+```csharp
 [LambdaFunction(Policies = "AWSXRayDaemonWriteAccess, AWSLambdaBasicExecutionRole")]
 [HttpApi(LambdaHttpMethod.Get, template: "/{cityName}")]
 [Tracing]
 public List<WeatherForecast> GetWeather(string cityName, ILambdaContext context)
 {
-```
-        return new List<WeatherForecast>
+    return new List<WeatherForecast>
+    {
+        new WeatherForecast        
         {
-            new WeatherForecast        
-            {
-                CityName = cityName, 
-                Date = DateTime.Today, 
-                TemperatureC = Random.Shared.Next(-10, 50)
-            }
-        };
-    }
-    
+            CityName = cityName, 
+            Date = DateTime.Today, 
+            TemperatureC = Random.Shared.Next(-10, 50)
+        }
+    };
+}
+
+```
 
 The Function returns a hardcoded list of `WeatherForecast` objects for a given `cityName`.
 
@@ -86,23 +88,23 @@ By annotating the function with the `Tracing` attribute, the function gets autom
 [Tracing]
 public async Task<List<WeatherForecast>> GenerateFakeDataWithDelay(string cityName)
 {
-```
-        await Task.Delay(1000);
-    
-        Tracing.WithSubsegment(
-                "TimeConsumingSubProcess", async _ => { await Task.Delay(500); });
-                
-        return new List<WeatherForecast>
+    await Task.Delay(1000);
+
+    Tracing.WithSubsegment(
+            "TimeConsumingSubProcess", async _ => { await Task.Delay(500); });
+            
+    return new List<WeatherForecast>
+    {
+        new WeatherForecast
         {
-            new WeatherForecast
-            {
-                CityName = cityName, 
-                Date = DateTime.Today, 
-                TemperatureC = Random.Shared.Next(-10, 50)
-            }
-        };
-    }
-    
+            CityName = cityName, 
+            Date = DateTime.Today, 
+            TemperatureC = Random.Shared.Next(-10, 50)
+        }
+    };
+}
+
+```
 
 You can see the new sub-segments for the new traces in the AWS Console as shown below.
 
@@ -110,8 +112,7 @@ You can see the new sub-segments for the new traces in the AWS Console as shown 
 
 AWS Lambda Function trace showing additional sub-segments logged using the Tracing attribute and also the helper method.
 
-Annotations and Metadata
-------------------------
+## Annotations and Metadata
 
 AWS X-Ray allows the recording of additional information about requests, the environment, or the application with annotations and metadata.
 
@@ -121,9 +122,12 @@ Annotations are indexed for use with filter expressions while Metadata are not i
 
 The `Tracing` class from the Powertools Tracing library exposes two methods, `AddAnnotation` and `AddMetadata` to add annotations and metadata to the trace segment.
 
-```text
+```csharp
+
 Tracing.AddAnnotation("City", cityName);
+
 Tracing.AddMetadata("Count", results.Count);
+
 ```
 
 Annotations and Metadata are shown under the corresponding segment detail in the AWS Console as key-value pairs, as shown in the screenshot below.
@@ -132,8 +136,7 @@ Annotations and Metadata are shown under the corresponding segment detail in the
 
 Annotations and Metadata are shown as key-value pairs under the corresponding segment detail in the AWS Console.
 
-Instrumenting Other AWS Services
---------------------------------
+## Instrumenting Other AWS Services
 
 Often when building Lambda Functions we integrate with other AWS Services, like DynamoDB, SQS, SNS, Secrets Manager, etc. In these cases, you use the appropriate .NET Nuget packages to talk to these services.
 
@@ -144,10 +147,11 @@ The below code shows how to register the DynamoDB client to be captured into the
 ```csharp
 public Function()
 {
+    Tracing.RegisterForAllServices();
+    dynamoDbContext = new DynamoDBContext(new AmazonDynamoDBClient());
+}
+
 ```
-        Tracing.RegisterForAllServices();
-        dynamoDbContext = new DynamoDBContext(new AmazonDynamoDBClient());
-    }
 
 In the `Function` constructor, before creating the `DynamoDBContext` instance, call the `RegisterForAllServices` helper function.
 
@@ -159,14 +163,15 @@ The actual Lambda function code now uses the `DynamoDBContext` to retrieve Weath
 [Tracing(Namespace = "GetWeather")]
 public async Task<List<WeatherForecast>> GetWeather(string cityName, ILambdaContext context)
 {
+    Tracing.AddAnnotation("City", cityName);
+
+    var results = await dynamoDbContext.QueryAsync<WeatherForecast>(cityName).GetRemainingAsync();
+    Tracing.AddMetadata("Count", results.Count);
+
+    return results;
+}
+
 ```
-        Tracing.AddAnnotation("City", cityName);
-    
-        var results = await dynamoDbContext.QueryAsync<WeatherForecast>(cityName).GetRemainingAsync();
-        Tracing.AddMetadata("Count", results.Count);
-    
-        return results;
-    }
 
 You can see the calls to DynamoDB in the trace information as shown below in the screenshot.
 

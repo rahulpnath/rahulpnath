@@ -1,11 +1,16 @@
 ---
 title: "How to Effectively Manage Data Lifetime with DynamoDB Time to Live"
-slug: "dynamodb-time-to-live-dotnet"
-date: "2023-12-05T10:27:38.000Z"
-feature_image: "/images/DynamoDB-TTL.png"
-tags: ["AWS","DynamoDB"]
+slug: dynamodb-time-to-live-dotnet
+date: 2023-12-05T00:00:00.000Z
+feature_image: /images/DynamoDB-TTL.png
+excerpt: >-
+  Amazon DynamoDB Time to Live (TTL) is a feature that allows you to manage the
+  expiration of items in a DynamoDB table automatically. Let's learn how to
+  enable and use the TTL feature when building applications.
+tags:
+  - AWS
+  - DynamoDB
 ---
-
 Amazon DynamoDB Time to Live (TTL) is a feature that allows you to manage the expiration of items in a DynamoDB table automatically. It simplifies removing outdated or stale data by enabling you to specify a timestamp attribute in your items, indicating when the items should expire.
 
 DynamoDB TTL feature removes the need for manual cleanup of expired table items, and it helps improve cost efficiency by deleting unnecessary data. Also, it provides performance improvement as it reduces the number of items to be processed on your queries and scans on the Table.
@@ -18,8 +23,7 @@ We will be using .NET for the application code. However, the concepts still appl
 
 _This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
 
-Enable Time to LIve on DynamoDB Table
--------------------------------------
+## Enable Time to LIve on DynamoDB Table
 
 You can enable Time to Live(TTL) on a DynamoDB table from the Additional Settings section on the Table details, as shown below.
 
@@ -41,10 +45,10 @@ Once specified and turned on, Time to Live is active on the DynamoDB table.
 
 To change the TTL property details, turn it off on the Table and then turn it on again with the new property details.
 
-Adding Items with Time to Live
-------------------------------
+## Adding Items with Time to Live
 
 When adding items to the Table, populate the item with the property specified in the Time to Live settings.  
+
 Below, I have the property `Ttl` on the `WeatherForecastTable` item. For backward compatibility with existing items, I have made it optional.
 
 To map to the appropriate casing as specified in the TTL settings for the Table, I am using the `DynamoDBProperty` attribute to explicitly specify the column name to map to in the DynamoDB table item.
@@ -53,24 +57,23 @@ To map to the appropriate casing as specified in the TTL settings for the Table,
 [HttpPost("post-weather-forecast-table-ttl")]
 public async Task PostWeatherForecastWithTTL(WeatherForecastTable data)
 {
-```
-        data.Date = data.Date.Date;
-        data.Ttl = DateTimeOffset.UtcNow.AddMinutes(1).ToUnixTimeSeconds();
-        await _dynamoDbContext.SaveAsync(data);
-    }
-    
-```csharp
+    data.Date = data.Date.Date;
+    data.Ttl = DateTimeOffset.UtcNow.AddMinutes(1).ToUnixTimeSeconds();
+    await _dynamoDbContext.SaveAsync(data);
+}
+
 public class WeatherForecastTable
 {
+    public string CityName { get; set; }
+    public DateTime Date { get; set; }
+    public string TemperatureC { get; set; }
+    public string? Summary { get; set; }
+
+    [DynamoDBProperty("ttl")]
+    public long? Ttl { get; set; }
+}
+
 ```
-        public string CityName { get; set; }
-        public DateTime Date { get; set; }
-        public string TemperatureC { get; set; }
-        public string? Summary { get; set; }
-    
-        [DynamoDBProperty("ttl")]
-        public long? Ttl { get; set; }
-    }
 
 ### Format Conditions For TTL DynamoDB Attribute
 
@@ -106,8 +109,7 @@ A second background process scans for expired items and deletes them. These proc
 
 TTL typically deletes expired items within a few days, depending on the size and activity level of the Table.
 
-Querying Items and Time to Live
--------------------------------
+## Querying Items and Time to Live
 
 DynamoDB items that have expired but haven't yet been deleted by the TTL background processes will still appear in reads, queries, and scans.
 
@@ -125,59 +127,57 @@ Since, in our case, the Time to Live property name is `ttl`, which is also a res
 [HttpGet("city-name-low-level-expressions-ttl")]
 public async Task<IEnumerable<WeatherForecastTable>> GetAllForCityLowLevelExpressionsTtl(string cityName, long? ttl)
 {
+    ttl = ttl ?? DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+    var queryRequest = new QueryRequest()
+    {
+        TableName = nameof(WeatherForecastTable),
+        KeyConditionExpression = "CityName = :cityName",
+        FilterExpression = "attribute_not_exists(#timeToLive) OR #timeToLive >= :timeToLive",
+        ExpressionAttributeNames = new Dictionary<string, string>()
+        {
+            {"#timeToLive", "ttl"}
+        },
+        ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
+        {
+            {":cityName", new AttributeValue(cityName)},
+            {":timeToLive", new AttributeValue() {N = ttl.ToString()}}
+        }
+    };
+
+    var response = await _dynamoDbClient.QueryAsync(queryRequest);
+
+    return response.Items.Select(a =>
+    {
+        var doc = Document.FromAttributeMap(a);
+        return _dynamoDbContext.FromDocument<WeatherForecastTable>(doc);
+    });
+}
+
 ```
-        ttl = ttl ?? DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        var queryRequest = new QueryRequest()
-        {
-            TableName = nameof(WeatherForecastTable),
-            KeyConditionExpression = "CityName = :cityName",
-            FilterExpression = "attribute_not_exists(#timeToLive) OR #timeToLive >= :timeToLive",
-            ExpressionAttributeNames = new Dictionary<string, string>()
-            {
-                {"#timeToLive", "ttl"}
-            },
-            ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
-            {
-                {":cityName", new AttributeValue(cityName)},
-                {":timeToLive", new AttributeValue() {N = ttl.ToString()}}
-            }
-        };
-    
-        var response = await _dynamoDbClient.QueryAsync(queryRequest);
-    
-        return response.Items.Select(a =>
-        {
-            var doc = Document.FromAttributeMap(a);
-            return _dynamoDbContext.FromDocument<WeatherForecastTable>(doc);
-        });
-    }
 
 The above query returns all records that either do not have a `ttl` property set or ones that haven't expired yet.
 
 Based on your application needs, you can use the appropriate filter expressions.
 
-DynamoDB Streams and TTL Auto-Deleted Messages
-----------------------------------------------
+## DynamoDB Streams and TTL Auto-Deleted Messages
 
 Items deleted automatically by the TTL background processes will also appear in the DynamoDB stream events.
 
 DynamoDB Streams capture a time-ordered sequence of events in any DynamoDB table. If you want to get started using DynamoDB streams, check out the blog post linked below.
 
-[
-
-DynamoDB Streams and AWS Lambda Trigger in .NET
-
-DynamoDB Streams capture a time-ordered sequence of events in any DynamoDB table. Let’s learn how to enable DynamoDB Streams, different stream types and how to consumer stream changes from a .NET AWS Lambda Function.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/aws-lambda-dynamodb-streams-trigger-dotnet.jpg)
-
-](/posts/aws-dynamodb-streams-lambda-triggers-dotnet/)
+<BlogLink
+  href="/blog/aws-dynamodb-streams-lambda-triggers-dotnet/"
+  title="DynamoDB Streams and AWS Lambda Trigger in .NET"
+  description="DynamoDB Streams capture a time-ordered sequence of events in any DynamoDB table. Let’s learn how to enable DynamoDB Streams, different stream types and how to consumer stream changes from a .NET AWS Lambda Function."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/aws-lambda-dynamodb-streams-trigger-dotnet.jpg"
+/>
 
 Items that are deleted by the TTL processes have the following field values.
 
-*   Records\[`<index>`\].userIdentity.type → '_Service_'
-*   Records\[`<index>`\].userIdentity.principalId → '_dynamodb.amazonaws.com_'
+-   Records\[`<index>`\].userIdentity.type → '_Service_'
+-   Records\[`<index>`\].userIdentity.principalId → '_dynamodb.amazonaws.com_'
 
 You can learn more about DynamoDB Streams and Time to Live in the [documentation here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/time-to-live-ttl-streams.html).

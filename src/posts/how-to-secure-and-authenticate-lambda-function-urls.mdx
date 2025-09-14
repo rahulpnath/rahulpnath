@@ -1,14 +1,19 @@
 ---
 title: "How To Secure and Authenticate AWS Lambda Function URLs"
-slug: "how-to-secure-and-authenticate-lambda-function-urls"
-date: "2022-10-31T07:23:29.000Z"
-feature_image: "/images/AWS-Lambda-Function-URLs-Auth.png"
-tags: ["AWS","Lambda"]
+slug: how-to-secure-and-authenticate-lambda-function-urls
+date: 2022-10-31T00:00:00.000Z
+feature_image: /images/AWS-Lambda-Function-URLs-Auth.png
+excerpt: >-
+  This article is sponsored by AWS and is part of my AWS
+  Series(GHOSTURL/blog/category/aws/).  In a previous blog post, Function URLs -
+  Quick and Easy way to Invoke AWS Lambda...
+tags:
+  - AWS
+  - Lambda
 ---
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/category/aws/)._
 
-_This article is sponsored by AWS and is part of my [AWS Series](/posts/category/aws/)._
-
-In a previous blog post, [Function URLs - Quick and Easy way to Invoke AWS Lambda Functions over HTTP](/posts/function-urls-in-aws-lambda-dotnet/), we learned how to expose and invoke Lambda functions over an HTTP endpoint.
+In a previous blog post, [Function URLs - Quick and Easy way to Invoke AWS Lambda Functions over HTTP](/blog/function-urls-in-aws-lambda-dotnet/), we learned how to expose and invoke Lambda functions over an HTTP endpoint.
 
 We enabled the Function URL without any authentication on the URL endpoint, which makes it possible for anyone with Lambda's URL to invoke the Lambda Function.
 
@@ -16,8 +21,7 @@ We enabled the Function URL without any authentication on the URL endpoint, whic
 
 When using this in real-world applications, we want to secure the Function URL endpoints and make it possible only for authenticated users or applications to invoke the Lambda Function.
 
-Enable AWS\_IAM Authentication Type
------------------------------------
+## Enable AWS\_IAM Authentication Type
 
 When enabling Function URLS, it gives the option to select the Auth type. To restrict the URL to only authenticated users, choose the AWS\_IAM Auth type option.
 
@@ -53,24 +57,21 @@ In this case, my lambda function is deployed to Sydney (ap-southeast-2) region, 
 
 With the AWS Signature setup, you can make a successful request to the AWS Lambda Function URL. Depending on the `HTTP Method` specified on the Postman request, it will perform the appropriate action on the Lambda Function.
 
-Calling Function URLs FROM .NET APPs
-------------------------------------
+## Calling Function URLs FROM .NET APPs
 
 When building new features, you will have to invoke our Function URL API from other .NET applications.
 
 In .NET, calling other API endpoints is usually done using the `HttpClient` class.
 
-[
-
-Are You Using HttpClient in The Right Way?
-
-If not used correctly it’s easy to run into socket exhaustion and DNS related issues with HttpClient in .NET Core. Learn how to identify these issues and how to use HttpClient class in the right way.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/http_client_web.jpg)
-
-](/posts/are-you-using-httpclient-in-the-right-way/)
+<BlogLink
+  href="/blog/are-you-using-httpclient-in-the-right-way/"
+  title="Are You Using HttpClient in The Right Way?"
+  description="If not used correctly it’s easy to run into socket exhaustion and DNS related issues with HttpClient in .NET Core. Learn how to identify these issues and how to use HttpClient class in the right way."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/http_client_web.jpg"
+/>
 
 The [AwsSignatureVersion4](https://github.com/FantasticFiasco/aws-signature-version-4) NuGet package extends the `HttpClient` class to add support for AWS Signature 4.
 
@@ -81,32 +82,31 @@ Below is the .NET sample code to make an authenticated call to a Lambda Function
 ```csharp
 async Task Main()
 {
+	var httpClient = new HttpClient();
+	var credentials = new ImmutableCredentials(
+        "ACCESS KEY ID", "SECRET", null);
+	var result = await httpClient.GetAsync($"https://lrd7ews3klz23s3brksliz7nii0iwsng.lambda-url.ap-southeast-2.on.aws?userId={Guid.NewGuid()}", "ap-southeast-2", "lambda", credentials);
+	
+	var resultString = await result.Content.ReadAsStringAsync();
+	result.StatusCode.Dump();
+	resultString.Dump();
+}
+
 ```
-    	var httpClient = new HttpClient();
-    	var credentials = new ImmutableCredentials(
-            "ACCESS KEY ID", "SECRET", null);
-    	var result = await httpClient.GetAsync($"https://lrd7ews3klz23s3brksliz7nii0iwsng.lambda-url.ap-southeast-2.on.aws?userId={Guid.NewGuid()}", "ap-southeast-2", "lambda", credentials);
-    	
-    	var resultString = await result.Content.ReadAsStringAsync();
-    	result.StatusCode.Dump();
-    	resultString.Dump();
-    }
 
 ### Using Environment Credentials
 
 When the .NET applications are already running in an environment where the AWS Credentials are configured, you can use those credentials to invoke the Function URL.
 
-[
-
-Learn How To Manage Credentials When Building .NET Application on AWS
-
-Learn different ways to set up and manage credentials and sensitive information when building .NET applications on AWS. We will also touch upon some of the tools and utilities that I have set up on my local development machine to make working with AWS easier.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/secure-key.jpg)
-
-](/posts/amazon-credentials-dotnet/)
+<BlogLink
+  href="/blog/amazon-credentials-dotnet/"
+  title="Learn How To Manage Credentials When Building .NET Application on AWS"
+  description="Learn different ways to set up and manage credentials and sensitive information when building .NET applications on AWS. We will also touch upon some of the tools and utilities that I have set up on my local development machine to make working with AWS easier."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/secure-key.jpg"
+/>
 
 The request will succeed if the configured credentials in the environment have access to invoke the Lambda function URL.
 
@@ -114,20 +114,19 @@ The request will succeed if the configured credentials in the environment have a
 ...
 var credentials = FallbackCredentialsFactory.GetCredentials();
 ...
+
 ```
 
 Instead of explicitly creating an `ImmutableCredentials` instance from the secret key and access key id, use the `FallbackCredentialsFactory` to get the credentials configured at the machine level.
 
-[
-
-Function URLs - Quick and Easy way to Invoke AWS Lambda Functions over HTTP
-
-A Function URL is a dedicated endpoint for your Lambda function. Learn how to enable Function URLs and build an API using .NET Lambda Function.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/AWS-Lambda-Function-URLs.png)
-
-](/posts/function-urls-in-aws-lambda-dotnet/)
+<BlogLink
+  href="/blog/function-urls-in-aws-lambda-dotnet/"
+  title="Function URLs - Quick and Easy way to Invoke AWS Lambda Functions over HTTP"
+  description="A Function URL is a dedicated endpoint for your Lambda function. Learn how to enable Function URLs and build an API using .NET Lambda Function."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/AWS-Lambda-Function-URLs.png"
+/>
 
 I hope this helps you authenticate your Lambda Function URLs and ensure only authenticated requests are processed on the URL.

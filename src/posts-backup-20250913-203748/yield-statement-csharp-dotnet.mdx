@@ -1,0 +1,282 @@
+---
+title: 'C# Yield Return Statement: A Deep Dive'
+slug: yield-statement-csharp-dotnet
+date: '2024-10-14'
+feature_image: /images/C--Yield-Statement.png
+excerpt: >-
+  Iterator methods are methods that create a source for an enumeration. The
+  yield method is used to define an iterator method. While you can implement the
+  IEnumerable interface, iterators makes it much more easier with the yield
+  statement. Let's learn more about this.
+tags:
+  - Dotnet
+  - AWS
+---
+In .NET, Iterators provide a way to create an Enumerable.
+
+While you can implement the IEnumerable interface, iterators makes it much more easier with the yield statement.
+
+<iframe src="https://www.youtube.com/embed/PHiptFztTQ8?feature=oembed" />
+
+In this post, let’s learn how to use `yield` statement to create an enumerable, how it works, and how it supports lazy evaluation.
+
+We will also see a real-world use case to search through a large log file stored in cloud storage without downloading the entire file into memory.
+
+This post is sponsored by AWS and is part of my .<BlogLink
+  href="/blog/tag"
+  title="Tag"
+  description="Read this interesting blog post"
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/default-feature.jpg"
+/>.
+
+## yield Statement in C#
+
+[Iterator methods](https://learn.microsoft.com/en-us/dotnet/csharp/iterators#enumeration-sources-with-iterator-methods) are methods that create a source for an enumeration.
+
+The yield method is used to define an iterator method.
+
+Below is a simple iterator method that returns an int enumerable.
+
+```csharp
+static IEnumerable<int> CreateSimpleIterator() 
+{
+  yield return 10;
+  yield return 20;
+  yield return 30;
+}
+```
+
+The above code uses the `yield return` statement to return each enumerable item one after the other.
+
+Consuming this is similar to consuming any other enumerables in .NET. You can use a for loop, for each, LINQ methods, etc.
+
+```csharp
+void Main() 
+{
+  var list = CreateSimpleIterator();
+  foreach(var item in list) {
+    item.Dump();
+  }
+}
+```
+
+The above method loops through each item and Dumps/prints them on[Dump](https://www.linqpad.net/CustomizingDump.aspx) the console. (For this sample, I am using [LINQPad](https://www.linqpad.net?referrer=rahulpnath.com),, a .NET scratchpad to run code)
+
+### yield - C# Compiler Generated Code
+
+Behind the scenes, the C# compiler is doing all the heavy lifting to generate the `IEnumerable` and `IEnumerator` interfaces for us.
+
+Below is a snapshot of the above code in ILSpy, showing a compiler-generated class that implements the IEnumerator and IEnumerable interfaces.
+
+![](/images/image.png)
+
+C# compiler generated code for iterator methods using yield statement in .NET.
+
+The compiler also generates a state machine to keep track of the method's state and the number of items generated and returned.  
+  
+More about this in the Lazy Evaluation of yield statement section.
+
+## yield break Statement to Stop Item Generation
+
+yield also provides a statement to break out of the enumerable generation conditionally.
+
+This stops generating further items in the enumerable and provides no further items to whoever is consuming the collection.
+
+Let's say we want to generate multiples of tens but limit the numbers generated to less than 100.  
+  
+The below code loops through and returns as long as the current number is less than 100.
+
+```csharp
+static IEnumerable < int > CreateSimpleIterator(int number) 
+{
+  for (int i = 0; i < number; i++) {
+    var tens = i * 10;
+
+    if (tens > 100)
+      yield
+    break;
+
+    yield
+    return tens;
+  }
+}
+```
+
+If the number exceeds 100, it breaks out of the generation loop and stops generating further items in the collection.
+
+## Lazy Evaluation of yield Statement in C#
+
+Iterator methods are lazy evaluated.
+
+This means the items in the collection are generated only when they are consumed or requested.
+
+To understand this further, let's introduce a few console write-line statements to our simple iterator method.
+
+It writes to the console before starting the item generation, right before returning an item, and when it generates all the items.
+
+```csharp
+async Task Main() 
+{
+  var numbers = CreateSimpleIterator(3);
+  "Printing Numbers".Dump();
+  foreach(var number in numbers) {
+    number.Dump();
+  }
+}
+
+static IEnumerable < int > CreateSimpleIterator(int number) 
+{
+  "Starting".Dump();
+  for (int i = 0; i < number; i++) {
+    var tens = i * 10;
+    if (tens > 100) yield
+    break;
+
+    $ "Returning for {i}".Dump();
+    yield
+    return tens;
+  }
+
+  "Ending".Dump();
+}
+```
+
+The above method prints the following for the input 3.
+
+```text
+Printing Numbers
+Starting
+Returning for 0
+0
+Returning for 1
+10
+Returning for 2
+20
+Ending
+```
+
+You can see the line `Printing Numbers` comes first, even though we have invoked the `CreateSimpleIterator` method before it.  
+  
+The iterator method runs only when the consuming code requests the first item from the collection.
+
+This happens when we iterate through the collection in the for-each statement in the Main function.
+
+As we loop through each item, the iterator method returns the item and pauses until the following item is requested.
+
+This is why we see the `Returning for {i}` statement printed and immediately after the number is printed from the consuming code in the `Main`.
+
+When the for-each statement in `Main` asks for the following item, the iterator method generates the next item.
+
+Each item is generated just when it's needed - lazily evaluated.
+
+### Generating Infinite Collections using yield Statement
+
+The lazy generation of items enables us to generate infinite collections using iterator methods.
+
+The below code generates an infinite list of multiples of tens.
+
+```csharp
+static IEnumerable < int > CreateSimpleIterator() 
+{
+  var i = 0;
+  while (true) {
+    yield
+    return i++ * 10;
+  }
+}
+```
+
+It's up to the consuming code to terminate or limit the number of items this iterator method generates.
+
+```csharp
+foreach(var number in numbers.Take(20)) 
+{
+  number.Dump();
+}
+```
+
+The above code uses the `Take` method to limit the number of items generated by the iterator method to 20.
+
+## Searching An AWS S3 File using yield
+
+Iterator methods also prove helpful in other real-world scenarios.
+
+Let's say I have a large log file that I need to search through for specific search keywords from within the code.
+
+Downloading the entire file into memory and then searching through it would be time-consuming and not memory efficient.
+
+If the file is unavailable locally but in cloud storage, you will have to factor in network delays to download the entire file before beginning to search it.
+
+Here, I have a large log file in Amazon S3 that I need to search for specific keywords.
+
+_Amazon Simple Storage Service (S3) is an object storage service that provides a scalable and secure storage infrastructure._
+
+[Amazon S3 For the .NET Developer: How to Easily Get Started](/blog/amazon-s3-dotnet/)
+
+The below code first gets the file object from S3 using the .NET SDK and then uses a StreamReader to read through the file line by line.
+
+For each line it reads it checks if it contains the search term.
+
+```csharp
+async IAsyncEnumerable<string> FetchAndProcessLogsAsync(IAmazonS3 s3Client, string logFileKey, string searchTerm)
+{
+    / Get the S3 object (log file) from the bucket
+    var getObjectRequest = new GetObjectRequest
+    {
+        BucketName = "user-service-large-messages",
+        Key = logFileKey
+    };
+
+    using var s3Object = await s3Client.GetObjectAsync(getObjectRequest);
+    using var stream = s3Object.ResponseStream;
+    using var reader = new StreamReader(stream, Encoding.UTF8);
+
+    / Read the file line by line, lazily returning matching lines.
+    string line;
+    while ((line = await reader.ReadLineAsync()) != null)
+    {
+        / If the line contains the search term, yield it
+        if (line.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+        {
+            yield return line; / Lazily return the matching line
+        }
+    }
+}
+```
+
+If a match is found, then it returns the line and proceeds to return to the next line.
+
+However, since this uses the yield statement to generate the iterator method, it proceeds to reading the next line only if the consuming code requests the next item.
+
+### Consuming an IAsyncEnumerable Generated using yield Statement
+
+The above method returns an `IAsyncEnumerable` since the iterator method uses asynchronous methods to perform network requests.
+
+```csharp
+async Task Main() {
+  var client = new AmazonS3Client();
+  var lines = FetchAndProcessLogsAsync(client, "Android.log", "Service");
+  
+  await foreach(var line in lines.Take(200)) 
+  {
+    line.Dump();
+  }
+}
+```
+
+To consume this, we can use the `await` keyword before the for-each statement. The `System.Linq.Async` Nuget package allows the use of normal LINQ methods on an AsyncEnumerable.
+
+<BlogLink
+  href="/blog/async-enumerable-dotnet/"
+  title="Getting Started with Async Enumerables: A .NET Developer’s Guide"
+  description="AsyncEnumerables enhances eumeration of collections with asynchronous capabilities. In this post, let’s explore how C# combines ‘yield return’ with ‘async’ and ‘await’ to create efficient asynchronous data streams and how ‘await foreach’ lets us effortlessly consume them."
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/AsyncEnumerable--2-.png"
+/>
+
+The above code limits the number of lines retrieved from the cloud S3 files to 200. Once that many lines (or the end of the file) are retrieved, it will stop reading the file and exit the collection generation.

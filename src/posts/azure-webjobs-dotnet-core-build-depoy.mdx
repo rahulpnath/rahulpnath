@@ -1,48 +1,51 @@
 ---
 title: "How To Continuously Deploy Your .NET Core Azure WebJobs"
-slug: "azure-webjobs-dotnet-core-build-depoy"
-date: "2020-06-29T00:00:00.000Z"
-feature_image: "/images/devops_webjob.jpg"
-tags: ["DevOps","Azure"]
-excerpt: "A step-by-step guide to continuously deploying .NET Core Azure WebJobs, including setup, SDK usage, and integration with Azure App Service for automated deployments."
+slug: azure-webjobs-dotnet-core-build-depoy
+date: 2020-06-29
+feature_image: /images/devops_webjob.jpg
+excerpt: >-
+  New To Azure WebJobs? Learn how to get started and set up a build deploy pipeline in Azure DevOps.
+tags:
+  - DevOps
+  - Azure
 ---
-
 > WebJobs is a feature of Azure App Service that enables you to run a program or script in the same instance as a web app, API app, or mobile app. Since this runs as part of the same instance as the Web App, there is no additional cost to use WebJobs. _WebJobs is not supported on a Linux App Service._
 
-The Azure WebJobs SDK simplifies the task of writing WebJobs. Version 3.x of WebJobs SDK supports both .NET Core and .NET Framework. At the time of writing, there are no code templates to create an Azure WebJob .NET Core application in Visual Studio. However, setting up is not that hard and well explained in the [Getting started with Azure WebJobs SDK article](https://docs.microsoft.com/en-us/azure/app-service/webjobs-sdk-get-started).
+The Azure WebJobs SDK simplifies the task of writing WebJobs. Version 3.x of WebJobs SDK supports both .NET Core and .NET Framework. At the time of writing, there are no code templates to create an Azure WebJob .NET Core application in Visual Studio. However, setting up is not that hard and well explained in the [Getting started with Azure WebJobs SDK article](https://docs.microsoft.com/en-us/azure/app-service/webjobs-sdk-get-started)."
 
 <iframe src="https://www.youtube.com/embed/HXZWvobMbo0" />
 
-Set Up Azure WebJob
--------------------
+## Set Up Azure WebJob
 
 All you need to do is create a .NET Core Console application (from the Visual Studio templates), add the _[Microsoft.Azure.WebJobs](https://www.nuget.org/packages/Microsoft.Azure.WebJobs)_ and _[Microsoft.Azure.WebJobs.Extensions](https://www.nuget.org/packages/Microsoft.Azure.WebJobs.Extensions/)_ NuGet packages. Update the Program.cs file in the .NET Console Application to use the HostBuilder as shown. If you want to log to the console, also add the _[Microsoft.Extensions.Logging.Console](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Console/)_ NuGet package.
 
 ```csharp
 static async Task Main()
 {
-```
-        var builder = new HostBuilder();
-    #if DEBUG
-        builder.UseEnvironment("development");
-    #endif
-        builder.ConfigureWebJobs(b =>
-        {
-            b.AddAzureStorageCoreServices();
-            b.AddAzureStorage();
-    
-        });
-        builder.ConfigureLogging((context, b) =>
-        {
-            b.AddConsole();
-        });
-        var host = builder.Build();
-        using (host)
-        {
-            await host.RunAsync();
-        }
+    var builder = new HostBuilder();
+#if DEBUG
+
+    builder.UseEnvironment("development");
+#endif
+
+    builder.ConfigureWebJobs(b =>
+    {
+        b.AddAzureStorageCoreServices();
+        b.AddAzureStorage();
+
+    });
+    builder.ConfigureLogging((context, b) =>
+    {
+        b.AddConsole();
+    });
+    var host = builder.Build();
+    using (host)
+    {
+        await host.RunAsync();
     }
-    
+}
+
+```
 
 To run the [host in development mode](https://docs.microsoft.com/en-us/azure/app-service/webjobs-sdk-how-to#host-development-settings) call the _UseEnvironment_ method on the builder and set it to _development_. It increases the queue polling interval, sets log level to verbose, etc., and makes development more efficient.
 
@@ -59,35 +62,34 @@ Triggers define how a function is invoked, and a function must have exactly one 
 ```csharp
 public class ProcessMessageFunction
 {
-```
-        private QueueClient _queueClient;
-        public ProcessMessageFunction(IConfiguration configuration)
-        {
-            _queueClient = new QueueClient(configuration["AzureWebJobsStorage"], "processed");
-        }
-    
-        public string ProcessQueueMessage([QueueTrigger("queue")] string message, ILogger logger)
-        {
-            await _queueClient.SendMessageAsync($"Processed {message} {DateTime.Now}");
-            logger.LogInformation(message);
-            return message;
-        }
+    private QueueClient _queueClient;
+    public ProcessMessageFunction(IConfiguration configuration)
+    {
+        _queueClient = new QueueClient(configuration["AzureWebJobsStorage"], "processed");
     }
-    
+
+    public string ProcessQueueMessage([QueueTrigger("queue")] string message, ILogger logger)
+    {
+        await _queueClient.SendMessageAsync($"Processed {message} {DateTime.Now}");
+        logger.LogInformation(message);
+        return message;
+    }
+}
+
+```
 
 The above function is triggered every time a message is dropped in the Azure Storage Queue with the name 'queue.' The function reads the message and drops it back to another queue named 'processed.' It adds a Processed text and the date and time it was processed.
 
 [![](/images/asp_net_core_banner.png)](https://www.youtube.com/playlist?list=PL59L9XrzUa-nqfCHIKazYMFRKapPNI4sP)
 
-Azure DevOps Pipeline
----------------------
+## Azure DevOps Pipeline
 
 Since we are not much interested in what the function is doing, let's move to set up the Build/Deploy pipeline for this Azure Function. I have a sample pipeline set up here (details at the bottom of the post) in case you want to refer to it at any step. You can also check out the video above for the full setup walkthrough.
 
 When setting up the build/deploy pipeline, I prefer to set it up as two separate pipelines.
 
-*   a Build Pipeline that builds and generates a build artifact
-*   a Release Pipeline that deploys the build artifact to the different environments (Dev, Test or Prod)
+-   a Build Pipeline that builds and generates a build artifact
+-   a Release Pipeline that deploys the build artifact to the different environments (Dev, Test or Prod)
 
 ### Build Pipeline
 
@@ -99,30 +101,32 @@ Select 'Starter pipeline' from the template options, which will help set up the 
 
 In the build pipeline, we need to achieve the below.
 
-*   Build the Project
-*   Publish the project (to create the executable file)
-*   Archive/Zip the publish folder
-*   Publish the Archive as Build Artifact
+-   Build the Project
+-   Publish the project (to create the executable file)
+-   Archive/Zip the publish folder
+-   Publish the Archive as Build Artifact
 
 #### Build and Publish The Project
 
 To build and publish the project, we will use the [DotNetCoreCLI task](https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core-cli?view=azure-devops). The CLI tasks need the project path to build and also any additional arguments that you want to pass. Below are the tasks to build and publish the WebJobs project.
 
-    - task: DotNetCoreCLI@2
-      inputs:
-        command: 'build'
-        projects: '**/*.csproj'
-        arguments: '--configuration Release'
-    
-    - task: DotNetCoreCLI@2
-      inputs:
-        command: 'publish'
-        publishWebProjects: false
-        projects: '**/*.csproj'
-        arguments: '--output $(Build.BinariesDirectory)/publish_output/App_Data/jobs/continuous/YoutubeWebJob'
-        zipAfterPublish: false
-        modifyOutputPath: false
-    
+```yml
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration Release'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '**/*.csproj'
+    arguments: '--output $(Build.BinariesDirectory)/publish_output/App_Data/jobs/continuous/YoutubeWebJob'
+    zipAfterPublish: false
+    modifyOutputPath: false
+
+```
 
 For both the tasks we pass in a wildcard selector for the csproj, since we only have one project in the whole repository. If you have multiple projects, make sure to provide the WebJobs project file's name just to build that. ('WebJobExample.WebJob' in this case).
 
@@ -140,20 +144,22 @@ To archive the build output, you can either specify the _zipAfterPublish_ to tru
 
 The below step uses the [Archive Files Task](https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/archive-files?view=azure-devops) and [Publish Build Artifacts Task](https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/publish-build-artifacts?view=azure-devops).
 
-    - task: ArchiveFiles@2
-      inputs:
-        rootFolderOrFile: '$(Build.BinariesDirectory)/publish_output'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-        replaceExistingArchive: true
-    
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'drop'
-        publishLocation: 'Container'
-    
+```yml
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.BinariesDirectory)/publish_output'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+
+```
 
 On saving the pipeline file, it will commit to your repository with the specified filename ([azure-pipelines.yml](https://rahulpnath.visualstudio.com/YouTube%20Samples/_git/MessageSender.Function?path=%2Fazure-pipelines.yml)). We now have out build pipeline, which creates a build artifact, a zip file with the console application executable (the Web Job) and the associated DLL's.
 
@@ -184,4 +190,3 @@ Find the related source code and the build/release pipeline below.
 **[Release Pipeline](https://rahulpnath.visualstudio.com/YouTube%20Samples/_release?_a=releases&view=mine&definitionId=7)**
 
 Hope this helps you set up a new Azure WebJob and configure the build/deploy pipeline in Azure DevOps.
-

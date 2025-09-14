@@ -1,13 +1,13 @@
 ---
 title: "Monitor Your Applications: Health Checks in ASP NET Core"
-slug: "asp-net-health-checks"
-date: "2024-08-12T06:47:40.000Z"
-feature_image: "/images/Health-Checks-1.png"
-tags: ["Dotnet"]
-excerpt: "ASP NET Health Checks feature lets you monitor and report on the health of your web application and its dependencies."
-
+slug: asp-net-health-checks
+date: 2024-08-12
+feature_image: /images/Health-Checks-1.png
+excerpt: >-
+  ASP NET Health Checks feature lets you monitor and report on the health of your web application and its dependencies.
+tags:
+  - Dotnet
 ---
-
 ASP NET Health Checks feature lets you monitor and report on the health of your web application and its dependencies.
 
 Health checks expose your system's health information.
@@ -18,15 +18,14 @@ Orchestrators, load balancers, and monitors can use this information to check yo
 
 In this post, we will learn how to
 
-*   Enable health checks
-*   Create custom health checks
-*   Use pre-built health check packages
-*   Customize the health check response
+-   Enable health checks
+-   Create custom health checks
+-   Use pre-built health check packages
+-   Customize the health check response
 
-AWS sponsors this post, which is part of my [ASP NET Series](/posts/tag/asp-net/).
+AWS sponsors this post, which is part of my [ASP NET Series](/blog/tag/asp-net/).
 
-Basic Health Probe For ASP NET Application
-------------------------------------------
+## Basic Health Probe For ASP NET Application
 
 ASP NET Core offers middleware and libraries to enable health check endpoints.
 
@@ -34,13 +33,13 @@ We first need to add the required dependencies to the dependency injection conta
 
 `AddHealthChecks` is idempotent and registers the `DefaultHealthCheckService` in the dependency injection container.
 
-
 ```csharp
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
 app.MapHealthChecks("/healthz");
+
 ```
 
 The `MapHealthChecks` method adds a health check endpoint to the API with the specific configuration.
@@ -49,12 +48,11 @@ The application now exposes a simple API endpoint on the route `/healthz`.
 
 It returns the following HTTP Status Codes by default based on the app state.
 
-*   HealthStatus.Healthy ⇒ `StatusCodes.Status200OK`
-*   HealthStatus.Degraded ⇒ `StatusCodes.Status200OK`
-*   HealthStatus.Unhealthy ⇒ `StatusCodes.Status503ServiceUnavailable`
+-   HealthStatus.Healthy ⇒ `StatusCodes.Status200OK`
+-   HealthStatus.Degraded ⇒ `StatusCodes.Status200OK`
+-   HealthStatus.Unhealthy ⇒ `StatusCodes.Status503ServiceUnavailable`
 
-Custom Health Check in ASP NET
-------------------------------
+## Custom Health Check in ASP NET
 
 Health Checks are created by implementing the `IHealthCheck` interface.
 
@@ -65,39 +63,39 @@ Below is a SampleHealthCheck, as shown in the official documentation [here](http
 ```csharp
 public class SampleHealthCheck : IHealthCheck
 {
-```csharp
-        public Task<HealthCheckResult> CheckHealthAsync(
-            HealthCheckContext context, CancellationToken cancellationToken = default)
+    public Task<HealthCheckResult> CheckHealthAsync(
+        HealthCheckContext context, CancellationToken cancellationToken = default)
+    {
+        var isHealthy = GetApplicationState();
+
+        / ...
+
+        if (isHealthy)
         {
-            var isHealthy = GetApplicationState();
-    
-            // ...
-    
-            if (isHealthy)
-            {
-                return Task.FromResult(
-                    HealthCheckResult.Healthy("A healthy result."));
-            }
-    
             return Task.FromResult(
-                new HealthCheckResult(
-                    context.Registration.FailureStatus, "An unhealthy result."));
+                HealthCheckResult.Healthy("A healthy result."));
         }
+
+        return Task.FromResult(
+            new HealthCheckResult(
+                context.Registration.FailureStatus, "An unhealthy result."));
     }
+}
+
+```
 
 Once defined, we need to register this in the DependencyInjection container so that the health check service can pick it up.
 
-
-```html
+```csharp
 builder.Services
   .AddHealthChecks()
   .AddCheck<SampleHealthCheck>("Sample");
+
 ```
 
 Based on the application's current state, it returns the appropriate HealthCheckResult.
 
-AspNetCore Diagnostics HealthChecks Package
--------------------------------------------
+## AspNetCore Diagnostics HealthChecks Package
 
 AspNetCore.Diagnostics.HealthChecks is a NuGet package that simplifies health monitoring in ASP.NET Core applications.
 
@@ -111,17 +109,15 @@ Let's see an example of adding a health check service for a SQL Server that the 
 
 I have an SQL Server instance running on AWS RDS that I use in my ASP NET application.
 
-[
-
-AWS RDS and .NET: Step-by-Step Guide for SQL Server Setup
-
-Amazon Relational Database Service (RDS) is a managed database service on AWS Cloud. RDS provides different database engines; in this post, we will focus on SQL Server. We will set up a Microsoft SQL Server database on RDS and connect to it from a .NET application.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/RDS-SQL-Server--1-.png)
-
-](/posts/aws-rds-sql-server-dotnet/)
+<BlogLink
+  href="/blog/aws-rds-sql-server-dotnet/"
+  title="AWS RDS and .NET: Step-by-Step Guide for SQL Server Setup"
+  description="Amazon Relational Database Service (RDS) is a managed database service on AWS Cloud. RDS provides different database engines; in this post, we will focus on SQL Server. We will set up a Microsoft SQL Server database on RDS and connect to it from a .NET application."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/RDS-SQL-Server--1-.png"
+/>
 
 Let's first install the NuGet package to add in SQL Server health checks.
 
@@ -129,12 +125,12 @@ Let's first install the NuGet package to add in SQL Server health checks.
 
 We must register the SqlServerHealthCheck instance as shown below, using the `AddSqlServer` extension method that the NuGet package provides.
 
-
-```html
+```csharp
 builder.Services
     .AddHealthChecks()
     .AddCheck<SampleHealthCheck>("Sample", tags: ["sample"])
     .AddSqlServer(connectionString);
+
 ```
 
 You can find the source code for the `SqlServerHealthCheck` on [GitHub](https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks/blob/master/src/HealthChecks.SqlServer/SqlServerHealthCheck.cs).
@@ -147,33 +143,30 @@ By default, it runs the query 'Select 1' as specified in the [extension method](
 
 Let's say our application is using AWS DynamoDB as its database we can use the `AspNetCore.HealthChecks.DynamoDB` NuGet package and register it like before.
 
-
-```html
+```csharp
 builder.Services
     .AddHealthChecks()
     .AddCheck<SampleHealthCheck>("Sample")
     .AddSqlServer(connectionString)
     .AddDynamoDb();
+
 ```
 
 The NuGet package provides a similar extension method, `AddDynamoDb` registering a health check for DynamoDB.
 
-[
-
-Amazon DynamoDB For The .NET Developer
-
-This blog post is a collection of other posts that covers various aspects of Amazon DynamoDB and other services you can integrate with when building serverless applications.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/Amazon-DynamoDB.png)
-
-](/posts/amazon-dynamodb-dotnet-developer/)
+<BlogLink
+  href="/blog/amazon-dynamodb-dotnet-developer/"
+  title="Amazon DynamoDB For The .NET Developer"
+  description="This blog post is a collection of other posts that covers various aspects of Amazon DynamoDB and other services you can integrate with when building serverless applications."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/Amazon-DynamoDB.png"
+/>
 
 The default implementation, in this [case](https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks/blob/master/src/HealthChecks.DynamoDb/DynamoDbHealthCheck.cs), calls a `ListTablesAsync` using the `AmazonDynamoDBClient` instance.
 
-Customize ASP NET Health Check Output
--------------------------------------
+## Customize ASP NET Health Check Output
 
 By default, the health check endpoint returns a simple string response → Healthy, Unhealthy.
 
@@ -186,9 +179,10 @@ We can specify a custom ResponseWriter when calling the `MapHelathChecks` endpoi
 ```csharp
 app.MapHealthChecks("/healthz", new HealthCheckOptions()
 {
+    ResponseWriter = WriteResponse
+});
+
 ```
-        ResponseWriter = WriteResponse
-    });
 
 You can look at a simple implementation of the `WriteResponse` method [here](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-8.0#customize-output).
 
@@ -196,8 +190,7 @@ This produces a customized JSON output that lists of the status of the individua
 
 Below is a sample response output.
 
-
-```css
+```json
 {
     "status": "Unhealthy",
     "results": {
@@ -218,6 +211,7 @@ Below is a sample response output.
         }
     }
 }
+
 ```
 
 ![](/images/image-11.png)

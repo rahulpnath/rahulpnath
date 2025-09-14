@@ -1,52 +1,57 @@
 ---
 title: "Function URLs - Quick and Easy way to Invoke AWS Lambda Functions over HTTP"
-slug: "function-urls-in-aws-lambda-dotnet"
-date: "2022-10-25T06:37:22.000Z"
-feature_image: "/images/AWS-Lambda-Function-URLs.png"
-tags: ["AWS","Lambda"]
+slug: function-urls-in-aws-lambda-dotnet
+date: 2022-10-25T00:00:00.000Z
+feature_image: /images/AWS-Lambda-Function-URLs.png
+excerpt: >-
+  A Function URL is a dedicated endpoint for your Lambda function. Learn how to
+  enable Function URLs and build an API using .NET Lambda Function.
+tags:
+  - AWS
+  - Lambda
 ---
-
-_This article is sponsored by AWS and is part of my [AWS Series](/posts/category/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/blog/category/aws/)._
 
 A Function URL is a dedicated HTTP(S) endpoint for your Lambda function.
 
 When enabling Function URLs, Lambda automatically generates a unique URL endpoint. Once you create a function URL, its URL endpoint never changes.
 
-<iframe src="https://www.youtube.com/embed/KMM\_q-Uta0Y?feature=oembed" />
+<iframe src="https://www.youtube.com/embed/KMM_q-Uta0Y?feature=oembed" />
 
 Function URLs are a good choice for a single-function microservice with a public endpoint that doesn’t require the advanced functionality of API Gateway.
 
 In this post, let’s learn,
 
-*   Create a Lambda Function using .NET and enable Function URLs.
-*   Handle request/response from the Lambda URL endpoint.
-*   Handle different HTTP requests and build an API endpoint using Function URLs.
+-   Create a Lambda Function using .NET and enable Function URLs.
+-   Handle request/response from the Lambda URL endpoint.
+-   Handle different HTTP requests and build an API endpoint using Function URLs.
 
-Enable Function URL on .NET Lambda Function
--------------------------------------------
+## Enable Function URL on .NET Lambda Function
 
 Let's first create a new Lambda Function to see Function URLs in action. For this example, I will make one using .NET. But the process is the same regardless of which programming language you choose.
 
 ### Create a .NET Lambda Function
 
-Install the AWS Toolkit ([Visual Studio](https://aws.amazon.com/visualstudio/), [Rider](https://aws.amazon.com/rider/), [VS Code](https://aws.amazon.com/visualstudiocode/)) and [set up Credentials for the local development environment](/posts/amazon-credentials-dotnet/). The toolkit helps you quickly develop .NET applications on the AWS infrastructure and deploy them quickly to your AWS Accounts.
+Install the AWS Toolkit ([Visual Studio](https://aws.amazon.com/visualstudio/), [Rider](https://aws.amazon.com/rider/), [VS Code](https://aws.amazon.com/visualstudiocode/)) and [set up Credentials for the local development environment](/blog/amazon-credentials-dotnet/). The toolkit helps you quickly develop .NET applications on the AWS infrastructure and deploy them quickly to your AWS Accounts.
 
 With the AWS Toolkit installed, select the AWS Lambda Lambda Project template from the new project template and choose the Empty Function blueprint. This creates an AWS Lambda function template project with a `Function.cs` class.
 
-To handle requests coming from Function URLs, the Lambda input must be of type `APIGatewayHttpApiV2ProxyRequest`. This is the same input type required when building [HTTP APIs (v2 payload) on Amazon API Gateway](/posts/amazon-api-gateway-http-apis/).
+To handle requests coming from Function URLs, the Lambda input must be of type `APIGatewayHttpApiV2ProxyRequest`. This is the same input type required when building [HTTP APIs (v2 payload) on Amazon API Gateway](/blog/amazon-api-gateway-http-apis/).
 
 Update the input type; for now, we will return the body coming in as part of the request.
 
-    public string FunctionHandler(
-        APIGatewayHttpApiV2ProxyRequest request, ILambdaContext context)
-    {
-        return request.Body.ToUpper();
-    }
-    
+```csharp
+public string FunctionHandler(
+    APIGatewayHttpApiV2ProxyRequest request, ILambdaContext context)
+{
+    return request.Body.ToUpper();
+}
+
+```
 
 ### Deploy Lambda Function
 
-To publish the Lambda function to an AWS account, you can use the Publish to AWS Lambda option that the AWS Toolkit provides. You can directly publish the new lambda function with your [development environment connected to your AWS account](/posts/amazon-credentials-dotnet/).
+To publish the Lambda function to an AWS account, you can use the Publish to AWS Lambda option that the AWS Toolkit provides. You can directly publish the new lambda function with your [development environment connected to your AWS account](/blog/amazon-credentials-dotnet/).
 
 I prefer to set up an automated build/deploy pipeline to publish to your AWS Account for real-world applications. Check out the below for an example of how to set up a Lambda Function deployment pipeline from GitHub Actions.
 
@@ -72,78 +77,80 @@ Once enabled and saved, the Lambda environment automatically generates a new URL
 
 To test the integration, make a `POST` request to the Function URL with some random text in the body. It will return the text in upper case.
 
-Handle Request/Response from Function URL
------------------------------------------
+## Handle Request/Response from Function URL
 
 By default, when returning a `string` response from the Lambda Function handler, it automatically converts it into a `200 OK` HTTP response.
 
 To have finer control over the returned HTTP Status code and response content, we can update the Function handler to return a `APIGatewayHttpApiV2ProxyResponse` object.
 
-    public APIGatewayHttpApiV2ProxyResponse FunctionHandler(
-        APIGatewayHttpApiV2ProxyRequest request, ILambdaContext context)
-    {
-        string? userIdString = null;
-        request.QueryStringParameters?.TryGetValue("userId", out userIdString);
-    
-        if (!Guid.TryParse(userIdString, out Guid userId)) return BadRequest();
-    
-        var user = new User() { Id = userId, Name = "<Name from Database>" };
-    
-        return new APIGatewayHttpApiV2ProxyResponse()
-        {
-            Body = JsonSerializer.Serialize(user),
-            StatusCode = (int)HttpStatusCode.OK
-        };
-    }
-    
 ```csharp
+public APIGatewayHttpApiV2ProxyResponse FunctionHandler(
+    APIGatewayHttpApiV2ProxyRequest request, ILambdaContext context)
+{
+    string? userIdString = null;
+    request.QueryStringParameters?.TryGetValue("userId", out userIdString);
+
+    if (!Guid.TryParse(userIdString, out Guid userId)) return BadRequest();
+
+    var user = new User() { Id = userId, Name = "<Name from Database>" };
+
+    return new APIGatewayHttpApiV2ProxyResponse()
+    {
+        Body = JsonSerializer.Serialize(user),
+        StatusCode = (int)HttpStatusCode.OK
+    };
+}
+
 private static APIGatewayHttpApiV2ProxyResponse BadRequest()
 {
+    return new APIGatewayHttpApiV2ProxyResponse()
+    {
+        StatusCode = (int)HttpStatusCode.BadRequest
+    };
+}
+
 ```
-        return new APIGatewayHttpApiV2ProxyResponse()
-        {
-            StatusCode = (int)HttpStatusCode.BadRequest
-        };
-    }
-    
 
 The above Lambda Function handler extracts `userId` from  `QueryStringParameters` on the incoming request. If the id exists, it returns a mocked `User` object. It returns a `BadRequest` response with the appropriate Status code if it is not passed.
 
-Build an API using Function URL in .NET
----------------------------------------
+## Build an API using Function URL in .NET
 
 The above version of the Lambda function returns the appropriate response no matter which HTTP Verb is used.  
+
 But when building HTTP APIs, we need to use the HTTP Verbs to determine what action to perform.
 
 For example, for a `GET` request, we can return the User corresponding the `userId`. For a `POST` request, we can take the `User` information from the request body, and create a new User in our data store, and so on.
 
 We can easily do this using the `request.RequestContext.Http.Method` property on the incoming request object. Based on the HTTP Verb of the request, we can switch between the different behavior in our Lambda Function.
 
-    public APIGatewayHttpApiV2ProxyResponse FunctionHandler(
-        APIGatewayHttpApiV2ProxyRequest request, ILambdaContext context)
+```csharp
+public APIGatewayHttpApiV2ProxyResponse FunctionHandler(
+    APIGatewayHttpApiV2ProxyRequest request, ILambdaContext context)
+{
+    return request.RequestContext.Http.Method.ToUpper() switch
     {
-        return request.RequestContext.Http.Method.ToUpper() switch
-        {
-            "GET" => HandleGetRequest(request),
-            "POST" => HandlePostRequest(request),
-            _ => BadRequest()
-        };
-    }
-    
-    private APIGatewayHttpApiV2ProxyResponse HandlePostRequest(
-        APIGatewayHttpApiV2ProxyRequest request)
+        "GET" => HandleGetRequest(request),
+        "POST" => HandlePostRequest(request),
+        _ => BadRequest()
+    };
+}
+
+private APIGatewayHttpApiV2ProxyResponse HandlePostRequest(
+    APIGatewayHttpApiV2ProxyRequest request)
+{
+    var user = JsonSerializer.Deserialize<User>(request.Body);
+    if (user == null) return BadRequest();
+
+    // Add this to the datastore
+
+    return new APIGatewayHttpApiV2ProxyResponse()
     {
-        var user = JsonSerializer.Deserialize<User>(request.Body);
-        if (user == null) return BadRequest();
-    
-        // Add this to the datastore
-    
-        return new APIGatewayHttpApiV2ProxyResponse()
-        {
-            StatusCode = (int)HttpStatusCode.Accepted,
-            Body = user.Id.ToString()
-        };
-    }
+        StatusCode = (int)HttpStatusCode.Accepted,
+        Body = user.Id.ToString()
+    };
+}
+
+```
 
 The above version of the Lambda Function handles `GET` and `POST` requests and handles them appropriately to return or create a new User.
 

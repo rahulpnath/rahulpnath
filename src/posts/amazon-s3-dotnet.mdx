@@ -1,13 +1,14 @@
 ---
 title: "Amazon S3 For the .NET Developer: How to Easily Get Started"
-slug: "amazon-s3-dotnet"
-date: "2022-04-20T00:00:00.000Z"
-feature_image: "/images/storage-box.jpg"
-tags: ["AWS"]
-excerpt: "A practical guide for .NET developers to get started with Amazon S3. Learn how to store and retrieve data, understand buckets and objects, and integrate S3 into your applications."
+slug: amazon-s3-dotnet
+date: 2022-04-20
+feature_image: /images/storage-box.jpg
+excerpt: >-
+  Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3.
+tags:
+  - AWS
 ---
-
-_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
 Amazon Simple Storage Service (S3) is an object storage service that provides a scalable and secure storage infrastructure. You can store any type of data in S3, which makes it suitable for a wider variety of use cases, including using it as a NO SQL Database.
 
@@ -15,27 +16,9 @@ While Amazon S3 allows interactions through the UI console, it’s more useful w
 
 In this blog post, let’s look at how to start using Amazon S3 from a .NET application. We will learn how to store and retrieve data from the storage, essential concepts to be aware of while using S3.
 
-<div>
 <iframe src="https://www.youtube.com/embed/3sdTztvaxhg" />
-</div>
 
-Basic Concepts
---------------
-```csharp
-private const string BucketName = "weather-forecast-rahul-youtube";
-
-[HttpPost]
-public async Task Post(IFormFile file)
-{
-    var s3client = new AmazonS3Client();
-    var bucketRequest = new PutBucketRequest()
-    {
-        BucketName = BucketName,
-        UseClientRegion = true
-    };
-    await s3Client.PutBucketAsync(bucketRequest);
-}
-```
+## Basic Concepts
 
 When using S3, two standard terms that you will come across often are **Buckets and Objects.**
 
@@ -47,8 +30,7 @@ A **Bucket** is a container for Objects and is required to start adding Objects 
 
 Any data/file stored in S3 is referred to as an Object. It is the fundamental entity stored in S3. An object consists of the data and associated metadata. The Object's name is referred to as Key and uniquely identifies it within a bucket.
 
-Amazon S3 & .NET
-----------------
+## Amazon S3 & .NET
 
 Amazon S3 allows programmatic access via [REST API](https://docs.aws.amazon.com/AmazonS3/latest/API/Welcome.html) and provides SDKs for popular languages.
 
@@ -76,23 +58,22 @@ I use the Shared AWS Credentials stored on my local machine to authenticate with
 
 Using the `PutBucketAsync` method on the S3 Client, we can pass a `PutBucketRequest` specifying the `BucketName` and the region for the Bucket.
 
-    
-    ```csharp
-    private const string BucketName = "weather-forecast-rahul-youtube";
+```csharp
+private const string BucketName = "weather-forecast-rahul-youtube";
 
-    [HttpPost]
-    public async Task Post(IFormFile file)
+[HttpPost]
+public async Task Post(IFormFile file)
+{
+    var s3client = new AmazonS3Client();
+    var bucketRequest = new PutBucketRequest()
     {
-        var s3client = new AmazonS3Client();
-        var bucketRequest = new PutBucketRequest()
-        {
-            BucketName = BucketName,
-            UseClientRegion = true
-        };
-        await s3Client.PutBucketAsync(bucketRequest);
-    }
-    ```
-    
+        BucketName = BucketName,
+        UseClientRegion = true
+    };
+    await s3Client.PutBucketAsync(bucketRequest);
+}
+
+```
 
 The above code creates a new Bucket, provided no bucket exists with the same `BucketName`.
 
@@ -106,24 +87,27 @@ The `AmazonS3Util` class as part of the same NuGet package provides the `DoesS3B
 var bucketExists = await AmazonS3Util.DoesS3BucketExistV2Async(s3Client, BucketName);
 if (!bucketExists)
 {
-   // Create Bucket
+   / Create Bucket
 }
+
 ```
+
 ### Upload File
 
 Objects are uploaded to S3 into a Bucket. The `AmazonS3Client` also provides methods to manage Objects.
 
 The `PutObjectAsync` method takes a `PutObjectRequest` to upload a file to S3.
+
 ```csharp
 var objectRequest = new PutObjectRequest()
 {
     BucketName = BucketName,
-     Key = formFile.FileName,
+    Key = formFile.FileName,
     InputStream = formFile.OpenReadStream()
 };
 var reponse = await s3Client.PutObjectAsync(objectRequest);
+
 ```
-    
 
 At the minimum, the request must contain the _BucketName, Key, and data (InputStream)_ when uploading a new object. This creates a new Object in the specified Bucket.
 
@@ -147,17 +131,19 @@ The AWS Console uses the delimiter in Object key names to group them as folders,
 
 An Object uploaded to S3 also has associated metadata, which are sets of name-value pairs. There are two kinds of metadata
 
-*   **System-defined metadata** → These are properties maintained by Amazon itself. Within this, some can be modified only by Amazon, and some that the user can set.
+-   **System-defined metadata** → These are properties maintained by Amazon itself. Within this, some can be modified only by Amazon, and some that the user can set.
 
 [Storage Class](https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html) is an example of system-defined metadata that can be updated by a user as well. Storage Class, by default is set to S3 Standard, and it impacts the [pricing for S3 usage](https://aws.amazon.com/s3/pricing/). Based on the usage scenario and performance requirement, you can choose from the [different storage classes available](https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html#sc-compare).
 
-*   **User-defined metadata** → Optional set of user-provided key value. It is useful to store additional information along with the Object in S3. User-defined metadata names must begin with "x-amz-meta-”.
+-   **User-defined metadata** → Optional set of user-provided key value. It is useful to store additional information along with the Object in S3. User-defined metadata names must begin with "x-amz-meta-”.
 
 User-defined metadata can be added from the AWS Console or when creating the Object in code, as shown below.
+
 ```csharp
-    ...
-    objectRequest.Metadata.Add("Test", "New Meta");
-    var reponse = await s3Client.PutObjectAsync(objectRequest);
+...
+objectRequest.Metadata.Add("Test", "New Meta");
+var reponse = await s3Client.PutObjectAsync(objectRequest);
+
 ```
 
 ### Retrieving Files
@@ -165,14 +151,16 @@ User-defined metadata can be added from the AWS Console or when creating the Obj
 Depending on your use case, you can retrieve single files or as a list.
 
 Given an Object key name, the `GetObjectAsync` method takes in the Bucket name and the key to retrieve the file, as shown below.
+
 ```csharp
- [HttpGet("getFile", Name = "GetWeatherForecastFile")]
- public async Task<IActionResult> GetFile(string fileName)
+[HttpGet("getFile", Name = "GetWeatherForecastFile")]
+public async Task<IActionResult> GetFile(string fileName)
 {
     var s3client = new AmazonS3Client();
-     var file = await s3client.GetObjectAsync(BucketName, fileName);
-     return File(file.ResponseStream, file.Headers.ContentType);
+    var file = await s3client.GetObjectAsync(BucketName, fileName);
+    return File(file.ResponseStream, file.Headers.ContentType);
 }
+
 ```
 
 The above code directly streams the content back to an API request. You can also download the contents to memory and process them if required. This is useful in machine-to-machine file-based processing scenarios.
@@ -180,30 +168,34 @@ The above code directly streams the content back to an API request. You can also
 ```csharp
 using var reader = new StreamReader(file.ResponseStream);
 var contents = await reader.ReadToEndAsync();
-```   
+
+```
 
 Amazon S3 also supports retrieving files in bulk. If you want to process all files under a given logical folder hierarchy, you can use the `ListObjectsV2Async` method.
 
 ```csharp
 var request = new ListObjectsV2Request()
-   {
+{
     BucketName = BucketName,
     Prefix = prefix
 };
 var response= await client.ListObjectsV2Async(request);
+
 ```
 
 ### Presigned URLs
 
 By default, all Objects uploaded to S3 are private. Using Presigned URLs, you can share files in the Bucket. You can attach different policies to the URL generated based on which you can restrict access to the file.
+
 ```csharp
-    var presignRequest = new GetPreSignedUrlRequest()
-    {
-        BucketName = BucketName,
-        Key = objectKey,
-        Expires = DateTime.UtcNow.AddSeconds(300),
-    };
-    var presignedUrlResponse=  s3Client.GetPreSignedURL(presignRequest);
+var presignRequest = new GetPreSignedUrlRequest()
+{
+    BucketName = BucketName,
+    Key = objectKey,
+    Expires = DateTime.UtcNow.AddSeconds(300),
+};
+var presignedUrlResponse=  s3Client.GetPreSignedURL(presignRequest);
+
 ```
 
 The above code generated a Presigned URL that expires in 300 seconds. Anyone with the URL can access the Object in that Bucket during that time.
@@ -211,39 +203,41 @@ The above code generated a Presigned URL that expires in 300 seconds. Anyone wit
 ### Delete Object
 
 To delete an existing Object, we only need the key and the Bucket name. Using the `DeleteObjectAsync` method, we can delete an Object from the Bucket.
+
 ```csharp
-    [HttpDelete]
-    public async void Delete(string fileName)
-    {
-        var response = await s3Client.DeleteObjectAsync(BucketName, fileName);
-    }
-    
+[HttpDelete]
+public async void Delete(string fileName)
+{
+    var response = await s3Client.DeleteObjectAsync(BucketName, fileName);
+}
+
 ```
+
 To protect against accidental deletes or to keep backups, you can [enable Versioning on the Bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/DeletingObjectVersions.html). When versioned deleting an Object is only a soft delete, you can retrieve the Object using the specific version identifier.
 
-Dependency Injection
---------------------
+## Dependency Injection
 
-<div>
 <iframe src="https://www.youtube.com/embed/YR6HkvNBpX4" />
-</div>
 
 To inject the `AmazonS3Client` into our class constructor, we must first register it in our _Program.cs_ class. The [AWSSDK.Extensions.NETCore.Setup](https://www.nuget.org/packages/AWSSDK.Extensions.NETCore.Setup/) NuGet package provides extensions methods to register AWS Service classes.
+
 ```csharp
-    builder.Services.AddAWSService<IAmazonS3>();    
+builder.Services.AddAWSService<IAmazonS3>();
+
 ```
+
 With the IAmazonS3 interface registered in the Service Collection, we can inject it into our class via the constructor, as shown below.
+
 ```csharp
-    public WeatherForecastController(
-        IAmazonS3 s3Client,
-        ILogger<WeatherForecastController> logger)
-    {
+public WeatherForecastController(
+    IAmazonS3 s3Client,
+    ILogger<WeatherForecastController> logger)
+{
+    this.s3Client = s3Client;
+    this.logger = logger;
+}
 
-        this.s3Client = s3Client;
-        this.logger = logger;
-    }
-
- ```
+```
 
 You can use the injected `s3Client`instance in all the functions instead of creating a new instance of `AmazonS3Client` every time.
 

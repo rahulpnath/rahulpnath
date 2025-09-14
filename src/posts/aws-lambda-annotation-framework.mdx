@@ -1,18 +1,23 @@
 ---
 title: "Learn How AWS Lambda Annotations Framework Makes API Gateway Integration Easy."
-slug: "aws-lambda-annotation-framework"
-date: "2023-08-28T06:56:57.000Z"
-feature_image: "/images/Lambda-Annotation-Framework---Introduction.png"
-tags: ["AWS","Lambda"]
+slug: aws-lambda-annotation-framework
+date: 2023-08-28T00:00:00.000Z
+feature_image: /images/Lambda-Annotation-Framework---Introduction.png
+excerpt: >-
+  Let's learn what the Lambda Annotation Framework aims to solve and how it
+  compares with older ways of building Lambda Functions. We will see this
+  through an example of creating a simple API endpoint.
+tags:
+  - AWS
+  - Lambda
 ---
-
 The [Lambda Annotations Framework](https://github.com/aws/aws-lambda-dotnet/blob/master/Libraries/src/Amazon.Lambda.Annotations/README.md) is a programming model that makes it easier to build AWS Lambda Functions using .NET.
 
 It provides a natural programming model to build Lambda Functions.
 
 The framework uses C# custom attributes and Source Generators to translate annotated Lambda functions to the regular Lambda programming model.
 
-<iframe src="https://www.youtube.com/embed/qWxjCkqX\_lM?feature=oembed" />
+<iframe src="https://www.youtube.com/embed/qWxjCkqX_lM?feature=oembed" />
 
 _This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
@@ -20,54 +25,52 @@ In this blog post let's learn what the Lambda Annotation Framework aims to solve
 
 First, we will build this using the traditional integration with API Gateway with a Lambda Function. We will then see how the Annotations Framework makes the process seamless and more straightforward.
 
-API Endpoint Using Lambda Programming Model
--------------------------------------------
+## API Endpoint Using Lambda Programming Model
 
-There are [several ways to build APIs](/posts/aws-lambda-dotnet-developer/#building-apis-with-aws-lambda) on AWS Lambda, including using API Gateway, Function URLs, and hosting ASP.NET Core Applications.
+There are [several ways to build APIs](/blog/aws-lambda-dotnet-developer/#building-apis-with-aws-lambda) on AWS Lambda, including using API Gateway, Function URLs, and hosting ASP.NET Core Applications.
 
 Below is a sample Lambda Function `MathPlus` that integrates with API Gateway to add two numbers.
 
 It expects the numbers to add as path variables - `/{a}/{b}`
 
-    public APIGatewayProxyResponse MathPlus(
-        APIGatewayProxyRequest request, ILambdaContext context)
-    {
-        if (!request.PathParameters.TryGetValue("a", out var aString) ||
-            !request.PathParameters.TryGetValue("b", out var bString))
-            return BadRequest();
-    
-        if (!int.TryParse(aString, out var a) || !int.TryParse(bString, out var b))
-            return BadRequest();
-    
-        var sum = a + b;
-        
-        return OkResult(sum);
-    }
-    
 ```csharp
+public APIGatewayProxyResponse MathPlus(
+    APIGatewayProxyRequest request, ILambdaContext context)
+{
+    if (!request.PathParameters.TryGetValue("a", out var aString) ||
+        !request.PathParameters.TryGetValue("b", out var bString))
+        return BadRequest();
+
+    if (!int.TryParse(aString, out var a) || !int.TryParse(bString, out var b))
+        return BadRequest();
+
+    var sum = a + b;
+    
+    return OkResult(sum);
+}
+
 private static APIGatewayProxyResponse OkResult(int sum)
 {
-```
-        return new APIGatewayProxyResponse
+    return new APIGatewayProxyResponse
+    {
+        StatusCode = (int)HttpStatusCode.OK,
+        Body = sum.ToString(),
+        Headers = new Dictionary<string, string>
         {
-            StatusCode = (int)HttpStatusCode.OK,
-            Body = sum.ToString(),
-            Headers = new Dictionary<string, string>
-            {
-                { "Content-Type", "text/plain" }
-            }
-        };
-    }
-    
-```csharp
+            { "Content-Type", "text/plain" }
+        }
+    };
+}
+
 private static APIGatewayProxyResponse BadRequest()
 {
+    return new APIGatewayProxyResponse
+    {
+        StatusCode = (int)HttpStatusCode.BadRequest
+    };
+}
+
 ```
-        return new APIGatewayProxyResponse
-        {
-            StatusCode = (int)HttpStatusCode.BadRequest
-        };
-    }
 
 The Function code tries to retrieve the 2 numbers (a & b) from the PathParameters property on the `APIGatewayProxyRequest`. It then tried to convert them into an integer.
 
@@ -79,8 +82,7 @@ The Function code is verbose and tied to the API Gateway Request/Response models
 
  _The actual logic that we are interested in is only one line (adding the two numbers) and the rest of it is purely boilerplate code._
 
-API Endpoint Using Lambda Annotations Framework
------------------------------------------------
+## API Endpoint Using Lambda Annotations Framework
 
 Lambda Annotations Framework simplifies the default Lambda programming model and simplifies the Function code.
 
@@ -98,8 +100,8 @@ The `LambdaFunction` attribute is used the decorate a .NET Function as a Lambda 
 
 Depending on the type of API we are building in API Gateway, we can use the `RestApi` or the `HttpApi` attribute.
 
-*   `RestApi` → Configures Lambda Function to be called from [API Gateway REST API](/posts/amazon-api-gateway-rest-api-introduction/).
-*   `HttpApi` → Configures Lambda Function to be called from [API Gateway HTTP API](/posts/amazon-api-gateway-http-apis/).
+-   `RestApi` → Configures Lambda Function to be called from [API Gateway REST API](/blog/amazon-api-gateway-rest-api-introduction/).
+-   `HttpApi` → Configures Lambda Function to be called from [API Gateway HTTP API](/blog/amazon-api-gateway-http-apis/).
 
 The below Function implements the same API endpoint to add two numbers using the Annotations Framework.
 
@@ -108,9 +110,10 @@ The below Function implements the same API endpoint to add two numbers using the
 [HttpApi(LambdaHttpMethod.Get, "/add/{a}/{b}")]
 public int Add(int a, int b, ILambdaContext lambdaContext)
 {
+    return a + b;
+}
+
 ```
-        return a + b;
-    }
 
 As you can see it is more close to the .NET programming language, which takes in two integers as the Function's input and returns the sum of them as the result.
 
@@ -134,42 +137,46 @@ By default, it generates a file with the name `serverless.template`, which is de
 
 Below is the generated CloudFormation template for the Function that we wrote above to add two numbers.
 
-    {
-      "AWSTemplateFormatVersion": "2010-09-09",
-      "Transform": "AWS::Serverless-2016-10-31",
-      "Description": "This template is partially managed by Amazon.Lambda.Annotations (v1.0.0.0).",
-      "Resources": {
-        "AnnotationScratchFunctionAddGenerated": {
-          "Type": "AWS::Serverless::Function",
-          "Metadata": {
-            "Tool": "Amazon.Lambda.Annotations",
-            "SyncedEvents": [
-              "RootGet"
-            ]
-          },
-          "Properties": {
-            "Runtime": "dotnet6",
-            "CodeUri": ".",
-            "MemorySize": 512,
-            "Timeout": 60,
-            "Policies": [
-              "AWSLambdaBasicExecutionRole"
-            ],
-            "PackageType": "Zip",
-            "Handler": "AnnotationScratch::AnnotationScratch.Function_Add_Generated::Add",
-            "Events": {
-              "RootGet": {
-                "Type": "HttpApi",
-                "Properties": {
-                  "Path": "/add/{a}/{b}",
-                  "Method": "GET"
-                }
-              }
+```
+
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Transform": "AWS::Serverless-2016-10-31",
+  "Description": "This template is partially managed by Amazon.Lambda.Annotations (v1.0.0.0).",
+  "Resources": {
+    "AnnotationScratchFunctionAddGenerated": {
+      "Type": "AWS::Serverless::Function",
+      "Metadata": {
+        "Tool": "Amazon.Lambda.Annotations",
+        "SyncedEvents": [
+          "RootGet"
+        ]
+      },
+      "Properties": {
+        "Runtime": "dotnet6",
+        "CodeUri": ".",
+        "MemorySize": 512,
+        "Timeout": 60,
+        "Policies": [
+          "AWSLambdaBasicExecutionRole"
+        ],
+        "PackageType": "Zip",
+        "Handler": "AnnotationScratch::AnnotationScratch.Function_Add_Generated::Add",
+        "Events": {
+          "RootGet": {
+            "Type": "HttpApi",
+            "Properties": {
+              "Path": "/add/{a}/{b}",
+              "Method": "GET"
             }
           }
         }
       }
     }
+  }
+}
+
+```
 
 It sets up an API Gateway HTTP API endpoint with the appropriate path and sets up the AWS Lambda Function integration to the source-generated function name - `AnnotationScratch::AnnotationScratch.Function_Add_Generated::Add`.
 

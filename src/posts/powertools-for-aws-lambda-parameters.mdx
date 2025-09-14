@@ -1,12 +1,14 @@
 ---
 title: "How To Effectively Manage Sensitive Information in AWS Lambda: Powertools Parameters"
-slug: "powertools-for-aws-lambda-parameters"
-date: "2024-01-01T23:14:36.000Z"
-feature_image: "/images/Powertools---Parameters.png"
-tags: ["AWS","Lambda"]
-excerpt: "Learn how to manage sensitive information in AWS Lambda using Powertools Parameters. This post covers storing configuration and secrets, using AWS services like Parameter Store and Secrets Manager, and integrating with the Lambda Powertools library for .NET."
+slug: powertools-for-aws-lambda-parameters
+date: 2024-01-01
+feature_image: /images/Powertools---Parameters.png
+excerpt: >-
+  Learn how to get started using the Lambda Powertools Parameters NuGet package, use it when building Lambda Functions, and connect quickly to Parameter Store and Secrets Manager using the library package.
+tags:
+  - AWS
+  - Lambda
 ---
-
 When building Lambda Functions, we often need to store configuration and sensitive information.
 
 AWS Provides different services like Parameter Store, Secrets Manager, etc., to store sensitive information.
@@ -17,33 +19,29 @@ The AWS Lambda Powertools library makes it easy to work with these different ser
 
 In this blog post, let’s learn how to get started using the Lambda Powertools Parameters NuGet package, use it when building Lambda Functions, and connect quickly to Parameter Store and Secrets Manager using the library package.
 
-_This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/tag/aws/)_._
 
-AWS Powertools Parameters Package
----------------------------------
+## AWS Powertools Parameters Package
 
 Powertools Parameters utility is available as a NuGet package. To get started using it from the application, install [AWS.Lambda.Powertools.Parameters](https://www.nuget.org/packages?q=AWS.Lambda.Powertools.Parameters) NuGet package.
 
 Once installed, we can use it to integrate with the various AWS Services to manage secrets and configuration.
 
-AWS Lambda & Parameters Store
------------------------------
+## AWS Lambda & Parameters Store
 
 AWS Parameter Store is a centralized, secure store for your application configuration.
 
 Parameter Store, a part of AWS Systems Manager, provides secure storage for application configuration and secret data. As parameter values, you can store passwords, database strings, Amazon Machine Image (AMI) IDs, API Keys, etc.
 
-[
-
-AWS Parameter Store For The .NET Developer: How to Easily Get Started
-
-Learn how to get started with AWS Parameter Store and use it from a .NET application to store and retrieve configuration data. Understand how parameters are versioned and how to use labels and hierarchies to manage parameters better. Seamlessly use the built-in .NET Configuration capabilities to loa
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/security_lock.jpg)
-
-](/posts/aws-parameter-store/)
+<BlogLink
+  href="/blog/aws-parameter-store/"
+  title="AWS Parameter Store For The .NET Developer: How to Easily Get Started"
+  description="Learn how to get started with AWS Parameter Store and use it from a .NET application to store and retrieve configuration data. Understand how parameters are versioned and how to use labels and hierarchies to manage parameters better. Seamlessly use the built-in .NET Configuration capabilities to loa"
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/security_lock.jpg"
+/>
 
 Parameter Store makes decoupling your code from configuration easy and acts as version control for your configuration data.
 
@@ -53,9 +51,12 @@ You can either retrieve one or multiple secrets at a time from the Parameter Sto
 
 The Powertools Parameter utility provides the `ParametersManager.SsmProvider` utility class to interact with the Parameter Store.
 
-        var value = await ParametersManager.SsmProvider.GetAsync("/Value1");
-        var multiple = await ParametersManager.SsmProvider
-             .GetMultipleAsync("/weather-app/");
+```csharp
+    var value = await ParametersManager.SsmProvider.GetAsync("/Value1");
+    var multiple = await ParametersManager.SsmProvider
+         .GetMultipleAsync("/weather-app/");
+
+```
 
 Use `GetAsync` method to retrieve one value and the `GetMultipleAsync` method to return multiple values given a key prefix.
 
@@ -69,22 +70,25 @@ Let's update the IAM permission of our Lambda function and add the below policy 
 
 To retrieve one parameter, we need the `ssm:GetParameter` and for multiple `ssm:GetParametersByPath` Action permissions. The below policy provides all actions starting with 'ssm:GetParameter', which is denoted by the '\*' at the end.
 
-    {
-      "PolicyName": "OrderApiParametersStorePolicy",
-      "PolicyDocument": {
-        "Version": "2012-10-17",
-        "Statement": [
-          {
-            "Effect": "Allow",
-            "Action": "ssm:GetParameter*",
-            "Resource": [
-              "arn:aws:ssm:ap-southeast-2:189107071895:parameter/Value1",
-              "arn:aws:ssm:ap-southeast-2:189107071895:parameter/weather-app/*"
-            ]
-          }
+```json
+{
+  "PolicyName": "OrderApiParametersStorePolicy",
+  "PolicyDocument": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": "ssm:GetParameter*",
+        "Resource": [
+          "arn:aws:ssm:ap-southeast-2:189107071895:parameter/Value1",
+          "arn:aws:ssm:ap-southeast-2:189107071895:parameter/weather-app/*"
         ]
       }
-    }
+    ]
+  }
+}
+
+```
 
 ### Transforming Parameter Store Values
 
@@ -94,37 +98,35 @@ For e.g., the parameter '/my-configuration' is stored as JSON in the Parameter S
 
 When retrieving the value, we can use the `WithTransformation` and specify to use JSON Transformation. This allows us to automatically deserialize the configuration to a custom type that we specify (in this case `MyConfiguration`)
 
-    var myConfiguration = await ParametersManager.SsmProvider.WithTransformation(Transformation.Json)
-         .GetAsync<MyConfiguration>("/my-configuration");
 ```csharp
+var myConfiguration = await ParametersManager.SsmProvider.WithTransformation(Transformation.Json)
+     .GetAsync<MyConfiguration>("/my-configuration");
 ...
 public class MyConfiguration
 {
+    public string Secret { get; set; }
+    public string Url { get; set; }
+}
+
 ```
-        public string Secret { get; set; }
-        public string Url { get; set; }
-    }
 
 The utility also supports [Base64 transformation](https://docs.powertools.aws.dev/lambda/dotnet/utilities/parameters/#transform-values).
 
-AWS Lambda & Secrets Manager
-----------------------------
+## AWS Lambda & Secrets Manager
 
 AWS Secrets Manager provides a centralized store to manage your application secrets.
 
 Secrets can be information like passwords, credentials, connection strings, API keys, etc. Secrets Manager helps you protect access to your IT resources and data by enabling you to rotate and manage access to your secrets.
 
-[
-
-How Best To Secure Secrets When Building .NET Applications on AWS
-
-Learn how to get started with using AWS Secrets Manager using a .NET Application. We will learn to connect to Secrets Manager from .NET using the client SDK and retrieve secrets. We will also see how to integrate Secrets Manager into built-in .NET Configuration and seamlessly use secrets from our ap
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/secure-padlock.jpg)
-
-](/posts/aws-secrets-manager/)
+<BlogLink
+  href="/blog/aws-secrets-manager/"
+  title="How Best To Secure Secrets When Building .NET Applications on AWS"
+  description="Learn how to get started with using AWS Secrets Manager using a .NET Application. We will learn to connect to Secrets Manager from .NET using the client SDK and retrieve secrets. We will also see how to integrate Secrets Manager into built-in .NET Configuration and seamlessly use secrets from our ap"
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/secure-padlock.jpg"
+/>
 
 ### Retrieving Secrets From Secrets Manager
 
@@ -132,8 +134,11 @@ The Parameters utility provides `ParametersManager.SecretsProvider` to retrieve 
 
 Secrets Manager currently supports only retrieving one secret value at a time. Trying to use the `GetMultipleAsync` method will throw an exception at runtime.
 
-    var secret1 = await ParametersManager.SecretsProvider
-           .GetAsync("weather-app/secret1");
+```csharp
+var secret1 = await ParametersManager.SecretsProvider
+       .GetAsync("weather-app/secret1");
+
+```
 
 ### Lambda Permissions for Secrets Manager
 
@@ -141,24 +146,26 @@ The Lambda Function requires `secretsmanager:GetSecretValue` permission on the S
 
 Let's update the IAM Permission also to include the required permission to retrieve the Secret from Secrets Manager, as shown below.
 
-    {
-      "PolicyName": "OrderApiSecretsStorePolicy",
-      "PolicyDocument": {
-        "Version": "2012-10-17",
-        "Statement": [
-          {
-            "Effect": "Allow",
-            "Action": "secretsmanager:GetSecretValue",
-            "Resource": [
-              "arn:aws:secretsmanager:ap-southeast-2:189107071895:secret:weather-app/secret1*"
-            ]
-          }
+```json
+{
+  "PolicyName": "OrderApiSecretsStorePolicy",
+  "PolicyDocument": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": "secretsmanager:GetSecretValue",
+        "Resource": [
+          "arn:aws:secretsmanager:ap-southeast-2:189107071895:secret:weather-app/secret1*"
         ]
       }
-    }
+    ]
+  }
+}
 
-DynamoDB Provider
------------------
+```
+
+## DynamoDB Provider
 
 The Parameters utility also supports using the DynamoDB table as a source of Parameter key values.
 

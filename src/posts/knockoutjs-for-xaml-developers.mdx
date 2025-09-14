@@ -1,11 +1,15 @@
 ---
 title: "KnockoutJS For XAML Developers"
-slug: "knockoutjs-for-xaml-developers"
-date: "2014-07-07T23:35:39.000Z"
-feature_image: "/images/MVVM_Knockoutjs.jpg"
-tags: ["Programming"]
+slug: knockoutjs-for-xaml-developers
+date: 2014-07-07T00:00:00.000Z
+feature_image: /images/MVVM_Knockoutjs.jpg
+excerpt: >-
+  After a very long time since I have actually wanted to move out to web
+  development, recently I have started developing a website as part of my
+  personal project, along...
+tags:
+  - Programming
 ---
-
 After a very long time since I have actually wanted to move out to web development, recently I have started developing a website as part of my personal project, along with a friend of mine. I have been into desktop/mobile development on Microsoft technologies, using XAML for a very long time. [Model-View-View Model (MVVM)](/blog/tag/mvvm/) is a pattern that got popular because of the powerful binding engine in XAML. It is always comforting to see familiar patterns while moving into unexplored technology areas. Same is the reason I chose to explore [KnockoutJS](http://knockoutjs.com/index.html)(KO), which simplifies dynamic JavaScript UIs with the MVVM pattern.
 
 ![MVVM Knockout](/images/MVVM_Knockoutjs.jpg)
@@ -20,11 +24,13 @@ We will see below how some of the major constructs in XAML map over to KnockoutJ
 
 Notifying data bounded clients on updates to the underlying bound data is a typical scenario in XAML, where we use \[INotifyPropertyChanged\](http://msdn.microsoft.com/en-us/library/system.componentmodel.inotifypropertychanged(v=vs.110).aspx) interface. This is also required on web pages and is handled by KO using _[observables](http://knockoutjs.com/documentation/observables.html)_
 
-    var personVM = {
-      Name: ko.observable('Rahul'),
-      Age: ko.observable(50),
-    };
-    
+```javascript
+var personVM = {
+  Name: ko.observable('Rahul'),"
+  Age: ko.observable(50),
+};
+
+```
 
 Declaring the property as an observable, makes any changes to the property immediately reflect on the bound UI elements, just like it happens on a property of a class that implements INotifyPropertyChanged.
 
@@ -52,39 +58,41 @@ In XAML when there are properties dependent on others , to notify changes we hav
 private string firstName;
 public string FirstName
 {
-```
-       get { return firstName; }
-       set
-       {
-            if (firstName!= value)
-            {
-                firstName= value;
-                OnPropertyChanged("FirstName");
-                OnPropertyChanged("FullName");
-            }
-       }
-```csharp
+   get { return firstName; }
+   set
+   {
+        if (firstName!= value)
+        {
+            firstName= value;
+            OnPropertyChanged("FirstName");
+            OnPropertyChanged("FullName");
+        }
+   }
 }
 public string FullName
 {
+    get { return FirstName +" " + LastName; }
+}
+
 ```
-        get { return FirstName +" " + LastName; }
-    }
-    
 
 Here whenever FirstName is updated to notify UI elements bound to FullName would be updated only if we explicitly call PropertyChanged on FullName property too. In KO this is handled using [computed observables](http://knockoutjs.com/documentation/computedObservables.html) and is much more elegant.
 
-    this.fullName = ko.computed(function () {
-      return this.firstName() + ' ' + this.lastName();
-    }, this);
-    
+```javascript
+this.fullName = ko.computed(function () {
+  return this.firstName() + ' ' + this.lastName();
+}, this);
+
+```
 
 **6\. Commanding**
 
 Commanding is how user interactions are bound to actions/functions on ViewModel, which will in turn perform something useful for the user. Like e.g. clicking a button. In KO this is handled using the same [data-bind](http://knockoutjs.com/documentation/click-binding.html) attribute using key’s corresponding to event handlers. \`\`
 
-    <button data-bind="click: performSomeAction">Click me</button>
-    
+```html
+<button data-bind="click: performSomeAction">Click me</button>
+
+```
 
 \*\*7. Value Converters \*\*
 
@@ -94,9 +102,9 @@ The \[IValueConverter\](http://msdn.microsoft.com/en-us/library/system.windows.d
 
 There are a lot of useful resources on the web that are freely available to get started with KnockoutJS. Some of them are listed below
 
-*   [Official Documentation](http://knockoutjs.com/documentation/introduction.html)
-*   [Learn By Doing](http://learn.knockoutjs.com/)
-*   [Videos](https://www.youtube.com/results?search_query=knockout+javascript)
-*   [More Videos](http://channel9.msdn.com/Search?term=knockout#ch9Search)
+-   [Official Documentation](http://knockoutjs.com/documentation/introduction.html)
+-   [Learn By Doing](http://learn.knockoutjs.com/)
+-   [Videos](https://www.youtube.com/results?search_query=knockout+javascript)
+-   [More Videos](http://channel9.msdn.com/Search?term=knockout#ch9Search)
 
 Hope you find this useful to easily understand KnockoutJS, re-applying your XAML knowledge . Do drop in a comment in case you find any other similarities with XAML that I have missed mentioning here and I would be happy to add it in. I am sure I have not covered it completely!

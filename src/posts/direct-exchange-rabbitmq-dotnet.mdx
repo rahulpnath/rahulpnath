@@ -1,11 +1,16 @@
 ---
 title: "RabbitMQ Direct Exchange Explained"
-slug: "direct-exchange-rabbitmq-dotnet"
-date: "2024-03-17T18:56:05.000Z"
-feature_image: "/images/RabbitMQ---Direct-Exchange.png"
-tags: ["RabbitMQ","AWS"]
+slug: direct-exchange-rabbitmq-dotnet
+date: 2024-03-17T00:00:00.000Z
+feature_image: /images/RabbitMQ---Direct-Exchange.png
+excerpt: >-
+  A Direct Exchange routes messages to queues whose binding key matches the
+  message routing key. Let's understand how to set up a Direct Exchange and how
+  it routes messages to consumers.
+tags:
+  - AWS
+  - RabbitMQ
 ---
-
 In RabbitMQ messages are published to an Exchange.
 
 RabbitMQ supports four types of exchanges that route messages based on various parameters and bindings. The type of Exchange determines how the messages are routed to the consumers bound to it.
@@ -14,18 +19,17 @@ A Direct Exchange routes the message to a Queue whose binding key exactly matche
 
 In this blog post, let's understand
 
-*   RabbitMQ Direct Exchange
-*   How Dire Exchange routes messages
-*   Set up a Direct Exchange from .NET app
+-   RabbitMQ Direct Exchange
+-   How Dire Exchange routes messages
+-   Set up a Direct Exchange from .NET app
 
 <iframe src="https://www.youtube.com/embed/H9cMqZdAApQ?feature=oembed" />
 
 I will use [Amazon MQ](https://aws.amazon.com/amazon-mq/?ref=rahulpnath.com), a managed message broker service that supports ActiveMQ and RabbitMQ engine types to host my RabbitMQ instance. However, you can use [one of the various options that RabbitMQ provides](https://www.rabbitmq.com/download.html?ref=rahulpnath.com) to host your instance,
 
-_AWS sponsors this article and is part of my_ [_RabbitMQ Series_](/posts/tag/rabbitmq/)_._
+_AWS sponsors this article and is part of my_ [_RabbitMQ Series_](/blog/tag/rabbitmq/)_._
 
-What is a Direct Exchange in RabbitMQ?
---------------------------------------
+## What is a Direct Exchange in RabbitMQ?
 
 When a message is sent to the Direct Exchange, it inspects its routing key.
 
@@ -33,8 +37,7 @@ If the routing key matches the binding key used to set up the Exchange, it route
 
 > A Direct Exchange routes messages to queues whose binding key matches the message routing key
 
-RabbitMQ Direct Exchange and Message Routing
---------------------------------------------
+## RabbitMQ Direct Exchange and Message Routing
 
 A Binding connects an Exchange with a Queue.
 
@@ -60,24 +63,21 @@ The same queue can have multiple routing keys, and the same routing key can be b
 
 In the above scenario, the same routing key 'green' can also be bound to different Queues. The 'green' routing key is bound to two keys, which means a message with the 'green' routing key is sent to both Queues.
 
-RabbitMQ Direct Exchange From .NET
-----------------------------------
+## RabbitMQ Direct Exchange From .NET
 
 To connect and send/receive messages from RabbitMQ, we will use a NuGet package - [RabbitMQ.Client](https://www.nuget.org/packages/RabbitMQ.Client?ref=rahulpnath.com).
 
 If you are new to building RabbitMQ from .NET applications, check out the Getting Started article below.
 
-[
-
-Amazon MQ RabbitMQ: A Reliable Messaging Solution for Your .NET Projects
-
-RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let’s learn how to get started using RabbitMQ on Amazon MQ from .NET application.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/rabbit-mq-dotnet.png)
-
-](/posts/amazon-mq-rabbitmq-dotnet/)
+<BlogLink
+  href="/blog/amazon-mq-rabbitmq-dotnet/"
+  title="Amazon MQ RabbitMQ: A Reliable Messaging Solution for Your .NET Projects"
+  description="RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let’s learn how to get started using RabbitMQ on Amazon MQ from .NET application."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/rabbit-mq-dotnet.png"
+/>
 
 ### Create RabbitMQ Direct Exchange From .NET
 
@@ -90,26 +90,26 @@ The `ExchangeDeclare` the method takes in an exchange name and its type. Below i
 ```csharp
 var factory = new ConnectionFactory()
 {
-```
-        Uri = new Uri("YOUR RABBIT INSTANCE URI"),
-        Port = 5671,
-        UserName = "<USERNAME FROM CONFIGURATION FILE>",
-        Password = "<PASSWORD FROM CONFIGURATION FILE>"
-    };
-    
-```csharp
+    Uri = new Uri("YOUR RABBIT INSTANCE URI"),
+    Port = 5671,
+    UserName = "<USERNAME FROM CONFIGURATION FILE>",
+    Password = "<PASSWORD FROM CONFIGURATION FILE>"
+};
+
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
-```
-    
-```csharp
+
 var exchangeName = "weather_direct";
 channel.ExchangeDeclare(exchangeName, ExchangeType.Direct);
+
 ```
 
 When sending a message, the sender specifies the Exchange and routing key..
 
-    channel.BasicPublish(exchangeName, routingKey, null, body);
+```csharp
+channel.BasicPublish(exchangeName, routingKey, null, body);
+
+```
 
 The Exchange uses the routing key to route the messages based on the binding keys specified on the Exchange to Queue binding.
 
@@ -122,26 +122,21 @@ To create a Queue, use the `QueueDeclare` method. It will create a new Queue onl
 ```csharp
 var factory = new ConnectionFactory()
 {
-```
-        Uri = new Uri("YOUR RABBIT INSTANCE URI"),
-        Port = 5671,
-        UserName = "<USERNAME FROM CONFIGURATION FILE>",
-        Password = "<PASSWORD FROM CONFIGURATION FILE>"
-    };
-    
-```csharp
+    Uri = new Uri("YOUR RABBIT INSTANCE URI"),
+    Port = 5671,
+    UserName = "<USERNAME FROM CONFIGURATION FILE>",
+    Password = "<PASSWORD FROM CONFIGURATION FILE>"
+};
+
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
-```
-    
-```csharp
+
 var queueName = "nsw";
 channel.QueueDeclare(queueName, false, false, false, null);
-```
-    
-```csharp
+
 var routingKey = "sydney";
 channel.QueueBind(queueName, "weather_direct", routingKey);
+
 ```
 
 Using the `QueueBind` method on the channel, we can bind the Queue with the Exchange and specify the routing key.
@@ -155,6 +150,7 @@ E.g., The below code registers all weather updates for the city of Wollongong to
 ```csharp
 var routingKey1 = "wollongong";
 channel.QueueBind(queueName, "weather_direct", routingKey1);
+
 ```
 
 Similarly, you can create multiple Queues as required and associate different Binding.

@@ -1,19 +1,21 @@
 ---
 title: "Exploring Amazon S3 Conditional Operations From .NET Application"
-slug: "amazon-s3-conditional-requests-dotnet"
-date: "2024-10-04T05:19:16.000Z"
-feature_image: "/images/Copy-of-Amazon-S3-Versioning.png"
-tags: ["AWS"]
-excerpt: "Learn how to use Amazon S3 conditional requests in .NET applications to ensure data consistency, prevent conflicts, and maintain integrity with conditional reads and writes."
+slug: amazon-s3-conditional-requests-dotnet
+date: 2024-10-04T00:00:00.000Z
+feature_image: /images/Copy-of-Amazon-S3-Versioning.png
+excerpt: >-
+  Amazon S3 now supports conditional requests. You can use conditional requests
+  to add preconditions to your S3 operations. If the precondition is not met it
+  will result in the S3 operation failing. Let’s learn about Conditional Reads
+  and Writes in Amazon S3 and how to use it from .NET
+tags:
+  - AWS
 ---
-
 Amazon S3 now supports conditional requests.
 
 You can use conditional requests to add preconditions to your S3 operations. If the precondition is not met, the S3 operation will fail.
 
-<div>
 <iframe src="https://www.youtube.com/embed/DGLPNKPmZJA?feature=oembed" />
-</div>
 
 There is no additional charge for conditional requests.
 
@@ -25,10 +27,9 @@ By specifying conditions you can avoid accidental overwrites, stale reads etc he
 
 Let’s explore both Conditional Reads and Conditional Writes in Amazon S3 and how to use them when building .NET applications.
 
-This article is sponsored by AWS and is part of my [.NET on AWS Series](/posts/tag/aws/).
+This article is sponsored by AWS and is part of my [.NET on AWS Series](/blog/tag/aws/).
 
-Amazon S3 Conditional Writes From .NET
---------------------------------------
+## Amazon S3 Conditional Writes From .NET
 
 Amazon S3 [Conditional writes](https://docs.aws.amazon.com/AmazonS3/latest/userguide/conditional-writes.html) check for the existence of an object during the write operation.
 
@@ -45,11 +46,12 @@ To use this from the .NET AWS S3 SDK, specify the `IfNoneMatch` property on the 
 ```csharp
 await s3Client.PutObjectAsync(new PutObjectRequest()
 {
-        BucketName = "<bucket-name>",
-        Key = request.File.FileName,
-        InputStream = request.File.OpenReadStream(),
-        IfNoneMatch = "*"
-    }, cancellationToken);
+    BucketName = "<bucket-name>",
+    Key = request.File.FileName,
+    InputStream = request.File.OpenReadStream(),
+    IfNoneMatch = "*"
+}, cancellationToken);
+
 ```
 
 If a file with the same name exists in the bucket, the `PutObjectRequest` will fail with an exception - _Amazon.S3.AmazonS3Exception: At least one of the pre-conditions you specified did not hold_
@@ -60,24 +62,21 @@ If a file does not already exist, it is uploaded successfully.
 
 Amazon S3 versioning is a powerful feature that allows you to preserve, retrieve, and restore every version of every object in your bucket.
 
-[
-
-Enable Versioning on Your Amazon S3 Buckets
-
-Amazon S3 versioning is a powerful feature that allows you to preserve, retrieve, and restore every version of every object in your bucket. In this post, let’s explore S3 versioning and how to use it when building .NET applications.
-
-![](/images/logo-512x512-1.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/Enable-S3-Versioning.png)
-
-](/posts/amazon-s3-versioning-dotnet/)
+<BlogLink
+  href="/blog/amazon-s3-versioning-dotnet/"
+  title="Enable Versioning on Your Amazon S3 Buckets"
+  description="Amazon S3 versioning is a powerful feature that allows you to preserve, retrieve, and restore every version of every object in your bucket. In this post, let’s explore S3 versioning and how to use it when building .NET applications."
+  authorImage="/images/logo-512x512-1.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/Enable-S3-Versioning.png"
+/>
 
 Conditional Requests work with versioning-enabled S3 buckets, too.
 
 A new file is written only if a file with same name does not exists or if the current object version is a delete marker.
 
-Amazon S3 Conditional Reads From .NET
--------------------------------------
+## Amazon S3 Conditional Reads From .NET
 
 With conditional reads in Amazon S3, you can return an object based on the object's metadata (ETag or Last-Modified date).
 
@@ -95,20 +94,21 @@ Similarly, by providing a Last-Modified date, the object will only be returned i
 
 Below are the various HTTP headers supported with conditional reads.
 
-*   **If-Match:** Returns object only if its ETag matches the provided value.
-*   **If-Modified-Since:** Returns object only if it has been modified after the specified date.
-*   **If-None-Match:** Returns object only if its ETag does not match the provided value.
-*   **If-Unmodified-Since:** Returns the object only if it has not been modified after the specified date.
+-   **If-Match:** Returns object only if its ETag matches the provided value.
+-   **If-Modified-Since:** Returns object only if it has been modified after the specified date.
+-   **If-None-Match:** Returns object only if its ETag does not match the provided value.
+-   **If-Unmodified-Since:** Returns the object only if it has not been modified after the specified date.
 
 To use this from the .NET AWS S3 SDK, specify the `IfNoneMatch` property on the `GetObjectRequest` as shown below.
 
 ```csharp
 var file = await s3Client.GetObjectAsync(new GetObjectRequest()
 {
-        BucketName = "user-service-large-messages",
-        Key = fileName,
-        EtagToMatch = etag
-    });
+    BucketName = "user-service-large-messages",
+    Key = fileName,
+    EtagToMatch = etag
+});
+
 ```
 
 The above code returns a file only if the ETag value provided matches that on S3.

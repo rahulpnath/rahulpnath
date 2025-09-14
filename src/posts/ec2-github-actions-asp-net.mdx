@@ -1,40 +1,39 @@
 ---
 title: "Step-by-Step: Setting Up GitHub Actions to Build and Deploy .NET to EC2"
-slug: "ec2-github-actions-asp-net"
-date: "2025-07-13T19:56:01.000Z"
-feature_image: "/images/Copy-of-AWS-EC2-Build-Deploy-Pipeline--1-.png"
-tags: ["AWS","EC2"]
-excerpt: "Learn how to set up a complete CI/CD pipeline using GitHub Actions to build and deploy ASP.NET Core applications to AWS EC2 instances with systemd service management."
+slug: ec2-github-actions-asp-net
+date: 2025-07-13
+feature_image: /images/Copy-of-AWS-EC2-Build-Deploy-Pipeline--1-.png
+excerpt: >-
+  Let's learn how to set up a GitHub Actions build-deploy pipeline to deploy an ASP.NET API application to an Amazon EC2 instance, running as a systemd service.
+tags:
+  - AWS
+  - EC2
 ---
-
 In this post, we’ll set up a **build and deployment pipeline using GitHub Actions** to deploy an [ASP.NET](http://ASP.NET) Core application to an AWS EC2 instance.
 
 We’ll configure the GitHub Actions workflow to:
 
-*   Build the [ASP.NET](http://ASP.NET) Core app
-*   Connect to the EC2 instance
-*   Deploy the app as a `systemd` service so it runs in the background
+-   Build the [ASP.NET](http://ASP.NET) Core app
+-   Connect to the EC2 instance
+-   Deploy the app as a `systemd` service so it runs in the background
 
 <iframe src="https://www.youtube.com/embed/hViTuEA75-w?feature=oembed" />
 
-This post is part of my [AWS EC2 series](/posts/tag/ec2/), and thanks to AWS for sponsoring this video.
+This post is part of my [AWS EC2 series](/blog/tag/ec2/), and thanks to AWS for sponsoring this video.
 
 If you are completely new to running .NET apps on AWS EC2 I highly recommend checking out my Step-by-Step guide.
 
-[
+<BlogLink
+  href="/blog/amazon-ec2-dotnet-api-hosting/"
+  title="Deploying a .NET Web API on Amazon EC2: A Step-by-Step Guide"
+  description="Let’s learn how to leverage Amazon EC2 to host your .NET applications. In this post, we will learn how to create an EC2 instance, set it up with .NET runtime, upload your .NET application, and run it from there."
+  authorImage="/images/logo-512x512-22.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/EC2-ASP-NET.png"
+/>
 
-Deploying a .NET Web API on Amazon EC2: A Step-by-Step Guide
-
-Let’s learn how to leverage Amazon EC2 to host your .NET applications. In this post, we will learn how to create an EC2 instance, set it up with .NET runtime, upload your .NET application, and run it from there.
-
-![](/images/logo-512x512-22.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/EC2-ASP-NET.png)
-
-](/posts/amazon-ec2-dotnet-api-hosting/)
-
-Setting Up EC2 Instance
------------------------
+## Setting Up EC2 Instance
 
 Before we dive into the GitHub Actions setup, we need an EC2 instance ready to host our ASP NET Core app.
 
@@ -42,30 +41,29 @@ We will use AWS CDK to define and deploy the required AWS infrastructure.
 
 I will be running the CDK deploy step manually outside of GitHub Actions to keep our build and deployment pipeline faster and more focused on the app itself.
 
-[
-
-AWS CDK For The .NET Developer: How To Easily Get Started
-
-AWS CDK simplifies Cloud Infrastructure management. CDK lets you define AWS resources using first-class programming concepts. It translates your code into AWS CloudFormation templates, which can be used to provision AWS resources for your application. Let’s get started using .NET and C#.
-
-![](/images/logo-512x512-23.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/AWS-CDK-3.png)
-
-](/posts/aws-cdk-dotnet/)
+<BlogLink
+  href="/blog/aws-cdk-dotnet/"
+  title="AWS CDK For The .NET Developer: How To Easily Get Started"
+  description="AWS CDK simplifies Cloud Infrastructure management. CDK lets you define AWS resources using first-class programming concepts. It translates your code into AWS CloudFormation templates, which can be used to provision AWS resources for your application. Let’s get started using .NET and C#."
+  authorImage="/images/logo-512x512-23.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/AWS-CDK-3.png"
+/>
 
 Here's a snippet from the [CDK code](https://github.com/rahulpnath/aws-ec2/commit/1c358d5218a1b84206048043bf04eef854d0a70f#diff-ceaf3769e56ae6c1122a8121107e005a33d99b33f6580d4521e7705f9d17dbfd) to set up the EC2 instance.
 
 ```csharp
-// Create EC2 InstanceMore actions
+/ Create EC2 InstanceMore actions
 var instance = new Instance_(this, "WebApiInstance", new InstanceProps {
-      InstanceType = InstanceType.Of(InstanceClass.BURSTABLE3, InstanceSize.MICRO),
-        MachineImage = MachineImage.LatestAmazonLinux2023(),
-        Vpc = vpc,
-        Role = role,
-        SecurityGroup = securityGroup,
-        KeyPair = KeyPair.FromKeyPairName(this, "key-0a498c763ef8ab954", "my-key-pair"),
-    });
+  InstanceType = InstanceType.Of(InstanceClass.BURSTABLE3, InstanceSize.MICRO),
+    MachineImage = MachineImage.LatestAmazonLinux2023(),
+    Vpc = vpc,
+    Role = role,
+    SecurityGroup = securityGroup,
+    KeyPair = KeyPair.FromKeyPairName(this, "key-0a498c763ef8ab954", "my-key-pair"),
+});
+
 ```
 
 To set up the key pair navigate to the AWS Console → EC2 → Key Pairs
@@ -78,8 +76,7 @@ To keep our GH Actions file more focused on the application, we will be running 
 
 Alternatively, you can also have a separate GH actions or include it in your application deployment steps as well.
 
-Deploying ASP.NET App as Systems Service File
----------------------------------------------
+## Deploying ASP.NET App as Systems Service File
 
 For this demo, we will use a [simple ASP.NET Core Web Api](https://github.com/rahulpnath/aws-ec2/tree/main/src/MyApi) application created by the default template.
 
@@ -93,38 +90,38 @@ Here is the [systemd](https://github.com/rahulpnath/aws-ec2/blob/main/src/MyApi/
 
 ### Key Sections of systemd File
 
-*   **\[Unit\]**
-    *   `Description`: Provides a description of the service.
-*   **\[Service\]**
-    *   `WorkingDirectory`: The directory where your app is located.
-    *   `ExecStart`: The command to start your application.
-    *   `Restart=always`: Ensures the app restarts automatically if it crashes or stops.
-    *   `User`: Specifies the user under which the app runs (`ec2-user`).
-    *   `Environment`: Sets environment variables:
-        *   `DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1`: Enables globalization features without needing ICU libraries.
-        *   `ASPNETCORE_ENVIRONMENT=Production`: Sets the environment to Production.
-        *   `ASPNETCORE_URLS=http://0.0.0.0:5000`: Binds the app to all network interfaces on port 5000.
-*   **\[Install\]**
-    *   `WantedBy=multi-user.target`: Ensures the service starts automatically on system boot.
+-   **\[Unit\]**
+    -   `Description`: Provides a description of the service.
+-   **\[Service\]**
+    -   `WorkingDirectory`: The directory where your app is located.
+    -   `ExecStart`: The command to start your application.
+    -   `Restart=always`: Ensures the app restarts automatically if it crashes or stops.
+    -   `User`: Specifies the user under which the app runs (`ec2-user`).
+    -   `Environment`: Sets environment variables:
+        -   `DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1`: Enables globalization features without needing ICU libraries.
+        -   `ASPNETCORE_ENVIRONMENT=Production`: Sets the environment to Production.
+        -   `ASPNETCORE_URLS=http://0.0.0.0:5000`: Binds the app to all network interfaces on port 5000.
+-   **\[Install\]**
+    -   `WantedBy=multi-user.target`: Ensures the service starts automatically on system boot.
 
-GitHub Actions Build and Deployment Pipeline
---------------------------------------------
+## GitHub Actions Build and Deployment Pipeline
 
 With that all out of the way, let's set up our GitHub Actions pipeline to deploy our ASP.NET app to the EC2 instance.  
   
+
 Whenever code is pushed to the branch, the workflow:
 
-*   **Builds the application** into a self-contained, production-ready artifact.
-*   **Deploys it to an EC2 instance**, stopping the current service, copying the new build, and restarting the service.
+-   **Builds the application** into a self-contained, production-ready artifact.
+-   **Deploys it to an EC2 instance**, stopping the current service, copying the new build, and restarting the service.
 
 ### Building the .NET Publish Artifact
 
 This GitHub Actions workflow starts when a push is made to the `test` branch. It prepares the environment and builds the application for deployment:
 
-*   Uses `.NET 9.0.x`, configured via `actions/setup-dotnet`.
-*   Check out the code from the repository.
-*   Runs `dotnet publish` from the `src/` directory, targeting `linux-x64` and generating a **self-contained** release build.
-*   Outputs the build to a `./publish` folder for deployment.
+-   Uses `.NET 9.0.x`, configured via `actions/setup-dotnet`.
+-   Check out the code from the repository.
+-   Runs `dotnet publish` from the `src/` directory, targeting `linux-x64` and generating a **self-contained** release build.
+-   Outputs the build to a `./publish` folder for deployment.
 
 ```yaml
 - uses: actions/checkout@v3
@@ -137,6 +134,7 @@ This GitHub Actions workflow starts when a push is made to the `test` branch. It
 - name: Publish
   working-directory: src
   run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --output ./publish --self-contained true -r linux-x64
+
 ```
 
 This ensures a clean, ready-to-run build that includes the .NET runtime.
@@ -147,10 +145,10 @@ After the build step, the workflow deploys the application to an EC2 instance us
 
 Key steps include:
 
-*   **Connecting via SSH** with a private key provided at runtime
-*   **Stopping the existing service** and cleaning the deployment directory
-*   **Transferring the published files and service definition** to the EC2 instance
-*   **Reloading `systemd` and restarting the service** to run the new version
+-   **Connecting via SSH** with a private key provided at runtime
+-   **Stopping the existing service** and cleaning the deployment directory
+-   **Transferring the published files and service definition** to the EC2 instance
+-   **Reloading `systemd` and restarting the service** to run the new version
 
 ```yaml
 - name: Configure AWS credentials
@@ -189,6 +187,7 @@ Key steps include:
      sudo systemctl enable myapi
      sudo systemctl restart myapi
     '
+
 ```
 
 This ensures a consistent and automated deployment with minimal manual intervention.

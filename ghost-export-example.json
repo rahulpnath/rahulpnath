@@ -1,0 +1,102 @@
+{
+  "db": [
+    {
+      "data": {
+        "posts": [
+          {
+            "id": "1",
+            "title": "Getting Started with Next.js and TypeScript",
+            "slug": "getting-started-nextjs-typescript",
+            "mobiledoc": null,
+            "html": "<p>Next.js has become one of the most popular React frameworks for building modern web applications. In this comprehensive guide, we'll explore how to set up a new Next.js project with TypeScript.</p>\n\n<h2 id=\"why-nextjs\">Why Next.js?</h2>\n\n<p>Next.js provides several benefits out of the box:</p>\n\n<ul>\n<li>Server-side rendering (SSR)</li>\n<li>Static site generation (SSG)</li>\n<li>API routes</li>\n<li>Automatic code splitting</li>\n<li>Built-in CSS support</li>\n</ul>\n\n<h2 id=\"setting-up-the-project\">Setting Up the Project</h2>\n\n<p>Let's start by creating a new Next.js project with TypeScript support:</p>\n\n<pre><code class=\"language-bash\">npx create-next-app@latest my-app --typescript\ncd my-app\nnpm run dev\n</code></pre>\n\n<p>This command will create a new Next.js application with TypeScript configuration already set up.</p>\n\n<h2 id=\"project-structure\">Project Structure</h2>\n\n<p>The generated project will have the following structure:</p>\n\n<pre><code class=\"language-text\">my-app/\n├── pages/\n│   ├── api/\n│   ├── _app.tsx\n│   └── index.tsx\n├── public/\n├── styles/\n├── next.config.js\n├── package.json\n└── tsconfig.json\n</code></pre>\n\n<blockquote>\n<p><strong>Note:</strong> Make sure you have Node.js 14.6.0 or newer installed on your system.</p>\n</blockquote>\n\n<p>For more advanced configurations, check out the <a href=\"https://nextjs.org/docs\">official Next.js documentation</a>.</p>\n\n<div class=\"kg-embed-card\">\n<iframe src=\"https://www.youtube.com/embed/dQw4w9WgXcQ\" frameborder=\"0\" allowfullscreen></iframe>\n</div>",
+            "plaintext": "Next.js has become one of the most popular React frameworks for building modern web applications. In this comprehensive guide, we'll explore how to set up a new Next.js project with TypeScript.",
+            "feature_image": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+            "featured": false,
+            "status": "published",
+            "locale": null,
+            "visibility": "public",
+            "email_subject": null,
+            "created_at": "2023-01-15T10:30:00.000Z",
+            "updated_at": "2023-01-15T10:30:00.000Z",
+            "published_at": "2023-01-15T10:30:00.000Z",
+            "custom_excerpt": "Learn how to set up a Next.js project with TypeScript and explore the key features that make Next.js a powerful React framework.",
+            "codeinjection_head": null,
+            "codeinjection_foot": null,
+            "og_image": null,
+            "og_title": null,
+            "og_description": null,
+            "twitter_image": null,
+            "twitter_title": null,
+            "twitter_description": null,
+            "meta_title": null,
+            "meta_description": null,
+            "email_only": false,
+            "tags": [
+              {
+                "id": "1",
+                "name": "Next.js",
+                "slug": "nextjs",
+                "description": null
+              },
+              {
+                "id": "2", 
+                "name": "TypeScript",
+                "slug": "typescript",
+                "description": null
+              },
+              {
+                "id": "3",
+                "name": "React",
+                "slug": "react", 
+                "description": null
+              }
+            ]
+          },
+          {
+            "id": "2",
+            "title": "Draft Post - Not Ready Yet",
+            "slug": "draft-post-not-ready",
+            "html": "<p>This is a draft post that should be skipped during migration.</p>",
+            "plaintext": "This is a draft post that should be skipped during migration.",
+            "feature_image": null,
+            "featured": false,
+            "status": "draft",
+            "visibility": "public",
+            "created_at": "2023-01-16T10:30:00.000Z", 
+            "updated_at": "2023-01-16T10:30:00.000Z",
+            "published_at": null,
+            "custom_excerpt": null,
+            "tags": [
+              {
+                "id": "4",
+                "name": "Draft",
+                "slug": "draft",
+                "description": null
+              }
+            ]
+          }
+        ],
+        "tags": [
+          {
+            "id": "1",
+            "name": "Next.js",
+            "slug": "nextjs", 
+            "description": "Posts about Next.js React framework",
+            "feature_image": null,
+            "visibility": "public",
+            "og_image": null,
+            "og_title": null,
+            "og_description": null,
+            "twitter_image": null,
+            "twitter_title": null,
+            "twitter_description": null,
+            "meta_title": null,
+            "meta_description": null,
+            "created_at": "2023-01-01T00:00:00.000Z",
+            "updated_at": "2023-01-01T00:00:00.000Z"
+          }
+        ]
+      }
+    }
+  ]
+}

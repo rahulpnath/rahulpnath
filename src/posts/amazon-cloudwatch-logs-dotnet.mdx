@@ -1,13 +1,16 @@
 ---
 title: "How To Log Correctly To AWS CloudWatch From a .NET Application"
-slug: "amazon-cloudwatch-logs-dotnet"
-date: "2022-05-03T00:00:00.000Z"
-feature_image: "/images/logs.jpg"
-tags: ["AWS"]
-excerpt: "Learn how to use Amazon CloudWatch when building .NET applications. We will learn how to write logs into CloudWatch, filter the logs, some good practices when logging, learn about Log Analytics, and see how we can filter and view logs across multiple applications."
-
+slug: amazon-cloudwatch-logs-dotnet
+date: 2022-05-03T00:00:00.000Z
+feature_image: /images/logs.jpg
+excerpt: >-
+  Learn how to use Amazon CloudWatch when building .NET applications. We will
+  learn how to write logs into CloudWatch, filter the logs, some good practices
+  when logging, learn about Log Analytics, and see how we can filter and view
+  logs across multiple applications.
+tags:
+  - AWS
 ---
-
 _This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 Logging is an essential aspect of application development.
@@ -16,23 +19,19 @@ When building applications on AWS, CloudWatch provides a centralized, highly sca
 
 CloudWatch allows to view, search, filter, or archive logs easily.
 
-<div>
 <iframe src="https://www.youtube.com/embed/-46yTm4DoEI" />
-</div>
 
 In this article, let’s learn how to use Amazon CloudWatch when building .NET applications. We will learn how to write logs into CloudWatch, filter the logs, some good practices when logging, learn about Log Analytics, and see how we can filter and view logs across multiple applications.
 
-Key Concepts of
----------------
+## Key Concepts of
 
 The [main concepts](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogsConcepts.html) that you’ll keep coming across when using CloudWatch Logs are _Log events_, _Log streams, and Log groups._
 
-*   **Log events →** record of some activity recorded by the app or resource being monitored. Simply put, the log statements you write
-*   **Log streams →** sequence of log events that share the same source.
-*   **Log groups** → group of log streams that share retention, monitoring, and access control settings. A log stream belongs to one log group.
+-   **Log events →** record of some activity recorded by the app or resource being monitored. Simply put, the log statements you write
+-   **Log streams →** sequence of log events that share the same source.
+-   **Log groups** → group of log streams that share retention, monitoring, and access control settings. A log stream belongs to one log group.
 
-.NET & AWS CloudWatch Logs
---------------------------
+## .NET & AWS CloudWatch Logs
 
 There are different ways to integrate with the CloudWatch service from a .NET application. Let’s go through them one by one.
 
@@ -49,27 +48,27 @@ var logClient = new AmazonCloudWatchLogsClient();
 var logGroupName = "/aws/weather-forecast-app";
 var logStreamName = DateTime.UtcNow.ToString("yyyyMMddHHmmssfff");
 var existing = await logClient
-        .DescribeLogGroupsAsync(new DescribeLogGroupsRequest()
-            {LogGroupNamePrefix = logGroupName});
+    .DescribeLogGroupsAsync(new DescribeLogGroupsRequest()
+        {LogGroupNamePrefix = logGroupName});
 var logGroupExists = existing.LogGroups.Any(l => l.LogGroupName == logGroupName);
 if (!logGroupExists)
-        await logClient.CreateLogGroupAsync(new CreateLogGroupRequest(logGroupName));
+    await logClient.CreateLogGroupAsync(new CreateLogGroupRequest(logGroupName));
 await logClient.CreateLogStreamAsync(new CreateLogStreamRequest(logGroupName, logStreamName));
 await logClient.PutLogEventsAsync(new PutLogEventsRequest()
 {
-        LogGroupName = logGroupName,
-        LogStreamName = logStreamName,
-        LogEvents = new List<InputLogEvent>()
+    LogGroupName = logGroupName,
+    LogStreamName = logStreamName,
+    LogEvents = new List<InputLogEvent>()
+    {
+        new()
         {
-            new()
-            {
-                Message = $"Get Weather Forecast called for city {cityName}",
-                Timestamp = DateTime.UtcNow
-            }
+            Message = $"Get Weather Forecast called for city {cityName}",
+            Timestamp = DateTime.UtcNow
         }
-    });
+    }
+});
+
 ```
-    
 
 As you can see, the above code is verbose and not something preferable to write every time we need to log.
 
@@ -83,15 +82,14 @@ To integrate with the out of the box [.NET Core Logging](#TDK) capability instal
 
 Adding Amazon CloudWatch as a logging provider is easily done by calling the `AddAWSProvider` extension method of the `ILoggingBuilder` as shown below.
 
-
-```
+```csharp
 builder.Logging.AddAWSProvider();
+
 ```
 
 The extension method adds an `AWSLoggerProvider` to the logging builder. The new provider also uses the `AmazonCloudWatchLogsClient` that we used earlier. It abstracts all the complexity and mechanics of talking to CloudWatch.
 
 You can use `ILogger` from the application code and use that to write log events.
-
 
 ```csharp
 public WeatherForecastController(
@@ -99,34 +97,35 @@ public WeatherForecastController(
 {
     _logger = logger;
 }
+
 [HttpGet(Name = "GetWeatherForecast")]
 public async Task<IEnumerable<WeatherForecast>> Get(string cityName)
 {
-        _logger.LogInformation("Get Weather Forecast called for {city}", cityName);
-    }
-    
+    _logger.LogInformation("Get Weather Forecast called for {city}", cityName);
+}
+
 ```
 
 You can either use configuration or code to set up the log group name. You can also specify other configuration settings and the log level configurations like below.
 
 ```json
-    "Logging": {
-      "Region": "us-east-1",
-      "LogGroup": "AspNetCore.WebSample",
-      "IncludeLogLevel": true,
-      "IncludeCategory": true,
-      "IncludeNewline": true,
-      "IncludeException": true,
-      "IncludeEventId": false,
-      "IncludeScopes": false,
-      "LogLevel": {
-        "Default": "Debug",
-        "System": "Information",
-        "Microsoft": "Information"
-      }
-    }
+"Logging": {
+  "Region": "us-east-1",
+  "LogGroup": "AspNetCore.WebSample",
+  "IncludeLogLevel": true,
+  "IncludeCategory": true,
+  "IncludeNewline": true,
+  "IncludeException": true,
+  "IncludeEventId": false,
+  "IncludeScopes": false,
+  "LogLevel": {
+    "Default": "Debug",
+    "System": "Information",
+    "Microsoft": "Information"
+  }
+}
+
 ```
-    
 
 ### Using Serilog and AWS CloudWatch
 
@@ -141,35 +140,34 @@ Once installed, setting up the integration is only a few lines of code. However 
 ```csharp
 builder.Host.UseSerilog((ctx, lc) =>
 {
-        lc
-            .ReadFrom.Configuration(ctx.Configuration)
-            .WriteTo.AWSSeriLog(
-                configuration: ctx.Configuration,
-                textFormatter: new RenderedCompactJsonFormatter());
-    });
+    lc
+        .ReadFrom.Configuration(ctx.Configuration)
+        .WriteTo.AWSSeriLog(
+            configuration: ctx.Configuration,
+            textFormatter: new RenderedCompactJsonFormatter());
+});
+
 ```
-    
 
 The log group and other log levels can be configured via code or the config file. The library looks for the `Serilog` section for the required configuration by default.
 
 ```json
-    "Serilog": {
-        "LogGroup": "/aws/weather-forecast-app",
-        "MinimumLevel": {
-          "Default": "Information",
-          "Override": {
-            "Microsoft": "Warning",
-            "System": "Warning"
-          }
-        }
+"Serilog": {
+    "LogGroup": "/aws/weather-forecast-app",
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Warning"
       }
+    }
+  }
+
 ```
-    
 
 The application code can inject the `ILogger` interface from the Serilog library or continue using the same `ILogger<T>` as in the previous example.
 
-Filtering Logs
---------------
+## Filtering Logs
 
 Writing logs is only one part of the story. What’s more critical is searching and filtering the relevant logs when there is an issue or debugging application behavior.
 
@@ -179,12 +177,12 @@ The CloudWatch logs provide rich [querying and filtering capabilities](https://d
 
 Using the Text-Based filtering patterns, you can use different filtering capabilities to match words, phrases, or numeric values.
 
-*   Match Single Term → Brisbane (logs which have Brisbane)
-*   Match Multiple Terms
-*   → Brisbane 9 (logs having Brisbane and number 9, not necessarily consecutive)
-*   → “count of 9” (matches the entire phrase)
-*   → -Brisbane 9 (logs without Brisbane but has 9)
-*   → ?Brisbane 9 (logs with 9, but Brisbane is optional)
+-   Match Single Term → Brisbane (logs which have Brisbane)
+-   Match Multiple Terms
+-   → Brisbane 9 (logs having Brisbane and number 9, not necessarily consecutive)
+-   → “count of 9” (matches the entire phrase)
+-   → -Brisbane 9 (logs without Brisbane but has 9)
+-   → ?Brisbane 9 (logs with 9, but Brisbane is optional)
 
 ![Text based filtering in CloudWatch log group, Showing all logs which do not have Brisbane and have number 9](/images/aws-cloudwatch-logs-text-filter.jpg)
 
@@ -195,11 +193,13 @@ Text-based filtering has its limitations. All filtering and querying are limited
 Structured Logs are powerful because the properties in the events are first class.
 
 The Serilog integration with CloudWatch uses the JSON formatter (provided out of the box with Serilog) and offers full structured logging support.
+
+```csharp
+ _logger.LogInformation(
+  "Received new weather data for city {City} with request {RequestId}", 
+  requestData.CityName, requestData.Id);
+
 ```
-     _logger.LogInformation(
-      "Received new weather data for city {City} with request {RequestId}", 
-      requestData.CityName, requestData.Id);
-```  
 
 > _Don’t use string interpolation while writing log messages. Pass the values as parameters to the log methods._
 
@@ -210,20 +210,18 @@ Here’s the difference between using string interpolation which generates the l
 When using structured logging and passing the values as parameters to the log methods, these are available as first-class properties to query in CloudWatch.
 
 To query JSON log events, a special syntax is to be used:
-```
+
 `{ PropertySelector Operator String }`
-```
 
-*   **PropertySelector** → starts with $. and the property name. also supports array indexing using \[\]
-*   **Operator -** equality or numeric operators based on property value
-*   **String -** Value to compare against and can be enclosed in double quotes
+-   **PropertySelector** → starts with $. and the property name. also supports array indexing using \[\]
+-   **Operator -** equality or numeric operators based on property value
+-   **String -** Value to compare against and can be enclosed in double quotes
 
-_eg. `{$.count > 10 && $.cityName = "Brisbane"}`_ → selects all log events that have a count property greater than 10 with the cityName property as Brisbane.
+_eg. {$.count > 10 && $.cityName = “Brisbane”}_ → selects all log events that have a count property greater than 10 with the cityName property as Brisbane.
 
 ![JSON based log filtering example with multiple properties](/images/aws-cloudwatch-log-structured-filter.jpg)
 
-AWS CLoudWatch Log Insights
----------------------------
+## AWS CLoudWatch Log Insights
 
 CloudWatch Log Insights provides richer capabilities to interact with log events. It allows to interactively search and analyze log data and supports a [custom query language](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_QuerySyntax.html).
 
@@ -249,8 +247,7 @@ CloudWatch Insights also enables the saving of Queries for later use. These quer
 
 ![Saved queries in CloudWatch Log Insights](/images/aws-cloudwatch-logs-insights-saved-queries.jpg)
 
-Summary
--------
+## Summary
 
 CloudWatch Logs provides rich features and capabilities to manage logs when building applications on AWS Infrastructure. Since it allows for a centralized location, it makes setting up and using the infrastructure from various application types easy.
 

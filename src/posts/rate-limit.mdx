@@ -1,15 +1,21 @@
 ---
-title: "How To Solve \"Rate exceeded for operation 'AWS::CloudFront::Distribution'.\" Error?"
-slug: "rate-limit"
-date: "2023-04-20T18:16:39.000Z"
-feature_image: "/images/Rate-Exceeded.png"
-tags: ["AWS"]
+title: >-
+  How To Solve "Rate exceeded for operation 'AWS::CloudFront::Distribution'."
+  Error?
+slug: rate-limit
+date: 2023-04-20T00:00:00.000Z
+feature_image: /images/Rate-Exceeded.png
+excerpt: >-
+  Recently at work, I had to deploy ~80 CloudFront instances, each with its own
+  Certificate, pointing to one S3 bucket as its source, all in one
+  CloudFormation file.
+    I kept running into "Rate exceeded for operation AWS::CloudFront::Distribution'.". Let's learn how to fix it.
+tags:
+  - AWS
 ---
-
 _This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
-The Problem
------------
+## The Problem
 
 Recently at work, I had to deploy ~80 CloudFront instances, each with its own Certificate, pointing to one S3 bucket as its source, all in one CloudFormation file.
 
@@ -25,8 +31,7 @@ I didn't want to split the deployment into different CloudFormation templates or
 
 As much as possible, I wanted to keep it all in one single file to be easily managed.
 
-The Solution
-------------
+## The Solution
 
 CloudFormation, when creating resources, tries to create all the resources that are not dependent at the same time.
 

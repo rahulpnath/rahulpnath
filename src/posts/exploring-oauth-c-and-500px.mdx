@@ -1,11 +1,13 @@
 ---
 title: "Windows 8 Series - Exploring OAuth: c# and 500px"
-slug: "exploring-oauth-c-and-500px"
-date: "2012-10-05T12:00:27.000Z"
-feature_image: "/images/oauth_500px_application_details.png"
-tags: ["Dotnet"]
+slug: exploring-oauth-c-and-500px
+date: 2012-10-05
+feature_image: /images/oauth_500px_application_details.png
+excerpt: >-
+  The days when we ourselves developed sites and application for our own services are long gone. Now it’s about building api’s, sharing data and going social that's the buzz. No...
+tags:
+  - Dotnet
 ---
-
 The days when we ourselves developed sites and application for our own services are long gone. Now it’s about building api’s, sharing data and going social that's the buzz. No more is it a feasible solution to build applications for the numerous devices, that varies in size,shape and by the software that runs in them. The best thing then would be to expose API’s so that anybody interested can build applications for you. In any case the last thing that you would want to share is your users credentials. This is where OAuth comes into picture. Put it simply OAuth is an open protocol that allows secure access to the data that you want to expose, usually the API.
 
 Most of us would have seen OAuth in action. Whenever you logon to a site using any of the social network sites identity,be it Facebook or Twitter it’s OAuth that is behind the scenes that helps the site to get the required information from the social entity and you don’t have to disclose your social credentials to the site that you actually intended to visit. If you have never seen this now is a good time to. Try it [here](http://500px.com/)
@@ -51,20 +53,20 @@ To get the request token we need to make a POST request to [_oauth/request\_toke
 ```csharp
 public async Task<OauthToken> RequestToken()
 {
+    AuthorizationParameters = new Dictionary<string, string>(){
+                      {OauthParameter.OauthCallback, OAuthCallbackUrl},
+                      {OauthParameter.OauthConsumerKey, consumerKey},
+                      {OauthParameter.OauthNonce, Nonce()},
+                      {OauthParameter.OauthSignatureMethod,OAuthSignatureMethod},
+                      {OauthParameter.OauthTimestamp, TimeStamp()},
+                      {OauthParameter.OauthVersion, OAuthVersion}
+                        };
+    string response = await this.MakeRequest(RequestType.POST)
+        .Sign(OAuthRequestUrl, String.Empty)
+        .ExecuteRequest(OAuthRequestUrl);
+}
+
 ```
-        AuthorizationParameters = new Dictionary<string, string>(){
-                          {OauthParameter.OauthCallback, OAuthCallbackUrl},
-                          {OauthParameter.OauthConsumerKey, consumerKey},
-                          {OauthParameter.OauthNonce, Nonce()},
-                          {OauthParameter.OauthSignatureMethod,OAuthSignatureMethod},
-                          {OauthParameter.OauthTimestamp, TimeStamp()},
-                          {OauthParameter.OauthVersion, OAuthVersion}
-                            };
-        string response = await this.MakeRequest(RequestType.POST)
-            .Sign(OAuthRequestUrl, String.Empty)
-            .ExecuteRequest(OAuthRequestUrl);
-    }
-    
 
 The above function handles adding the parameters required and executing the request.
 
@@ -73,21 +75,21 @@ The _MakeRequest_ call specifies the kind of HTTP call that you want to make, he
 ```csharp
 private Oauth500px Sign(string Url, string tokenSecret)
 {
+    String SigBaseStringParams = String.Join("&", AuthorizationParameters.Select(key => key.Key + "=" + Uri.EscapeDataString(key.Value)));
+    String SigBaseString = requestType.ToString() + "&";
+    SigBaseString += Uri.EscapeDataString(Url) + "&" + Uri.EscapeDataString(SigBaseStringParams);
+
+    IBuffer KeyMaterial = CryptographicBuffer.ConvertStringToBinary(consumerSecret + "&" + tokenSecret, BinaryStringEncoding.Utf8);
+    MacAlgorithmProvider HmacSha1Provider = MacAlgorithmProvider.OpenAlgorithm(OAuthSignatureMethodName);
+    CryptographicKey MacKey = HmacSha1Provider.CreateKey(KeyMaterial);
+    IBuffer DataToBeSigned = CryptographicBuffer.ConvertStringToBinary(SigBaseString, BinaryStringEncoding.Utf8);
+    IBuffer SignatureBuffer = CryptographicEngine.Sign(MacKey, DataToBeSigned);
+    String Signature = CryptographicBuffer.EncodeToBase64String(SignatureBuffer);
+    AuthorizationParameters.Add(OauthParameter.OauthSignature, Signature);
+    return this;
+}
+
 ```
-        String SigBaseStringParams = String.Join("&", AuthorizationParameters.Select(key => key.Key + "=" + Uri.EscapeDataString(key.Value)));
-        String SigBaseString = requestType.ToString() + "&";
-        SigBaseString += Uri.EscapeDataString(Url) + "&" + Uri.EscapeDataString(SigBaseStringParams);
-    
-        IBuffer KeyMaterial = CryptographicBuffer.ConvertStringToBinary(consumerSecret + "&" + tokenSecret, BinaryStringEncoding.Utf8);
-        MacAlgorithmProvider HmacSha1Provider = MacAlgorithmProvider.OpenAlgorithm(OAuthSignatureMethodName);
-        CryptographicKey MacKey = HmacSha1Provider.CreateKey(KeyMaterial);
-        IBuffer DataToBeSigned = CryptographicBuffer.ConvertStringToBinary(SigBaseString, BinaryStringEncoding.Utf8);
-        IBuffer SignatureBuffer = CryptographicEngine.Sign(MacKey, DataToBeSigned);
-        String Signature = CryptographicBuffer.EncodeToBase64String(SignatureBuffer);
-        AuthorizationParameters.Add(OauthParameter.OauthSignature, Signature);
-        return this;
-    }
-    
 
 The _ExecueRequest_ handles adding the details to the authorization header and making the request and returning the response.
 
@@ -100,16 +102,16 @@ The call to authorize brings up the login page of the Service Provider(500px),if
 ```csharp
 public async Task<OauthToken> AuthorizeToken()
 {
+    var tempAuthorizeUrl = OAuthAuthorizeUrl + "?oauth_token=" + Token.Token;
+    System.Uri StartUri = new Uri(tempAuthorizeUrl);
+    System.Uri EndUri = new Uri(OAuthCallbackUrl);
+    var auth =
+        await
+        WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, StartUri, EndUri);
+    var responseData = auth.ResponseData;
+}
+
 ```
-        var tempAuthorizeUrl = OAuthAuthorizeUrl + "?oauth_token=" + Token.Token;
-        System.Uri StartUri = new Uri(tempAuthorizeUrl);
-        System.Uri EndUri = new Uri(OAuthCallbackUrl);
-        var auth =
-            await
-            WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, StartUri, EndUri);
-        var responseData = auth.ResponseData;
-    }
-    
 
 Since this is for Windows8 I use the WebAuthenticationBroker to issue the request to authorize the user, which will open up a nice UI asking the user credentials. On entering the login details and getting successfully authorized, we would get the _request token_ and the _oauth\_verifier_ code.
 
@@ -120,22 +122,22 @@ This final step gives you the access token, that is used for any request to a pr
 ```csharp
 public async Task<OauthToken> AccessToken()
 {
+    AuthorizationParameters = new Dictionary<string, string>()
+            {
+                {OauthParameter.OauthConsumerKey, consumerKey},
+                {OauthParameter.OauthNonce, Nonce()},
+                {OauthParameter.OauthSignatureMethod,OAuthSignatureMethod},
+                {OauthParameter.OauthTimestamp, TimeStamp()},
+                {OauthParameter.OauthToken,Token.Token},
+                {OauthParameter.OauthVerifier,Token.Verifier},
+                {OauthParameter.OauthVersion, OAuthVersion}
+            };
+    var response = await this.MakeRequest(RequestType.POST)
+        .Sign(OAuthAccessUrl, Token.SecretCode)
+        .ExecuteRequest(OAuthAccessUrl);
+}
+
 ```
-        AuthorizationParameters = new Dictionary<string, string>()
-                {
-                    {OauthParameter.OauthConsumerKey, consumerKey},
-                    {OauthParameter.OauthNonce, Nonce()},
-                    {OauthParameter.OauthSignatureMethod,OAuthSignatureMethod},
-                    {OauthParameter.OauthTimestamp, TimeStamp()},
-                    {OauthParameter.OauthToken,Token.Token},
-                    {OauthParameter.OauthVerifier,Token.Verifier},
-                    {OauthParameter.OauthVersion, OAuthVersion}
-                };
-        var response = await this.MakeRequest(RequestType.POST)
-            .Sign(OAuthAccessUrl, Token.SecretCode)
-            .ExecuteRequest(OAuthAccessUrl);
-    }
-    
 
 The SecretCode, that was obtained from the call to Requesttoken is also passed to the function _Sign_.
 
@@ -148,44 +150,47 @@ The ExecuteRequest handles for this and is a genenric function that would allow 
 ```csharp
 public async Task<T> ExecuteRequest<T>(string Url, Dictionary<string, string> Parameters) where T : class
 {
-```
-        AuthorizationParameters = new Dictionary<string, string>()
-                                      {
-                                          {OauthParameter.OauthConsumerKey, consumerKey},
-                                          {OauthParameter.OauthNonce, Nonce()},
-                                          {OauthParameter.OauthSignatureMethod, OAuthSignatureMethod},
-                                          {OauthParameter.OauthTimestamp, TimeStamp()},
-                                          {OauthParameter.OauthToken, Token.Token},
-                                          {OauthParameter.OauthVersion, OAuthVersion}
-                                      };
-    
-        string RequestUrl;
-        if (Parameters != null && Parameters.Count > 0)
+    AuthorizationParameters = new Dictionary<string, string>()
+                                  {
+                                      {OauthParameter.OauthConsumerKey, consumerKey},
+                                      {OauthParameter.OauthNonce, Nonce()},
+                                      {OauthParameter.OauthSignatureMethod, OAuthSignatureMethod},
+                                      {OauthParameter.OauthTimestamp, TimeStamp()},
+                                      {OauthParameter.OauthToken, Token.Token},
+                                      {OauthParameter.OauthVersion, OAuthVersion}
+                                  };
+
+    string RequestUrl;
+    if (Parameters != null && Parameters.Count > 0)
+    {
+        RequestUrl = Url + "?" +
+                     String.Join("&",
+                     Parameters.Select(a => a.Key + (string.IsNullOrEmpty(a.Value) ? string.Empty : "=" + Uri.EscapeDataString(a.Value))).ToArray());
+        foreach (var parameter in Parameters)
         {
-            RequestUrl = Url + "?" +
-                         String.Join("&",
-                         Parameters.Select(a => a.Key + (string.IsNullOrEmpty(a.Value) ? string.Empty : "=" + Uri.EscapeDataString(a.Value))).ToArray());
-            foreach (var parameter in Parameters)
-            {
-                AuthorizationParameters.Add(parameter.Key, parameter.Value);
-            }
+            AuthorizationParameters.Add(parameter.Key, parameter.Value);
         }
-        else
-            RequestUrl = Url;
-        var response = await this.MakeRequest(requestType).Sign(Url, Token.SecretCode).ExecuteRequest(RequestUrl);
-        if (string.IsNullOrEmpty(response))
-            return null;
-        DataContractJsonSerializer json = new DataContractJsonSerializer(typeof(T));
-        T dat = json.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(response))) as T;
-        return dat;
     }
-    
+    else
+        RequestUrl = Url;
+    var response = await this.MakeRequest(requestType).Sign(Url, Token.SecretCode).ExecuteRequest(RequestUrl);
+    if (string.IsNullOrEmpty(response))
+        return null;
+    DataContractJsonSerializer json = new DataContractJsonSerializer(typeof(T));
+    T dat = json.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(response))) as T;
+    return dat;
+}
+
+```
 
 A sample way to use this would be as below
 
-    Oauth500Px.MakeRequest(Oauth500px.RequestType.GET).ExecuteRequest&lt;PhotoDetails&gt;(
-                        photoDetails, null);
-    
+```csharp
+
+Oauth500Px.MakeRequest(Oauth500px.RequestType.GET).ExecuteRequest&lt;PhotoDetails&gt;(
+                    photoDetails, null);
+
+```
 
 The code for the OAuth wrapper for 500px specific toWindows8 is available [here](https://github.com/rahulpnath/Blog/blob/master/Oauth500px.cs) for download. Feel free to modify it and use it. I will be refactoring the code out a bit more and also add a few functionalities. So in case you wanted this specific version do keep a copy for yourself.
 

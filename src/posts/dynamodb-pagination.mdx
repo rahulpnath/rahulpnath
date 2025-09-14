@@ -1,11 +1,15 @@
 ---
 title: "3 Different Ways To Do Data Pagination from Amazon DynamoDB Using .NET"
-slug: "dynamodb-pagination"
-date: "2023-03-02T20:39:25.000Z"
-feature_image: "/images/DynamoDB-Pagination.png"
-tags: ["AWS","DynamoDB"]
+slug: dynamodb-pagination
+date: 2023-03-02T00:00:00.000Z
+feature_image: /images/DynamoDB-Pagination.png
+excerpt: >-
+  Learn how to use Dynamodb pagination to retrieve large amounts of data stored
+  in the table.s.
+tags:
+  - AWS
+  - DynamoDB
 ---
-
 DynamoDB charges for reading, writing, and storing data in your DynamoDB tables.
 
 As a rule of thumb, when querying data, you can consider that each record that you retrieve from the database has a direct cost attached to it. Limiting the items you retrieve has a direct impact on saving cost and also performance.
@@ -20,8 +24,7 @@ We will look at the code examples using .NET, but the concepts apply to other pr
 
 We will learn how to use the LastEvaluatedKey, ExclusiveStartKey, Limit, and ScanIndexForward properties to page data, when querying from DynamoDB.
 
-Introduction to DynamoDB Pagination
------------------------------------
+## Introduction to DynamoDB Pagination
 
 Pagination, in general, is a process by which a large dataset is divided into smaller groups or chunks so that you can load them as required.
 
@@ -33,20 +36,17 @@ This means you cannot implement the typical page number style of pagination with
 
 When using pagination over DynamoDB, it’s easier to have an infinite scroll or continuous scroll kind of paging data UI style. When using this style, as you scroll to the end of the list that is currently displayed, the next set of items is automatically loaded.
 
-[
+<BlogLink
+  href="/blog/aws-dynamodb-net-core/"
+  title="AWS DynamoDB For The .NET Developer: How To Easily Get Started"
+  description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/aws_dynamodb.jpg"
+/>
 
-AWS DynamoDB For The .NET Developer: How To Easily Get Started
-
-Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/aws_dynamodb.jpg)
-
-](/posts/aws-dynamodb-net-core/)
-
-When Does DynamoDB Start Paginating?
-------------------------------------
+## When Does DynamoDB Start Paginating?
 
 A DynamoDB Query has a 1MB limit for the result set returned.
 
@@ -60,8 +60,7 @@ With the Low-level APIs in .NET SDK, you can also be explicit on the number of i
 
 The `Limit` property specifies the **maximum number** of items to limit when executing a query. However, if the 1MB limit reaches before the limit, DynamoDB returns just those items and will be lesser than the specified count.
 
-Different Ways To Page Data from DynamoDB
------------------------------------------
+## Different Ways To Page Data from DynamoDB
 
 With the DynamoDB .NET SDK, there are different ways you can page data from the table.
 
@@ -74,10 +73,11 @@ So to achieve this and pass the next key back and forth from the UI to the API, 
 ```csharp
 public class PagedResult<T> where T: class
 {
+    public List<T> Items { get; set; }
+    public string NextPageKey { get; set; }
+}
+
 ```
-        public List<T> Items { get; set; }
-        public string NextPageKey { get; set; }
-    }
 
 The `PagedResult` class has two properties - one, a list of Items that are returned in the current query and the `NextPageKey` to use to retrieve the next set of items.
 
@@ -97,37 +97,41 @@ The DynamoDB Query response returns a property `LastEvaluatedKey` that contains 
 
 The below code uses the `JsonSerializer` and the `Convert` class to convert the `LastEvalutedKey` to a base64 string.
 
-    var nextPageKey = response.LastEvaluatedKey.Count == 0
-        ? null
-        : Convert.ToBase64String(JsonSerializer.SerializeToUtf8Bytes(
-            response.LastEvaluatedKey,
-            new JsonSerializerOptions()
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
-            }));
-            
 ```csharp
+var nextPageKey = response.LastEvaluatedKey.Count == 0
+    ? null
+    : Convert.ToBase64String(JsonSerializer.SerializeToUtf8Bytes(
+        response.LastEvaluatedKey,
+        new JsonSerializerOptions()
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+        }));
+        
 return new PagedResult<WeatherForecast>()
 {
+    Items = items,
+    NextPageKey = nextPageKey
+};
+
 ```
-        Items = items,
-        NextPageKey = nextPageKey
-    };
 
 **Note**: _We need to use the special `JsonSerializerOptions` to ensure that the DynamoDB types are serialized and deserialized as expected._
 
 Before making a request to DynamoDB, we can check if a pageKey is passed to the API.If a pageKey exists, use that to set the `ExlusiveStartKey` property. We can convert it back from base64 and deserialize to `Dictionary<string,AttributeValue>` and set it as the `ExclusiveStartKey`.
 
-    var exclusiveStartKey= string.IsNullOrEmpty(pageKey)
-            ? null
-            : JsonSerializer.Deserialize<Dictionary<string, AttributeValue>>(Convert.FromBase64String(pageKey));
-            
-        var queryRequest = new QueryRequest()
-        {
-            ...
-            ExclusiveStartKey = exclusiveStartKey,
-            Limit = 5,
-        }
+```csharp
+var exclusiveStartKey= string.IsNullOrEmpty(pageKey)
+        ? null
+        : JsonSerializer.Deserialize<Dictionary<string, AttributeValue>>(Convert.FromBase64String(pageKey));
+        
+    var queryRequest = new QueryRequest()
+    {
+        ...
+        ExclusiveStartKey = exclusiveStartKey,
+        Limit = 5,
+    }
+
+```
 
 With the `ExclusiveStartKey` set, DynamoDB reads items only from that item and returns the next set of items. It fetches up to a maximum items as specified by the `Limit` property (5 in this case), or 1MB is reached.
 
@@ -148,34 +152,35 @@ To do this, I use the .NET SDKs Document model, which has helper methods to easi
 public async Task<PagedResult<WeatherForecast>> GetPagedWeatherData(
 string cityName, DateTime? lastReadItem)
 {
-```
-        Dictionary<string,AttributeValue> startKey = null;
-        if (lastReadItem != null)
-        {
-            var doc = new Document();
-            doc[nameof(WeatherForecast.CityName)] = cityName;
-            doc[nameof(WeatherForecast.Date)] = lastReadItem.Value.ToString(AWSSDKUtils.ISO8601DateFormat);
-            startKey = doc.ToAttributeMap();
-        }
-        
-        var queryRequest = new QueryRequest()
-        {
-            TableName = nameof(WeatherForecast),
-            ExclusiveStartKey = startKey,
-            KeyConditionExpression = "CityName = :cityName",
-            ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
-            {
-                {":cityName", new AttributeValue(cityName)},
-            }
-        };
-        var response = await _dynamoDbClient.QueryAsync(queryRequest);
-        var data = response.Items.Select(a =>
-        {
-            var doc = Document.FromAttributeMap(a);
-            return _dynamoDbContext.FromDocument<WeatherForecast>(doc);
-        });
-        return new PagedResult<WeatherForecast>(data,  data.MaxBy(a => a.Date)?.Date.ToString(AWSSDKUtils.ISO8601DateFormat));
+    Dictionary<string,AttributeValue> startKey = null;
+    if (lastReadItem != null)
+    {
+        var doc = new Document();
+        doc[nameof(WeatherForecast.CityName)] = cityName;
+        doc[nameof(WeatherForecast.Date)] = lastReadItem.Value.ToString(AWSSDKUtils.ISO8601DateFormat);
+        startKey = doc.ToAttributeMap();
     }
+    
+    var queryRequest = new QueryRequest()
+    {
+        TableName = nameof(WeatherForecast),
+        ExclusiveStartKey = startKey,
+        KeyConditionExpression = "CityName = :cityName",
+        ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
+        {
+            {":cityName", new AttributeValue(cityName)},
+        }
+    };
+    var response = await _dynamoDbClient.QueryAsync(queryRequest);
+    var data = response.Items.Select(a =>
+    {
+        var doc = Document.FromAttributeMap(a);
+        return _dynamoDbContext.FromDocument<WeatherForecast>(doc);
+    });
+    return new PagedResult<WeatherForecast>(data,  data.MaxBy(a => a.Date)?.Date.ToString(AWSSDKUtils.ISO8601DateFormat));
+}
+
+```
 
 In the above code, given the last read/known DateTime (Range Key), we construct the `ExclusiveStartKey` and pass that to the DynamoDB request.
 
@@ -192,38 +197,39 @@ The below code specifies the greater than condition on the Date property (Range 
 ```csharp
 [HttpGet("city-name-paged-range-key-condition")]
 public async Task<PagedResult<WeatherForecast>> GetAllForCityPagedWithKeyCondition(
-```
-        string cityName, DateTime? fromDateTime)
+    string cityName, DateTime? fromDateTime)
+{
+    var queryRequest = new QueryRequest()
     {
-        var queryRequest = new QueryRequest()
+        TableName = nameof(WeatherForecast),
+        KeyConditionExpression = "CityName = :cityName and #date > :fromDateTime",
+        Limit = 5,
+        ExpressionAttributeNames = new Dictionary<string, string>()
         {
-            TableName = nameof(WeatherForecast),
-            KeyConditionExpression = "CityName = :cityName and #date > :fromDateTime",
-            Limit = 5,
-            ExpressionAttributeNames = new Dictionary<string, string>()
-            {
-                {"#date", "Date"}
-            },
-            ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
-            {
-                {":cityName", new AttributeValue(cityName)},
-                {":fromDateTime", new AttributeValue(fromDateTime.Value.ToString(AWSSDKUtils.ISO8601DateFormat))},
-            }
-        };
-        var response = await _dynamoDbClient.QueryAsync(queryRequest);
-        var items = response.Items.Select(a =>
+            {"#date", "Date"}
+        },
+        ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
         {
-            var doc = Document.FromAttributeMap(a);
-            return _dynamoDbContext.FromDocument<WeatherForecast>(doc);
-        }).ToList();
-        var nextPageKey = !response.LastEvaluatedKey.Any()
-            ? null
-            : items.MaxBy(a => a.Date)?.Date.ToString(AWSSDKUtils.ISO8601DateFormat);
-        return new PagedResult<WeatherForecast>()
-        {
-            Items = items,
-            NextPageKey = nextPageKey
-        };
+            {":cityName", new AttributeValue(cityName)},
+            {":fromDateTime", new AttributeValue(fromDateTime.Value.ToString(AWSSDKUtils.ISO8601DateFormat))},
+        }
+    };
+    var response = await _dynamoDbClient.QueryAsync(queryRequest);
+    var items = response.Items.Select(a =>
+    {
+        var doc = Document.FromAttributeMap(a);
+        return _dynamoDbContext.FromDocument<WeatherForecast>(doc);
+    }).ToList();
+    var nextPageKey = !response.LastEvaluatedKey.Any()
+        ? null
+        : items.MaxBy(a => a.Date)?.Date.ToString(AWSSDKUtils.ISO8601DateFormat);
+    return new PagedResult<WeatherForecast>()
+    {
+        Items = items,
+        NextPageKey = nextPageKey
+    };
+
+```
 
 In this case, since Date is a [reserved keyword](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ReservedWords.html) in DynamoDB, so I use a placeholder property to specify the property name (_#date_). The actual property name is passed as part of the `ExpressionAttributeNames` property, which specifies a map for the placeholder property.
 

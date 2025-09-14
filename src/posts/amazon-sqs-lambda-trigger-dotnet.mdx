@@ -1,13 +1,16 @@
 ---
 title: "Amazon SQS and AWS Lambda Triggers in .NET"
-slug: "amazon-sqs-lambda-trigger-dotnet"
-date: "2022-09-21T00:00:00.000Z"
-feature_image: "/images/amazon-sqs-lambda-triggers-dotnet.jpg"
-tags: ["AWS","Lambda"]
-excerpt: "Learn how to process SQS messages from AWS Lambda Function. We will learn how to set up and trigger a .NET Lambda Function using SQS and the various configurations associated."
-
+slug: amazon-sqs-lambda-trigger-dotnet
+date: 2022-09-21T00:00:00.000Z
+feature_image: /images/amazon-sqs-lambda-triggers-dotnet.jpg
+excerpt: >-
+  Learn how to process SQS messages from AWS Lambda Function. We will learn how
+  to set up and trigger a .NET Lambda Function using SQS and the various
+  configurations associated.
+tags:
+  - AWS
+  - Lambda
 ---
-
 _This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 Amazon Simple Queue Service (SQS) is a fully managed message queuing service.
@@ -16,57 +19,50 @@ SQS enables you to decouple applications and build distributed software systems.
 
 AWS Lambda functions can process messages in SQS.
 
-<div>
 <iframe src="https://www.youtube.com/embed/0V4aeT7oONo" />
-</div>
 
 In this post, you’ll learn
 
-*   Build and set up a Lambda Function to handle SQS messages
-*   Different Lambda SQS trigger configurations.
-*   Exception handling when processing SQS messages
+-   Build and set up a Lambda Function to handle SQS messages
+-   Different Lambda SQS trigger configurations.
+-   Exception handling when processing SQS messages
 
-[
+<BlogLink
+  href="/blog/amazon-sqs"
+  title="Amazon SQS For the .NET Developer: How to Easily Get Started"
+  description="Learn how to get started with Amazon SQS and use it from a .NET Application. We will learn how to send and receive messages, important properties,and concepts that you need to know when using SQS."
+  authorImage="/images/favicon.ico"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/queue.jpg"
+/>
 
-Amazon SQS For the .NET Developer: How to Easily Get Started
+## Build and Deploy .NET Lambda Function
 
-Learn how to get started with Amazon SQS and use it from a .NET Application. We will learn how to send and receive messages, important properties,and concepts that you need to know when using SQS.
+[AWS Lambda](/blog/aws-lambda-net-core/) is Amazon’s answer to serverless computing services. It allows running code with zero administration of the infrastructure that the code is running on.
 
-![](/images/favicon.ico)Rahul NathRahul Pulikkot Nath
-
-![](/images/queue.jpg)
-
-](/posts/amazon-sqs)
-
-Build and Deploy .NET Lambda Function
--------------------------------------
-
-[AWS Lambda](/posts/aws-lambda-net-core/) is Amazon’s answer to serverless computing services. It allows running code with zero administration of the infrastructure that the code is running on.
-
-Make sure to install the AWS Toolkit ([Visual Studio](https://aws.amazon.com/visualstudio/), [Rider](https://aws.amazon.com/rider/), [VS Code](https://aws.amazon.com/visualstudiocode/)) and [set up Credentials for the local development environment](/posts/amazon-credentials-dotnet/).  This helps you quickly develop a .NET application on the AWS infrastructure and deploy them quickly to your AWS Accounts.
+Make sure to install the AWS Toolkit ([Visual Studio](https://aws.amazon.com/visualstudio/), [Rider](https://aws.amazon.com/rider/), [VS Code](https://aws.amazon.com/visualstudiocode/)) and [set up Credentials for the local development environment](/blog/amazon-credentials-dotnet/).  This helps you quickly develop a .NET application on the AWS infrastructure and deploy them quickly to your AWS Accounts.
 
 With the AWS Toolkit installed, select the AWS Lambda Lambda Project template and choose SQS blueprint. As shown below, it creates an AWS Lambda function template project with a `Function.cs` class with everything required to handle SQS events.
 
 ```csharp
 public async Task FunctionHandler(SQSEvent evnt, ILambdaContext context)
 {
-```csharp
-        foreach(var message in evnt.Records)
-        {
-            await ProcessMessageAsync(message, context);
-        }
+    foreach(var message in evnt.Records)
+    {
+        await ProcessMessageAsync(message, context);
     }
-    
-```csharp
+}
+
 private async Task ProcessMessageAsync(SQSEvent.SQSMessage message, ILambdaContext context)
 {
+    context.Logger.LogInformation($"Processed message {message.Body}");
+
+    // TODO: Do interesting work based on the new message
+    await Task.CompletedTask;
+}
+
 ```
-        context.Logger.LogInformation($"Processed message {message.Body}");
-    
-        // TODO: Do interesting work based on the new message
-        await Task.CompletedTask;
-    }
-    
 
 The `SQSEvent` class represents the SQS message notification. It contains a list of `SQSMessage` objects in the Records property.
 
@@ -74,16 +70,13 @@ The blueprint code loops through the `Records` property and logs the message bod
 
 ### Deploy Lambda Function
 
-To publish the Lambda function to the AWS account, you can use the Publish to AWS Lambda option that the AWS Toolkit provides. You can directly publish the new lambda function with your [development environment connected to your AWS account](/posts/amazon-credentials-dotnet/).
+To publish the Lambda function to the AWS account, you can use the Publish to AWS Lambda option that the AWS Toolkit provides. You can directly publish the new lambda function with your [development environment connected to your AWS account](/blog/amazon-credentials-dotnet/).
 
 I prefer to set up an automated build/deploy pipeline to publish to your AWS Account for real-world applications. Check out the below for an example of how to set up a Lambda Function deployment pipeline from GitHub Actions.
 
-<div>
 <iframe src="https://www.youtube.com/embed/U96230YlSJA" />
-</div>
 
-Setting Up SQS Lambda Trigger
------------------------------
+## Setting Up SQS Lambda Trigger
 
 Lambda Triggers can be set up under the Lambda Function or on the SQS.
 
@@ -109,11 +102,9 @@ Navigate to the IAM Role associated with the Lambda Function. You can do this un
 
 The IAM role specifies the permissions for the Lambda function. Setting up SQS Trigger requires the below [permissions](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html).
 
-```sql
-*   **sqs:ReceiveMessage** → Receive the message from the Queue.
-*   **sqs:DeleteMessage** → Delete the message from Queue once successfully processed.
-*   **sqs:GetQueueAttributes** → Get Queue attributes to determine the default timeout and other related attributes for processing the message.
-```
+-   **sqs:ReceiveMessage** → Receive the message from the Queue.
+-   **sqs:DeleteMessage** → Delete the message from Queue once successfully processed.
+-   **sqs:GetQueueAttributes** → Get Queue attributes to determine the default timeout and other related attributes for processing the message.
 
 Add an inline policy to the Lambda function IAM Role and give access to SQS, as shown below.
 
@@ -133,8 +124,7 @@ As soon as the message arrives in the Queue, it will trigger our .NET Lambda fun
 
 The Lambda function reads the message and logs it to the console. You can see this under Cloudwatch Logs.
 
-SQS Lambda Trigger Configuration
---------------------------------
+## SQS Lambda Trigger Configuration
 
 The SQS Lambda Trigger Configuration provides a few configurable options.
 
@@ -144,14 +134,11 @@ You can update the configuration by navigating the Lambda function and editing t
 
 ![The SQS Lambda trigger provides a few configurable options, mainly Batch Size and Batch Window. This affects how the messages are sent to the Lambda function.](/images/aws-lambda-sqs-trigger-configurations.jpg)
 
-```sql
-*   **Batch Size** → This is the largest number of records that will be read from the Queue at once and delivered to the Lambda Function. If you want the Lambda function to process only one message at a time, set this to 1. Setting a higher value does not guarantee the Lambda Functions will be delivered that many records. It only indicates the maximum limit of records.
-*   **Batch Window** → This specifies the time in seconds to wait to gather records to set the Batch Size setting before invoking the Lambda function. E.g., if the Batch size is ten and Batch Window is 30 seconds, it will wait 30 seconds to accumulate ten records. If there are ten records before that, the Function gets invoked immediately. After 30 seconds there still is less than 10, it will invoke the Lambda function with the available records. These settings become more critical when many messages come into your Queue.
-*   **Filter Criteria** → You can [filter messages coming into SQS](https://docs.aws.amazon.com/lambda/latest/dg/invocation-eventfiltering.html#filtering-sqs) even before it is delivered to your Lambda function. So if you are only interested in specific kinds of messages (based on message properties or attributes), you can specify the Filters. It is a JSON object structure, and you can add multiple filters to a trigger configuration. If the messages do not pass the filter criteria, these are automatically dropped from the SQS.
-```
+-   **Batch Size** → This is the largest number of records that will be read from the Queue at once and delivered to the Lambda Function. If you want the Lambda function to process only one message at a time, set this to 1. Setting a higher value does not guarantee the Lambda Functions will be delivered that many records. It only indicates the maximum limit of records.
+-   **Batch Window** → This specifies the time in seconds to wait to gather records to set the Batch Size setting before invoking the Lambda function. E.g., if the Batch size is ten and Batch Window is 30 seconds, it will wait 30 seconds to accumulate ten records. If there are ten records before that, the Function gets invoked immediately. After 30 seconds there still is less than 10, it will invoke the Lambda function with the available records. These settings become more critical when many messages come into your Queue.
+-   **Filter Criteria** → You can [filter messages coming into SQS](https://docs.aws.amazon.com/lambda/latest/dg/invocation-eventfiltering.html#filtering-sqs) even before it is delivered to your Lambda function. So if you are only interested in specific kinds of messages (based on message properties or attributes), you can specify the Filters. It is a JSON object structure, and you can add multiple filters to a trigger configuration. If the messages do not pass the filter criteria, these are automatically dropped from the SQS.
 
-Exception Handling When Processing SQS Messages
------------------------------------------------
+## Exception Handling When Processing SQS Messages
 
 So all good until now. We have messages coming into the queue, the Lambda function gets triggered, processes the message, and successfully removes the message from the Queue.
 

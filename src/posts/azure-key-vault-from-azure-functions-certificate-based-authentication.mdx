@@ -1,12 +1,13 @@
 ---
 title: "Azure Key Vault From Azure Functions - Certificate Based Authentication"
-slug: "azure-key-vault-from-azure-functions-certificate-based-authentication"
-date: "2017-05-25T00:00:00.000Z"
-feature_image: "/images/azureFunction_newFunctionApp.png"
-tags: ["Azure"]
+slug: azure-key-vault-from-azure-functions-certificate-based-authentication
+date: 2017-05-25T00:00:00.000Z
+feature_image: /images/azureFunction_newFunctionApp.png
+excerpt: Authenticate with Azure Key Vault from Azure Function using Certificates
+tags:
+  - Azure
 ---
-
-In the previous post we saw how to connect to [Azure Key Vault from Azure Functions](/posts/azure-key-vault-from-azure-functions/). We used the [Application Id and Secret to authenticate with the Azure AD Application](/posts/authenticating-a-client-application-with-azure-key-vault/). Since the general recommendation is to use certificate-based authentication, in this post, we will see how we can use certificates to authenticate from within an Azure Function.
+In the previous post we saw how to connect to [Azure Key Vault from Azure Functions](/blog/azure-key-vault-from-azure-functions/). We used the [Application Id and Secret to authenticate with the Azure AD Application](/blog/authenticating-a-client-application-with-azure-key-vault/). Since the general recommendation is to use certificate-based authentication, in this post, we will see how we can use certificates to authenticate from within an Azure Function.
 
 First, we need to create an Azure AD application and set it up to use certificate-based authentication. Create a new service principal for the AD application and associate that with the Azure Key Vault. Authorize the AD application with the permissions required. In this case, I am providing all access to keys and secrets.
 
@@ -19,12 +20,12 @@ $credential = [System.Convert]::ToBase64String($rawCertificateData)
 $startDate= [System.DateTime]::Now
 $endDate = $startDate.AddYears(1)
 $adApplication = New-AzureRmADApplication -DisplayName "CertAdApplication" -HomePage  "http://www.test.com" -IdentifierUris "http://www.test.com" -CertValue $credential  -StartDate $startDate -EndDate $endDate
+
+$servicePrincipal = New-AzureRmADServicePrincipal -ApplicationId $adApplication.ApplicationId
+
+Set-AzureRmKeyVaultAccessPolicy -VaultName 'RahulKeyVault' -ServicePrincipalName $servicePrincipal.ServicePrincipalNames[0] -PermissionsToSecrets all -PermissionToKeys all
+
 ```
-    
-    $servicePrincipal = New-AzureRmADServicePrincipal -ApplicationId $adApplication.ApplicationId
-    
-    Set-AzureRmKeyVaultAccessPolicy -VaultName 'RahulKeyVault' -ServicePrincipalName $servicePrincipal.ServicePrincipalNames[0] -PermissionsToSecrets all -PermissionToKeys all
-    
 
 Create an Azure Function App under your subscription as shown below. You can also use the same application created in the previous post (if you did create one).
 
@@ -42,7 +43,7 @@ For the certificate to be available for use in the Azure Functions an entry shou
 
 ![Azure Function Certificates App Settings](/images/azureFunction_AppSetting.png)
 
-Using a certificate to authenticate with the Key Vault is the same as we have [seen before](/posts/authenticating-a-client-application-with-azure-key-vault/).
+Using a certificate to authenticate with the Key Vault is the same as we have [seen before](/blog/authenticating-a-client-application-with-azure-key-vault/).
 
 ```csharp
 using System;
@@ -50,50 +51,46 @@ using Microsoft.Azure.KeyVault;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-```
-    
-```csharp
+
 private const string applicationId = "AD Application ID";
 private const string certificateThumbprint = "Certificate Thumbprint";
-```
-    
-```csharp
+
 public async static Task Run(TimerInfo myTimer, TraceWriter log)
 {
-```
-        var keyClient = new KeyVaultClient(async (authority, resource, scope) =>
+    var keyClient = new KeyVaultClient(async (authority, resource, scope) =>
+{
+    var authenticationContext = new AuthenticationContext(authority, null);
+    X509Certificate2 certificate;
+    X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+    try
     {
-        var authenticationContext = new AuthenticationContext(authority, null);
-        X509Certificate2 certificate;
-        X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
-        try
+        store.Open(OpenFlags.ReadOnly);
+        X509Certificate2Collection certificateCollection = store.Certificates.Find(X509FindType.FindByThumbprint, certificateThumbprint, false);
+        if (certificateCollection == null || certificateCollection.Count == 0)
         {
-            store.Open(OpenFlags.ReadOnly);
-            X509Certificate2Collection certificateCollection = store.Certificates.Find(X509FindType.FindByThumbprint, certificateThumbprint, false);
-            if (certificateCollection == null || certificateCollection.Count == 0)
-            {
-                throw new Exception("Certificate not installed in the store");
-            }
-    
-            certificate = certificateCollection[0];
+            throw new Exception("Certificate not installed in the store");
         }
-        finally
-        {
-            store.Close();
-        }
-    
-        var clientAssertionCertificate = new ClientAssertionCertificate(applicationId, certificate);
-        var result = await authenticationContext.AcquireTokenAsync(resource, clientAssertionCertificate);
-        return result.AccessToken;
-    });
-    
-        var secretIdentifier = "https://rahulkeyvault.vault.azure.net/secrets/mySecretName";
-        var secret = await keyClient.GetSecretAsync(secretIdentifier);
-    
-        log.Info($"Secret Value: {secret}");
-    }
-    
 
-Make sure you add in the _project.json_ as seen in the [previous post](/posts/azure-key-vault-from-azure-functions/) to enable the required NuGet packages. The Azure function now uses the certificate to authenticate with Key Vault and retrieve the secret.
+        certificate = certificateCollection[0];
+    }
+    finally
+    {
+        store.Close();
+    }
+
+    var clientAssertionCertificate = new ClientAssertionCertificate(applicationId, certificate);
+    var result = await authenticationContext.AcquireTokenAsync(resource, clientAssertionCertificate);
+    return result.AccessToken;
+});
+
+    var secretIdentifier = "https://rahulkeyvault.vault.azure.net/secrets/mySecretName";
+    var secret = await keyClient.GetSecretAsync(secretIdentifier);
+
+    log.Info($"Secret Value: {secret}");
+}
+
+```
+
+Make sure you add in the _project.json_ as seen in the [previous post](/blog/azure-key-vault-from-azure-functions/) to enable the required NuGet packages. The Azure function now uses the certificate to authenticate with Key Vault and retrieve the secret.
 
 Hope this helps!

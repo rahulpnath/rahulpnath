@@ -1,34 +1,38 @@
 ---
 title: "RabbitMQ Fanout Exchange Explained"
-slug: "fanout-exchange-rabbitmq-dotnet"
-date: "2024-03-21T05:46:42.000Z"
-feature_image: "/images/RabbitMQ---Fanout-Exchange.png"
-tags: ["RabbitMQ","AWS"]
+slug: fanout-exchange-rabbitmq-dotnet
+date: 2024-03-21T00:00:00.000Z
+feature_image: /images/RabbitMQ---Fanout-Exchange.png
+excerpt: >-
+  A Fanout Exchange type in RabbitMQ routes messages to all of the queues bound
+  to it, ignoring the routing key. Let's understand how to set up a Fanout
+  Exchange and how it routes messages to consumers.
+tags:
+  - AWS
+  - RabbitMQ
 ---
-
 An Exchange in RabbitMQ is a routing mechanism to send messages to queues.
 
 RabbitMQ supports four different Exchange Types.
 
-*   Topic Exchange
-*   [Fanout Exchange](/posts/fanout-exchange-rabbitmq-dotnet/)
-*   Headers Exchange
-*   [**Direct Exchange**](/posts/direct-exchange-rabbitmq-dotnet/)
+-   Topic Exchange
+-   [Fanout Exchange](/blog/fanout-exchange-rabbitmq-dotnet/)
+-   Headers Exchange
+-   [**Direct Exchange**](/blog/direct-exchange-rabbitmq-dotnet/)
 
 <iframe src="https://www.youtube.com/embed/NUASc6djZqE?feature=oembed" />
 
 In this blog post, let's understand
 
-*   RabbitMQ Fanout Exchange
-*   Routing messages in Fanout Exchange
-*   Set up a Fanout Exchange from .NET app
+-   RabbitMQ Fanout Exchange
+-   Routing messages in Fanout Exchange
+-   Set up a Fanout Exchange from .NET app
 
 I use [Amazon MQ](https://aws.amazon.com/amazon-mq/?ref=rahulpnath.com), a managed message broker service that supports ActiveMQ and RabbitMQ engine types, to host my RabbitMQ instance. However, you can use [one of the various options that RabbitMQ provides](https://www.rabbitmq.com/download.html?ref=rahulpnath.com) to host your instance,
 
-_AWS sponsors this article and is part of my_ [_RabbitMQ Series_](/posts/tag/rabbitmq/)_._
+_AWS sponsors this article and is part of my_ [_RabbitMQ Series_](/blog/tag/rabbitmq/)_._
 
-What is a RabbitMQ Fanout Exchange?
------------------------------------
+## What is a RabbitMQ Fanout Exchange?
 
 A Fanout Exchange type in RabbitMQ routes messages to all the queues bound to it, ignoring the routing key.
 
@@ -42,24 +46,21 @@ Fanout Exchange routes messages to all queues bound to it. It ignores the routin
 
 Fanout exchange ignores the routing keys on the messages and any Binding keys if specified.
 
-RabbitMQ Fanout Exchange From .NET
-----------------------------------
+## RabbitMQ Fanout Exchange From .NET
 
 We will use a NuGet package, [RabbitMQ.Client](https://www.nuget.org/packages/RabbitMQ.Client?ref=rahulpnath.com), to connect and send/receive messages from RabbitMQ.
 
 If you are new to building RabbitMQ from .NET applications, check out the Getting Started article below.
 
-[
-
-Amazon MQ RabbitMQ: A Reliable Messaging Solution for Your .NET Projects
-
-RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let’s learn how to get started using RabbitMQ on Amazon MQ from .NET application.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/rabbit-mq-dotnet.png)
-
-](/posts/amazon-mq-rabbitmq-dotnet/)
+<BlogLink
+  href="/blog/amazon-mq-rabbitmq-dotnet/"
+  title="Amazon MQ RabbitMQ: A Reliable Messaging Solution for Your .NET Projects"
+  description="RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let’s learn how to get started using RabbitMQ on Amazon MQ from .NET application."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/rabbit-mq-dotnet.png"
+/>
 
 ### Creating RabbitMQ Fanout Exchange From .NET
 
@@ -70,26 +71,26 @@ The `ExchangeDeclare` the method takes in an exchange name and its type. Below
 ```csharp
 var factory = new ConnectionFactory()
 {
-```
-        Uri = new Uri("YOUR RABBIT INSTANCE URI"),
-        Port = 5671,
-        UserName = "<USERNAME FROM CONFIGURATION FILE>",
-        Password = "<PASSWORD FROM CONFIGURATION FILE>"
-    };
-    
-```csharp
+    Uri = new Uri("YOUR RABBIT INSTANCE URI"),
+    Port = 5671,
+    UserName = "<USERNAME FROM CONFIGURATION FILE>",
+    Password = "<PASSWORD FROM CONFIGURATION FILE>"
+};
+
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
-```
-    
-```csharp
+
 var exchangeName = "weather_fanout";
 channel.ExchangeDeclare(exchangeName, ExchangeType.Fanout);
+
 ```
 
 When sending a message, the sender specifies the Exchange and routing key.
 
-    channel.BasicPublish(exchangeName, routingKey, null, body);
+```csharp
+channel.BasicPublish(exchangeName, routingKey, null, body);
+
+```
 
 When sending to a Fanout Exchange, the `routingKey` can be empty as the exchange ignores it.
 
@@ -102,22 +103,19 @@ To create a Queue, use the `QueueDeclare` method. It will create a new Queue o
 ```csharp
 var factory = new ConnectionFactory()
 {
-```
-        Uri = new Uri("YOUR RABBIT INSTANCE URI"),
-        Port = 5671,
-        UserName = "<USERNAME FROM CONFIGURATION FILE>",
-        Password = "<PASSWORD FROM CONFIGURATION FILE>"
-    };
-    
-```csharp
+    Uri = new Uri("YOUR RABBIT INSTANCE URI"),
+    Port = 5671,
+    UserName = "<USERNAME FROM CONFIGURATION FILE>",
+    Password = "<PASSWORD FROM CONFIGURATION FILE>"
+};
+
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
-```
-    
-```csharp
+
 var queueName = "nsw";
 channel.QueueDeclare(queueName, false, false, false, null);
 channel.QueueBind(queueName, "weather_fanout", string.Empty);
+
 ```
 
 The above code sets up a queue `nsw` and sets up a binding with the Fanout exchange (`weather_fanout`) we created earlier.
@@ -134,6 +132,7 @@ For example, In this case, the `weather_fanout` exchange can be used to broadcas
 var queueName = "qld";
 channel.QueueDeclare(queueName, false, false, false, null);
 channel.QueueBind(queueName, "weather_fanout", string.Empty);
+
 ```
 
 Any time a message is sent to the Exchange, a copy of it is sent to both `qld` and `nsw` Queues and the consumers listening on those queues can process the messages.

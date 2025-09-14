@@ -1,11 +1,12 @@
 ---
 title: "REST...after a long time"
-slug: "rest-after-a-long-time"
-date: "2011-06-11T14:22:28.000Z"
-feature_image: ""
-tags: ["Programming"]
+slug: rest-after-a-long-time
+date: 2011-06-11
+excerpt: >-
+  It's not been too long since I have been  into Web development,but I have already started hearing the buzz word every now and then.  REpresentational State Transfer(REST).  Aaron...
+tags:
+  - Programming
 ---
-
 It's not been too long since I have been  into Web development,but I have already started hearing the buzz word every now and then.
 
 REpresentational State Transfer(REST).
@@ -16,18 +17,17 @@ REST simplifies a lot on the interface that is exposed to the client.As for REST
 
 As for WCF is concerned you have 2 attributes,WebGet and WebInvoke, that would decorate you functions to indicate the mapping with the http interface.WebGet is used to map to the GET of http and all other verbs map to WebInvoke,which inturn has Method property that indicates what method of http it actually maps to.
 
-```json
+```csharp
 [WebGet(UriTemplate = "users/{username}")]
 [OperationContract]
+
 User GetUserDetails(string userName)
-```
-    
-```json
+
 [WebInvoke(Method = "PUT", UriTemplate = "users/{username}")]
 [OperationContract]
 void PutNewUser(string userName, User user) {...}
+
 ```
-    
 
 As seen in the above snippet,the same resource,users,supports 2 different kind of methods to be invoked on it.So the function that actually gets invoked would be decided by the Http.So you see the client never calls a GetUserDetails or PutNewUser.All it knows is HTTP and its interface,which gives a uniformity across resources and also makes life simple.
 

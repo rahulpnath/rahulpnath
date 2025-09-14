@@ -1,29 +1,36 @@
 ---
 title: "Checking in Package Dependencies into Source Control"
-slug: "checking-in-package-dependencies-into-source-control"
-date: "2016-04-26T12:21:21.000Z"
-feature_image: "/images/nuget_package_sources.png"
-tags: ["Programming","Thoughts"]
+slug: checking-in-package-dependencies-into-source-control
+date: 2016-04-26T00:00:00.000Z
+feature_image: /images/nuget_package_sources.png
+excerpt: >-
+  This post looks into why we should include packages in the source control and
+  not resolve it via configuration files at build time.  Over the past few
+  years, Package...
+tags:
+  - Thoughts
+  - Programming
 ---
-
 _This post looks into why we should include packages in the source control and not resolve it via configuration files at build time._
 
-Over the past few years, [Package Managers](https://en.wikipedia.org/wiki/Package_manager) have gained an important role in the way software gets developed. There is an [increasing number of package managers](https://github.com/showcases/package-managers) catering to different programming languages and areas of development, making the distribution of reusable libraries and plugins easy. The convention that's usually followed with these package dependencies is to exclude them from source control, and use a configuration file ([package.json](https://docs.npmjs.com/files/package.json), [packages.config](https://docs.nuget.org/consume/package-restore)) to retrieve all the packages at build time. Even the [GitHub’s collection](https://github.com/github/gitignore) of [.gitignore](https://git-scm.com/docs/gitignore) file templates ignores the packages folders of various package managers.
+Over the past few years, [Package Managers](https://en.wikipedia.org/wiki/Package_manager) have gained an important role in the way software gets developed. There is an [increasing number of package managers](https://github.com/showcases/package-managers) catering to different programming languages and areas of development, making the distribution of reusable libraries and plugins easy. The convention that's usually followed with these package dependencies is to exclude them from source control, and use a configuration file ([package.json](https://docs.npmjs.com/files/package.json), [packages.config](https://docs.nuget.org/consume/package-restore)) to retrieve all the packages at build time. Even the [GitHub’s collection](https://github.com/github/gitignore) of [.gitignore](https://git-scm.com/docs/gitignore) file templates ignores the packages folders of various package managers."
 
-```bash
+```text
 # NuGet Packages
+
 *.nupkg
 # The packages folder can be ignored because of Package Restore
+
 **/packages/*
 ...
 # Dependency directories
+
 node_modules
 jspm_packages
-```
-    
 
-Common Arguments for not Checking in Packages
----------------------------------------------
+```
+
+## Common Arguments for not Checking in Packages
 
 Since checking in packages is not a common practice, let's first see some of the arguments for not doing this and how it compares to having them checked in.
 
@@ -43,8 +50,7 @@ But for the project to build we need the packages restored first. So the time is
 
 Moreover cloning a repository is a one-time activity, while a clean can be done any time a developer wants to. So it actually saves more time to keep the packages checked in.
 
-More Reason for Checking in Packages
-------------------------------------
+## More Reason for Checking in Packages
 
 Now that we have seen most of the common arguments are not valid, let's see more reasons on why including the packages into the source control is actually better.
 
@@ -66,4 +72,4 @@ Many times I have had to update my Package sources in Visual Studio and break my
 
 ![Nuget custom package source](/images/nuget_package_sources.png)
 
-Do you still see any reason for not checking in package dependencies into the source control? If not let's go and change that package folder exclude and have them included in the source. (I just updated [CLAL](/posts/clal-command-line-application-launcher/) to [include dependencies.](https://github.com/rahulpnath/clal/commit/736023d9ab4bd285cb077ff54acd1bbaad142a08))
+Do you still see any reason for not checking in package dependencies into the source control? If not let's go and change that package folder exclude and have them included in the source. (I just updated [CLAL](/blog/clal-command-line-application-launcher/) to [include dependencies.](https://github.com/rahulpnath/clal/commit/736023d9ab4bd285cb077ff54acd1bbaad142a08))

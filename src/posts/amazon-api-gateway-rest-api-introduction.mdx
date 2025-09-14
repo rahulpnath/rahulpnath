@@ -1,13 +1,15 @@
 ---
 title: "Amazon API Gateway - Introduction To Building REST APIs"
-slug: "amazon-api-gateway-rest-api-introduction"
-date: "2022-07-22T00:00:00.000Z"
-feature_image: "/images/learning_code.jpg"
-tags: ["AWS"]
-excerpt: "Learn how to build REST API using API Gateway. We will learn the different building blocks of REST APIs, how they connect with each other, and how you can build and configure an API in the AWS Console."
-
+slug: amazon-api-gateway-rest-api-introduction
+date: 2022-07-22T00:00:00.000Z
+feature_image: /images/learning_code.jpg
+excerpt: >-
+  Learn how to build REST API using API Gateway. We will learn the different
+  building blocks of REST APIs, how they connect with each other, and how you
+  can build and configure an API in the AWS Console.
+tags:
+  - AWS
 ---
-
 _This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 Amazon API Gateway is an AWS service for managing APIs at any scale.
@@ -16,22 +18,19 @@ REST APIs and HTTP APIs are both RESTful API products offered by API Gateway. Wh
 
 In this blog post, let’s learn the core concepts and terminologies you’ll come across when building REST API.
 
-<div>
 <iframe src="https://www.youtube.com/embed/mOaV5LwfzUE" />
-</div>
 
 We will learn
 
-*   the different building blocks of REST APIs and how they connect
-*   Build and configure an API in the AWS Console.
-*   Stages and Stage Variables when deploying APIs
+-   the different building blocks of REST APIs and how they connect
+-   Build and configure an API in the AWS Console.
+-   Stages and Stage Variables when deploying APIs
 
 I will be using Mock integration to show the different concepts. Understanding these basic building blocks is necessary to build real-world backend integrations.
 
 > _Both REST APIs and HTTP APIs help us build RESTful APIs. The REST word in REST APIs is purely a naming thing that is not confused with RESTful services._
 
-Develop A REST API
-------------------
+## Develop A REST API
 
 From the AWS Console, under API Gateway, select ‘REST API’ to start building one.
 
@@ -39,9 +38,9 @@ From the AWS Console, under API Gateway, select ‘REST API’ to start building
 
 It prompts you to provide an API Name, description, and Endpoint Type. [Endpoint type](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-endpoint-types.html) can be _regional_, _edge-optimized or private._ Choose an appropriate option based on where most of your API traffic originates.
 
-*   **Regional** → Best for clients in the same region
-*   **Edge Optimized** → Best for geographically distributed clients
-*   **Private** → Best for access only from within Amazon Virtual Private Cloud (VPC)
+-   **Regional** → Best for clients in the same region
+-   **Edge Optimized** → Best for geographically distributed clients
+-   **Private** → Best for access only from within Amazon Virtual Private Cloud (VPC)
 
 Once you create REST API, you can add resources and methods to it.
 
@@ -81,8 +80,8 @@ They can be of different types - Lambda Function, HTTP, Mock, AWS Service, or VP
 
 Integrations can be of two types:
 
-*   **Proxy Integration** → With Proxy integration, the request is passed on to the integration as is, which means the backend service will need to interact with the HTTP requests and response objects.
-*   **Non-Proxy Integration →** With Non-proxy integrations, we can specify mapping templates to transform the HTTP request into the backend-specific format. For example, if we have a lambda function to add a user, we can specify a mapping template to pass only the user details and not any of the HTTP Request details.
+-   **Proxy Integration** → With Proxy integration, the request is passed on to the integration as is, which means the backend service will need to interact with the HTTP requests and response objects.
+-   **Non-Proxy Integration →** With Non-proxy integrations, we can specify mapping templates to transform the HTTP request into the backend-specific format. For example, if we have a lambda function to add a user, we can specify a mapping template to pass only the user details and not any of the HTTP Request details.
 
 ![](/images/api-gateway-rest-api-create-integration.jpg)
 
@@ -120,8 +119,7 @@ A mapping template is a script written in [Velocity Template Language (VTL)](htt
 
 The Mapping template below uses the count property from the query string to set the `statusCode` property on the Integration Request.
 
-
-```css
+```csharp
 {
   #set($countString = $input.params('count'))
   #set($Integer = 0)
@@ -132,6 +130,7 @@ The Mapping template below uses the count property from the query string to set 
     "statusCode": 500
   #end
 }
+
 ```
 
 With Non-Proxy Integrations, you can also set up the [Integration passthrough behaviors.](https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-passthrough-behaviors.html) API Gateway supports different options to decide whether to pass through requests coming into the API Gateway to the integration backend.
@@ -150,8 +149,7 @@ You can also use Mapping Templates when setting up Integration Response to map t
 
 Until now, all our work was under the Resources section of the API Gateway. Any changes to this section are like making changes to your ‘source code’ when building applications.
 
-Deploy REST API
----------------
+## Deploy REST API
 
 To interact and make the API callable for your users, you need to Deploy the API to a Stage.
 

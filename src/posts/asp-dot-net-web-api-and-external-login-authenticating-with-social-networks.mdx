@@ -1,13 +1,13 @@
 ---
 title: "ASP.NET Web API and External Login - Authenticating with Social Networks"
-slug: "asp-dot-net-web-api-and-external-login-authenticating-with-social-networks"
-date: "2014-09-10T19:29:35.000Z"
-feature_image: "/images/web_api_authentication_vs_template.png"
-tags: ["Dotnet"]
-excerpt: ""
-
+slug: asp-dot-net-web-api-and-external-login-authenticating-with-social-networks
+date: 2014-09-10
+feature_image: /images/web_api_authentication_vs_template.png
+excerpt: >-
+  The ASP.NET Web API project created from the default template in Visual Studio 2013 comes with an option to choose the Authentication method. The 'Individual User Accounts' option of authorization...
+tags:
+  - Dotnet
 ---
-
 The ASP.NET Web API project created from the default template in Visual Studio 2013 comes with an option to choose the Authentication method. The 'Individual User Accounts' option of authorization will allow users of your API to authenticate using exisitng their exisitng social networks(Facebook, Twitter, Google or Microsoft). This is a very useful feature and also speeds up the signing process, as there is little or no input required from the user and also one less password less to remember. All these social logins uses [OAuth](http://oauth.net/) to provide authorized access to their services, and there are exisitng Owin adapters for these social networks. You could very well write a custom owin adapter to plug new authorization providers.
 
 > In this post we will see how we can enable Facebook login for your API when **_the client and api are hosted on seperate domains_**.
@@ -22,9 +22,9 @@ The Account Controller has all the methods that is required for a client to auth
 
 The client in it login screen would be showing the allowed authorization providers along with the normal username/password login option. The _ExternalLogins_ endpoint returns all the supported external authentication providers. The supported list of providers can be added in _Startup.Auth.cs_
 
-
-```
+```csharp
 app.UseFacebookAuthentication(appId: "APPID", appSecret: "APPSECRET");
+
 ```
 
 The application id and secret can be obtained by registering for an application with the corresponding provider. For facebook you can do that [here](https://developers.facebook.com/). You would also need to configure the web api endpoint as a website platform when obtaining the api keys. Now on querying the endoint the client will get back the endpoint that it needs to hit when an authentication with Facebook is required. A redirect url is to be passsed along with the request, to which the api will redirect to after succesfull authentication with the token. By default email is not received from facebook, but you can override this behaviour by providing some extra options when registering the provider as shown below. The OnAuthenticated method on the FacebookProvider gets called once the user is authenticated with facebook. At this point you can get the Email details explicitly and add it to the claims.
@@ -32,31 +32,23 @@ The application id and secret can be obtained by registering for an application 
 ```csharp
 var facebookProvider = new FacebookAuthenticationProvider()
 {
-```css
-```code
-        OnAuthenticated = (context) =>
-            {
-                // Add the email id to the claim
-```
-                context.Identity.AddClaim(new Claim(ClaimTypes.Email, context.Email));
-                return Task.FromResult(0);
-            }
-```csharp
+    OnAuthenticated = (context) =>
+        {
+            // Add the email id to the claim
+            context.Identity.AddClaim(new Claim(ClaimTypes.Email, context.Email));
+            return Task.FromResult(0);
+        }
 };
 var options = new FacebookAuthenticationOptions()
-```css
-```json
-                  {
-                      AppId = "AppId",
-                      AppSecret = "AppSecret",
-                      Provider = facebookProvider
-                  };
-```text
+              {
+                  AppId = "AppId",
+                  AppSecret = "AppSecret",
+                  Provider = facebookProvider
+              };
 options.Scope.Add("email");
 app.UseFacebookAuthentication(options);
+
 ```
-```sql
-    
 
 You can also get the facebook token if required from the context and which can be used in the database to update information to facebook on behalf of the user.
 
@@ -69,26 +61,22 @@ The owin middleware abstracts away the interaction with the authorization server
 ```csharp
 public override Task AuthorizationEndpointResponse(OAuthAuthorizationEndpointResponseContext context)
 {
-```csharp
-```code
-        //  Add the claims to the return url
-        foreach (var claim in context.Identity.Claims)
+    //  Add the claims to the return url
+    foreach (var claim in context.Identity.Claims)
+    {
+        if (claim.Type == ClaimsIdentity.DefaultNameClaimType)
         {
-            if (claim.Type == ClaimsIdentity.DefaultNameClaimType)
-            {
-```
-                context.AdditionalResponseParameters.Add("username", claim.Value);
-```code
-            }
-            else if (claim.Type == ClaimTypes.Email)
-            {
-```
-                context.AdditionalResponseParameters.Add("email", claim.Value);
-            }
+            context.AdditionalResponseParameters.Add("username", claim.Value);
         }
-        return base.AuthorizationEndpointResponse(context);
+        else if (claim.Type == ClaimTypes.Email)
+        {
+            context.AdditionalResponseParameters.Add("email", claim.Value);
+        }
     }
-    
+    return base.AuthorizationEndpointResponse(context);
+}
+
+```
 
 The above method adds in the additional response parameters that gets embedded in the redirect url to the client.
 
@@ -96,8 +84,7 @@ The above method adds in the additional response parameters that gets embedded i
 
 Now that the user is successfully authenticated with the authorization provider and we have a token, we need to register the user into our database, as we dont want to go to facebook to verify the identity for each and every request. The client can call into _RegisterExternal_ method to register the user into our system. It expects us to pass a email/username for the external authenticated user, which we would have already got from the redirect url parameters. Now the external authenticated user is a valid user in our system and is allowed to make authenticated calls to the api.For the call to RegisterExternal we need to add the token that we got as part of the redirecturl as part of the Authorization header.
 
-
-```csharp
+```javascript
 var registerUser = function () {
     $.ajax({
         url: config.apiBaseUrl + 'api/Account/RegisterExternal',
@@ -117,22 +104,23 @@ var registerUser = function () {
             alert('Registration failed' + data.toString());
         }
     });
+
 ```
 
 On successfull registeration we can get the User details by calling to the UserInfo endpoint.
 
-```csharp
+```javascript
 var userInfoUrl = config.apiBaseUrl + 'api/Account/UserInfo';
 $.ajax({
+  url: userInfoUrl,
+  success: function (data) {
+    window.location = '#';
+  },
+  beforeSend: function (xhr) {
+    xhr.setRequestHeader('Authorization', 'Bearer ' + config.token);
+  },
+});
+
 ```
-      url: userInfoUrl,
-      success: function (data) {
-        window.location = '#';
-      },
-      beforeSend: function (xhr) {
-        xhr.setRequestHeader('Authorization', 'Bearer ' + config.token);
-      },
-    });
-    
 
 We can mofify the models to handle more information as required by our api. We could save the token in a local storage and retrieve it whenever a user visits the site back again. The same is the approach for integrating with the other social networks that we have. The sample using the facebook provider is availabe [here](https://github.com/rahulpnath/Blog/tree/master/WebApiAuthentication).

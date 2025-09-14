@@ -1,13 +1,14 @@
 ---
 title: "Accessing Azure Key Vault From Azure Runbook"
-slug: "accessing-azure-key-vault-from-azure-runbook"
-date: "2016-11-21T00:00:00.000Z"
-feature_image: "/images/runbook_create.png"
-tags: ["Azure"]
-excerpt: "A quick walk-through on using Key Vault from Azure Automation Runbook."
+slug: accessing-azure-key-vault-from-azure-runbook
+date: 2016-11-21
+feature_image: /images/runbook_create.png
+excerpt: >-
+  A quick walk-through on using Key Vault from Azure Automation Runbook.
+tags:
+  - Azure
 ---
-
-Azure Automation is a new service in Azure that allows you to automate your Azure management tasks and to orchestrate actions across external systems from right within Azure. If you are new to Azure Automation, get started [here](https://azure.microsoft.com/en-us/blog/azure-automation-runbook-management/). Runbooks live within the Azure Automation account and can execute PowerShell scripts. In this post, I will walk you through on how to use Key Vault from an Azure Automation Runbook.
+Azure Automation is a new service in Azure that allows you to automate your Azure management tasks and to orchestrate actions across external systems from right within Azure. If you are new to Azure Automation, get started [here](https://azure.microsoft.com/en-us/blog/azure-automation-runbook-management/). Runbooks live within the Azure Automation account and can execute PowerShell scripts. In this post, I will walk you through on how to use Key Vault from an Azure Automation Runbook."
 
 To create a Runbook go to 'Add a Runbook' under Automation Account, Runbooks as shown in the image below. Once created you can author your PowerShell script there.
 
@@ -15,9 +16,10 @@ To create a Runbook go to 'Add a Runbook' under Automation Account, Runbooks as 
 
 In this example I will get all the Keys from an existing key vault, using the [Get-AzureKeyVaultKey](https://msdn.microsoft.com/en-us/library/dn868053.aspx) cmdlet. This returns all the key for the given key vault.
 
-
 ```powershell
+
 Get-AzureKeyVaultKey -VaultName YoutubeVault
+
 ```
 
 If we are to run this script now, it will fail for many reasons - we do not have the key vault cmdlets imported in the runbook nor have we given access to the automation account to access the keys in the vault. Running it gives me the below error.
@@ -38,29 +40,29 @@ You can use the [sample code below](https://azure.microsoft.com/en-us/documentat
 $connectionName = "AzureRunAsConnection"
 try
 {
-        # Get the connection "AzureRunAsConnection "
-        $servicePrincipalConnection=Get-AutomationConnection -Name $connectionName
-    
-        "Logging in to Azure..."
-        Add-AzureRmAccount `
-            -ServicePrincipal `
-            -TenantId $servicePrincipalConnection.TenantId `
-            -ApplicationId $servicePrincipalConnection.ApplicationId `
-            -CertificateThumbprint $servicePrincipalConnection.CertificateThumbprint
+    # Get the connection "AzureRunAsConnection "
+    $servicePrincipalConnection=Get-AutomationConnection -Name $connectionName
+
+    "Logging in to Azure..."
+    Add-AzureRmAccount `
+        -ServicePrincipal `
+        -TenantId $servicePrincipalConnection.TenantId `
+        -ApplicationId $servicePrincipalConnection.ApplicationId `
+        -CertificateThumbprint $servicePrincipalConnection.CertificateThumbprint
 }
 catch {
-        if (!$servicePrincipalConnection)
-        {
-            $ErrorMessage = "Connection $connectionName not found."
-            throw $ErrorMessage
-        } else{
-            Write-Error -Message $_.Exception
-            throw $_.Exception
-        }
+    if (!$servicePrincipalConnection)
+    {
+        $ErrorMessage = "Connection $connectionName not found."
+        throw $ErrorMessage
+    } else{
+        Write-Error -Message $_.Exception
+        throw $_.Exception
     }
-    
+}
 
 Get-AzureKeyVaultKey -VaultName YoutubeVault
+
 ```
 
 On execution, the Runbook can connect to the key vault and retrieve all the keys. Based on the permissions set on the vault you can perform different actions on the key vault. This helps in automating a lot of tasks that otherwise needs to be done manually. Hope this helps you connect Runbooks with Key Vault.

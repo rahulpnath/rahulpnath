@@ -1,0 +1,190 @@
+---
+title: Amazon DynamoDB For The .NET Developer
+slug: amazon-dynamodb-dotnet-developer
+date: '2023-06-08'
+feature_image: /images/Amazon-DynamoDB.png
+excerpt: >-
+  This blog post is a collection of other posts that covers various aspects of
+  Amazon DynamoDB and other services you can integrate with when building
+  serverless applications.
+tags:
+  - AWS
+  - DynamoDB
+---
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
+
+DynamoDB is a cloud-hosted NoSQL database provided by Amazon Web Services (AWS). DynamoDB provides _reliable performance,_ a _managed experience,_ and a convenient _API access_ to interact with it.
+
+This blog post is a collection of other posts that covers various aspects of Amazon DynamoDB and other services you can integrate with when building serverless applications.
+
+## Getting Started With Amazon DynamoDB
+
+If you are completely new to AWS DynamoDB and just getting started, check out my getting started article below.
+
+<BlogLink
+  href="/blog/aws-dynamodb-net-core/"
+  title="AWS DynamoDB For The .NET Developer: How To Easily Get Started"
+  description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API."
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/aws_dynamodb.jpg"
+/>
+
+It covers an introduction to DynamoDB, an understanding of how to create tables, and doing basic Create Read, Update, and Delete (CRUD) operations from the .NET application using the DynamoDB SDK.  
+
+### Running DynamoDB on Your Dev Machine
+
+[DynamoDB Local](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html?ref=rahulpnath.com) is available as a download that is useful for developing and test applications without accessing the DynamoDB Web Service. The database is self-contained and runs on your computer.
+
+<BlogLink
+  href="/blog/aws-dynamodb-local/"
+  title="How to Run and Access DynamoDB Local For Easy Development and Testing"
+  description="Learn how to set up and run DynamoDB database on your local development machine. We’ll see how to connect using AWS CLI, from .NET application and using GUI tools like Dynobase and NoSQL Workbench."
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/laptop_developer.jpg"
+/>
+
+Check out the above article, where I walk through in detail how to set up a local instance of DynamoDB, access it from applications, and the different modes it supports. I also cover the various GUI tools that can interact with the locally installed database instance.
+
+## Retrieving Data From DynamoDB
+
+To retrieve data from DynamoDB, you have multiple querying options.
+
+The Query operation is ideal for retrieving items that match specific criteria using partition and sort key values. Another option is the Scan operation, which filters results based on conditions but can be costly and impact performance for large tables.
+
+As a rule of thumb, when querying data, you can consider that each record that you retrieve from the database has a direct cost attached to it. Limiting the items you retrieve has a direct impact on saving cost and also performance. Pagination helps with breaking down the items into smaller groups and loading them as required.
+
+To learn more about different ways you can query DynamoDB and how to paginate data in your requests, check out the posts below.
+
+-   <BlogLink
+  href="/blog/dynamodb-querying-dotnet"
+  title="5 Ways To Query Data From Amazon DynamoDB using .NET"
+  description="Read this interesting blog post"
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/DynamoDB-Querying-new.png"
+/>
+-   <BlogLink
+  href="/blog/dynamodb-pagination"
+  title="3 Different Ways To Do Data Pagination from Amazon DynamoDB Using .NET"
+  description="Learn how to use Dynamodb pagination to retrieve large amounts of data stored in the table.s."
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/DynamoDB-Pagination.png"
+/>
+
+### Improving Query Performance Using Indexes in DynamoDB
+
+Amazon DynamoDB provides fast access to items in a table by specifying primary key values.
+
+However, applications often require accessing data using alternate keys as well. In these cases, defining a second set of keys, a Secondary Index, is advantageous and beneficial to enable data access.
+
+-   <BlogLink
+  href="/blog/dynamodb-global-secondary-index-gsi"
+  title="Exploring Global Secondary Index: Advanced Querying in DynamoDB From .NET"
+  description="Learn how to create, set up and use a Global Secondary Index (GSI) in DynamoDB for more efficient data access and optimizing cost."
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/DynamoDB-GSI.png"
+/>
+-   <BlogLink
+  href="/blog/local-secondary-index-dynamodb"
+  title="Improving Queries Using Local Secondary Index in DynamoDB with .NET"
+  description="Learn how to create, set up and use a Local Secondary Index (GSI) in DynamoDB for more efficient data access and optimizing cost."
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/DynamoDB-LSI.png"
+/>
+-   <BlogLink
+  href="/blog/dynamodb-sparse-index-dotnet"
+  title="Improving Query Performance in DynamoDB with Sparse Indexes and .NET"
+  description="A Sparse Index is a special type of Index, where the Index does not have an entry for every item in the base table. Sparse Indexes optimize storage and performance by selectively including only a subset of items from the base table. Learn how to use this to your advantage."
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/DynamoDB-Sparse-Index.png"
+/>
+
+## Writing Data To DynamoDB
+
+DynamoDB provides two primary methods to write/modify data in a table: `PutItem` and `UpdateItem`. These are part of the Low-Level API `IAmazonDynamoDB`. The High-Level API, `IDynamoDBContext` wraps the two methods into a single `SaveAsync` method.
+
+-   <BlogLink
+  href="/blog/dynamodb-putitem-vs-updateitem-whats-the-difference"
+  title="DynamoDB UpdateItem vs. PutItem in .NET - Which One Should You Use?"
+  description="Read this interesting blog post"
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/DynamoDB-UpdateItem-vs-Put.png"
+/>
+
+By default, when using the .NET DynamoDB SDK, it serializes .NET classes, with a default constructor, as JSON objects. However, you can customize the data written into DynamoDB using Custom Converters.
+
+-   <BlogLink
+  href="/blog/dynamodb-custom-converters-dotnet"
+  title="Learn How to Map Complex .NET Types to DynamoDB using Custom Converters"
+  description="Read this interesting blog post"
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/DynamoDB-Custom-Converters.png"
+/>
+
+When writing data to DynamoDB, it is essential to ensure data consistency when multiple users or applications access the same data simultaneously. Check out the below articles to explore the different ways you can ensure data consistency when writing to DynamoDB.
+
+-   <BlogLink
+  href="/blog/dynamodb-condition-expressions-dotnet"
+  title="How to Ensure Data Consistency with DynamoDB Condition Expressions From .NET Applications"
+  description="DynamoDB Condition Expressions allow specifying constraints when writing data to an Amazon DynamoDB table.
+It allows you to specify a Boolean expression that must be true for the operation to proceed. Let's learn from Condition Expressions and how to use it from .NET"
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/DynamoDB-Condition-Expressions.png"
+/>
+-   <BlogLink
+  href="/blog/dynamodb-optimistic-locking"
+  title="How to Implement Optimistic Locking in .NET for Amazon DynamoDB"
+  description="Optimistic locking is an approach that allows multiple users to access and modify the same data concurrently while preventing conflicts and maintaining consistency. When building your applications, let’s learn how to set up Optimistic Locking with objects in the DynamoDB table."
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/DynamoDB-Optimistic-Locking.png"
+/>
+
+## DynamoDB and AWS Lambda
+
+DynamoDB Triggers allow you to automatically invoke a Lambda function in response to specific actions on a DynamoDB table, such as item updates, inserts, or deletions.
+
+DynamoDB Triggers enable you to build powerful and scalable applications that can automatically respond to changes in your DynamoDB tables without the need for any polling or manual intervention.
+
+Check out the below articles to understand more about DynamoDB and AWS Lambda Triggers.
+
+-   <BlogLink
+  href="/blog/aws-dynamodb-streams-lambda-triggers-dotnet"
+  title="DynamoDB Streams and AWS Lambda Trigger in .NET"
+  description="DynamoDB Streams capture a time-ordered sequence of events in any DynamoDB table. Let's learn how to enable DynamoDB Streams, different stream types and how to consumer stream changes from a .NET AWS Lambda Function."
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/aws-lambda-dynamodb-streams-trigger-dotnet.jpg"
+/>
+-   <BlogLink
+  href="/blog/aws-dynamodb-streams-lambda-triggers-exception-handling-dotnet"
+  title="How to Handle Exceptions When Processing DynamoDB Stream Events in .NET Lambda Function"
+  description="Read this interesting blog post"
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/aws-lambda-dynamodb-streams-trigger-exception-handling-dotnet.jpg"
+/>
+
+I hope this helps you get a good understanding of Amazon DynamoDB, and how to read/write to tables and integrate it with other AWS Services from your .NET application.

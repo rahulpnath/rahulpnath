@@ -1,12 +1,14 @@
 ---
 title: "Going Serverless on AWS For The .NET Developer: How To Easily Get Started"
-slug: "aws-serverless-application"
-date: "2021-04-16T00:00:00.000Z"
-feature_image: "/images/aws_serverless.jpg"
-tags: ["AWS"]
+slug: aws-serverless-application
+date: 2021-04-16
+feature_image: /images/aws_serverless.jpg
+excerpt: >-
+  Learn how to get started with AWS Serverless Application using the Serverless Application Model (SAM). The Serverless Application Template available as part of the AWS Toolkit makes it easy to start building Serverless Application.
+tags:
+  - AWS
 ---
-
-[AWS Lambda's](/posts/aws-lambda-net-core/) are the stepping stones to building a Serverless application in AWS.
+[AWS Lambda's](/blog/aws-lambda-net-core/) are the stepping stones to building a Serverless application in AWS.
 
 A Serverless Application in AWS is a combination of Lambda functions, event sources, and other resources that work together to perform tasks. It is more than just a Lambda function; it can include additional resources such as APIs, databases, and event source mappings.
 
@@ -14,12 +16,11 @@ A Serverless Application in AWS is a combination of Lambda functions, event sour
 
 Now that's a lot of jargon in one line. Let's understand each of them better.
 
-<iframe src="https://www.youtube.com/embed/iLo8svHzD\_g" />
+<iframe src="https://www.youtube.com/embed/iLo8svHzD_g" />
 
 In this post, let's learn how to build an AWS Serverless application using the Serverless Application Template as part of the AWS Toolkit. We will see how we can deploy one or more Lambda functions using the AWS SAM and also use it to deploy a Lambda-driven API Gateway application backed by a DynamoDB database.
 
-Creating an AWS Serverless Application
---------------------------------------
+## Creating an AWS Serverless Application
 
 The [AWS Toolkit for Visual Studio](https://aws.amazon.com/visualstudio/) comes with a built-in template to create a Serverless Application.
 
@@ -29,7 +30,7 @@ To create a new application, choose the '_AWS Serverless Application (.NET Core 
 
 Select the '_Empty Serverless Application_' blueprint to create a Serverless application with just one function.
 
-As shown below, it contains the same set of files as we saw in the [previous post on getting started with AWS Lambda](/posts/aws-lambda-net-core/) with the addition of one new file `serverless.template` ;which is the AWS SAM template file.
+As shown below, it contains the same set of files as we saw in the [previous post on getting started with AWS Lambda](/blog/aws-lambda-net-core/) with the addition of one new file `serverless.template` ;which is the AWS SAM template file.
 
 ![AWS Serverless Application Empty blueprint application default items](/images/aws_serverless_template_default_items.jpg)
 
@@ -39,8 +40,8 @@ The [AWS Serverless Application Model](https://docs.aws.amazon.com/serverless-ap
 
 AWS SAM consists of the following components
 
-*   Template specification → Provides a clean and straightforward way to describe the required infrastructure
-*   Command Line Interface (CLI) → Commands to build and deploy the resources to AWS
+-   Template specification → Provides a clean and straightforward way to describe the required infrastructure
+-   Command Line Interface (CLI) → Commands to build and deploy the resources to AWS
 
 _AWS SAM templates are an extension of AWS CloudFormation templates_, with some additional components make them easier to work with.
 
@@ -52,8 +53,8 @@ _AWS SAM templates are an extension of AWS CloudFormation templates_, with some 
 
 When using CloudFormation, you normally work with [Templates and Stacks.](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-whatis-concepts.html)
 
-*   _**Templates**_ are YAML or JSON files that act as blueprints for building AWS resources. It has a well-defined [structure and schema defined.](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html)
-*   A group of related resources forms a single unit called a _**Stack.**_ You manage resources by basically managing stacks.
+-   _**Templates**_ are YAML or JSON files that act as blueprints for building AWS resources. It has a well-defined [structure and schema defined.](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html)
+-   A group of related resources forms a single unit called a _**Stack.**_ You manage resources by basically managing stacks.
 
 ### serverless.template File
 
@@ -61,45 +62,47 @@ The _serverless.template_ file is used to define the Serverless Application. It 
 
 The `Transform` element in the template file indicates this file to contain AWS SAM syntax, which will be [transformed into AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-aws-serverless.html) compliant format.
 
-    {
-      "AWSTemplateFormatVersion": "2010-09-09",
-      "Transform": "AWS::Serverless-2016-10-31",
-      "Description": "An AWS Serverless Application.",
-      "Resources": {
-        "Get": {
-          "Type": "AWS::Serverless::Function",
-          "Properties": {
-            "Handler": "empty::empty.Functions::Get",
-            "Runtime": "dotnetcore3.1",
-            "CodeUri": "",
-            "MemorySize": 256,
-            "Timeout": 30,
-            "Role": null,
-            "Policies": [
-              "AWSLambdaBasicExecutionRole"
-            ],
-            "Events": {
-              "RootGet": {
-                "Type": "Api",
-                "Properties": {
-                  "Path": "/",
-                  "Method": "GET"
-                }
-              }
+```json
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Transform": "AWS::Serverless-2016-10-31",
+  "Description": "An AWS Serverless Application.",
+  "Resources": {
+    "Get": {
+      "Type": "AWS::Serverless::Function",
+      "Properties": {
+        "Handler": "empty::empty.Functions::Get",
+        "Runtime": "dotnetcore3.1",
+        "CodeUri": "",
+        "MemorySize": 256,
+        "Timeout": 30,
+        "Role": null,
+        "Policies": [
+          "AWSLambdaBasicExecutionRole"
+        ],
+        "Events": {
+          "RootGet": {
+            "Type": "Api",
+            "Properties": {
+              "Path": "/",
+              "Method": "GET"
             }
-          }
-        }
-      },
-      "Outputs": {
-        "ApiURL": {
-          "Description": "API endpoint URL for Prod environment",
-          "Value": {
-            "Fn::Sub": "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
           }
         }
       }
     }
-    
+  },
+  "Outputs": {
+    "ApiURL": {
+      "Description": "API endpoint URL for Prod environment",
+      "Value": {
+        "Fn::Sub": "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+      }
+    }
+  }
+}
+
+```
 
 The [AWS::Serverless::Function](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html) creates an AWS Lambda function, an IAM Role and event source mappings that trigger the function. It supports various properties as used above to configure the AWS Lambda.
 
@@ -109,37 +112,36 @@ The above scenario defines the Lambda with _AWSLambdaBasicExecutionRole_ role an
 
 The Lambda maps to the `Get` method within the `Functions` class.
 
-```json
+```csharp
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
 namespace empty
 {
-```
-        public class Functions
+    public class Functions
+    {
+        public APIGatewayProxyResponse Get(
+            APIGatewayProxyRequest request, ILambdaContext context)
         {
-            public APIGatewayProxyResponse Get(
-                APIGatewayProxyRequest request, ILambdaContext context)
+            context.Logger.LogLine("Get Request\n");
+
+            var response = new APIGatewayProxyResponse
             {
-                context.Logger.LogLine("Get Request\n");
-    
-                var response = new APIGatewayProxyResponse
-                {
-                    StatusCode = (int)HttpStatusCode.OK,
-                    Body = "Hello AWS Serverless",
-                    Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
-                };
-    
-                return response;
-            }
+                StatusCode = (int)HttpStatusCode.OK,
+                Body = "Hello AWS Serverless",
+                Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
+            };
+
+            return response;
         }
     }
-    
+}
+
+```
 
 The function takes in an `APIGatewayProxyResponse` and returns `APIGatewayProxyResponse` since API Gateway triggers it. It simply returns a hard-coded text.
 
 To add another Lambda function, we need to create a new function endpoint in the code and add another resource in the `serverless.template` file.
 
-Deploying To AWS
-----------------
+## Deploying To AWS
 
 The easiest way to publish the AWS Lambda function to AWS infrastructure is to right-click on the project and select the 'Publish To AWS Lambda...' option. It prompts up a dialog to choose the AWS profile, region, and CloudFormation settings.
 
@@ -169,8 +171,7 @@ Each time the application is published, the template and the associated publishe
 
 ![CloudFormation associated S3 bucket](/images/aws_serverless_cloudformation_s3.jpg)
 
-Web API using Azure Lambda, API Gateway, and DynamoDB
------------------------------------------------------
+## Web API using Azure Lambda, API Gateway, and DynamoDB
 
 To create a more complex AWS Serverless applications that use a DynamoDB table to store and retrieve data using AWS Lambda's and API Gateway, you can select the 'Blog API using DynamoDB' as the blueprint.
 
@@ -178,17 +179,15 @@ To create a more complex AWS Serverless applications that use a DynamoDB table t
 
 It scaffolds a template with 4 API endpoints to `GetBlogs`, `GetBlog`, `AddBlog`, and `RemoveBlog` items from a DynamoDB table.
 
-[
-
-AWS DynamoDB For The .NET Developer: How To Easily Get Started
-
-Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API.
-
-![](/images/favicon.ico)Rahul NathRahul Pulikkot Nath
-
-![](/images/aws_dynamodb.jpg)
-
-](/posts/aws-dynamodb-net-core)
+<BlogLink
+  href="/blog/aws-dynamodb-net-core"
+  title="AWS DynamoDB For The .NET Developer: How To Easily Get Started"
+  description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API."
+  authorImage="/images/favicon.ico"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/aws_dynamodb.jpg"
+/>
 
 As with the Empty template we created earlier, this one has a `serverless.template` file which defines all the resources (AWS Lambda, DynamoDB, etc.) required for this application.
 
@@ -196,16 +195,14 @@ It also has additional `Parameters` and `Condition` defined in the template to d
 
 ![AWS Serverless Publish Template Parameters dialog](/images/aws_serverless_publish_template_parameters.jpg)
 
-```bash
 Once published, we can use the API URL to interact with the Blog Items in the DynamoDB table. You can use curl or [Postman](https://www.postman.com/) etc. to make the `PUT` request to add items to it.
-```
 
 ```bash
 curl --location --request PUT '<API URL>' \
 --header 'Content-Type: application/json' \
 --data-raw '{"Name": "AWS Serverless", "Content": "This is a test blog"}'
+
 ```
-    
 
 The other API endpoints can retrieve and delete items if required.
 
@@ -213,22 +210,12 @@ We have a fully functional API endpoint to manage Blog items backed by the Dynam
 
 I hope this helps you get started with building AWS Serverless application for AWS and understand more about its various building blocks.
 
-[
-
-AWS Lambda For The .NET Developer
-
-Learn to build Serverless Applications on AWS
-
-![](/images/apple-touch-icon.png)Udemy
-
-![](/images/4689888_b522_4.jpg)
-
-](https://www.udemy.com/course/aws-lambda-dotnet/?referralCode=981481B991C2890BD448)
+[AWS Lambda For The .NET Developer](https://www.udemy.com/course/aws-lambda-dotnet/?referralCode=981481B991C2890BD448)
 
 Feel free to drop in the comments or [send a tweet](https://twitter.com/rahulpnath) if you have any comments or questions.
 
 **References**
 
-*   [What is AWS SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html)?
-*   [What is AWS CloudFormation?](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html)
-*   [AWS SAM Template anatomy](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-template-anatomy.html)
+-   [What is AWS SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html)?
+-   [What is AWS CloudFormation?](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html)
+-   [AWS SAM Template anatomy](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-template-anatomy.html)

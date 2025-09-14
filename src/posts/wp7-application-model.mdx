@@ -1,11 +1,13 @@
 ---
 title: "WP7 Application Model"
-slug: "wp7-application-model"
-date: "2010-11-17T05:40:57.000Z"
-feature_image: "/images/wp7_application_model.png"
-tags: ["Programming"]
+slug: wp7-application-model
+date: 2010-11-17
+feature_image: /images/wp7_application_model.png
+excerpt: >-
+  Mobile phones should be always responsive,highly responsive infact.If it's not responding within 10 to 15 seconds,the users hits the switch off button or removes the battery to reset the phone....I...
+tags:
+  - Programming
 ---
-
 Mobile phones should be always responsive,highly responsive infact.If it's not responding within 10 to 15 seconds,the users hits the switch off button or removes the battery to reset the phone....I have done this many a times.
 
 The WP7 application model allows only 1 application to be running at a time.But its not that bad that you have to always start from the beginning of an app if you switch away from it.Whenever you switch away from an app,it just goes into a hibernation mode,tombstoning to be more precise.Whenever a user switches between applications,the phone activates and deactivates the applications.Events are raised to notify this activating and deactivating so that the developers can handle them and maintain the state of the application between switches,as if it was just back there running.A user may also explicitly close down an application by pressing the back button on the device at the first page of the application.

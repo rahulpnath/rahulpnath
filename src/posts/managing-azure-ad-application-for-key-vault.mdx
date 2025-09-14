@@ -1,27 +1,28 @@
 ---
 title: "Managing Azure AD Application for Key Vault"
-slug: "managing-azure-ad-application-for-key-vault"
-date: "2015-06-27T19:13:48.000Z"
-feature_image: ""
-tags: ["Azure"]
+slug: managing-azure-ad-application-for-key-vault
+date: 2015-06-27T00:00:00.000Z
+excerpt: >-
+  This post looks into the life cycle of managing an Azure AD application that
+  is used to secure access to Key Vault.
+tags:
+  - Azure
 ---
+> Please check [here](/blog/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/) for scripts using the latest PowerShell cmdlets.
 
-> Please check [here](/posts/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/) for scripts using the latest PowerShell cmdlets.
+Access to the Key Vault is secured using AD application token, as we had seen in the '[Authenticating a Client Application with Azure Key Vault](/blog/authenticating-a-client-application-with-azure-key-vault/)'. Quite often administrators require to manage the AD application created, performing activities like creating new AD applications, changing the certificate used to authenticate with the AD application, remove a certificate or even delete an application. All of these are possible using PowerShell scripts and administrators can even run this as part of their automation scripts. With the latest Azure PowerShell version(0.9.2 or higher), the Key Vault cmdlet's are included automatically and does not require any additional installations. For managing the Azure AD application we need to [install the Azure AD module for PowerShell](https://msdn.microsoft.com/en-us/library/azure/jj151815.aspx#bkmk_installmodule) and import them into the PowerShell command prompt.
 
-Access to the Key Vault is secured using AD application token, as we had seen in the '[Authenticating a Client Application with Azure Key Vault](/posts/authenticating-a-client-application-with-azure-key-vault/)'. Quite often administrators require to manage the AD application created, performing activities like creating new AD applications, changing the certificate used to authenticate with the AD application, remove a certificate or even delete an application. All of these are possible using PowerShell scripts and administrators can even run this as part of their automation scripts. With the latest Azure PowerShell version(0.9.2 or higher), the Key Vault cmdlet's are included automatically and does not require any additional installations. For managing the Azure AD application we need to [install the Azure AD module for PowerShell](https://msdn.microsoft.com/en-us/library/azure/jj151815.aspx#bkmk_installmodule) and import them into the PowerShell command prompt.
-
-Creating AD application
------------------------
+## Creating AD application
 
 The _[New-AzureADApplication](https://msdn.microsoft.com/en-us/library/dn986794.aspx)_ cmdlet is used to create a new Azure AD application. It also provides an option to specify the certificate details used to authenticate with the AD application at the time of creation itself. This can be done as a separate step if required, which is shown later in the post.
 
 First we need a certificate that is to be used for authenticating against the AD application, for which I use the below commands to generate a test certificate
 
-```powershell
+```text
 makecert -sv mykey.pvk -n "cn=AD Test Vault Application" ADTestVaultApplication.cer -b 03/03/2014 -e 06/05/2017 -r -len 2048
 pvk2pfx -pvk mykey.pvk -spc ADTestVaultApplication.cer -pfx ADTestVaultApplication.pfx -po test
+
 ```
-    
 
 This certificate is then used to create the AD application using the below script.
 
@@ -34,20 +35,21 @@ $credential = [System.Convert]::ToBase64String($rawCertificateData)
 $startDate= [System.DateTime]::Now
 $endDate = $startDate.AddYears(1)
 $adApplication = New-AzureADApplication -DisplayName "KeyVaultADApplication"
+  -HomePage  "http://www.rahulpnath.com" -IdentifierUris "http://www.rahulpnath.com"
+  -KeyValue  $credential -KeyType "AsymmetricX509Cert" -KeyUsage "Verify"
+  -StartDate $startDate -EndDate $endDate
+
 ```
-      -HomePage  "http://www.rahulpnath.com" -IdentifierUris "http://www.rahulpnath.com"
-      -KeyValue  $credential -KeyType "AsymmetricX509Cert" -KeyUsage "Verify"
-      -StartDate $startDate -EndDate $endDate
-    
 
 To associate the application created with the Key Vault, we need to create a service principal using [New-AzureADServicePrincipal](https://msdn.microsoft.com/en-us/library/dn986799.aspx) and then associate that with the Vault using the [Set-AzureKeyVaultAccessPolicy](https://msdn.microsoft.com/en-us/library/azure/dn903607.aspx)
 
 ```powershell
 $servicePrincipal = New-AzureADServicePrincipal -ApplicationId $adApplication.ApplicationId
+
 Set-AzureKeyVaultAccessPolicy -VaultName 'KeyVaultRahul' -ObjectId  $servicePrincipal.Id -PermissionsToKeys all -PermissionsToSecrets all
 $ServicePrincipal.ApplicationId #Outputs the ServicePrincipalName/AppPrincipalId
+
 ```
-    
 
 ### Adding a Certificate
 
@@ -63,9 +65,10 @@ $rawCertData = $x509Certificate2.GetRawCertData()
 $credentialValue = [System.Convert]::ToBase64String($rawCertData)
 $startDate= [System.DateTime]::Now
 $endDate = $startDate.AddYears(1)
+
 New-MsolServicePrincipalCredential -ServicePrincipalName $ServicePrincipal.ApplicationId -Type Asymmetric -Value $credentialValue -StartDate $startDate -EndDate   $endDate
+
 ```
-    
 
 ### Removing a Certificate
 
@@ -73,21 +76,27 @@ Whenever a credential gets compromised or as part of regular credential refresh,
 
 ```powershell
 $servicePrincipalCredential = Get-MsolServicePrincipalCredential -ServicePrincipalName $ServicePrincipal.ApplicationId -ReturnKeyValues 0
+
 Remove-MsolServicePrincipalCredential -ServicePrincipalName $ServicePrincipal.ApplicationId -KeyIds $servicePrincipalCredential[0].KeyId
+
 ```
-    
 
 ### Delete an application
 
 The [Remove-MsolServicePrincipal](https://msdn.microsoft.com/en-us/library/azure/dn194113.aspx) cmdlet removes a service principal from Microsoft Azure Active Directory, by specifying objectID/applicationID/ServicePrincipalName to identify the service principal.
 
 ```powershell
+
 Remove-MsolServicePrincipal -ObjectId <Guid>
+
 Or
+
 Remove-MsolServicePrincipal -AppPrincipalId <Guid>
+
 Or
+
 Remove-MsolServicePrincipal -ServicePrincipalName <string>
+
 ```
-    
 
 Managing the AD application is a very important and necessary process in the life cycle of a Key Vault, as the access to the Vault is controlled using that. Certificates securing the AD applciation should be rolled/updated frequently and application permissions should be reviewed often to make sure that all applications have only the required permissions.

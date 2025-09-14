@@ -1,11 +1,15 @@
 ---
 title: "Working Effectively Under Constraints"
-slug: "working-effectively-under-constraints"
-date: "2018-09-22T00:00:00.000Z"
-feature_image: "/images/working_constraints.png"
-tags: ["Thoughts"]
+slug: working-effectively-under-constraints
+date: 2018-09-22T00:00:00.000Z
+feature_image: /images/working_constraints.png
+excerpt: >-
+  At times you might be working in environments where there are a lot of
+  restrictions on the tools that you can use, the process that you need to
+  follow, etc....
+tags:
+  - Thoughts
 ---
-
 At times you might be working in environments where there are a lot of restrictions on the tools that you can use, the process that you need to follow, etc. Under these circumstances, it is essential that we stick to some core and fundamental principles and practices that we as an industry have adopted. We need to make sure that we have that in place no matter what the restrictions imposed are. Below are a few of the restrictions that I along with my team had to face at one of the clients and what we did to keep ourselves on top of it and still deliver at a higher speed.
 
 ![Working under Constraints.](/images/working_constraints.png "Working under Constraints. Image Source - https://www.saba.com/blog/how-to-master-employee-engagement-constraints")
@@ -22,8 +26,8 @@ This might sound an outdated practice (as it did to me) but here I am at a clien
 
 After a quick chat with the team, we decided on the below.
 
-*   **Set up build/deploy pipeline up to Test environment.** This would allow seamless integration while we are developing features and get it out for testing. Since we had access till the Test environment, this was hardly an hours work to get it all working.
-*   Since we did not have access to UAT/PROD and the process required us to hand over a deployment package to the concerned team, we **set up a 'Packaging Project' in Octopus.** This project basically unzips the selected build package into our Dev environment server, applies the configuration transforms and zips up the folder into a deployment package. With this, we are now able to create a deployment package for any given build and for any environment. We are also having discussions to enable access to UAT/PROD servers for the deployment servers so that we can deploy automatically, all the way to production.
+-   **Set up build/deploy pipeline up to Test environment.** This would allow seamless integration while we are developing features and get it out for testing. Since we had access till the Test environment, this was hardly an hours work to get it all working.
+-   Since we did not have access to UAT/PROD and the process required us to hand over a deployment package to the concerned team, we **set up a 'Packaging Project' in Octopus.** This project basically unzips the selected build package into our Dev environment server, applies the configuration transforms and zips up the folder into a deployment package. With this, we are now able to create a deployment package for any given build and for any environment. We are also having discussions to enable access to UAT/PROD servers for the deployment servers so that we can deploy automatically, all the way to production.
 
 No longer was the process dependent on a developer or a developer machine and was completely automated. For those reading this and in a similar situation but who does not have access to a build/deploy system like Jenkins/Octopus I would basically set up a simple script to pull down the source given a commit hash/branch/tfs label and perform a build and package independent of the working directory of the developer. This script could run on a shared server (if you have access to one) or worst on a developer's machine/VM. The fundamental thing that we are trying to achieve is to decouple it from the current working folder on a developer machine and the manual steps involved in generating a package. As long as you have an automated way to create a package irrespective of what tools/systems you use we should be safe and sound.
 
@@ -35,8 +39,8 @@ There was not much information on why this was the case, but the primary reason 
 
 Again we decided to have a quick chat with the team along with the DBA on how to improve the current process, as it was getting harder to track application package versions and the associated scripts to go with that package.
 
-*   DbUp by default embeds the SQL artifacts into the executable which removes all visibility into the actual scripts. However, this behaviour is configurable using [ScriptProviders](https://dbup.readthedocs.io/en/latest/more-info/script-providers/). By using the **FileSystemScriptProvider, we can specify the folder from which to load the SQL scripts**. Configuring the msbuild to copy out all the folder files to the output and including them into the final package was an easy change. This provided the DBA with the actual SQL artifacts, and he could review them quickly. We also started a [code review](/posts/code-review/) process and began including the DBA for any changes related to SQL artifacts. This gave even more visibility to the DBA and helped catch issues right at the time of development.
-*   With automated build/deploy till Test environment in place, we **no longer had to make ad-hoc changes** to the databases, and everything was pushed through the source control as it was faster and more comfortable.
+-   DbUp by default embeds the SQL artifacts into the executable which removes all visibility into the actual scripts. However, this behaviour is configurable using [ScriptProviders](https://dbup.readthedocs.io/en/latest/more-info/script-providers/). By using the **FileSystemScriptProvider, we can specify the folder from which to load the SQL scripts**. Configuring the msbuild to copy out all the folder files to the output and including them into the final package was an easy change. This provided the DBA with the actual SQL artifacts, and he could review them quickly. We also started a [code review](/blog/code-review/) process and began including the DBA for any changes related to SQL artifacts. This gave even more visibility to the DBA and helped catch issues right at the time of development.
+-   With automated build/deploy till Test environment in place, we **no longer had to make ad-hoc changes** to the databases, and everything was pushed through the source control as it was faster and more comfortable.
 
 With this few tweaks we were now in a much better state, and there was a one to one trackability between source code and SQL artifacts. It all lived as part of one package, traceable all the way to the source code commit tag auto-generated by the build system.
 
@@ -54,7 +58,7 @@ Now we are trying to push for a service bus!
 
 ### Build Server without NuGet access
 
-The build server we were using was in-house hosted, and the box that it ran did not have internet access. This meant that you cannot have any external package dependencies that can be pulled at build time. We chose to include the package references along with the source code, which is anyways what [I tend to prefer more](/posts/checking-in-package-dependencies-into-source-control/). All our third-party libraries were pushed along with the source code repository, so the build machine had all the required dependencies and did not have to have internet connectivity to make a build.
+The build server we were using was in-house hosted, and the box that it ran did not have internet access. This meant that you cannot have any external package dependencies that can be pulled at build time. We chose to include the package references along with the source code, which is anyways what [I tend to prefer more](/blog/checking-in-package-dependencies-into-source-control/). All our third-party libraries were pushed along with the source code repository, so the build machine had all the required dependencies and did not have to have internet connectivity to make a build.
 
 Those are just a subset of the issues that we had to run into and bet you there were so many smaller ones. At times problems are not technical in nature, but more about communication and how effectively you are able to get all the people involved to get along with each other.
 

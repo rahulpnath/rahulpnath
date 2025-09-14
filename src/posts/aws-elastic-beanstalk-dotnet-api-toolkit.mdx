@@ -1,11 +1,14 @@
 ---
 title: "Step By Step Guide: Deploying ASP NET API To AWS Elastic Beanstalk Using Visual Studio Toolkit"
-slug: "aws-elastic-beanstalk-dotnet-api-toolkit"
-date: "2024-08-15T06:18:21.000Z"
-feature_image: "/images/Beanstalk---AWS-Toolkit--1-.png"
-tags: ["AWS","Dotnet"]
+slug: aws-elastic-beanstalk-dotnet-api-toolkit
+date: 2024-08-15
+feature_image: /images/Beanstalk---AWS-Toolkit--1-.png
+excerpt: >-
+  In this post let's explore step-by-step how to deploy an ASP NET Web API application to AWS Elastic Beanstalk. We will use the Visual Studio Toolkit to deploy the application and create multiple environments.
+tags:
+  - Dotnet
+  - AWS
 ---
-
 With the variety of services offered by AWS, choosing one to deploy your application can be confusing.
 
 EC2 is the lowest level of do-it-yourself compute service that AWS provides.
@@ -20,10 +23,9 @@ In this post, let’s look at how to quickly get started using AWS Elastic Beans
 
 We will deploy our application using [AWS Toolkit](https://www.youtube.com/watch?v=jwRs45mA568)
 
-This post is sponsored by AWS and is part of my [.NET on AWS Series](/posts/tag/aws/)
+This post is sponsored by AWS and is part of my [.NET on AWS Series](/blog/tag/aws/)
 
-Deploy .NET API to AWS Elastic Beanstalk
-----------------------------------------
+## Deploy .NET API to AWS Elastic Beanstalk
 
 With AWS Toolkit installed and setup, right click on your project and choose the 'Publish to AWS...' from the menu.
 
@@ -41,7 +43,7 @@ One deploys to Linux based EC2 and the other Windows based.
 
 Visual Studio AWS Toolkit options to deploy .NET applications to Elastic Beanstalk.
 
-Yes AWS Elastic Beanstalk uses [EC2 instances](/posts/amazon-ec2-dotnet-api-hosting/) to deploy the applications.
+Yes AWS Elastic Beanstalk uses [EC2 instances](/blog/amazon-ec2-dotnet-api-hosting/) to deploy the applications.
 
 Only that you don't have to manage them, AWS does this automatically for you.
 
@@ -98,8 +100,7 @@ Visual Studio AWS Toolkit deploy ASP NET application to AWS Elastic Beanstalk
 
 If you don't have an AWS account I recommend setting one up using the [AWS Free Tier option](https://aws.amazon.com/free/), which will give you enough credits to try things out.
 
-AWS Elastic Beanstalk Deployed Resources For ASP NET API
---------------------------------------------------------
+## AWS Elastic Beanstalk Deployed Resources For ASP NET API
 
 Navigate to your AWS console → Elastic Beanstalk once the deployment is complete.
 
@@ -135,8 +136,7 @@ The Health section shows the EC2 instances that's running your application.
 
 In this case we only have a single instance deployed for our application.
 
-Deploy Multiple Environments to AWS Elastic Beanstalk from Visual Studio AWS Toolkit
-------------------------------------------------------------------------------------
+## Deploy Multiple Environments to AWS Elastic Beanstalk from Visual Studio AWS Toolkit
 
 You can deploy multiple environments to the same AWS Elastic Beanstalk application from Visual Studio AWS Toolkit.
 

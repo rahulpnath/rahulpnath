@@ -1,15 +1,18 @@
 ---
 title: "Managing Your Postman API Specs"
-slug: "manage-your-postman-api-specs"
-date: "2018-07-02T00:00:00.000Z"
-feature_image: "/images/postman_published.png"
-tags: ["Testing","Programming"]
+slug: manage-your-postman-api-specs
+date: 2018-07-02T00:00:00.000Z
+feature_image: /images/postman_published.png
+excerpt: >-
+  Organizing and managing your API specs either through Postman Cloud or your
+  Source Control.
+tags:
+  - Programming
+  - Testing
 ---
+In the previous post, we explored how to use [Postman for testing API endpoints](/blog/automated-api-testing-using-postman-collection-runner/). Postman is an excellent tool to manage API specs as well, so that you can try API requests individually to see how things are working. It also acts as documentation for all your API endpoints and serves as a good starting point for someone new to the team. When it comes to managing the API specs for your application, there are a few options that we have and let's explore what they are.
 
-In the previous post, we explored how to use [Postman for testing API endpoints](/posts/automated-api-testing-using-postman-collection-runner/). Postman is an excellent tool to manage API specs as well, so that you can try API requests individually to see how things are working. It also acts as documentation for all your API endpoints and serves as a good starting point for someone new to the team. When it comes to managing the API specs for your application, there are a few options that we have and let's explore what they are.
-
-Organizing API Specs
---------------------
+## Organizing API Specs
 
 Postman supports the concept of [Collections](https://www.getpostman.com/docs/v6/postman/collections/creating_collections), which are nothing but a Folder to group of saved API requests/Specs. Collections support nesting which means you can add Folders within a collection to further group them. As you can see below the _MyApplication_ and _Postman Echo_ are collections, and there are subfolders inside them which in turn contains API requests. The multi-level hierarchy helps you to organize your requests the way you want to.
 
@@ -19,7 +22,7 @@ Postman supports the concept of [Collections](https://www.getpostman.com/docs/v6
 
 Any Collection that you create in Postman is automatically synced to Postman Cloud if you are logged in with an account. It allows you to share collections through a link. With [paid version of Postman](https://www.getpostman.com/pricing) you get to create [team workspaces](https://www.getpostman.com/workspaces), which means a team can collaborate on the shared versions. It allows easy sharing of specs across your team and manages them in a centralized place.
 
-However, if you are not logged in or don't have a paid version of Postman, you can maintain the specs along with your Source Code. Postman allows you to [export Collections and share specs as a JSON file](https://www.getpostman.com/docs/v6/postman/collections/sharing_collections#sharing-as-a-file). You can then check this file into your source code repository. Other team members can Import the exported file to get the latest specs. The only disadvantage with this is that you need to make sure to export/import every time you/other team members make a change to the JSON file. However, I have seen this approach work well in teams and one way we made sure that the JSON file was up to date is to have to update the API spec as a Work Item and which required to be [peer reviewed](/posts/code-review/)(through Pull Requests)
+However, if you are not logged in or don't have a paid version of Postman, you can maintain the specs along with your Source Code. Postman allows you to [export Collections and share specs as a JSON file](https://www.getpostman.com/docs/v6/postman/collections/sharing_collections#sharing-as-a-file). You can then check this file into your source code repository. Other team members can Import the exported file to get the latest specs. The only disadvantage with this is that you need to make sure to export/import every time you/other team members make a change to the JSON file. However, I have seen this approach work well in teams and one way we made sure that the JSON file was up to date is to have to update the API spec as a Work Item and which required to be [peer reviewed](/blog/code-review/)(through Pull Requests)
 
 ### Managing Environments
 
@@ -35,8 +38,7 @@ Postman allows you to [publish API specs](https://www.getpostman.com/docs/v6/pos
 
 ![Postman Published](/images/postman_published.png)
 
-Security Considerations
------------------------
+## Security Considerations
 
 When using the sync feature of Postman (logged in to the application with Postman account), it is [recommended](https://www.getpostman.com/docs/v6/postman_for_publishers/run_button/security) that you do not have any sensitive information (like passwords/tokens) as part of the API request spec/Collection. These should be extracted out as Environment variables and stored as part of the appropriate environment.
 

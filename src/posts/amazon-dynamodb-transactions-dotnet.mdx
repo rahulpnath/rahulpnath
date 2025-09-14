@@ -1,25 +1,23 @@
 ---
 title: "Beyond CRUD: Leveraging DynamoDB Transactions for Complex Operations in .NET"
-slug: "amazon-dynamodb-transactions-dotnet"
-date: "2024-08-06T06:09:38.000Z"
-feature_image: "/images/DynamoDB-Transactions-2.png"
-tags: ["AWS","DynamoDB"]
-excerpt: "Amazon DynamoDB Transactions simplifies the developer experience of making all-or-nothing changes to multiple items within and across tables. In this post, let's learn about TransactWriteItems and how to use them when building .NET applications."
-
+slug: amazon-dynamodb-transactions-dotnet
+date: 2024-08-06
+feature_image: /images/DynamoDB-Transactions-2.png
+excerpt: >-
+  Amazon DynamoDB Transactions simplifies the developer experience of making all-or-nothing changes to multiple items within and across tables. In this post, let's learn about TransactWriteItems and how to use them when building .NET applications.
+tags:
+  - AWS
+  - DynamoDB
 ---
-
 Amazon DynamoDB Transactions simplifies the developer experience of making all-or-nothing changes to multiple items within and across tables.
 
 DynamoDB provides transaction read and write APIs to manage complex business workflows as a single, all-or-nothing operation.
 
-<div>
 <iframe src="https://www.youtube.com/embed/kQ14L2pEZic?feature=oembed" />
-</div>
 
 This post will focus on the TransactWriteItems and learn how to use them when building .NET applications.
 
-DynamoDB TransactWriteItems and .NET
-------------------------------------
+## DynamoDB TransactWriteItems and .NET
 
 The [TransactWriteItems](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/transaction-apis.html#transaction-apis-txwriteitems) function in the AWS SDK for .NET provides a powerful way to perform multiple write operations on DynamoDB tables as a single, all-or-nothing transaction.
 
@@ -30,39 +28,39 @@ Below is a sample code in .NET to invoke the `TransactWriteItemsAsync` method on
 ```csharp
 var request = new TransactWriteItemsRequest()
 {
-        TransactItems = items,
-        ReturnConsumedCapacity = ReturnConsumedCapacity.TOTAL
+    TransactItems = items,
+    ReturnConsumedCapacity = ReturnConsumedCapacity.TOTAL
 };
 try
 {
-        var response = await dynamoDbClient.TransactWriteItemsAsync(request);
+    var response = await dynamoDbClient.TransactWriteItemsAsync(request);
 }
 catch (TransactionCanceledException ex)
 {
-        Console.WriteLine("Transaction was cancelled. Reason: " + ex.Message);
+    Console.WriteLine("Transaction was cancelled. Reason: " + ex.Message);
 }
 catch (Exception ex)
 {
-        Console.WriteLine("An error occurred: " + ex.Message);
-    }
+    Console.WriteLine("An error occurred: " + ex.Message);
+}
+
 ```
 
 The `TransactItems` is a `List<TransactWriteItem>` that contains the individual items in the transaction.
 
 We will explore the different options using the below use case.
 
-Sample Use Case for DynamoDB Transactions
------------------------------------------
+## Sample Use Case for DynamoDB Transactions
 
 An e-commerce business requires a system to verify customer information, check and update product inventory, and create order records without risking overselling products or creating invalid orders.
 
 Here are the main consistency points that need to be maintained:
 
-*   **Valid Customer** : Ensure orders are only created for existing, valid customers.
-*   **Inventory Accuracy**: Prevent overselling by updating product quantity only if sufficient stock is available.
-*   **Order Integrity**: Guarantee that an order is created only if customer validation and inventory update are successful.
-*   **Unique Orders**: Ensure each order ID is unique and no duplicate orders are created.
-*   **Atomicity**: All parts of the transaction (customer check, inventory update, order creation) must succeed or fail together.
+-   **Valid Customer** : Ensure orders are only created for existing, valid customers.
+-   **Inventory Accuracy**: Prevent overselling by updating product quantity only if sufficient stock is available.
+-   **Order Integrity**: Guarantee that an order is created only if customer validation and inventory update are successful.
+-   **Unique Orders**: Ensure each order ID is unique and no duplicate orders are created.
+-   **Atomicity**: All parts of the transaction (customer check, inventory update, order creation) must succeed or fail together.
 
 You can also find a similar use case in the [Amazon documentation for DynamoDB transactions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/transaction-example.html) (Java).
 
@@ -70,9 +68,9 @@ Let's walk through the solution in incremental scenarios as below. We will explo
 
 The application uses three tables in DynamoDB to store the different information.
 
-*   **Orders** → Stores order information
-*   **ProductCatalog** → Stored product info and inventory available
-*   **Customers** → Store customer details
+-   **Orders** → Stores order information
+-   **ProductCatalog** → Stored product info and inventory available
+-   **Customers** → Store customer details
 
 _Note that this is purely for demo purposes. The tables and the data stored in them would differ based on your application and the use cases it needs to accommodate._
 
@@ -84,41 +82,42 @@ Let's create a list of `TransactWriteItem` to pass to the `TransactWriteItemsReq
 
 In this case, we have two operations:
 
-*   Update → Update ProductCatalog to reduce the available quantity based on the order quantity
-*   Put → Create a new Order and ensure that the `OrderId` is unique and does not already exist.
+-   Update → Update ProductCatalog to reduce the available quantity based on the order quantity
+-   Put → Create a new Order and ensure that the `OrderId` is unique and does not already exist.
 
 ```csharp
 new TransactWriteItem
 {
-        Update = new Update
+    Update = new Update
+    {
+        TableName = "ProductCatalog",
+        Key = new Dictionary<string, AttributeValue>
         {
-            TableName = "ProductCatalog",
-            Key = new Dictionary<string, AttributeValue>
-            {
-                {"ProductId", new AttributeValue {S = productId}}
-            },
-            UpdateExpression = "SET Quantity = Quantity - :orderQuantity",
-            ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-            {
-                {":orderQuantity", new AttributeValue {N = orderQuantity.ToString()}}
-            }
+            {"ProductId", new AttributeValue {S = productId}}
+        },
+        UpdateExpression = "SET Quantity = Quantity - :orderQuantity",
+        ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+        {
+            {":orderQuantity", new AttributeValue {N = orderQuantity.ToString()}}
         }
+    }
 },
 new TransactWriteItem
 {
-        Put = new Put
+    Put = new Put
+    {
+        TableName = "Orders",
+        Item = new Dictionary<string, AttributeValue>
         {
-            TableName = "Orders",
-            Item = new Dictionary<string, AttributeValue>
-            {
-                {"OrderId", new AttributeValue {S = orderId}},
-                {"CustomerId", new AttributeValue {S = customerId}},
-                {"ProductId", new AttributeValue {S = productId}},
-                {"Quantity", new AttributeValue {N = orderQuantity.ToString()}}
-            },
-            ConditionExpression = "attribute_not_exists(OrderId)"
-        }
+            {"OrderId", new AttributeValue {S = orderId}},
+            {"CustomerId", new AttributeValue {S = customerId}},
+            {"ProductId", new AttributeValue {S = productId}},
+            {"Quantity", new AttributeValue {N = orderQuantity.ToString()}}
+        },
+        ConditionExpression = "attribute_not_exists(OrderId)"
     }
+}
+
 ```
 
 With the above code, we can ensure that creating an Order and reducing the inventory count happens in one request transaction.
@@ -129,39 +128,39 @@ However, if the order quantity exceeds the available items in the product catalo
 
 Let's ensure that the Quantity in ProductCatalog does not become negative. The transaction must fail if the order quantity exceeds the product's available inventory.
 
-[
-
-How to Ensure Data Consistency with DynamoDB Condition Expressions From .NET Applications
-
-DynamoDB Condition Expressions allow specifying constraints when writing data to an Amazon DynamoDB table. It allows you to specify a Boolean expression that must be true for the operation to proceed. Let’s learn from Condition Expressions and how to use it from .NET
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/DynamoDB-Condition-Expressions.png)
-
-](/posts/dynamodb-condition-expressions-dotnet/)
+<BlogLink
+  href="/blog/dynamodb-condition-expressions-dotnet/"
+  title="How to Ensure Data Consistency with DynamoDB Condition Expressions From .NET Applications"
+  description="DynamoDB Condition Expressions allow specifying constraints when writing data to an Amazon DynamoDB table. It allows you to specify a Boolean expression that must be true for the operation to proceed. Let’s learn from Condition Expressions and how to use it from .NET"
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/DynamoDB-Condition-Expressions.png"
+/>
 
 We can add a `ConditionExpression` to our Update request on the ProductCatalog to achieve this.
 
 ```csharp
 new TransactWriteItem()
 {
-        Update = new Update()
+    Update = new Update()
+    {
+        TableName = "ProductCatalog",
+        Key = new Dictionary<string, AttributeValue>
         {
-            TableName = "ProductCatalog",
-            Key = new Dictionary<string, AttributeValue>
-            {
-                {"ProductId", new AttributeValue {S = productId}}
-            },
-            UpdateExpression = "SET Quantity = Quantity - :orderQuantity",
-            ConditionExpression = "Quantity >= :orderQuantity",
-            ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-            {
-                {":orderQuantity", new AttributeValue {N = orderQuantity.ToString()}}
-            }
+            {"ProductId", new AttributeValue {S = productId}}
+        },
+        UpdateExpression = "SET Quantity = Quantity - :orderQuantity",
+        ConditionExpression = "Quantity >= :orderQuantity",
+        ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+        {
+            {":orderQuantity", new AttributeValue {N = orderQuantity.ToString()}}
         }
-    },
+    }
+},
+
 ```
+
 The Condition Expression ensures that the Quantity in the database must be greater than or equal to the quantity of items in the order.
 
 If this condition is not met when executing the transaction, the transaction will fail as a whole and throw a `TransactionCanceledException`.
@@ -175,23 +174,24 @@ To fix this and ensure a valid customer exists, we can add a `ConditionCheck` tr
 ```csharp
 new TransactWriteItem
 {
-        ConditionCheck = new ConditionCheck
+    ConditionCheck = new ConditionCheck
+    {
+        TableName = "Customers",
+        Key = new Dictionary<string, AttributeValue>
         {
-            TableName = "Customers",
-            Key = new Dictionary<string, AttributeValue>
-            {
-                { "CustomerId", new AttributeValue { S = customerId } }
-            },
-            ConditionExpression = "attribute_exists(CustomerId)"
-        }
-    },
+            { "CustomerId", new AttributeValue { S = customerId } }
+        },
+        ConditionExpression = "attribute_exists(CustomerId)"
+    }
+},
+
 ```
+
 The above code adds a condition check to ensure the CustomerId exists in the Customers table.
 
 If a valid customer does not exists it will throw an exception and the whole transaction will fail.
 
-DynamoDB Transactions and Idempotency
--------------------------------------
+## DynamoDB Transactions and Idempotency
 
 You can make a `TransactWriteItems` call idempotent by including a client token.
 
@@ -208,11 +208,13 @@ The initial call consumes write capacity units. Subsequent calls with the same t
 ```csharp
 var request = new TransactWriteItemsRequest()
 {
-        TransactItems = items,
-        ReturnConsumedCapacity = ReturnConsumedCapacity.TOTAL,
-        ClientRequestToken = orderId
-    };
+    TransactItems = items,
+    ReturnConsumedCapacity = ReturnConsumedCapacity.TOTAL,
+    ClientRequestToken = orderId
+};
+
 ```
+
 A client token is valid for 10 minutes after the initial request finishes.
 
 Reusing the token after this period or changing any other request parameter within the 10-minute window will result in an `IdempotentParameterMismatch` exception.

@@ -1,9 +1,202 @@
 import type { MDXComponents } from "mdx/types";
 import PostCard from "./components/PostCard";
+import BlogPostCard from "./components/BlogPostCard";
+import BlogLink from "./components/BlogLink";
+import Image from "next/image";
+
+// Custom components for better MDX styling
+const CodeBlock = ({ className, children, ...props }: any) => {
+  const language = className?.replace(/language-/, '') || '';
+  
+  return (
+    <div className="relative group">
+      {language && (
+        <div className="absolute top-3 right-3 px-2 py-1 text-xs font-mono text-gray-400 bg-gray-800 rounded z-10">
+          {language}
+        </div>
+      )}
+      <pre className={`${className} bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto border border-gray-200 relative`} {...props}>
+        <code>{children}</code>
+      </pre>
+    </div>
+  );
+};
+
+const Callout = ({ type = 'info', children }: { type?: 'info' | 'warning' | 'success' | 'error', children: React.ReactNode }) => {
+  const styles = {
+    info: 'bg-blue-50 border-blue-200 text-blue-800',
+    warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
+    success: 'bg-green-50 border-green-200 text-green-800',
+    error: 'bg-red-50 border-red-200 text-red-800'
+  };
+
+  const icons = {
+    info: '💡',
+    warning: '⚠️',
+    success: '✅',
+    error: '❌'
+  };
+
+  return (
+    <div className={`p-4 border-l-4 rounded-r-lg ${styles[type]} my-6`}>
+      <div className="flex items-start gap-3">
+        <span className="text-lg">{icons[type]}</span>
+        <div className="flex-1">{children}</div>
+      </div>
+    </div>
+  );
+};
+
+const HighlightBox = ({ children }: { children: React.ReactNode }) => (
+  <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl p-6 my-8 shadow-sm">
+    <div className="text-gray-800 leading-relaxed">{children}</div>
+  </div>
+);
+
+const StepCard = ({ step, title, children }: { step: number, title: string, children: React.ReactNode }) => (
+  <div className="bg-white border border-gray-200 rounded-xl p-6 my-8 shadow-sm hover:shadow-md transition-shadow">
+    <div className="flex items-center gap-4 mb-4">
+      <div className="flex items-center justify-center w-10 h-10 bg-[#823EB7] text-white rounded-full text-sm font-bold shadow-sm">
+        {step}
+      </div>
+      <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+    </div>
+    <div className="text-gray-800 leading-relaxed">{children}</div>
+  </div>
+);
+
+const YoutubeEmbed = ({ src, title = "YouTube video" }: { src: string, title?: string }) => {
+  // Extract video ID from various YouTube URL formats
+  const getVideoId = (url: string) => {
+    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+  };
+
+  const videoId = getVideoId(src);
+  
+  if (!videoId) return null;
+
+  return (
+    <div className="relative w-full my-8">
+      <div className="relative w-full h-0 pb-[56.25%] rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+        <iframe
+          src={`https://www.youtube.com/embed/${videoId}`}
+          title={title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="absolute top-0 left-0 w-full h-full"
+        />
+      </div>
+    </div>
+  );
+};
+
+const TechStack = ({ technologies }: { technologies: string[] }) => (
+  <div className="flex flex-wrap gap-3 my-8">
+    {technologies.map((tech) => (
+      <span
+        key={tech}
+        className="px-4 py-2 bg-purple-50 text-[#823EB7] rounded-lg text-sm font-medium border border-purple-100 hover:bg-purple-100 transition-colors"
+      >
+        {tech}
+      </span>
+    ))}
+  </div>
+);
+
+// Helper function to generate heading IDs
+const generateHeadingId = (text: string): string => {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+};
+
+// Heading components with automatic ID generation
+const createHeading = (level: number) => (props: any) => {
+  const { children, ...rest } = props;
+  const text = typeof children === 'string' ? children : children?.toString?.() || '';
+  const id = generateHeadingId(text);
+  
+  const HeadingTag = `h${level}` as keyof JSX.IntrinsicElements;
+  
+  return (
+    <HeadingTag id={id} {...rest}>
+      {children}
+    </HeadingTag>
+  );
+};
+
+// Export components for server-side usage
+export const mdxComponents: MDXComponents = {
+  // Custom components
+  PostCard,
+  BlogPostCard,
+  BlogLink,
+  Callout,
+  HighlightBox,
+  StepCard,
+  YoutubeEmbed,
+  TechStack,
+  
+  // Heading components with auto-generated IDs
+  h1: createHeading(1),
+  h2: createHeading(2),
+  h3: createHeading(3),
+  h4: createHeading(4),
+  h5: createHeading(5),
+  h6: createHeading(6),
+  
+  // Enhanced default components
+  pre: CodeBlock,
+  iframe: (props: any) => {
+    if (props.src?.includes('youtube.com')) {
+      return <YoutubeEmbed src={props.src} title={props.title} />;
+    }
+    return <iframe {...props} className="w-full border border-gray-200 rounded-lg" />;
+  },
+  img: (props: any) => (
+    <Image
+      {...props}
+      width={800}
+      height={400}
+      className="w-full h-auto rounded-lg border border-gray-200 my-6"
+      alt={props.alt || ''}
+    />
+  ),
+  blockquote: (props: any) => (
+    <blockquote className="border-l-4 border-[#823EB7] pl-6 py-4 my-8 italic text-gray-700 bg-purple-50 rounded-r-xl shadow-sm" {...props} />
+  ),
+  table: (props: any) => (
+    <div className="overflow-x-auto my-6">
+      <table className="min-w-full border-collapse border border-gray-200 rounded-lg" {...props} />
+    </div>
+  ),
+  th: (props: any) => (
+    <th className="border border-gray-200 bg-gray-50 px-4 py-2 text-left font-semibold text-gray-900" {...props} />
+  ),
+  td: (props: any) => (
+    <td className="border border-gray-200 px-4 py-2 text-gray-700" {...props} />
+  ),
+  a: (props: any) => {
+    const isExternal = props.href?.startsWith('http') && !props.href?.includes('rahulpnath.com');
+    return (
+      <a
+        {...props}
+        className="text-[#823EB7] hover:text-purple-700 underline decoration-purple-300 hover:decoration-purple-500 transition-colors font-medium"
+        {...(isExternal && {
+          target: '_blank',
+          rel: 'noopener noreferrer'
+        })}
+      />
+    );
+  },
+};
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     ...components,
-    PostCard, // now available globally
+    ...mdxComponents,
   };
 }

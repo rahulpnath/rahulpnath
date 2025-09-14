@@ -1,11 +1,17 @@
 ---
-title: "A Beginner's Guide to MassTransit and RabbitMQ in ASP NET"
-slug: "masstransit-rabbitmq-asp-dotnet"
-date: "2024-09-26T04:56:50.000Z"
-feature_image: "/images/MassTransit---RabbitMQ.png"
-tags: ["RabbitMQ","AWS"]
+title: A Beginner's Guide to MassTransit and RabbitMQ in ASP NET
+slug: masstransit-rabbitmq-asp-dotnet
+date: 2024-09-26T00:00:00.000Z
+feature_image: /images/MassTransit---RabbitMQ.png
+excerpt: >-
+  MassTransit is a powerful .NET library for building distributed systems. Let's
+  learn how to set up MassTransit using RabbitMQ transport from an ASP NET
+  application. We will also learn the default queue topology MassTransit sets up
+  on RabbitMQ transport.
+tags:
+  - AWS
+  - RabbitMQ
 ---
-
 MassTransit is a powerful .NET library for building distributed systems.
 
 It simplifies messaging and event-driven architecture, making creating scalable and resilient applications easy.
@@ -22,23 +28,21 @@ I will use an AWS MQ-hosted instance of RabbitMQ as my transport.
 
 This post is sponsored by AWS and is part of my RabbitMQ Series.
 
-Installing and Setting Up MassTransit in ASP NET Core
------------------------------------------------------
+## Installing and Setting Up MassTransit in ASP NET Core
 
 To install MassTransit with RabbitMQ in an ASP.NET Core application, run the following commands to add the required NuGet packages:
 
 ```bash
 dotnet add package MassTransit.AspNetCore
 dotnet add package MassTransit.RabbitMQ
+
 ```
-    
 
 NuGet packages required for MassTransit with RabbitMQ transport.
 
 This will install MassTransit and the RabbitMQ transport, which we will configure later in this blog post.
 
-Publishing Messages Using MassTransit
--------------------------------------
+## Publishing Messages Using MassTransit
 
 I am using a default ASP NET Core Web API application for the demo.
 
@@ -56,20 +60,23 @@ This makes it a perfect case to use message-driven architecture.
 
 Any time new weather forecast data is added, let's raise `WeaherDataAddedEvent`, as shown below.
 
-    app.MapPost(
-            "/weatherforecast", 
-            async ([FromBody] WeatherForecast data, IBus bus) =>
+```csharp
+app.MapPost(
+        "/weatherforecast", 
+        async ([FromBody] WeatherForecast data, IBus bus) =>
+    {
+        Console.WriteLine($"New weather data added for {data.City} " +
+                          $"on {data.Date} with Temperature {data.TemperatureC}");
+        await bus.Publish(new WeatherDataAddedEvent()
         {
-            Console.WriteLine($"New weather data added for {data.City} " +
-                              $"on {data.Date} with Temperature {data.TemperatureC}");
-            await bus.Publish(new WeatherDataAddedEvent()
-            {
-                City = data.City, TemperatureC = data.TemperatureC, DateTime = data.Date
-            });
-        })
-        .WithName("PostWeatherForecast")
-        .DisableAntiforgery()
-        .WithOpenApi();
+            City = data.City, TemperatureC = data.TemperatureC, DateTime = data.Date
+        });
+    })
+    .WithName("PostWeatherForecast")
+    .DisableAntiforgery()
+    .WithOpenApi();
+
+```
 
 ASP NET Core `POST` endpoint, publishing an event to RabbitMQ using MassTransit.
 
@@ -77,8 +84,7 @@ The above code uses an instance of`IBus` from the MassTransit library to publish
 
 `IBus` will be automatically injected into the controller once we set up MassTransit later in this post.
 
-Consuming Messages Using MassTransit
-------------------------------------
+## Consuming Messages Using MassTransit
 
 To consume a message in MassTransit, Create a consumer class that implements `IConsumer<T>`, where `T` is the message type you're consuming.
 
@@ -87,38 +93,36 @@ The `SendNewWeatherDataEmail` class consumes the `WeatherDataAddedEvent` publish
 ```csharp
 public class SendNewWeatherDataEmail: IConsumer<WeatherDataAddedEvent>
 {
-```
-        public Task Consume(ConsumeContext<WeatherDataAddedEvent> context)
-        {
-            Console.WriteLine(@$"Sending Email for City {context.Message.City} 
-                              on {context.Message.DateTime} with 
-                              {context.Message.TemperatureC}");
-            return Task.CompletedTask;
-        }
+    public Task Consume(ConsumeContext<WeatherDataAddedEvent> context)
+    {
+        Console.WriteLine(@$"Sending Email for City {context.Message.City} 
+                          on {context.Message.DateTime} with 
+                          {context.Message.TemperatureC}");
+        return Task.CompletedTask;
     }
+}
+
+```
 
 Message Consumer in MassTransit handling an event.
 
 The consumer implements `IConsumer<WeatherDataAddedEvent>` interface.
 
-Wiring MassTransit with RabbitMQ Transport
-------------------------------------------
+## Wiring MassTransit with RabbitMQ Transport
 
 Now that we have set up our application code to publish messages and added a consumer for the message let's wire up MassTransit to use RabbitMQ as our transport mechanism.
 
 If you are new to RabbitMQ, I highly recommend checking out the articles below to learn some basic concepts.
 
-[
-
-RabbitMQ - Rahul Nath
-
-RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let’s learn how to get started using RabbitMQ on Amazon MQ from .NET application.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/RabbitMQ-2.png)
-
-](/posts/tag/rabbitmq/)
+<BlogLink
+  href="/blog/tag/rabbitmq/"
+  title="RabbitMQ - Rahul Nath"
+  description="RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let’s learn how to get started using RabbitMQ on Amazon MQ from .NET application."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/RabbitMQ-2.png"
+/>
 
 You can host a RabbitMQ instance in multiple ways. For this blog post, I use an AWS MQ-hosted instance of RabbitMQ.
 
@@ -128,26 +132,27 @@ Creating an AWS MQ hosted instance of RabbitMQ.
 
 The following code in `Program.cs`registers MassTransit and sets up the RabbitMQ transport.
 
-```javascript
+```csharp
 builder.Services.AddMassTransit(mt =>
 {
-```
-        mt.AddConsumer<SendNewWeatherDataEmail>();
-        
-        var rabbitConfiguration = builder.Configuration
-            .GetSection(nameof(RabbitConfiguration))
-            .Get<RabbitConfiguration>();
-        
-        mt.UsingRabbitMq((context, cfg) =>
+    mt.AddConsumer<SendNewWeatherDataEmail>();
+    
+    var rabbitConfiguration = builder.Configuration
+        .GetSection(nameof(RabbitConfiguration))
+        .Get<RabbitConfiguration>();
+    
+    mt.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.ConfigureEndpoints(context);
+        cfg.Host(rabbitConfiguration.Host, host =>
         {
-            cfg.ConfigureEndpoints(context);
-            cfg.Host(rabbitConfiguration.Host, host =>
-            {
-                host.Username(rabbitConfiguration.UserName);
-                host.Password(rabbitConfiguration.Password);
-            });
+            host.Username(rabbitConfiguration.UserName);
+            host.Password(rabbitConfiguration.Password);
         });
     });
+});
+
+```
 
 Registering MassTransit and setting up RabbitMQ as transport at the startup of a ASP NET aplication.
 
@@ -157,8 +162,7 @@ We also set up to use RabbitMQ as the transport.
 
 First, we retrieve the RabbitMQ configuration setting from appsettings.json and use that in the `UsinRabbitMQ` extension method to set up the RabbitMQ host details and credentials to connect.
 
-MassTransit Default Queue Topology Convention
----------------------------------------------
+## MassTransit Default Queue Topology Convention
 
 The `ConfigureEndpoints` the method sets up the channels and binding on RabbitMQ based on the default MassTransit convention.
 
@@ -172,8 +176,10 @@ MassTransit's default RabbitMQ topology setup:
 
 MassTransit creates a fanout exchange named after the message type and class namespace (e.g., "_hello\_mass\_transit:WeatherDataAddedEvent_").  
   
+
 This is the primary point where publishers send messages.  
   
+
 For each consumer, MassTransit creates a unique queue named after the consumer (e.g., "_SendNewWeatherDataEmail_") and a fanout exchange, typically called the same (e.g., "_SendNewWeatherDataEmail_")
 
 ![](/images/image-5.png)
@@ -184,6 +190,7 @@ The different Exchanges setup by default based on the default MassTransit conven
 
 MassTransit binds the message type exchange to each consumer's exchange and each exchange to its corresponding queue.  
   
+
 This is an example of [Exchange to Exchange Bindings in RabbitMQ](https://www.rabbitmq.com/docs/e2e).
 
 ![](/images/image-6.png)
@@ -192,6 +199,7 @@ RabbitMQ Routing set up by MassTransit from the message publish exchange to each
 
 The published message goes to the message type exchange and is forwarded to all bound consumer exchanges.  
   
+
 Each consumer exchange then routes the message to its specific queue. Consumers read messages from their dedicated queues.
 
 ![](/images/image-7.png)

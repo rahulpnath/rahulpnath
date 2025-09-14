@@ -1,23 +1,26 @@
 ---
-title: "How to Handle Exceptions When Processing DynamoDB Stream Events in .NET Lambda Function"
-slug: "aws-dynamodb-streams-lambda-triggers-exception-handling-dotnet"
-date: "2022-08-31T00:00:00.000Z"
-feature_image: "/images/aws-lambda-dynamodb-streams-trigger-exception-handling-dotnet.jpg"
-tags: ["AWS","DynamoDB","Lambda"]
-excerpt: "Learn how to use Amazon CloudWatch when building .NET applications. We will learn how to write logs into CloudWatch, filter the logs, some good practices when logging, learn about Log Analytics, and see how we can filter and view logs across multiple applications."
+title: ">-   How to Handle Exceptions When Processing DynamoDB Stream Events in .NET Lambda   Function"
+slug: aws-dynamodb-streams-lambda-triggers-exception-handling-dotnet
+date: 2022-08-31T00:00:00.000Z
+feature_image: /images/aws-lambda-dynamodb-streams-trigger-exception-handling-dotnet.jpg
+excerpt: >-
+  This article is sponsored by AWS and is part of my AWS
+  Series(GHOSTURL/tag/aws/).  DynamoDB Streams capture a time-ordered sequence
+  of events in any DynamoDB table.  In a previous...
+tags:
+  - AWS
+  - DynamoDB
+  - Lambda
 ---
-
 _This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
 
 DynamoDB Streams capture a time-ordered sequence of events in any DynamoDB table.
 
-In a previous blog post, [DynamoDB Streams and AWS Lambda Trigger in .NET](/posts/aws-dynamodb-streams-lambda-triggers-dotnet/), we learned how to set up DynamoDB Stream on a DynamoDB table and wire up a Lambda Function written in .NET to respond to stream record events.
+In a previous blog post, [DynamoDB Streams and AWS Lambda Trigger in .NET](/blog/aws-dynamodb-streams-lambda-triggers-dotnet/), we learned how to set up DynamoDB Stream on a DynamoDB table and wire up a Lambda Function written in .NET to respond to stream record events.
 
 A _stream record_ contains information about a data modification to a single item in a DynamoDB table. _Shards_ in DynamoDB streams is a collection of stream records.
 
-<div>
-    <iframe src="https://www.youtube.com/embed/4YzuN4MAFiQ" />
-</div>
+<iframe src="https://www.youtube.com/embed/4YzuN4MAFiQ" />
 
 When enabling Streams, DynamoDB creates at least one Shard per partition in the DynamoDB table. When a Lambda function is used to process the events in the DynamoDB Stream, one instance of the Lambda Function is invoked per Shard in the Stream.
 
@@ -31,12 +34,11 @@ However, if there are exceptions when processing Stream events, any further chan
 
 You will see slight behavior differences based on the number of partitions on the DynamoDB table and the number of concurrent Lambda functions configured for processing from the DynamoDB stream.
 
-Simulating Exception in .NET Lambda Function
---------------------------------------------
+## Simulating Exception in .NET Lambda Function
 
 To test the above configurations, let’s simulate an exception in our .NET Lambda Function.
 
-Below I have modified the Lambda Function [from our previous blog post](/posts/aws-dynamodb-streams-lambda-triggers-dotnet/), which listens to changes in my User table, to check if the user’s Name property contains the word ‘Error’. And if it does, I throw an exception.
+Below I have modified the Lambda Function [from our previous blog post](/blog/aws-dynamodb-streams-lambda-triggers-dotnet/), which listens to changes in my User table, to check if the user’s Name property contains the word ‘Error’. And if it does, I throw an exception.
 
 ```csharp
 foreach (var record in dynamoEvent.Records)
@@ -49,12 +51,12 @@ foreach (var record in dynamoEvent.Records)
     }
    ...
 }
+
 ```
 
 This is just for demonstration purposes. In real-world functions, the exceptions can happen because of unhandled null exceptions, external dependencies that your Lambda Function might be using etc.
 
-Dead Letter Queue For DynamoDB Streams
---------------------------------------
+## Dead Letter Queue For DynamoDB Streams
 
 Queuing up new stream records when an exception occurs is not a great experience when building applications. Exceptions might happen for various reasons, and the associated fix will differ.
 
@@ -68,8 +70,8 @@ By setting the ‘_On-failure destination_’  to an Amazon SQS Queue or SNS To
 
 The two settings that go in hand when setting the on-failure destination are:
 
-*   **Retry Attempts →** Maximum number of retries when Lambda returns an error
-*   **Maximum age of record →** Max time/age of a record until it is sent to Function.
+-   **Retry Attempts →** Maximum number of retries when Lambda returns an error
+-   **Maximum age of record →** Max time/age of a record until it is sent to Function.
 
 By default, both these values are set to -1, which means there is no limit. This is what causes the errored record to be retried until it succeeds of the max-age reaches (which is 7 days).
 
@@ -81,9 +83,7 @@ With the updating settings on the Lambda Trigger configuration, update a record 
 
 You will notice that the Lambda Function was invoked twice with the record with the word Error. Since the message will not be processed (regardless of the number of retries), it will be moved to the configured SQS queue. You can fix the code or do the needful to fix the error record and move them out of the queue.
 
-<div>
-    <iframe src="https://www.youtube.com/embed/U7PvdYlvA-8" />
-</div>
+<iframe src="https://www.youtube.com/embed/U7PvdYlvA-8" />
 
 For real-world scenarios, if the error in processing the Stream record is transient, it might succeed in the retry and will unblock the stream. However, if the errors are not transient, they will be moved to the SNS/SQS without blocking the Stream from further processing.
 
@@ -91,20 +91,17 @@ Your action for the messages in the queue depends on your application, the error
 
 Messages in the SNS/SQS can be monitored and processed separately without having to block the other updates in the DynamoDB stream. Once the error record is moved to the DLQ, the Stream records' processing continues as usual.
 
-[
+<BlogLink
+  href="/blog/amazon-sns"
+  title="Amazon SNS For the .NET Developer: Getting Started Quick and Easy"
+  description="Learn how to get started with Amazon SNS and use it from a .NET application. We will learn about Topics, sending messages to topics, and using Subscriptions to receive messages. We will also learn about Filters, how to use them, and error handling with SNS."
+  authorImage="/images/favicon.ico"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/amazon-sns.jpg"
+/>
 
-Amazon SNS For the .NET Developer: Getting Started Quick and Easy
-
-Learn how to get started with Amazon SNS and use it from a .NET application. We will learn about Topics, sending messages to topics, and using Subscriptions to receive messages. We will also learn about Filters, how to use them, and error handling with SNS.
-
-![](/images/favicon.ico)Rahul NathRahul Pulikkot Nath
-
-![](/images/amazon-sns.jpg)
-
-](/posts/amazon-sns)
-
-Stream Event Integration Patterns
----------------------------------
+## Stream Event Integration Patterns
 
 Depending on the kind of processing and number of activities you want to trigger based on Stream Records, you can choose different integration patterns.
 

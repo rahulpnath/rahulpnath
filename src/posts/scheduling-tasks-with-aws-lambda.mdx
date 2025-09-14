@@ -1,47 +1,48 @@
 ---
 title: "Serverless Task Automation: Task Scheduling with AWS Lambda and Amazon EventBridge"
-slug: "scheduling-tasks-with-aws-lambda"
-date: "2023-10-30T06:31:51.000Z"
-feature_image: "/images/scheduling-tasks-lambda.png"
-tags: ["AWS","Lambda"]
+slug: scheduling-tasks-with-aws-lambda
+date: 2023-10-30
+feature_image: /images/scheduling-tasks-lambda.png
+excerpt: >-
+  Learn how to use Amazon EventBridge Scheduler to setup and schedule triggers for Lambda Functions using rate and cron expressions.
+tags:
+  - AWS
+  - Lambda
 ---
-
 Scheduling tasks using AWS Lambda is useful for automating repetitive, time-based operations. Some common use cases include data backups, report generation, data cleanup, and periodic application maintenance.
 
-With [Amazon EventBridge Scheduler](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-create-rule-schedule.html), you can specify when and how often you want a Lambda Function to run. This means you can easily set up daily, weekly, or custom cron-like schedules.
+With [Amazon EventBridge Scheduler](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-create-rule-schedule.html), you can specify when and how often you want a Lambda Function to run. This means you can easily set up daily, weekly, or custom cron-like schedules."
 
 <iframe src="https://www.youtube.com/embed/P6yp0ByekEk?feature=oembed" />
 
 In this post, let's learn how to use Amazon EventBridge and set up schedules to trigger a Lambda Function built using .NET. The concepts apply to other programming languages as well.
 
-_This article is sponsored by AWS and is part of my [_AWS Series_](/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [_AWS Series_](/tag/aws/)._
 
-AWS EventBridge and .NET Lambda Trigger
----------------------------------------
+## AWS EventBridge and .NET Lambda Trigger
 
 EventBridge Scheduler (earlier referred to as CloudWatch Events) is highly customizable and scalable with a wide set of target API operations and AWS Services.
 
-[
-
-AWS Lambda For The .NET Developer
-
-This blog post is a collection of other posts that covers various aspects of AWS Lambda and other services you can integrate with when building serverless applications on Lambda.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/AWS-Lambda.png)
-
-](/posts/aws-lambda-dotnet-developer/)
+<BlogLink
+  href="/blog/aws-lambda-dotnet-developer/"
+  title="AWS Lambda For The .NET Developer"
+  description="This blog post is a collection of other posts that covers various aspects of AWS Lambda and other services you can integrate with when building serverless applications on Lambda."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/AWS-Lambda.png"
+/>
 
 To handle EventBridge Events from a Lambda Function we use the `ScheduledEvent` class from the [Amazon.Lambda.CloudWatchEvents](https://www.nuget.org/packages/Amazon.Lambda.CloudWatchEvents) NuGet package
 
 ```csharp
 public string FunctionHandler(ScheduledEvent input, ILambdaContext context)
 {
+    Console.WriteLine($"Scheduled Task Run with {JsonSerializer.Serialize(input)}");
+    return input.Source.ToUpper();
+}
+
 ```
-        Console.WriteLine($"Scheduled Task Run with {JsonSerializer.Serialize(input)}");
-        return input.Source.ToUpper();
-    }
 
 To run the AWS Lambda Function on a schedule, create a new Lambda Trigger and configure it to use 'EventBridge (CloudWatch Events)' trigger.
 
@@ -49,17 +50,19 @@ You can create a new rule and specify the name, description, and schedule expres
 
 In EventBridge you can create two types of scheduled rules
 
-*   **Rate Expression** → Rules that run at a regular rate.
-*   **CRON Expression** → Rules that run at specific times.
+-   **Rate Expression** → Rules that run at a regular rate.
+-   **CRON Expression** → Rules that run at specific times.
 
 Let's learn how to use both of these to schedule and run AWS Lambda Functions.
 
-Rate Expression Lambda Triggers
--------------------------------
+## Rate Expression Lambda Triggers
 
 Rate expressions have two required fields - the value and unit - separated by white space.
 
-    rate(value unit)
+```cmd
+rate(value unit)
+
+```
 
 Value is a positive number and unit takes _minute|minutes|hour|hours|day|days_ as values.
 
@@ -100,12 +103,12 @@ In the above example, I have hardcoded the input to be a string input. In this c
 ```csharp
 public string FunctionHandler(string input, ILambdaContext context)
 {
-```
-      ...
-    }
+  ...
+}
 
-CRON Expression Lambda Triggers
--------------------------------
+```
+
+## CRON Expression Lambda Triggers
 
 Rate Expressions allows you to specify how often you want a Rule to trigger. However, when you need more fine-grained control over when a rule should trigger you can use [Cron Expression](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-cron-expressions.html).
 
@@ -117,7 +120,10 @@ Cron Expression example Lambda Trigger using AWS EventBridge
 
 The above screenshot sets up a CRON job to run the function every minute between 4-5 a.m. (UTC) on a Monday and Tuesday.
 
-    cron(0/1 4-5 ? * MON-TUE *)
+```cron
+cron(0/1 4-5 ? * MON-TUE *)
+
+```
 
 All CRON jobs are set in UTC time, however, if you navigate to the CRON job rule in EventBridge, you can see the time in both UTC and local time zone.
 

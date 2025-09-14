@@ -1,34 +1,31 @@
 ---
 title: "Amazon SQS For the .NET Developer: How to Easily Get Started"
-slug: "amazon-sqs"
-date: "2022-05-12T00:00:00.000Z"
-feature_image: "/images/queue.jpg"
-tags: ["AWS"]
-excerpt: "Learn how to get started with Amazon SQS and use it from a .NET Application. We will learn how to send and receive messages, important properties,and concepts that you need to know when using SQS."
-
+slug: amazon-sqs
+date: 2022-05-12
+feature_image: /images/queue.jpg
+excerpt: >-
+  Learn how to get started with Amazon SQS and use it from a .NET Application. We will learn how to send and receive messages, important properties,and concepts that you need to know when using SQS.
+tags:
+  - AWS
 ---
-
-_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
 Amazon Simple Queue Service (SQS) is a fully managed message queuing service that decouples applications and helps build distributed software systems.
 
 Using SQS, you can send, store, and receive messages between different applications without losing them or requiring other services to be available/online.
 
-<div>
 <iframe src="https://www.youtube.com/embed/U7PvdYlvA-8" />
-</div>
 
 In this post, let’s learn how to get started with Amazon SQS and use it from a .NET Application. We will learn how to send and receive messages, properties, and concepts that you need to know when using SQS.
 
-Create SQS
-----------
+## Create SQS
 
 The straightforward way to create an Amazon SQS is from the [AWS Console](https://console.aws.amazon.com/sqs/).
 
 SQS supports two types of queues.
 
-*   **Standard Queue** → Provides unlimited throughput, at-least-once delivery, and best-effort ordering
-*   **FIFO Queue** → Provides high throughput, exactly-once processing, and first-in-first-out delivery (when strict ordering is required)
+-   **Standard Queue** → Provides unlimited throughput, at-least-once delivery, and best-effort ordering
+-   **FIFO Queue** → Provides high throughput, exactly-once processing, and first-in-first-out delivery (when strict ordering is required)
 
 You can find the details comparison between the two [here](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html#sqs-queue-types) and the price comparison [here](https://aws.amazon.com/sqs/pricing/).
 
@@ -36,8 +33,7 @@ Create a new queue by specifying the queue name and selecting the queue type. Le
 
 ![Create Queue from Amazon Console](/images/amazon-sqs-create-queue.jpg)
 
-SQS & .NET
-----------
+## SQS & .NET
 
 We will use the ASP NET Core default Web API template as our sample application. The application has a `GET` method to return `WeatherForecast` data by default.
 
@@ -47,12 +43,9 @@ The [AWSSDK.SQS](https://www.nuget.org/packages/AWSSDK.SQS/) NuGet package provi
 
 You can connect by passing the credentials explicitly or setting up the credentials for your environment.
 
-<div>
 <iframe src="https://www.youtube.com/embed/ukam37umkQc" />
-</div>
 
-Send Message
-------------
+## Send Message
 
 We want to add new weather data to our application and assume that it requires some processing before storing the data in our database.
 
@@ -64,19 +57,17 @@ A Queue comes in handy for these scenarios. We can accept an incoming request an
 [HttpPost]
 public async Task Post(WeatherForecast data)
 {
-```csharp
-```csharp
-        var client = new AmazonSQSClient();
-        var request = new SendMessageRequest()
-        {
-            MessageBody = JsonSerializer.Serialize(data),
-            QueueUrl = "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo"
-        };
+    var client = new AmazonSQSClient();
+    var request = new SendMessageRequest()
+    {
+        MessageBody = JsonSerializer.Serialize(data),
+        QueueUrl = "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo"
+    };
+
+    var result = await client.SendMessageAsync(request);
+}
+
 ```
-    
-        var result = await client.SendMessageAsync(request);
-    }
-    
 
 The `POST` method takes in `WeatherForecast` data and uses the `AmazonSQSClient` to drop it into the Queue.
 
@@ -105,21 +96,18 @@ We can use the `DelaySeconds` property on the Message object in these cases. It 
 ```csharp
 var request = new SendMessageRequest()
 {
-```html
-```csharp
-        QueueUrl = "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo",
-        MessageBody = JsonSerializer.Serialize(data),
-        DelaySeconds = 10
-    };
+    QueueUrl = "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo",
+    MessageBody = JsonSerializer.Serialize(data),
+    DelaySeconds = 10
+};
+
 ```
-    
 
 Messages with a `DelaySecond` specified are available for processing in the Queue only after the delay period.
 
 Alternatively, you can also set a Delay period at the Queue level. It is set as the `Delivery Delay` property and is the default when `DelaySecond` is not specified at the message level.
 
-Receive Message
----------------
+## Receive Message
 
 You want these messages to be processed in the background as you queue them up in SQS.
 
@@ -129,41 +117,35 @@ There are different ways to process the messages coming to an SQS Queue. Let’s
 
 Background Tasks in ASP NET Core allow to run tasks in the background. For scenarios where you want a simple queue processing service, you can use a Background Task.
 
-<div>
 <iframe src="https://www.youtube.com/embed/oWMQKjHrlJE" />
-</div>
 
 You are limited with scaling these services, so keep that in mind when picking a Background Job to process a queue message.
 
 ```csharp
 public class WeatherForecastProcessor : BackgroundService
 {
-```csharp
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        Console.WriteLine("Starting Weather Forecast Processor");
+        var client = new AmazonSQSClient();
+
+        while (!stoppingToken.IsCancellationRequested)
         {
-            Console.WriteLine("Starting Weather Forecast Processor");
-            var client = new AmazonSQSClient();
-    
-```csharp
-            while (!stoppingToken.IsCancellationRequested)
+            var request = new ReceiveMessageRequest()
             {
-                var request = new ReceiveMessageRequest()
-                {
-                    QueueUrl = "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo",
-                };
-                var response = await client.ReceiveMessageAsync(request);
-                foreach(var message in response.Messages)
-                {
-```
-                    Console.WriteLine("New message received");
-                    Console.WriteLine(message.Body);
-```code
-                }
+                QueueUrl = "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo",
+            };
+            var response = await client.ReceiveMessageAsync(request);
+            foreach(var message in response.Messages)
+            {
+                Console.WriteLine("New message received");
+                Console.WriteLine(message.Body);
             }
         }
     }
+}
+
 ```
-    
 
 The `WeatherForecastProcessor` is a simple Background Task that polls the Queue using the same `AmazonSQSClient` for messages. It uses the `ReceiveMessageAsync` method to retrieve messages from the queue.
 
@@ -178,13 +160,11 @@ The `MaxNumberOfMessages` property specifies the maximum number of messages to b
 ```csharp
 var request = new ReceiveMessageRequest()
 {
-```csharp
-```code
-        QueueUrl = "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo",
-        MaxNumberOfMessages = 5,
-    };
+    QueueUrl = "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo",
+    MaxNumberOfMessages = 5,
+};
+
 ```
-    
 
 Amazon SQS does not return messages more than the count specified, hence the name `MaxNumberOfMessages`. It can return fewer messages if there are not enough messages in the Queue.
 
@@ -199,13 +179,11 @@ If it finds the required number of messages, it returns early. If there are no n
 ```csharp
 var request = new ReceiveMessageRequest()
 {
-```csharp
-```code
-        QueueUrl = "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo",
-        WaitTimeSeconds = 10,
-    };
+    QueueUrl = "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo",
+    WaitTimeSeconds = 10,
+};
+
 ```
-    
 
 `WaitTimeSeconds` can take a value between 0 and 20 seconds, and setting it enables the use of [Short/Long Polling in SQS](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-short-and-long-polling.html). By default the value is 0, and this is referred to as **Short Polling.** When the value is greater than 0, it’s called Long Polling.
 
@@ -218,13 +196,11 @@ When a message is read from the queue for processing, it is only temporarily hid
 ```csharp
 var request = new ReceiveMessageRequest()
 {
+    QueueUrl = "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo",
+    VisibilityTimeout = 20,
+};
+
 ```
-```code
-        QueueUrl = "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo",
-        VisibilityTimeout = 20,
-    };
-```
-    
 
 By default, this is 30 seconds, which means when a message is read from the Queue by one consumer, it will be hidden for 30 seconds from other consumers. If the consumer fails to process the message and delete the message (which will see later), the message will be made available in the Queue again after 30 seconds.
 
@@ -232,17 +208,7 @@ By default, this is 30 seconds, which means when a message is read from the Queu
 
 In cases where you expect a high load of messages and have to process them quickly, Background Tasks might not be a perfect choice. While there are other options, AWS Lambda is an excellent choice.
 
-[
-
-AWS Lambda For The .NET Developer
-
-Learn to build Serverless Applications on AWS
-
-![](/images/apple-touch-icon.png)Udemy
-
-![](/images/4689888_b522_4.jpg)
-
-](https://www.udemy.com/course/aws-lambda-dotnet/?referralCode=981481B991C2890BD448)
+[AWS Lambda For The .NET Developer](https://www.udemy.com/course/aws-lambda-dotnet/?referralCode=981481B991C2890BD448)
 
 _[AWS Lambda](https://aws.amazon.com/lambda/) is a serverless, event-driven compute service that lets you run code for virtually any type of application or backend service without provisioning or managing servers_
 
@@ -252,8 +218,7 @@ Check out my video on CloudFormation, where I show you how to set up an SQS Trig
 
 <iframe src="https://www.youtube.com/embed/U96230YlSJA" />
 
-Delete Message
---------------
+## Delete Message
 
 When a message is read from Queue, it is only temporarily hidden and made available for processing again after the `VisibilityTimeout`. However, if we have one consumer (an instance of Background Task or Lambda Function) successfully process the message, we no longer want the message to be processed again.
 
@@ -261,17 +226,16 @@ To remove the message from the Queue, we need to delete the message from the que
 
 The `ReceiptHandle` is a unique identifier associated with receiving a message. Each time you receive a message (even if the same queue message is received again), the ReceiptHandle will be different.
 
-
 ```csharp
 await client.DeleteMessageAsync(
     "https://sqs.ap-southeast-2.amazonaws.com/189107071895/youtube-demo",
     message.ReceiptHandle);
+
 ```
 
 Once deleted, the message is removed from the SQS Queue and is no longer available for processing.
 
-Dead-letter Queue
------------------
+## Dead-letter Queue
 
 Dead-letter queues (DLQ) are used to store messages that fail to be processed successfully in the source queues.
 

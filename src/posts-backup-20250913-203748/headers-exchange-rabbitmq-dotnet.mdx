@@ -1,0 +1,182 @@
+---
+title: RabbitMQ Headers Exchange Explained
+slug: headers-exchange-rabbitmq-dotnet
+date: '2024-04-05'
+feature_image: /images/RABBITMQ-1.png
+excerpt: >-
+  Headers Exchange in RabbitMQ routes messages using message headers to route
+  messages.  Let’s explore how Header Exchanges work in RabbitMQ, underlying
+  concepts and see it in action from a .NET application.
+tags:
+  - RabbitMQ
+  - AWS
+---
+Headers Exchange in RabbitMQ routes messages using message headers to route messages.
+
+A message is considered a match if the header's value matches that on the binding.
+
+In this post, let’s explore
+
+-   RabbitMQ Headers Exchanges
+-   Underlying Concepts of Headers Exchange
+-   Headers Exchange in action from a .NET application.
+
+<iframe src="https://www.youtube.com/embed/2x2nHN8V0cg?feature=oembed" />
+
+I use [Amazon MQ](https://aws.amazon.com/amazon-mq/?ref=rahulpnath.com), a managed message broker service that supports ActiveMQ and RabbitMQ engine types, to host my RabbitMQ instance. However, you can use [one of the various options that RabbitMQ provides](https://www.rabbitmq.com/download.html?ref=rahulpnath.com) to host your instance.
+
+_This article is sponsored by AWS and is part of my_ <BlogLink
+  href="/blog/tag"
+  title="Tag"
+  description="Read this interesting blog post"
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/default-feature.jpg"
+/>_._
+
+## What is a RabbitMQ Headers Exchange?
+
+Headers Exchange in RabbitMQ uses message header attributes to route messages.
+
+Since a message can contain more than one header value, Headers Exchange supports routing on multiple attributes.
+
+> _Headers Exchange is referred to as a 'Direct Exchange on steroids'_
+
+With Headers Exchange, we are not limited to one routing key but use multiple header keys to specify the binding.
+
+When a message is sent, the Sender also populates header attributes.
+
+![](/images/image.png)
+
+Sender specifies the header attributes and associated values when sending messages to the Exchange.
+
+_The headers property is a key/value table allowing user-defined keys and values._
+
+The Receiver sets up the Queue and the associated Bindings on the Queue.
+
+### Any or All Match on Header Attributes
+
+The Binding can be set up to match all or any one of the Header attributes on the message. This means that the message is considered a match only when all the header attributes are an exact match or any one of the attributes matches.
+
+![](/images/image-1.png)
+
+x-match binding argument specifies whether all header attributes must match or any one of the header attributes must match.
+
+The `x-match` attribute on the Binding is used to specify this.
+
+-   all → matches all header values
+-   any → matches any one header value
+
+### Message Routing in RabbitMQ Headers Exchange
+
+When a message is sent to the Headers exchange it inspects the header attributes on the message and that on the binding to decide which Queues to send a copy of the message to.
+
+Depending on the `x-match` binding attribute, it either compares all the header attributes and any one of the attributes to create a match.
+
+![](/images/image-2.png)
+
+In the above scenario, the message has two header attributes `location` and `temperature` with values of 'sydney' and 25.
+
+Since the first binding (from the left) has an `x-match` value set to `all` and the `location` and `temperature` header values specified match that on the message it gets sent to that queue.
+
+The second binding (middle one) has an `x-match` set to `all` and only one header, `location` specified with a value of `brisbane`. Since it does not match with that on the message, that queue does not receive a copy of the message.
+
+The third binding has the `x-match` of `any` and has the `location` set to 'brisbane' and the `temperature` to 25. In this case, since one of the headers, `temperature`, matches that on the message, a copy of the message is sent to the queue.
+
+## RabbitMQ Headers Exchange From .NET
+
+We will use a NuGet package, [RabbitMQ.Client](https://www.nuget.org/packages/RabbitMQ.Client?ref=rahulpnath.com), to connect and send/receive messages from RabbitMQ.
+
+If you are new to building RabbitMQ from .NET applications, check out the Getting Started article below.
+
+<BlogLink
+  href="/blog/amazon-mq-rabbitmq-dotnet/"
+  title="Amazon MQ RabbitMQ: A Reliable Messaging Solution for Your .NET Projects"
+  description="RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let’s learn how to get started using RabbitMQ on Amazon MQ from .NET application."
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/rabbit-mq-dotnet.png"
+/>
+
+### Create and Send Messages to Headers Exchange From .NET
+
+Exchanges are created using the Channel.
+
+The `ExchangeDeclare` the method takes in an exchange name and its type. Below is an example of creating a RabbitMQ Headers Exchange in .NET.
+
+```csharp
+var factory = new ConnectionFactory()
+{
+    Uri = new Uri("YOUR RABBIT INSTANCE URI"),
+    Port = 5671,
+    UserName = "<USERNAME FROM CONFIGURATION FILE>",
+    Password = "<PASSWORD FROM CONFIGURATION FILE>"
+};
+
+using var connection = factory.CreateConnection();
+using var channel = connection.CreateModel();
+
+var exchangeName = "weather_headers";
+channel.ExchangeDeclare(exchangeName, ExchangeType.Headers);
+```
+
+When sending a message, the sender specifies the Exchange, message body, and message headers.
+
+```csharp
+var basicProps = channel.CreateBasicProperties();
+basicProps.Headers = new Dictionary<string, object>()
+{
+    {"location", location},
+    {"temperature", temperature}
+};
+channel.BasicPublish(exchangeName, routingKey, basicProps, body);
+```
+
+The above code uses the `CreateBasicProperties` method on the channel to construct the instance to add in the Headers.
+
+The `routingKey` is ignored in the case of Headers Exchange. You can pass that as an empty string.
+
+### Set up Binding on RabbitMQ Headers Exchange From .NET
+
+Messages are routed to Queues from Exchanges using the Binding information.
+
+To create a Queue, use the `QueueDeclare` method. It will create a new Queue only if one doesn't exist with the same name.
+
+```csharp
+var factory = new ConnectionFactory()
+{
+    Uri = new Uri("YOUR RABBIT INSTANCE URI"),
+    Port = 5671,
+    UserName = "<USERNAME FROM CONFIGURATION FILE>",
+    Password = "<PASSWORD FROM CONFIGURATION FILE>"
+};
+
+using var connection = factory.CreateConnection();
+using var channel = connection.CreateModel();
+
+channel.QueueDeclare(queueName, false, false, false, null);
+
+var bindingHeaders = new Dictionary<string, object>()
+{
+    {"x-match", match},
+    {"location", location}
+};
+if (!string.IsNullOrEmpty(temperature))
+    bindingHeaders.Add("temperature", temperature);
+
+channel.QueueBind(queueName, "weather_headers", routingKey:string.Empty, bindingHeaders);
+```
+
+The above code sets up the Binding using the `QueeuBind` method on the channel passing in the `queueName`, `exchangeName` and also the binding headers.
+
+Once the Sender and Receiver applications are running, you can see the Exchange and its details in the RabbitMQ Management console.
+
+Below is the snapshot of the `weather_headers` exchange, with three Bindings set up and the associated binding headers set up.
+
+![](/images/image-3.png)
+
+RabbitMQ Management Console showing the Headers Exchange, Queues and Bindings set up.
+
+You can find the complete source code for this blog post sample [here.](https://github.com/rahulpnath/youtube-samples/tree/main/rabbit-mq/07%20exchange-headers)

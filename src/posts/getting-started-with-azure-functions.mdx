@@ -1,11 +1,13 @@
 ---
 title: "Azure Functions ⚡ For The .NET Developer: How To Easily Get Started"
-slug: "getting-started-with-azure-functions"
-date: "2021-10-21T00:00:00.000Z"
-feature_image: "/images/laptop_developer.jpg"
-tags: ["Azure"]
+slug: getting-started-with-azure-functions
+date: 2021-10-21
+feature_image: /images/laptop_developer.jpg
+excerpt: >-
+  Write your first Azure Function to process messages from an Azure Queue Storage. See how to use Managed Identities to setup authentication for Azure Function with other resources.
+tags:
+  - Azure
 ---
-
 What is the most essential part of programming?
 
 Yes, you guessed it correct - _**The code!**_
@@ -18,10 +20,9 @@ Azure Functions can be used to build web APIs, respond to database changes, proc
 
 If you prefer to watch along while you read, check out my video here 👇
 
-<iframe src="https://www.youtube.com/embed/27OUTVdK2\_0" />
+<iframe src="https://www.youtube.com/embed/27OUTVdK2_0" />
 
-Writing Our First Function
---------------------------
+## Writing Our First Function
 
 Before proceeding any further, make sure you have the [Azure Functions Core Tools](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local?WT.mc_id=AZ-MVP-5003875) installed.
 
@@ -54,28 +55,30 @@ The below function is an Azure Queue Storage triggered Function. It runs anytime
 ```csharp
 public static class Function1
 {
-```
-        [FunctionName("ProcessWeatherData")]
-        public static void Run(
-            [QueueTrigger("add-weatherdata", Connection = "WeatherDataQueue")]string myQueueItem, 
-            ILogger log)
-        {
-            log.LogInformation($"C# Queue trigger function processed: {myQueueItem}");
-        }
+    [FunctionName("ProcessWeatherData")]
+    public static void Run(
+        [QueueTrigger("add-weatherdata", Connection = "WeatherDataQueue")]string myQueueItem, 
+        ILogger log)
+    {
+        log.LogInformation($"C# Queue trigger function processed: {myQueueItem}");
     }
-    
+}
+
+```
 
 The connection string `WeatherDataQueue` can be specified as part of the `local.settings.json` file when running on the local development computer.
 
-    {
-      "IsEncrypted": false,
-      "Values": {
-        "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-        "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-        "WeatherDataQueue": "<Connection String to Azure Storage Account>"
-      }
-    }
-    
+```csharp
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "WeatherDataQueue": "<Connection String to Azure Storage Account>"
+  }
+}
+
+```
 
 Run the application after setting the correct connection string. If you drop messages to the queue either via the Azure Portal or using code, it will automatically be picked up the Function code and process.
 
@@ -83,24 +86,21 @@ In this case, it simply logs the message.
 
 ![Azure Function Local Application Console](/images/azure_function_processing.jpg)
 
-Azure Function & Managed Identity
----------------------------------
+## Azure Function & Managed Identity
 
 Azure Functions supports Managed Identities.
 
 This means we can avoid having to put in connection strings to connect to other resources (that support Managed Identities) and instead let Azure manage the credentials for us.
 
-[
-
-DefaultAzureCredential: Unifying How We Get Azure AD Token
-
-Azure Identity library provides Azure Active Directory token authentication support across the Azure SDK
-
-![](/images/favicon.ico)Rahul NathRahul Pulikkot Nath
-
-![](/images/pfx_security.jpg)
-
-](/posts/defaultazurecredential-from-azure-sdk)
+<BlogLink
+  href="/blog/defaultazurecredential-from-azure-sdk"
+  title="DefaultAzureCredential: Unifying How We Get Azure AD Token"
+  description="Azure Identity library provides Azure Active Directory token authentication support across the Azure SDK"
+  authorImage="/images/favicon.ico"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/pfx_security.jpg"
+/>
 
 In our example, we added in the `WeatherDataQueue` connection string to connect to the Azure Queue Storage. We can replace this to use Managed Identites.
 
@@ -108,15 +108,17 @@ To enable Managed Identities for QueueTrigger we need to update it to the latest
 
 With the updated packages, update the connection string name in `local.settings.json` file with a suffix `__queueServiceUri`.
 
-    {
-      "IsEncrypted": false,
-      "Values": {
-        "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-        "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-        "WeatherDataQueue__queueServiceUri": "https://youtubevideodemo.queue.core.windows.net/"
-      }
-    }
-    
+```csharp
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "WeatherDataQueue__queueServiceUri": "https://youtubevideodemo.queue.core.windows.net/"
+  }
+}
+
+```
 
 The `QueueTrigger` class is set up to use Managed Identity to connect to the Storage Account when it detects a connection string value appended with the _serviceUri_.
 
@@ -130,8 +132,7 @@ Since we need to access Queue Storage to read, write, and delete messages, I hav
 
 The application does not use any secrets or sensitive information to connect the Queue Storage. The Azure infrastructure is automatically managing this for us. It is one less thing to worry about for us developers.
 
-Deploying Azure Functions
--------------------------
+## Deploying Azure Functions
 
 The easiest way to deploy (for testing purposes) is to Publish from the IDE. In Visual Studio, this is built-in, for other IDE’s you will have to install the Azure Tools Extension.
 
@@ -139,7 +140,7 @@ The easiest way to deploy (for testing purposes) is to Publish from the IDE. In 
 
 For real-world applications, I suggest setting up a build-deploy pipeline. If you are using Azure DevOps, check out the below video 👇
 
-<iframe src="https://www.youtube.com/embed/\_cOckpopDkY" />
+<iframe src="https://www.youtube.com/embed/_cOckpopDkY" />
 
 We have successfully created an Azure Function, set it up to process messages from a Queue Storage, and have an end-to-end build and deploy pipeline to push our code into the Azure Infrastructure.
 

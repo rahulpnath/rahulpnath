@@ -1,11 +1,16 @@
 ---
 title: "Why Should You Care About Lambda Lifecycle As A .NET Developer?"
-slug: "lambda-lifecycle-and-net"
-date: "2023-02-16T07:40:14.000Z"
-feature_image: "/images/Lambda-Lifecycle-2.png"
-tags: ["AWS","Lambda"]
+slug: lambda-lifecycle-and-net
+date: 2023-02-16T00:00:00.000Z
+feature_image: /images/Lambda-Lifecycle-2.png
+excerpt: >-
+  The Lambda Lifecycle affects the way we write out Function code. Learn some of
+  the dos and don'ts when building Lambda Functions in .NET because of how
+  Lambda initializes the Function classes.
+tags:
+  - AWS
+  - Lambda
 ---
-
 _This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
 
 I made a terrible mistake when I first started using AWS Lambda Functions.
@@ -20,23 +25,21 @@ Understanding the AWS Lambda Lifecycle is essential when building Lambda Functio
 
 It would be best to avoid certain things when writing your Function code; we will go over those and why in this article.
 
-AWS Lambda Function Lifecycle
------------------------------
+## AWS Lambda Function Lifecycle
 
 AWS Lambda provides a secure and isolated runtime environment for our function code. This execution environment manages the resources required to run our Function and also provides lifecycle support for the Function’s runtime.
 
 The Lambda Lifecycle mainly consists of three phases:
 
-*   **Init Phase →** Limited to 10 seconds. Starts all extension, runs Function’s static code, etc
-*   **Invoke Phase →** Invokes the Function handler configured when setting up Lambda Function and waits for the duration of the Functions timeout.
-*   **Shutdown Phase →** Limited to 2 seconds.
+-   **Init Phase →** Limited to 10 seconds. Starts all extension, runs Function’s static code, etc
+-   **Invoke Phase →** Invokes the Function handler configured when setting up Lambda Function and waits for the duration of the Functions timeout.
+-   **Shutdown Phase →** Limited to 2 seconds.
 
 [![Diagram showing the different lifecycle phases of a Lambda Function. (From the AWS Docs)](/images/image.png)](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/6f6c4842-1be6-4042-9faa-5619c0c5a11c/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230216%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230216T050826Z&X-Amz-Expires=86400&X-Amz-Signature=0a62fb23998dcda5f08efb79157545826111f94759d4d6012ab47f5bcd9f81e3&X-Amz-SignedHeaders=host&response-content-disposition=filename%3D%22Untitled.png%22&x-id=GetObject)
 
 You can read more about each phase and the related activities in the [official documentation here](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtime-environment.html#runtimes-lifecycle).
 
-Lambda Lifecycle and .NET Functions
------------------------------------
+## Lambda Lifecycle and .NET Functions
 
 The Lambda Lifecycle affects the way we write our Function code.
 
@@ -47,20 +50,20 @@ Let’s consider a simple AWS Lambda Function code, as shown below.
 ```csharp
 public class Function
 {
-```
-        public int Count { get; set; }
-        public Function()
-        {
-            Count = 0;
-        }
-       
-        public string FunctionHandler(string input, ILambdaContext context)
-        {
-            Count++;
-            return $"{input} - {Count}";
-        }
+    public int Count { get; set; }
+    public Function()
+    {
+        Count = 0;
     }
-    
+   
+    public string FunctionHandler(string input, ILambdaContext context)
+    {
+        Count++;
+        return $"{input} - {Count}";
+    }
+}
+
+```
 
 We have a class `Function` where we have the Lambda Function Handler (`FunctionHandler`) which takes in string input. The `Function` class also defines a `Count` property that is initialized inside the Class constructor.
 
@@ -95,12 +98,12 @@ Let’s simulate the Function doing some work by adding a Thread sleep to our co
 ```csharp
 public string FunctionHandler(string input, ILambdaContext context)
 {
+    Count++;
+    Thread.Sleep(1000 * 5);
+    return $"{input} - {Count}";
+}
+
 ```
-        Count++;
-        Thread.Sleep(1000 * 5);
-        return $"{input} - {Count}";
-    }
-    
 
 The Function now takes 5 seconds to respond once invoked.
 
@@ -110,8 +113,10 @@ To simulate two parallel requests, you can make requests from Visual Studio, AWS
 
 Below is how you can use the aws cli to invoke a function in PowerShell.
 
-    aws lambda invoke --function-name lambda-lifecycle --cli-binary-format raw-in-base64-out --payload '\\"Console\\"' response.json && cat .\\response.json
-    
+```powershell
+aws lambda invoke --function-name lambda-lifecycle --cli-binary-format raw-in-base64-out --payload '\\"Console\\"' response.json && cat .\\response.json
+
+```
 
 If you make two parallel calls after freshly deploying the Lambda Function with the above code, you will see that both invocations return the Count as 1. Since Lambda creates multiple instances of the class to handle both requests happening at the same time.
 

@@ -1,26 +1,26 @@
 ---
 title: "How To Create An ARM Template For Cosmos DB"
-slug: "cosmos-arm-template"
-date: "2020-11-05T00:00:00.000Z"
-feature_image: "/images/arm_template.png"
-tags: ["Azure"]excerpt: "Learn how to create an ARM template to deploy Azure Cosmos DB with dynamic containers. With this template you can keep adding containers as you build the application."
-
+slug: cosmos-arm-template
+date: 2020-11-05
+feature_image: /images/arm_template.png
+excerpt: >-
+  Learn how to create an ARM template to deploy Azure Cosmos DB with dynamic containers. With this template you can keep adding containers as you build the application.
+tags:
+  - Azure
 ---
-
 ARM Templates always overwhelmed me for its size and various attributes and values. After having discovered the ways to author them, these are less intimidating than before.
 
-I now use either the [Visual Studio Resource Group Project](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/create-visual-studio-deployment-project?WT.mc_id=AZ-MVP-5003875) or the [ARM Tools extensions for VS Code](https://marketplace.visualstudio.com/items?itemName=msazurermtools.azurerm-vscode-tools) for authoring ARM templates. It has significantly reduced the time and energy required to create an ARM template.
+I now use either the [Visual Studio Resource Group Project](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/create-visual-studio-deployment-project?WT.mc_id=AZ-MVP-5003875) or the [ARM Tools extensions for VS Code](https://marketplace.visualstudio.com/items?itemName=msazurermtools.azurerm-vscode-tools) for authoring ARM templates. It has significantly reduced the time and energy required to create an ARM template."
 
 In this blog post, I will use the VS Code Extension to create an ARM template to create a Cosmos DB account, database, and containers.
 
-<iframe src="https://www.youtube.com/embed/p\_vySBLni00" />
+<iframe src="https://www.youtube.com/embed/p_vySBLni00" />
 
 If you are new or getting started with Azure Cosmos DB, it's good to get an idea of the [Azure Cosmos DB resource model](https://docs.microsoft.com/en-us/azure/cosmos-db/account-databases-containers-items?WT.mc_id=AZ-MVP-5003875). To start using Azure Cosmos DB, we need to create an Azure Cosmos account (1), a database (2) in it, and containers (3) inside them. Below is a snapshot from the Azure Portal Data Explorer showing this hierarchy.
 
 ![](/images/cosmos_resource_model_hierarchy.jpg)
 
-ARM Template
-------------
+## ARM Template
 
 In an empty working folder, let's create a new file for our ARM template and name it _azuredeploy.json_ (you can choose any name for the file, but will see later why I chose this specific name.). Once you have the VS Code extension for ARM Template installed, open your working folder/file in VS Code editor.
 
@@ -64,19 +64,20 @@ ARM template supports a list of [standard template functions](https://docs.micro
 
 The [parameters function](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-functions-deployment?WT.mc_id=AZ-MVP-5003875#parameters) is one of them and is used to retrieve the parameter value defined in the parameters section of the template. Using this function, we can specify the Azure Cosmos account name from the variable `accountName` that we just created.
 
-    "resources": [
-      {
-        "name": "[parameters('accountName')]",
-      }
-    ]
-    
+```json
+"resources": [
+  {
+    "name": "[parameters('accountName')]",
+  }
+]
+
+```
 
 Now that we have the account created let's create the database. using the `arm-cosmos-sql-database` template snippets. I have the database name (`databaseName`) as a parameter.
 
 Here is how the template looks so far
 
-
-```css
+```json
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
@@ -104,53 +105,50 @@ Here is how the template looks so far
     }
   },
   "resources": [
-
-```css
-{
-  "name": "[parameters('accountName')]",
-  "type": "Microsoft.DocumentDB/databaseAccounts",
-  "apiVersion": "2019-12-12",
-  "location": "[parameters('location')]",
-  "kind": "GlobalDocumentDB",
-  "properties": {
-    "consistencyPolicy": {
-      "defaultConsistencyLevel": "Eventual",
-      "maxStalenessPrefix": 1,
-      "maxIntervalInSeconds": 5
-    },
-    "locations": [
-      {
-        "locationName": "[parameters('location')]",
-        "failoverPriority": 0
+    {
+      "name": "[parameters('accountName')]",
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "apiVersion": "2019-12-12",
+      "location": "[parameters('location')]",
+      "kind": "GlobalDocumentDB",
+      "properties": {
+        "consistencyPolicy": {
+          "defaultConsistencyLevel": "Eventual",
+          "maxStalenessPrefix": 1,
+          "maxIntervalInSeconds": 5
+        },
+        "locations": [
+          {
+            "locationName": "[parameters('location')]",
+            "failoverPriority": 0
+          }
+        ],
+        "databaseAccountOfferType": "Standard",
+        "enableAutomaticFailover": false
       }
-    ],
-    "databaseAccountOfferType": "Standard",
-    "enableAutomaticFailover": false
-  }
-},
-{
-  "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases",
-  "name": "[concat( parameters('accountName'), '/sql/', parameters('databaseName'))]",
-  "apiVersion": "2016-03-31",
-  "dependsOn": [
-    "[resourceId('Microsoft.DocumentDB/databaseAccounts/', parameters('accountName'))]"
-  ],
-  "properties": {
-    "resource": {
-      "id": "[parameters('databaseName')]"
     },
-    "options": {
-      "throughput": 400
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases",
+      "name": "[concat( parameters('accountName'), '/sql/', parameters('databaseName'))]",
+      "apiVersion": "2016-03-31",
+      "dependsOn": [
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts/', parameters('accountName'))]"
+      ],
+      "properties": {
+        "resource": {
+          "id": "[parameters('databaseName')]"
+        },
+        "options": {
+          "throughput": 400
+        }
+      }
     }
-  }
-}
   ]
-```
 }
-```css
 
-Adding Dynamic Containers
--------------------------
+```
+
+## Adding Dynamic Containers
 
 A container is the unit of scalability in an Azure Cosmos container, and it is a schema-agnostic container of items. Items added to the containers and automatically grouped into partitions based on the partition key.
 
@@ -162,19 +160,21 @@ To add one container to the template, we can use the `arm-cosmos-sql-container` 
 
 Let's define a parameter to hold the containers and the related properties. For multiple containers, we will define an object array as below.
 
-    "containers": {
-      "value": [
-        {
-          "name": "MyContainer1",
-          "partitionKey": "/partitionKey1"
-        },
-        {
-          "name": "MyContainer2",
-          "partitionKey": "/partitionKey2"
-        }
-      ]
+```json
+"containers": {
+  "value": [
+    {
+      "name": "MyContainer1",
+      "partitionKey": "/partitionKey1"
+    },
+    {
+      "name": "MyContainer2",
+      "partitionKey": "/partitionKey2"
     }
-    
+  ]
+}
+
+```
 
 It specifies an array object, which has a `name` and `parititionKey` property. You can extend this if you want to set more properties on the container.
 
@@ -186,8 +186,7 @@ In the containers section of the resources, the copy section can be used as belo
 
 In the example below, the container name and the partition key is set using that. This section is repeated based on the number of objects in the `containers` parameter - `"count": "[length(parameters('containers'))]"`
 
-
-```css
+```json
 {
   "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
   "name": "[concat(parameters('accountName'), '/sql/', parameters('databaseName'), '/', parameters('containers')[copyIndex()].name)]",
@@ -212,10 +211,10 @@ In the example below, the container name and the partition key is set using that
     }
   }
 }
-```sql
 
-**ARM Template Parameters File**
---------------------------------
+```
+
+## **ARM Template Parameters File**
 
 Rather than passing parameters inline when running the ARM template, it's easier to use a JSON parameter file. You can find more details of the [parameter file and the format here.](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/parameter-files?WT.mc_id=AZ-MVP-5003875#parameter-file)
 
@@ -227,8 +226,7 @@ It supports creating a new parameter file or choosing an existing one from disk.
 
 Below is the parameter file for the Cosmos ARM template we created. You can name this however you like; I have it as _azuredeploy.parameters.json_
 
-
-```css
+```json
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
@@ -253,10 +251,10 @@ Below is the parameter file for the Cosmos ARM template we created. You can name
     }
   }
 }
-```sql
 
-**Deploying ARM Template**
---------------------------
+```
+
+## **Deploying ARM Template**
 
 There are multiple ways you can deploy the ARM template.
 
@@ -264,12 +262,12 @@ If you prefer to use the UI, the Azure Portal allows this under the '[Deploy a c
 
 Alternatively, you can use [PowerShell scripts](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-powershell?WT.mc_id=AZ-MVP-5003875) or Azure CLI to deploy too. Below is an example of using the CLI to deploy.
 
-```powershell
+```json
 az login
 az group create --name "Delete" --location "Australia East"
 az deployment group create --resource-group Delete --template-file .\azuredeploy.json --parameters azuredeploy.parameters.json
+
 ```
-    
 
 When executing deployment scripts, you can choose [mode](https://docs.microsoft.com/en-us/cli/azure/group/deployment?view=azure-cli-latest?WT.mc_id=AZ-MVP-5003875#az_group_deployment_create-optional-parameters) between 'Incremental' or 'Complete'. By default, it is Incremental, which only adds resources to resource groups. So if a resource already exists, it skips and goes to the next resource in the template.
 
@@ -279,8 +277,7 @@ ARM templates can be used in Build/Deploy pipelines, and you can automate creati
 
 <iframe src="https://www.youtube.com/embed/3IRwtbGlshk" />
 
-[Azure Quickstart Templates](https://github.com/Azure/azure-quickstart-templates/tree/master/101-cosmosdb-sql-multiple-containers)
-----------------------------------------------------------------------------------------------------------------------------------
+## [Azure Quickstart Templates](https://github.com/Azure/azure-quickstart-templates/tree/master/101-cosmosdb-sql-multiple-containers)
 
 [Azure Resource Manager Quickstart Templates](https://azure.microsoft.com/en-au/resources/templates/) is a collection of community-contributed templates to deploy Azure resources quickly. The template code for these templates are available in this [GitHub repository](https://github.com/Azure/azure-quickstart-templates).
 

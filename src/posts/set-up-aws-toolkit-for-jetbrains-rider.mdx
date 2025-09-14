@@ -1,19 +1,23 @@
 ---
 title: "Guide To Building AWS Lambda Functions with Ease in JetBrains Rider"
-slug: "set-up-aws-toolkit-for-jetbrains-rider"
-date: "2023-11-01T06:45:15.000Z"
-feature_image: "/images/Lambda-Function-JetBrains-Rider.png"
-tags: ["AWS","Lambda"]
+slug: set-up-aws-toolkit-for-jetbrains-rider
+date: 2023-11-01T00:00:00.000Z
+feature_image: /images/Lambda-Function-JetBrains-Rider.png
+excerpt: >-
+  The AWS Toolkit plugin for JetBrains Rider makes it easier to develop, debug,
+  and deploy serverless applications with AWS right from your IDE. Learn how to
+  setup AWS Toolkit and create AWS Lambda Functions from JetBrains Rider IDE.
+tags:
+  - AWS
+  - Lambda
 ---
-
-The [AWS Toolkit plugin for JetBrains Rider](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/getting-started.html) makes it easier to develop, debug, and deploy serverless applications with AWS right from your IDE.
+The [AWS Toolkit plugin for JetBrains Rider](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/getting-started.html) makes it easier to develop, debug, and deploy serverless applications with AWS right from your IDE."
 
 In this blog post, let's learn how to set up the AWS Toolkit and create AWS Lambda Functions from JetBrains Rider IDE.
 
 <iframe src="https://www.youtube.com/embed/jwRs45mA568?feature=oembed" />
 
-Install AWS Toolkit For JetBrains Rider
----------------------------------------
+## Install AWS Toolkit For JetBrains Rider
 
 The AWS Toolkit is available in [the JetBrains marketplace](https://plugins.jetbrains.com/plugin/11349-aws-toolkit). You can install this from within the Rider IDE, by navigating to Settings → Plugins section and searching for 'AWS Toolkit'.
 
@@ -31,20 +35,17 @@ The Toolkit automatically picks up the AWS connection strings from the configura
 
 We learned how to set up the AWS credentials in an earlier article on Learn How To Manage Credentials When Building .NET Application on AWS.
 
-[
+<BlogLink
+  href="/blog/amazon-credentials-dotnet/"
+  title="Learn How To Manage Credentials When Building .NET Application on AWS"
+  description="Learn different ways to set up and manage credentials and sensitive information when building .NET applications on AWS. We will also touch upon some of the tools and utilities that I have set up on my local development machine to make working with AWS easier."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/secure-key.jpg"
+/>
 
-Learn How To Manage Credentials When Building .NET Application on AWS
-
-Learn different ways to set up and manage credentials and sensitive information when building .NET applications on AWS. We will also touch upon some of the tools and utilities that I have set up on my local development machine to make working with AWS easier.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/secure-key.jpg)
-
-](/posts/amazon-credentials-dotnet/)
-
-Create Lambda Functions in JetBrains Rider
-------------------------------------------
+## Create Lambda Functions in JetBrains Rider
 
 With the AWS Toolkit installed, we now have additional template options to create .NET projects.
 
@@ -61,9 +62,10 @@ Once you fill in the required Solution Name, Project Name, and the solution dire
 ```csharp
 public string FunctionHandler(string input, ILambdaContext context)
 {
+    return input.ToUpper();
+}
+
 ```
-        return input.ToUpper();
-    }
 
 ### AWS Services and Lambda Function in JetBrains Rider
 
@@ -82,37 +84,35 @@ The template generates the required code to handle `SQSEvents` in the AWS Functi
 ```csharp
 public async Task FunctionHandler(SQSEvent evnt, ILambdaContext context)
 {
-```
-        foreach (var message in evnt.Records)
-        {
-            await ProcessMessageAsync(message, context);
-        }
-    }
-    
-    private async Task ProcessMessageAsync(
-               SQSEvent.SQSMessage message, ILambdaContext context)
+    foreach (var message in evnt.Records)
     {
-        context.Logger.LogInformation($"Processed message {message.Body}");
-        // TODO: Do interesting work based on the new message
-        await Task.CompletedTask;
+        await ProcessMessageAsync(message, context);
     }
+}
+
+private async Task ProcessMessageAsync(
+           SQSEvent.SQSMessage message, ILambdaContext context)
+{
+    context.Logger.LogInformation($"Processed message {message.Body}");
+    // TODO: Do interesting work based on the new message
+    await Task.CompletedTask;
+}
+
+```
 
 If you want to learn more about integrating with different AWS Services when building Lambda Functions check out my below blog post.
 
-[
+<BlogLink
+  href="/blog/aws-lambda-dotnet-developer/"
+  title="AWS Lambda For The .NET Developer"
+  description="This blog post is a collection of other posts that covers various aspects of AWS Lambda and other services you can integrate with when building serverless applications on Lambda."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/AWS-Lambda.png"
+/>
 
-AWS Lambda For The .NET Developer
-
-This blog post is a collection of other posts that covers various aspects of AWS Lambda and other services you can integrate with when building serverless applications on Lambda.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/AWS-Lambda.png)
-
-](/posts/aws-lambda-dotnet-developer/)
-
-Debugging Lambda Function from JetBrains Rider
-----------------------------------------------
+## Debugging Lambda Function from JetBrains Rider
 
 The Mock Lambda Tool helps test the Lambda function locally without deploying it to an AWS environment.
 
@@ -122,19 +122,17 @@ _****Note:****_ __This tool is not a local Lambda environment. This tool is opti
 
 You can set up the Mock Lambda Test Tool to work with Rider in two ways
 
-*   Using Rider .run file
-*   Using launchsettings.json file
+-   Using Rider .run file
+-   Using launchsettings.json file
 
 You can learn more in my blog post on How To Set Up AWS .NET Mock Lambda Test Tool on JetBrains Rider.
 
-[
-
-How To Set Up AWS .NET Mock Lambda Test Tool on JetBrains Rider
-
-Learn how to setup .NET Mock Lambda Test Tool to work with JetBrains Rider IDE.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/Rider---Mock-Lambda-Tool.png)
-
-](/posts/how-to-set-up-aws-net-mock-lambda-test-tool-on-jetbrains-rider/)
+<BlogLink
+  href="/blog/how-to-set-up-aws-net-mock-lambda-test-tool-on-jetbrains-rider/"
+  title="How To Set Up AWS .NET Mock Lambda Test Tool on JetBrains Rider"
+  description="Learn how to setup .NET Mock Lambda Test Tool to work with JetBrains Rider IDE."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/Rider---Mock-Lambda-Tool.png"
+/>

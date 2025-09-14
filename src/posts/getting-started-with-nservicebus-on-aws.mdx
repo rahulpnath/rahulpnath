@@ -1,12 +1,14 @@
 ---
 title: "NServiceBus on AWS SQS: Learn How to Quickly Get Started"
-slug: "getting-started-with-nservicebus-on-aws"
-date: "2023-01-19T08:39:29.000Z"
-feature_image: "/images/NServiceBus-on-AWS-SQS.png"
-tags: ["AWS"]
+slug: getting-started-with-nservicebus-on-aws
+date: 2023-01-19
+feature_image: /images/NServiceBus-on-AWS-SQS.png
+excerpt: >-
+  NServiceBus is a messaging framework provided by Particular Software, which makes it quick and easy to build message-driven applications. Learn how to quickly get started by building a sender/receiver using NServiceBus on AWS.
+tags:
+  - AWS
 ---
-
-_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
 NServiceBus is a messaging framework provided by Particular Software.
 
@@ -18,24 +20,22 @@ With all the low-level serialization, threading, and transaction management hand
 
 In this article, let’s learn how to
 
-*   Get started using NServiceBus and core concepts.
-*   Send and process messages in a .NET application.
-*   Use AWS SQS as the underlying transport.
-*   Handling large message sizes in SQS transport
+-   Get started using NServiceBus and core concepts.
+-   Send and process messages in a .NET application.
+-   Use AWS SQS as the underlying transport.
+-   Handling large message sizes in SQS transport
 
-NServiceBus and Important Concepts
-----------------------------------
+## NServiceBus and Important Concepts
 
 Before diving into any code, let's understand some of the core terms used in building message-based applications and NServiceBus.
 
-*   **Message:** Commands and Events are generally classified as Messages. A Command is used to request an action must be taken, whereas an Event indicates an action has happened.  
+-   **Message:** Commands and Events are generally classified as Messages. A Command is used to request an action must be taken, whereas an Event indicates an action has happened.  
     
-*   **Endpoint:** An Endpoint is a logical entity that sends/receives messages with other Endpoints. An endpoint is identified by a name. A deployed endpoint is referred to as an instance.
-*   **Hosting:** Hosting is how an endpoint instance is run on a process. Multiple endpoint instances can be hosted in the same process.
-*   **Transport:** Transport is the mechanism by which Endpoints communicate with each other. NServiceBus supports different transport mechanisms and can be easily plugged in when configuring the bus.
+-   **Endpoint:** An Endpoint is a logical entity that sends/receives messages with other Endpoints. An endpoint is identified by a name. A deployed endpoint is referred to as an instance.
+-   **Hosting:** Hosting is how an endpoint instance is run on a process. Multiple endpoint instances can be hosted in the same process.
+-   **Transport:** Transport is the mechanism by which Endpoints communicate with each other. NServiceBus supports different transport mechanisms and can be easily plugged in when configuring the bus.
 
-Install and Setup NServiceBus
------------------------------
+## Install and Setup NServiceBus
 
 To get started with NServiceBus, all we need to do is install the [NuGet package](https://www.nuget.org/packages/NServiceBus/).
 
@@ -64,16 +64,17 @@ I have one Message defined - `CreateUserCommand` as shown below.
 ```csharp
 public class CreateUserCommand : ICommand
 {
-```
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-    
-        public CreateUserCommand(Guid id, string name)
-        {
-            Id = id;
-            Name = name ?? throw new ArgumentNullException(nameof(name));
-        }
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+
+    public CreateUserCommand(Guid id, string name)
+    {
+        Id = id;
+        Name = name ?? throw new ArgumentNullException(nameof(name));
     }
+}
+
+```
 
 The `CreateUserCommand` is used to create a new user in the system.
 
@@ -89,25 +90,24 @@ It sets up a new Endpoint by specifying  `EndpointConfiguration` and configurin
 
 The `EnableInstallers` method on the EndpointConfiguration ensures that all the associated infrastructure is automatically set up if it does not already exist.
 
-    using NServiceBus;
-    
-    Console.WriteLine("Hello, World!");
-    
 ```csharp
+using NServiceBus;
+
+Console.WriteLine("Hello, World!");
+
 var endpointConfiguration = new EndpointConfiguration("user-service");
 var transport = endpointConfiguration.UseTransport<SqsTransport>();
 endpointConfiguration.EnableInstallers();
-```
-    
-    var endointInstance = await Endpoint.Start(endpointConfiguration);
-    
-```csharp
+
+var endointInstance = await Endpoint.Start(endpointConfiguration);
+
 Console.WriteLine("Press any key to stop");
+
 Console.ReadKey();
+
+await endointInstance.Stop();
+
 ```
-    
-    await endointInstance.Stop();
-    
 
 The `CreateUserCommandHandler` is responsible for handling and processing `CreateUserCommand` when that message arrives in the queue.
 
@@ -118,18 +118,19 @@ The receiver logs the message contents in this example, as shown below.
 ```csharp
 internal class CreateUserCommandHandler : IHandleMessages<CreateUserCommand>
 {
-```
-        static ILog log = LogManager.GetLogger<CreateUserCommandHandler>();
-    
-        public async Task Handle(
-        CreateUserCommand message, IMessageHandlerContext context)
-        {
-            log.Info($"Processed message for user with Id {message.Id}, and {message.Name}");
-    
-            // Create the user
-            // Save To database/persistent store
-        }
+    static ILog log = LogManager.GetLogger<CreateUserCommandHandler>();
+
+    public async Task Handle(
+    CreateUserCommand message, IMessageHandlerContext context)
+    {
+        log.Info($"Processed message for user with Id {message.Id}, and {message.Name}");
+
+        / Create the user
+        / Save To database/persistent store
     }
+}
+
+```
 
 #### Underlying Infrastructure with Amazon SQS
 
@@ -137,12 +138,12 @@ When running the Receiver application for the first time, it automatically confi
 
 Below you can see two Amazon SQS Queue is automatically created
 
-*   _user-service_  → For messages sent to the Endpoint
-*   _error_ → For messages that fail to process by the Receiver
+-   _user-service_  → For messages sent to the Endpoint
+-   _error_ → For messages that fail to process by the Receiver
 
 ![](/images/image.png)
 
-You can see these resources in the Amazon Console or from Visual Studio if you have [AWS Toolkit installed and set up.](/posts/amazon-credentials-dotnet/)
+You can see these resources in the Amazon Console or from Visual Studio if you have [AWS Toolkit installed and set up.](/blog/amazon-credentials-dotnet/)
 
 ![](/images/image-1.png)
 
@@ -162,43 +163,41 @@ Since the API does not process any messages and is responsible for only sending 
 
 We also need to configure the Routing to configure the endpoint to which the message must be sent. In this case, the message needs to be sent to the _user-service_ responsible for processing the messages.
 
-```javascript
+```csharp
 builder.Host.UseNServiceBus(context =>
 {
+    var endpointConfiguration = new EndpointConfiguration("user-api");
+    var transport = endpointConfiguration.UseTransport<SqsTransport>();
+    transport.Routing().RouteToEndpoint(typeof(CreateUserCommand), "user-service");
+    endpointConfiguration.SendOnly();
+
+    return endpointConfiguration;
+});
+
 ```
-        var endpointConfiguration = new EndpointConfiguration("user-api");
-        var transport = endpointConfiguration.UseTransport<SqsTransport>();
-        transport.Routing().RouteToEndpoint(typeof(CreateUserCommand), "user-service");
-        endpointConfiguration.SendOnly();
-    
-        return endpointConfiguration;
-    });
 
 The `UserController` has a `POST` method, which uses the `IMessageSession` instance from NServiceBus to send the message. It creates a new `CreateUserCommand` message instance and sends it to the bus.
 
-```typescript
+```csharp
 public UserController(IMessageSession session, ILogger<UserController> logger)
 {
-```
-        this.session = session;
-        _logger = logger;
-    }
-    
-```csharp
+    this.session = session;
+    _logger = logger;
+}
+
 [HttpPost]
 public async Task Post(UserData userData)
 {
+    await session.Send(new CreateUserCommand(userData.Id, userData.Name));
+}
+
 ```
-        await session.Send(new CreateUserCommand(userData.Id, userData.Name));
-    }
-    
 
 Since we are publishing the same message type and with the Routing information, NServiceBus knows where to send the message. It places the message in the Amazon SQS Queue created by the Receiver application.
 
 As soon as the message is dropped in the queue, the Receiver application will pick it up for processing and hand it over to the message handler. It processes the messages and writes the output to the console.
 
-Large Message Sizes with NServiceBus and SQS Transport
-------------------------------------------------------
+## Large Message Sizes with NServiceBus and SQS Transport
 
 Amazon SQS has a [maximum message size of 256KB.](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html)
 
@@ -212,17 +211,20 @@ NServiceBus provides out-of-the-box support for these scenarios by allowing us t
 
 As shown below, setting up Amazon S3 for large messages is easily done by single-line configuration.
 
-    transport.S3(
-        bucketForLargeMessages: "user-service-large-messages",
-        keyPrefix: "user");
+```csharp
+transport.S3(
+    bucketForLargeMessages: "user-service-large-messages",
+    keyPrefix: "user");
+
+```
 
 The receiver uses the Amazon S3 document link to retrieve the message and pass it on to the message handler.
 
 ##### Additional Reading
 
-*   **[NServiceBus Step-by-step](https://docs.particular.net/tutorials/nservicebus-step-by-step/)**
-*   **[Amazon SQS Transport](https://docs.particular.net/transports/sqs/)**
-*   [NServiceBus Pricing](https://particular.net/pricing)  
+-   **[NServiceBus Step-by-step](https://docs.particular.net/tutorials/nservicebus-step-by-step/)**
+-   **[Amazon SQS Transport](https://docs.particular.net/transports/sqs/)**
+-   [NServiceBus Pricing](https://particular.net/pricing)  
     
 
 Full source code sample [available here](https://rahulpnath.visualstudio.com/YouTube%20Samples/_git/NServiceBus.AWS.SQS).

@@ -1,0 +1,208 @@
+---
+title: A .NET Programmer's Guide to CancellationToken
+slug: cancellation-token-dotnet
+date: '2024-03-22'
+feature_image: /images/Cancellation-Token.png
+tags:
+  - Dotnet
+  - AWS
+---
+Imagine having a long-running request triggered by a user on your server.
+
+But the user is no longer interested in the result and has navigated away from the page.
+
+However, the server is still processing that request and utilizing resources until you come along and implement Cancellation Tokens in the application code.
+
+<iframe src="https://www.youtube.com/embed/39gIPekzpjs?feature=oembed" />
+
+In this blog post, let's learn
+
+-   Problem with not using Cancellation Token
+-   What is CancellationToken
+-   Using Cancellation Token to Fix Long Running Processes
+-   Using Cancellation Token in HTTP API Calls
+
+_This article is sponsored by AWS_.
+
+## The Problem with not using Cancellation Tokens
+
+Below is a sample `GET` API endpoint. It simulates some long-running processes called in a loop a hundred times.
+
+```csharp
+app.MapGet("/long-running-request", async () =>
+    {
+        var randomId = Guid.NewGuid();
+        var results = new List<string>();
+
+        for (int i = 0; i < 100; i++)
+        {
+            await Task.Delay(1000);
+            var result = $"{randomId} - Result {i}";
+            Console.WriteLine(result);
+            results.Add(result);
+        }
+
+        return Results.Ok(results);
+    })
+    .WithName("GetAllData")
+    .WithOpenApi();
+```
+
+Long Running GET Api Endpoint
+
+The work is started as soon as the API endpoint is called.
+
+Once invoked, if the user decides to stay at the other end of the request everything works as expected.
+
+However, if the user navigates away from the API request or explicitly cancels out of the API request, the server will continue processing the request; in this case, it loops through the task a hundred times.
+
+It's okay for one-off scenarios; however, if you have a busy website and the number of users increases on your website, this soon starts taking up the server resources that could otherwise be used to serve other user requests.
+
+Let's learn how to fix this and put those server resources to better use.
+
+## What is CancellationToken in .NET?
+
+.NET uses Cancellation Token for cooperative cancellation of asynchronous or long-running synchronous operations.
+
+Cancellation tokens are particularly useful when long-running or asynchronous operations must be canceled under certain conditions, such as in UI applications where a user might decide to cancel an ongoing operation.
+
+They allow for a cooperative approach to cancellation, where the executing code periodically checks for cancellation requests and responds accordingly.
+
+### Using CancellationToken in .NET
+
+The CancellationToken object in itself is created and managed using the `CancellationTokenSource`.
+
+The below source code shows a simple usage of the `CancellationToken`.
+
+```csharp
+var source = new CancellationTokenSource();
+Console.WriteLine("Press any key to cancel the operation...");
+var longRunningTask = LongRunningOperationAsync(source.Token);
+
+Console.ReadKey();
+Console.WriteLine("Key Pressed");
+source.Cancel();
+
+await longRunningTask;
+
+async Task LongRunningOperationAsync(CancellationToken cancellationToken)
+{
+    try
+    {
+        var i = 0;
+        while (i++ < 10)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            / Simulate some work
+            Console.WriteLine($"Working {i}");
+            await Task.Delay(2000, cancellationToken);
+            Console.WriteLine($"Completed {i}");
+        }
+    }
+    catch (OperationCanceledException )
+    {
+        Console.WriteLine("User cancelled the operation");
+    }
+}
+```
+
+This code demonstrates how to use a cancellation token to cancel a long-running asynchronous operation in .NET.
+
+It creates a `CancellationTokenSource`, starts a long-running task, and waits for a key press to cancel the operation.
+
+The `LongRunningOperationAsync` method simulates work and periodically checks if cancellation has been requested, allowing for graceful cancellation handling.
+
+When a key is pressed, the operation is canceled, and the program responds accordingly, providing a valid response to the calling method and the user.
+
+If the user never cancels (in this case press the key), the long running operation will run to completion.
+
+## Cancelling Long Running API Requests in .NET
+
+So, let's fix our long-running API request, which is still on its 88th loop, computing the work we requested.
+
+In ASP NET APIs, when a user makes an HTTP request, the framework automatically creates a `CancellationTokenSource` and passes the token along with the [`HttpContext` as the `ReuestAborted` property](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/use-http-context?view=aspnetcore-8.0#requestaborted).
+
+The framework also injects it into the Controller functions if it has a `CancellationToken` property, as shown in the code below.
+
+```csharp
+app.MapGet("/long-running-request", async (CancellationToken cancellationToken) =>
+    {
+        var randomId = Guid.NewGuid();
+        var results = new List<string>();
+
+        for (int i = 0; i < 100; i++)
+        {
+            if (cancellationToken.IsCancellationRequested)
+                return Results.StatusCode(499);
+            
+            await Task.Delay(1000);
+            var result = $"{randomId} - Result {i}";
+            Console.WriteLine(result);
+            results.Add(result);
+        }
+
+        return Results.Ok(results);
+    })
+```
+
+The updated code now looks at the Cancellation Token `IsCancellationRequested` property to check if the request has been canceled.
+
+It continues with the work only if the request is not cancelled, otherwise returning a different response result.
+
+So now any time a user navigates away from the page or cancels the request, our long-running process will stop immediately after and stop processing that request completely.
+
+## Using CancellationToken For HTTP Requests
+
+You can also use Cancellation Tokens when making external calls to API's or databases.
+
+Let's say we have a scenario in which the user can upload files, and we decide to store them in [Amazon S3](https://youtu.be/3sdTztvaxhg).
+
+Amazon Simple Storage Service (S3) is an object storage service that provides a scalable and secure storage infrastructure.
+
+<BlogLink
+  href="/blog/amazon-s3-dotnet/"
+  title="Amazon S3 For the .NET Developer: How to Easily Get Started"
+  description="Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3."
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/storage-box.jpg"
+/>
+
+This could also be any other service like [Azure Blob Storage](https://youtu.be/TAPERUEGhvw?si=iYxpwFNDR9lU0zLM) etc.
+
+When uploading files, if they are large, it will take more time, but we can still be in a state where a user can navigate away.
+
+Not handling this means we will have those large files unnecessarily uploaded to our S3 storage and our server performing those additional work for no reason.
+
+We can use CancellationTokens for the rescue even in these scenarios.
+
+```csharp
+app.MapPost("/upload-large-file", async (
+        [FromForm] FileUploadRequest request, 
+        CancellationToken cancellationToken) =>
+    {
+        try
+        {
+            var s3Client = new AmazonS3Client();
+            await s3Client.PutObjectAsync(new PutObjectRequest()
+            {
+                BucketName = "user-service-large-messages",
+                Key = $"{Guid.NewGuid()} - {request.File.FileName}",
+                InputStream = request.File.OpenReadStream()
+            }, cancellationToken);
+
+            return Results.NoContent();
+        }
+        catch (OperationCanceledException e)
+        {
+            return Results.StatusCode(499);
+        }
+    })
+```
+
+The `AmazonS3Client` in this scenario, which is from the S3 Nuget package takes in a CancellationToken to it's `PutObjectAsync` method.
+
+Any time the user cancels the request, the SDK automatically throws the `OperationCanceledException` and cancels the upload request.
+
+🔗 [Code Sample](https://github.com/rahulpnath/youtube-samples/tree/main/cancellation-token-example)

@@ -1,0 +1,159 @@
+---
+title: How To Deploy Web App and Web Job In A Single Pipeline
+slug: azure-webapp-with-webjobs-dotnet-core-build-depoy
+date: '2021-05-07'
+feature_image: /images/andrik-langfield-ujx_KIIujRg-unsplash.jpg
+excerpt: >-
+  Learn how to set up a build/deploy pipeline for deploying a Web application
+  and Web Job into Azure Web App. Also find out whether you should have a single
+  or multiple pipeline for this and how to decide between them.
+tags:
+  - DevOps
+  - Azure
+---
+How do you deploy an Azure Web App along with a Web Job?
+
+I keep getting this question. I had covered how to [previous post](/blog/azure-webjobs-dotnet-core-build-depoy/) in a previous post. Check that out if you are getting started with WebJobs.
+
+This post will add to the [earlier project](https://rahulpnath.visualstudio.com/YouTube%20Samples/_git/WebJobs), an Azure Web App and show how to set up a build and deploy pipeline for both Web App and Web Job.
+
+<iframe src="https://www.youtube.com/embed/LxoI71g1ffo" />
+
+## Add a Web App
+
+Let's add an [ASP NET Core React Single Page Application](https://youtu.be/mILRINbRiJM) to the WebJob project, using the Add New Project in Visual Studio.
+
+The solution now has two projects:
+
+-   **WebApExample -** React Single Page Application
+-   **WebJobExample.WebJob -** Web Job Application (set up in this <BlogLink
+  href="/blog/azure-webjobs-dotnet-core-build-depoy"
+  title="How To Continuously Deploy Your .NET Core Azure WebJobs"
+  description="New To Azure WebJobs? Learn how to get started and set up a build deploy pipeline in Azure DevOps."
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/devops_webjob.jpg"
+/>)
+
+![Web App with Web Job Visual Studio Solution Explorer](/images/web_app_with_web_job.jpg)
+
+Let's push this up into [Azure DevOps repository](https://rahulpnath.visualstudio.com/YouTube%20Samples/_git/WebAppWithWebJobs), where we will set up the build and deploy pipeline.
+
+## Setup Build Pipeline
+
+Let's create a new Build Pipeline for this new repository. We already have an `azure-pipelines.yml` from the previous Web Jobs set up. All we need to do is add tasks to build the Web App project as well.
+
+The WebJob `publish` task, has a specific folder structure (_App\_Data/jobs/continuous/YoutubeWebJob_) as the output folder. It is by convention, and Azure expects WebJobs to be in that folder structure in the web server (IIS). The build artifacts folder changes depending on whether the WebJob is continuous (_AppData/jobs/continuous_) or triggered (_App\_Data/jobs/triggered_).
+
+The existing `publish` task uses a wildcard pattern to find the csproj file within the source repository. It was fine when it had only one project. Since now we have two project files, let's update that to be more specific to our WebJobs project file - `projects: '**/WebJobExample.WebJob.csproj'`
+
+To publish the Web App project, we can add one more [DotNetCoreCLI task](https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core-cli?view=azure-devops) to the build pipeline (very similar to the publish task for WebJobs)
+
+![Azure DevOps Build Pipeline Assistant to add new task](/images/web_app_with_web_job_publish_build_task.jpg)
+```yaml
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+    arguments: '--output $(Build.BinariesDirectory)/publish_output'
+    zipAfterPublish: false
+    modifyOutputPath: false
+
+```
+
+The CLI task publishes the web project into the same output folder as that of the Web Jobs. It has zip package turned off since we zip it before publishing the artifact.
+
+The entire `azure-pipelines.yml` file is [available here.](https://rahulpnath.visualstudio.com/YouTube%20Samples/_git/WebAppWithWebJobs?path=%2Fazure-pipelines.yml)
+
+## Setup Release Pipeline
+
+With the build artifact ready, let's release this to an Azure Web App.
+
+### Create Resources
+
+To keep things simple, I'll be manually creating the resources required to deploy the application manually.
+
+However, I suggest setting up the resources through code. It is referred to as Infrastructure as Code (IaC). One way to implement Infrastructure as code for Azure solutions is to use Azure Resource Manager (ARM) Templates.
+
+<iframe src="https://www.youtube.com/embed/3IRwtbGlshk" />
+
+But for now, let's head off to Azure Portal and manually create the resources.
+
+-   **Azure Web App** → To deploy the Web App and Web Job
+-   **Storage Account** → Queue where Web Job is listening for messages.
+
+As shown below, create the resources under a Resource Group. _A [Resource Group](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal) is a container that holds related resources for an Azure solution._
+
+![Azure Portal Resource Group with the associated resources](/images/web_app_with_web_job_resources_azure_portal.jpg)
+
+### Create Pipeline
+
+To create a new release pipeline under Pipelines → Releases, use the '_New Release Pipeline_' option.
+
+It prompts you to select a template. Choose 'Azure App Service deployment', to deploy into an Azure App Service.
+
+The template will automatically set up one stage with the required task to deploy the Azure Web App.
+
+![Release Pipeline select artifact and create Stages](/images/web_app_with_web_job_release_pipeline_overview.jpg)
+
+1.  Under the Artifacts section, select the Build Artifact that we created in the previous step.
+2.  If you want the Release to be automatically triggered, use the icon on top of the Artifacts session and enable '_Continuous deployment trigger_'.
+3.  Give the Pipeline an appropriate name.
+4.  Select the Dev Stage to set up the Task
+
+For the Dev Stage, select the Azure Web App instance created in the previous step.
+
+The [appsettings.json](https://rahulpnath.visualstudio.com/YouTube%20Samples/_git/WebAppWithWebJobs?path=%2FWebJobExample.WebJob%2Fappsettings.json) file under WebJob project expects the `AzureWebJobsStorage` to be populated with a valid Storage Account connection string. To view and copy the connection string, navigate to [Access keys under the storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-keys-manage?tabs=azure-portal#view-account-access-keys).
+
+The Variables section in the Release Pipeline helps manage Stage (or environment) specific variables in Azure DevOps. Add a key-value pair for the Scope (stage or environment), in this case, Dev.
+
+To replace the variable value during Release, specify the `appsettings.json` file path under the 'File Transforms & Variable Substitution Options\` section for the 'Deploy Azure App Service Task'.
+
+If you are new to Variables in Azure DevOps, check out the video below which explains it in detail.
+
+<iframe src="https://www.youtube.com/embed/OFr6Vkw0mq8" />
+
+When a release is created and deployed to an environment, it will replace the file with the key-value from Variables.
+
+![Azure DevOps Release Varialbes](/images/web_app_with_web_job_release_variables.jpg)<BlogLink
+  href="/blog/connect-net-core-to-azure-key-vault-in-ten-minutes/"
+  title="Connect .Net Core To Azure Key Vault In Ten Minutes"
+  description="Access secrets in Azure Key Vault from .Net Core and learn how to elegantly handle when rotating secrets."
+  authorImage="/images/logo-512x512-24.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/pfx_security.jpg"
+/>
+
+The Task by default uses Zip Deploy unless explicitly specified under the 'Additional Deployment Options' section.
+
+With [Zip Deploy](https://github.com/microsoft/azure-pipelines-tasks/blob/master/Tasks/AzureRmWebAppDeploymentV4/README.md#zip-deploy), it deploys the entire file contents to the wwwroot folder of the Azure App Service. It will overwrite all existing files.
+
+![Azure App Service release pipeline task](/images/web_app_with_web_job_release_pipeline.jpg)
+
+Save and Create a new Release!
+
+We have successfully set up a build/release pipeline for a Web App with a Web Job.
+
+Navigate the Azure App Service URL, and you can see the default React Single Page Application template application running. The Web Job is also successfully running, and you can view that under the Web Jobs section under the App Service in Azure Portal.
+
+## Single Pipeline vs Multiple Pipeline
+
+I often get asked whether to set up a single release pipeline or multiple pipelines to deploy a Web App and associated Web Job.
+
+If the Web App and Web Job are usually deployed together and depend on each other, then I suggest keeping this in the same pipeline as we have seen above.
+
+However, if the Web Job and the Web App are unrelated and changes are independent and need to be released independently, I suggest keeping them in different App Service.
+
+Instead of deploying it under the same App Service as the Web App, you can create a new App Service. For Azure Web App, the pricing is at the [Azure App Service Plan](https://docs.microsoft.com/en-us/azure/app-service/overview-hosting-plans). You can create both the App Service under the same plan to save on cost. You can then create one [pipeline for Web App](https://youtu.be/SYhufaLn51w) and [previous post](/blog/azure-webjobs-dotnet-core-build-depoy/).
+
+Keeping it separate avoids deploying into specific folders of the App Service (in this case, web app into _wwwroot_ and web jobs to the _AppData/jobs_). Any changes to the file will trigger a restart of the App Service instance. You could also consider making the Web Job an Azure Function in this case.
+
+I hope this helps to successfully set up a build deploy pipeline for your Web App and Web Job!
+
+Below are the DevOps links
+
+**[Repository](https://rahulpnath.visualstudio.com/YouTube)**  
+**[Build Pipeline](https://rahulpnath.visualstudio.com/YouTube)**  
+**[Release Pipeline](https://rahulpnath.visualstudio.com/YouTube)**

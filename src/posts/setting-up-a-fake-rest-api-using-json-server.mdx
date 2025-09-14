@@ -1,48 +1,47 @@
 ---
 title: "Setting Up A Fake REST API Using JSON Server"
-slug: "setting-up-a-fake-rest-api-using-json-server"
-date: "2020-04-06T00:00:00.000Z"
-feature_image: "/images/json_server.jpg"
-tags: ["Testing"]
+slug: setting-up-a-fake-rest-api-using-json-server
+date: 2020-04-06T00:00:00.000Z
+feature_image: /images/json_server.jpg
+excerpt: >-
+  JSON Server(https://github.com/typicode/json-server) is a great way to set up"
+  a full fake REST API for front-end development. JSON server can be set up
+  literally in '30 seconds' and with no...
+tags:
+  - Testing
 ---
-
 [JSON Server](https://github.com/typicode/json-server) is a great way to set up a full fake REST API for front-end development. JSON server can be set up literally in '30 seconds' and with no coding as the website claims. Capture some of the real API's data if it already exists or create a mock data based on the API Schema in _db.json_ file. That's all to do, and we have an API with full CRUD capabilities
 
 However, it's not always that you can use something straight out of the box to fit all conditions and constraints of your API. In this post, let's look at customizing and configuring JSON Server for some commonly occurring scenarios.
 
 <iframe src="https://www.youtube.com/embed/yq0S2f3k9zY" />
 
-Setting up JSON Server
-----------------------
+## Setting up JSON Server
 
 JSON Server can be [used as a module](https://github.com/typicode/json-server#module) in combination with the other Express middlewares when it needs to be customized. JSON server is built over [Express, a web framework for Node.js](https://expressjs.com/). To set it up as a module add a _server.js_ file to your repository with the below setup code as from the docs.
 
-```javascript
+```js
 // server.js
 const jsonServer = require("json-server");
 const server = jsonServer.create();
 const router = jsonServer.router("db.json");
 const middlewares = jsonServer.defaults();
-```
-    
-    server.use(middlewares);
-    
-```text
+
+server.use(middlewares);
+
 // Have all URLS prefixed with a /api
 server.use(
-```
-      jsonServer.rewriter({
-        "/api/*": "/$1",
-      })
-    );
-    
-```javascript
+  jsonServer.rewriter({
+    "/api/*": "/$1",
+  })
+);
+
 server.use(router);
 server.listen(5000, () => {
+  console.log("JSON Server is running");
+});
+
 ```
-      console.log("JSON Server is running");
-    });
-    
 
 Start up the server using '**_node server.js_**'.
 
@@ -54,71 +53,70 @@ When using a JSON file (db.json) as the mock data source, any changes made using
 
 The router function takes in a source that is _either a path to a JSON file (e.g. `'db.json'`) or an object in memory_. Using an in-memory object also allows organizing our mock data into separate files. I have all my mock data [under one folder](https://github.com/rahulpnath/quotes/tree/master/ui/mockApi/mockData) with an _index.js_ file that serves the in-memory object, as below.
 
-```text
+```js
 // index.js file under mockDate folder
 // quotes, users, products, branches etc are in other
 // files under the same folder
-```
-    
-```javascript
+
 const quotes = require("./quotes");
 const users = require("./users");
 const products = require("./products");
 const branches = require("./branches");
+
+module.exports = {
+  quotes,
+  users,
+  products,
+  branches,
+};
+
 ```
-    
-    module.exports = {
-      quotes,
-      users,
-      products,
-      branches,
-    };
-    
 
 Pass the in-memory object to the router as below
 
-```javascript
+```js
 const data = require("./mockData");
 const router = jsonServer.router(data);
+
 ```
-    
 
 Since this is an in-memory object, any changes made to it are not persistent. Every time the server starts, it uses the same data served from the 'index.js' file above.
 
-Summary and Detail View Endpoints
----------------------------------
+## Summary and Detail View Endpoints
 
 Another common scenario is to have a list view and a detailed view of the resources. E.g., We have a list of quotes, and clicking any will open the detailed view. The data representation for the detail and list view are often different.
 
 ```text
 '/api/quotes'  -> Returns list of Quote Summary
 '/api/quotes/:id' -> Returns Quote Details
+
 ```
-    
 
 By overriding the render method of the router, we can format the data separately for the list view and the detail view. Below I intercept the response if the route matches the list API endpoint and transform the data into the summary format.
 
-    router.render = (req, res) => {
-      let data = res.locals.data;
-    
-      if (url === "/api/quotes" && req.method === "GET") {
-        data = data.map(toQuoteSummary);
-      }
-      res.jsonp(data);
-    };
-    
-    const toQuoteSummary = (quote) => ({
-      id: quote.id,
-      scenarios: quote.scenarios,
-      quoteNumber: quote.quoteNumber,
-      statusCode: quote.statusCode,
-      lastModifiedAt: quote.lastModifiedAt,
-      customerName: quote.customer && quote.customer.name,
-      mobilePhoneDescription: quote.mobilePhone && quote.mobilePhone.serialNo,
-    });
-    
+```js
+router.render = (req, res) => {
+  let data = res.locals.data;
 
-JSON Server delivers what it promises and is easy to set up and customize. If you have the original API running, capture the API request to generate mock data. Strip out any sensitive or PII information [before checking it into source control](/posts/keeping-sensitive-configuration-data-out-of-source-control/).
+  if (url === "/api/quotes" && req.method === "GET") {
+    data = data.map(toQuoteSummary);
+  }
+  res.jsonp(data);
+};
+
+const toQuoteSummary = (quote) => ({
+  id: quote.id,
+  scenarios: quote.scenarios,
+  quoteNumber: quote.quoteNumber,
+  statusCode: quote.statusCode,
+  lastModifiedAt: quote.lastModifiedAt,
+  customerName: quote.customer && quote.customer.name,
+  mobilePhoneDescription: quote.mobilePhone && quote.mobilePhone.serialNo,
+});
+
+```
+
+JSON Server delivers what it promises and is easy to set up and customize. If you have the original API running, capture the API request to generate mock data. Strip out any sensitive or PII information [before checking it into source control](/blog/keeping-sensitive-configuration-data-out-of-source-control/).
 
 Here is an [example repository](https://github.com/rahulpnath/quotes), where I have been setting up a Fake API to drive a front-end application, cypress tests, and more.
 

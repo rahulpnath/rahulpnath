@@ -1,11 +1,16 @@
 ---
-title: "A .NET Programmer's Guide to CancellationToken"
-slug: "cancellation-token-dotnet"
-date: "2024-03-22T03:30:10.000Z"
-feature_image: "/images/Cancellation-Token.png"
-tags: ["Dotnet","AWS"]
+title: A .NET Programmer's Guide to CancellationToken
+slug: cancellation-token-dotnet
+date: 2024-03-22T00:00:00.000Z
+feature_image: /images/Cancellation-Token.png
+excerpt: >-
+  Imagine having a long-running request triggered by a user on your server.  But
+  the user is no longer interested in the result and has navigated away from the
+  page....
+tags:
+  - Dotnet
+  - AWS
 ---
-
 Imagine having a long-running request triggered by a user on your server.
 
 But the user is no longer interested in the result and has navigated away from the page.
@@ -16,35 +21,37 @@ However, the server is still processing that request and utilizing resources unt
 
 In this blog post, let's learn
 
-*   Problem with not using Cancellation Token
-*   What is CancellationToken
-*   Using Cancellation Token to Fix Long Running Processes
-*   Using Cancellation Token in HTTP API Calls
+-   Problem with not using Cancellation Token
+-   What is CancellationToken
+-   Using Cancellation Token to Fix Long Running Processes
+-   Using Cancellation Token in HTTP API Calls
 
 _This article is sponsored by AWS_.
 
-The Problem with not using Cancellation Tokens
-----------------------------------------------
+## The Problem with not using Cancellation Tokens
 
 Below is a sample `GET` API endpoint. It simulates some long-running processes called in a loop a hundred times.
 
-    app.MapGet("/long-running-request", async () =>
+```csharp
+app.MapGet("/long-running-request", async () =>
+    {
+        var randomId = Guid.NewGuid();
+        var results = new List<string>();
+
+        for (int i = 0; i < 100; i++)
         {
-            var randomId = Guid.NewGuid();
-            var results = new List<string>();
-    
-            for (int i = 0; i < 100; i++)
-            {
-                await Task.Delay(1000);
-                var result = $"{randomId} - Result {i}";
-                Console.WriteLine(result);
-                results.Add(result);
-            }
-    
-            return Results.Ok(results);
-        })
-        .WithName("GetAllData")
-        .WithOpenApi();
+            await Task.Delay(1000);
+            var result = $"{randomId} - Result {i}";
+            Console.WriteLine(result);
+            results.Add(result);
+        }
+
+        return Results.Ok(results);
+    })
+    .WithName("GetAllData")
+    .WithOpenApi();
+
+```
 
 Long Running GET Api Endpoint
 
@@ -58,8 +65,7 @@ It's okay for one-off scenarios; however, if you have a busy website and the num
 
 Let's learn how to fix this and put those server resources to better use.
 
-What is CancellationToken in .NET?
-----------------------------------
+## What is CancellationToken in .NET?
 
 .NET uses Cancellation Token for cooperative cancellation of asynchronous or long-running synchronous operations.
 
@@ -75,39 +81,38 @@ The below source code shows a simple usage of the `CancellationToken`.
 
 ```csharp
 var source = new CancellationTokenSource();
+
 Console.WriteLine("Press any key to cancel the operation...");
 var longRunningTask = LongRunningOperationAsync(source.Token);
-```
-    
-```csharp
+
 Console.ReadKey();
+
 Console.WriteLine("Key Pressed");
 source.Cancel();
-```
-    
-    await longRunningTask;
-    
-```csharp
+
+await longRunningTask;
+
 async Task LongRunningOperationAsync(CancellationToken cancellationToken)
 {
-```
-        try
+    try
+    {
+        var i = 0;
+        while (i++ < 10)
         {
-            var i = 0;
-            while (i++ < 10)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                // Simulate some work
-                Console.WriteLine($"Working {i}");
-                await Task.Delay(2000, cancellationToken);
-                Console.WriteLine($"Completed {i}");
-            }
-        }
-        catch (OperationCanceledException )
-        {
-            Console.WriteLine("User cancelled the operation");
+            cancellationToken.ThrowIfCancellationRequested();
+            // Simulate some work
+            Console.WriteLine($"Working {i}");
+            await Task.Delay(2000, cancellationToken);
+            Console.WriteLine($"Completed {i}");
         }
     }
+    catch (OperationCanceledException )
+    {
+        Console.WriteLine("User cancelled the operation");
+    }
+}
+
+```
 
 This code demonstrates how to use a cancellation token to cancel a long-running asynchronous operation in .NET.
 
@@ -119,8 +124,7 @@ When a key is pressed, the operation is canceled, and the program responds accor
 
 If the user never cancels (in this case press the key), the long running operation will run to completion.
 
-Cancelling Long Running API Requests in .NET
---------------------------------------------
+## Cancelling Long Running API Requests in .NET
 
 So, let's fix our long-running API request, which is still on its 88th loop, computing the work we requested.
 
@@ -128,24 +132,27 @@ In ASP NET APIs, when a user makes an HTTP request, the framework automatically 
 
 The framework also injects it into the Controller functions if it has a `CancellationToken` property, as shown in the code below.
 
-    app.MapGet("/long-running-request", async (CancellationToken cancellationToken) =>
+```csharp
+app.MapGet("/long-running-request", async (CancellationToken cancellationToken) =>
+    {
+        var randomId = Guid.NewGuid();
+        var results = new List<string>();
+
+        for (int i = 0; i < 100; i++)
         {
-            var randomId = Guid.NewGuid();
-            var results = new List<string>();
-    
-            for (int i = 0; i < 100; i++)
-            {
-                if (cancellationToken.IsCancellationRequested)
-                    return Results.StatusCode(499);
-                
-                await Task.Delay(1000);
-                var result = $"{randomId} - Result {i}";
-                Console.WriteLine(result);
-                results.Add(result);
-            }
-    
-            return Results.Ok(results);
-        })
+            if (cancellationToken.IsCancellationRequested)
+                return Results.StatusCode(499);
+            
+            await Task.Delay(1000);
+            var result = $"{randomId} - Result {i}";
+            Console.WriteLine(result);
+            results.Add(result);
+        }
+
+        return Results.Ok(results);
+    })
+
+```
 
 The updated code now looks at the Cancellation Token `IsCancellationRequested` property to check if the request has been canceled.
 
@@ -153,8 +160,7 @@ It continues with the work only if the request is not cancelled, otherwise retur
 
 So now any time a user navigates away from the page or cancels the request, our long-running process will stop immediately after and stop processing that request completely.
 
-Using CancellationToken For HTTP Requests
------------------------------------------
+## Using CancellationToken For HTTP Requests
 
 You can also use Cancellation Tokens when making external calls to API's or databases.
 
@@ -162,17 +168,15 @@ Let's say we have a scenario in which the user can upload files, and we decide t
 
 Amazon Simple Storage Service (S3) is an object storage service that provides a scalable and secure storage infrastructure.
 
-[
-
-Amazon S3 For the .NET Developer: How to Easily Get Started
-
-Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3.
-
-![](/images/logo-512x512.png)Rahul NathRahul Pulikkot Nath
-
-![](/images/storage-box.jpg)
-
-](/posts/amazon-s3-dotnet/)
+<BlogLink
+  href="/blog/amazon-s3-dotnet/"
+  title="Amazon S3 For the .NET Developer: How to Easily Get Started"
+  description="Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3."
+  authorImage="/images/logo-512x512.png"
+  authorName="Rahul Nath"
+  authorTitle="Rahul Pulikkot Nath"
+  featureImage="/images/storage-box.jpg"
+/>
 
 This could also be any other service like [Azure Blob Storage](https://youtu.be/TAPERUEGhvw?si=iYxpwFNDR9lU0zLM) etc.
 
@@ -182,27 +186,30 @@ Not handling this means we will have those large files unnecessarily uploaded to
 
 We can use CancellationTokens for the rescue even in these scenarios.
 
-    app.MapPost("/upload-large-file", async (
-            [FromForm] FileUploadRequest request, 
-            CancellationToken cancellationToken) =>
+```csharp
+app.MapPost("/upload-large-file", async (
+        [FromForm] FileUploadRequest request, 
+        CancellationToken cancellationToken) =>
+    {
+        try
         {
-            try
+            var s3Client = new AmazonS3Client();
+            await s3Client.PutObjectAsync(new PutObjectRequest()
             {
-                var s3Client = new AmazonS3Client();
-                await s3Client.PutObjectAsync(new PutObjectRequest()
-                {
-                    BucketName = "user-service-large-messages",
-                    Key = $"{Guid.NewGuid()} - {request.File.FileName}",
-                    InputStream = request.File.OpenReadStream()
-                }, cancellationToken);
-    
-                return Results.NoContent();
-            }
-            catch (OperationCanceledException e)
-            {
-                return Results.StatusCode(499);
-            }
-        })
+                BucketName = "user-service-large-messages",
+                Key = $"{Guid.NewGuid()} - {request.File.FileName}",
+                InputStream = request.File.OpenReadStream()
+            }, cancellationToken);
+
+            return Results.NoContent();
+        }
+        catch (OperationCanceledException e)
+        {
+            return Results.StatusCode(499);
+        }
+    })
+
+```
 
 The `AmazonS3Client` in this scenario, which is from the S3 Nuget package takes in a CancellationToken to it's `PutObjectAsync` method.
 

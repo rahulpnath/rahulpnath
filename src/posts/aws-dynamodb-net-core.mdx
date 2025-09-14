@@ -1,12 +1,14 @@
 ---
 title: "AWS DynamoDB For The .NET Developer: How To Easily Get Started"
-slug: "aws-dynamodb-net-core"
-date: "2021-04-06T00:00:00.000Z"
-feature_image: "/images/aws_dynamodb.jpg"
-tags: ["AWS","DynamoDB"]excerpt: "Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it's data store. We will learn to do basic Creat, Read, Update and Delete operations from the API."
-
+slug: aws-dynamodb-net-core
+date: 2021-04-06
+feature_image: /images/aws_dynamodb.jpg
+excerpt: >-
+  Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it's data store. We will learn to do basic Creat, Read, Update and Delete operations from the API.
+tags:
+  - AWS
+  - DynamoDB
 ---
-
 DynamoDB is a cloud-hosted NoSQL database provided by Amazon Web Services (AWS). DynamoDB provides _reliable performance,_ a _managed experience,_ and a convenient _API access_ to interact with it.
 
 > _Amazon DynamoDB is a fully managed NoSQL database service that provides fast and predictable performance with seamless scalability._
@@ -29,8 +31,7 @@ Let's move this hardcoded data into DynamoDB and starting retrieving it from the
 
 Let's add an extra property, `City`, to the `WeatherData` class to identify the city of the weather data. We will use this shortly.
 
-Set Up DynamoDB
----------------
+## Set Up DynamoDB
 
 To create a Table to hold the Weather Data, head off to the [AWS Console](https://aws.amazon.com/) and navigate to DynamoDB (by searching in the top bar, _Alt+S)_. Make sure you are in the appropriate Region where you want to create the Table.
 
@@ -42,8 +43,8 @@ To create a table, use the 'Create table' button on the DynamoDB page. It prompt
 
 DynamoDB supports two different kinds of primary keys.
 
-*   **Partition Key →** A simple primary key, with just one attribute. Not two items can have the same partition key value
-*   **Partition Key and Sort Key →** A composite primary key composed of two attributes. One attribute is the partition key, and the other a sort key. It's possible for two items to have the same partition key; however, they must have different sort keys. The combination of them must be unique.
+-   **Partition Key →** A simple primary key, with just one attribute. Not two items can have the same partition key value
+-   **Partition Key and Sort Key →** A composite primary key composed of two attributes. One attribute is the partition key, and the other a sort key. It's possible for two items to have the same partition key; however, they must have different sort keys. The combination of them must be unique.
 
 To store the `WeatherFOrecast` let's create a new table with the same name (you can use a different name if you want). For the Primary key, since the weather data is retrieved based on the city, we will make that the Partition key. For the Sort key, we can use the Date property.
 
@@ -61,22 +62,21 @@ There can be any other property on the Item and necessarily need not be the same
 
 We can add JSON data to the table as below → On top of City and Date properties, it contains Summary and Temperature in Celsius as our `WeatherForecast` class.
 
-
-```css
+```json
 {
   "City": "Brisbane",
   "Date": "2021-04-02T02:10:40.595Z",
   "Summary": "Warm",
   "TemperatureC": 20
 }
+
 ```
 
 Below is a snapshot of the Table with a few items added to it.
 
 ![DynamoDB Table with Items](/images/aws_dynamodb_table_items_portal.jpg)
 
-Set up App to Use DynamoDB
---------------------------
+## Set up App to Use DynamoDB
 
 With the data set up in DynamoDB, let's update the Web API application to retrieve the data from DynamoDB.
 
@@ -92,7 +92,6 @@ _The Query operation allows selecting multiple items with the same partition/has
 
 The `Get` method below uses the `DynamoDBContext` to perform the `Query` operation and get back all the items with the given `city` name as the partition key.
 
-
 ```csharp
 public WeatherForecastController(
     IDynamoDBContext dynamoDbContext,
@@ -101,22 +100,20 @@ public WeatherForecastController(
     _dynamoDbContext = dynamoDbContext;
     _logger = logger;
 }
-```
-```csharp
+
 [HttpGet]
 public async Task<IEnumerable<WeatherForecast>> Get(string city = "Brisbane")
 {
-```csharp
-        return await _dynamoDbContext
-            .QueryAsync<WeatherForecast>(city)
-            .GetRemainingAsync();
-    }
-    
+    return await _dynamoDbContext
+        .QueryAsync<WeatherForecast>(city)
+        .GetRemainingAsync();
+}
+
+```
 
 The `Get` function now returns all the weather forecast data for the given city name. But the initial hard-coded data we replaced was returning only the weather forecast for the upcoming 5 days.
 
 We can add a filter condition on the date (range key) to match the original functionality.
-
 
 ```csharp
 return await _dynamoDbContext
@@ -125,6 +122,7 @@ return await _dynamoDbContext
         QueryOperator.Between, 
         new object[] { DateTime.Now.Date.AddDays(1), DateTime.Now.Date.AddDays(5)})
     .GetRemainingAsync();
+
 ```
 
 The above query uses the `Between` operator on the date range key to filter out the items between a specific date range. Similarly, there are [different operators](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.KeyConditionExpressions) like _Equal, LessThan, GreaterThanOrEqual, BeginsWith_, etc.
@@ -143,15 +141,13 @@ With the Controller now using the `IDynamoDBContext` let's wire up the applicati
 var credentials = new BasicAWSCredentials("<ACCESS_KEY>", "<SECRET_KEY>");
 var config = new AmazonDynamoDBConfig()
 {
-```
-        RegionEndpoint = RegionEndpoint.APSoutheast2
-```csharp
+    RegionEndpoint = RegionEndpoint.APSoutheast2
 };
 var client = new AmazonDynamoDBClient(credentials, config);
 services.AddSingleton<IAmazonDynamoDB>(client);
 services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
-```sql
-    
+
+```
 
 The above code creates an `AmazonDynamoDBClient` using the credentials and Region to access DynamoDB for your account. The `DynamoDBContext` requires only the `AmazonDynamoDBClient`.
 
@@ -175,39 +171,34 @@ Below I use the `GenerateDummyData` to generate some weather forecast given a ci
 [HttpPost]
 public async Task Post(string city)
 {
-```csharp
-        var data =  GenererateDummyData(city);
-        foreach (var d in data)
-            await _dynamoDbContext.SaveAsync(d);
-```csharp
+    var data =  GenererateDummyData(city);
+    foreach (var d in data)
+        await _dynamoDbContext.SaveAsync(d);
 }
 private static WeatherForecast[] GenererateDummyData(string city)
 {
-```csharp
-        var rng = new Random();
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                City = city,
-                Date = DateTime.UtcNow.Date.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
-    }
-    
+    var rng = new Random();
+    return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        {
+            City = city,
+            Date = DateTime.UtcNow.Date.AddDays(index),
+            TemperatureC = rng.Next(-20, 55),
+            Summary = Summaries[rng.Next(Summaries.Length)]
+        })
+        .ToArray();
+}
+
+```
 
 If you want to update an existing item's property, use the `LoadAsync` method to load the Item, update the property, and save it back using the `SaveAsync` method.
-
 
 ```csharp
 var todayForecast = await _dynamoDbContext
     .LoadAsync<WeatherForecast>(city, DateTime.Now.Date );
-```
-```csharp
 todayForecast.TemperatureC = 20;
 await _dynamoDbContext.SaveAsync(todayForecast);
+
 ```
-    
 
 Similarly, the `DeleteAsync` method deletes an item by specifying the partition and the range key or the Item itself.
 
@@ -215,22 +206,21 @@ Similarly, the `DeleteAsync` method deletes an item by specifying the partition 
 [HttpDelete]
 public async Task Delete(string city)
 {
+    await _dynamoDbContext
+        .DeleteAsync<WeatherForecast>(city, DateTime.Now.Date);
+}
+
 ```
-        await _dynamoDbContext
-            .DeleteAsync<WeatherForecast>(city, DateTime.Now.Date);
-    }
-    
 
 There are [more methods available for Batch Get, Batch Write](https://docs.amazonaws.cn/en_us/amazondynamodb/latest/developerguide/DotNetDynamoDBContext.html), etc. that you can explore here.
 
-DynamoDB API Overview
----------------------
+## DynamoDB API Overview
 
 The Amazon DynamoDB support provided in the AWS SDK for .NET is divided into three layers:
 
-*   Low-Level Interface → found under the namespaces _`Amazon. DynamoDB'and' Amazon.DynamoDB.Model`_. It is the API most closely related to the service model, with little overhead or helper functionality.
-*   Document Interface → found under the namespace _`Amazon.DynamoDB.DocumentModel`._ It's an API based around Table and Document classes.
-*   High-Level Interface → found under the namespace _`Amazon.DynamoDB.DataModel`._ Easiest to work with .NET classes and is what we used in the code samples above.
+-   Low-Level Interface → found under the namespaces _`Amazon. DynamoDB'and' Amazon.DynamoDB.Model`_. It is the API most closely related to the service model, with little overhead or helper functionality.
+-   Document Interface → found under the namespace _`Amazon.DynamoDB.DocumentModel`._ It's an API based around Table and Document classes.
+-   High-Level Interface → found under the namespace _`Amazon.DynamoDB.DataModel`._ Easiest to work with .NET classes and is what we used in the code samples above.
 
 Not all functionality is available via the High-Level interface, e.g., to create a new table. In these cases, we will need to fall back to the lower-level APIs.
 
@@ -240,7 +230,7 @@ I hope this helps you to get a basic understanding of DynamoDB and how to get st
 
 In future posts, I'll show you how to automate creating tables and avoid manual creation. I'll also show how to set up a local development environment using docker and more.
 
-[\*Subscribe to my Newsletter](#) below to stay updated and have a great time learning!\*
+[\*Subscribe to my Newsletter](/subscribe) below to stay updated and have a great time learning!\*
 
 ### References
 
