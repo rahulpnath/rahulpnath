@@ -126,9 +126,7 @@ If you are new to RabbitMQ, I highly recommend checking out the articles below t
 
 You can host a RabbitMQ instance in multiple ways. For this blog post, I use an AWS MQ-hosted instance of RabbitMQ.
 
-![](/images/image-27.png)
-
-Creating an AWS MQ hosted instance of RabbitMQ.
+<Figure src="/images/image-27.png" caption="Creating an AWS MQ hosted instance of RabbitMQ." />
 
 The following code in `Program.cs`registers MassTransit and sets up the RabbitMQ transport.
 
@@ -166,9 +164,7 @@ First, we retrieve the RabbitMQ configuration setting from appsettings.json and 
 
 The `ConfigureEndpoints` the method sets up the channels and binding on RabbitMQ based on the default MassTransit convention.
 
-![](/images/MassTransit-RabbitMQ-Queue-Topology.png)
-
-Defauilt MassTransit Queue Topology for RabbitMQ.
+<Figure src="/images/MassTransit-RabbitMQ-Queue-Topology.png" caption="Defauilt MassTransit Queue Topology for RabbitMQ." />
 
 MassTransit's default RabbitMQ topology setup:
 
@@ -202,9 +198,7 @@ The published message goes to the message type exchange and is forwarded to all 
 
 Each consumer exchange then routes the message to its specific queue. Consumers read messages from their dedicated queues.
 
-![](/images/image-7.png)
-
-RabbitMQ Queues set up by MassTransit for each consumer.
+<Figure src="/images/image-7.png" caption="RabbitMQ Queues set up by MassTransit for each consumer." />
 
 This setup allows multiple consumers to handle the same message type independently.
 

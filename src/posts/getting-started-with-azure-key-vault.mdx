@@ -16,9 +16,7 @@ tags:
 
 Azure Key Vault service is a cloud hosted, HSM(Hardware Security Modules)-backed service for managing cryptographic keys and other secrets. With Azure Key Vault, the process of managing and controlling the keys required for an application or multiple applications for an enterprise can be handled at a centralized place. Also these sensitive information no longer needs to be exposed in the application's configuration file or in database. Keys can be created in the vault and accessed via url's by the required application. Operations against the Key Vault are authenticated and authorized using Azure Active Directory. So in short all that a developer would need to know are the URI's for the keys, the [sdk/api](https://msdn.microsoft.com/en-us/library/azure/dn903625.aspx) to access the vault features and also on the mechanism to authenticate against the AD application (an appId/client secret or appId/certificate).
 
-![Azure Key Vault Overview](/images/azurekeyvault_overview.png)
-
-## Key Types
+<Figure src="/images/azurekeyvault_overview.png" caption="## Key Types" />
 
 The initial release of Azure Key Vault only supports RSA keys (asymmetric cryptography) - it supports both software and HSM processed keys, and are represented as JSON Web Key objects. In future there might be more support for the different key types that are there in cryptography. For those who are new to cryptography or needs a quick recap on cryptography algorithms:
 
@@ -26,9 +24,7 @@ The initial release of Azure Key Vault only supports RSA keys (asymmetric crypto
 
 Symmetric cryptography, uses the same key to encrypt and decrypt the data. The keys are shared between the identities that require to transfer the encrypted data.
 
-![Symmetric Encryption](/images/symmetric_encryption.png)
-
-### **Asymmetric Cryptography**
+<Figure src="/images/symmetric_encryption.png" caption="### **Asymmetric Cryptography**" />
 
 Asymmetric cryptography, also known as public key cryptography uses two separate keys - a public key and private key. The public key can be used to encrypt the data or to verify a digital signature whereas the private key is used to decrypt the text or to digital sign.
 

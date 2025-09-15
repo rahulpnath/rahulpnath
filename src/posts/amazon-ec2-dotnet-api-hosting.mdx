@@ -38,15 +38,11 @@ You can create an EC2 instance in multiple ways. I'll use the AWS Console to cre
 
 You need to provide it with a name, the OS Image and associated configuration.
 
-![](/images/image-4.png)
-
-Creating an AWS EC2 instance from the AWS Console - specify name and OS image.
+<Figure src="/images/image-4.png" caption="Creating an AWS EC2 instance from the AWS Console - specify name and OS image." />
 
 Amazon EC2 provides a [wide selection of instance types](https://aws.amazon.com/ec2/instance-types/). optimized to fit different use cases. It allows you to choose the CPU, memory, networking resources, etc.
 
-![](/images/image-5.png)
-
-EC2 instance type allows to choose CPU, memory, networking resources for your instance.
+<Figure src="/images/image-5.png" caption="EC2 instance type allows to choose CPU, memory, networking resources for your instance." />
 
 You can restrict access to your EC2 instances based on your application requirements and company policies.
 
@@ -58,17 +54,13 @@ Configure the network settings for your EC2 instance to control who/where your i
 
 If you want to connect to the EC2 instance remotely, you can create a key pair and assign it to the EC2 instance.
 
-![](/images/image-7.png)
-
-Create and assign a key pair to connect to your EC2 instances.
+<Figure src="/images/image-7.png" caption="Create and assign a key pair to connect to your EC2 instances." />
 
 The above option to 'create new key pair' automatically creates one and prompts us to save the file for future use. Keep this handy, as we will use it to upload our application to the EC2 instance.
 
 Click on 'Launch instance' once you have all the information, and it will create a new EC2 instance with the specified configuration.
 
-![](/images/image-8.png)
-
-## Connecting to EC2 and Setting Up .NET Runtime
+<Figure src="/images/image-8.png" caption="## Connecting to EC2 and Setting Up .NET Runtime" />
 
 Now that we have our EC2 instance running let's connect and set up .NET to run our application.
 
@@ -88,9 +80,7 @@ On Windows, you can also go to the file's properties and update the Security to 
 
 Once the permissions are updated, you can connect to the EC2 machine successfully using ssh.
 
-![](/images/image-14.png)
-
-Connecting to EC2 instance using ssh from your terminal
+<Figure src="/images/image-14.png" caption="Connecting to EC2 instance using ssh from your terminal" />
 
 ## Uploading .NET Application to EC2 Instance
 

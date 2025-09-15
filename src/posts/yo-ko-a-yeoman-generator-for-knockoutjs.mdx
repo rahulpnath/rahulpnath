@@ -20,9 +20,7 @@ KnockoutJs helps you simplify dynamic JavaScript UIs using the Model-View-ViewMo
 
 Once installed you can generate your web app from the command prompt and running the command '**yo ko**'. This is will ask for the name of the project, whether to use JavaScript or TypeScript and also if you need to include automated tests using Jasmine and Karma. On giving your options your web app would be scaffolded out.
 
-![hp_dv4](/images/yo_ko.png)
-
-**Project Structure**
+<Figure src="/images/yo_ko.png" caption="**Project Structure**" />
 
 The generated web app is a simple Single Page Application(SPA), using the components feature released with [Knockout 3.2.0](http://blog.stevensanderson.com/2014/08/18/knockout-3-2-0-released/), [Bower](http://bower.io/) to manage packages and [Gulp](http://gulpjs.com/) for the build
 
@@ -59,9 +57,7 @@ The knockout components are defined in the _components_ folder and has both the 
 
 The build is managed is using [Gulp](http://gulpjs.com/), which can be installed using [npm](https://www.npmjs.org/package/gulp). To build the project, you need to run _gulp_ at the root folder. The build packages all the javascript modules/files into a single file, replaces the required updates in the html file, minifies the html, js and css etc. If not for the build systems, the application would have to make lots of file/scripts/css requests or would have to have it all in the same file while development which makes working as a team difficult. These build system are highly configurable and can be used to setup output as required. The build tasks are defined in the _gulpfile.js_ and the '_default_' task runs when running the gulp command. This is will generate the optimized files in the _dist_ folder, which can be hosted in the server of your choice. I use the [zero-configuration command-line http-server](https://www.npmjs.org/package/http-server) available on nodejs.
 
-![yo ko application ](/images/yo_ko_app.png)
-
-**Adding New Components**
+<Figure src="/images/yo_ko_app.png" caption="**Adding New Components**" />
 
 To add new components the knockout generator provides a command which generated the html/css components in the appropriate folder. You would still need to add the registration of the component in the startup file.
 

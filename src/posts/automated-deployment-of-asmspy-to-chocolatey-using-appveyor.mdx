@@ -20,9 +20,7 @@ I started with an [easy issue](https://github.com/mikehadlow/AsmSpy/pull/20) to 
 
 AsmSpy is currently distributed as a [zip package](http://static.mikehadlow.com/AsmSpy.zip). Chocolatey supports packaging from a URL with a PowerShell script [_Install-ChocolateyZipPackage_](https://github.com/chocolatey/choco/wiki/HelpersInstallChocolateyZipPackage). For the first release I [used this helper script to create the Chocolatey package](https://github.com/mikehadlow/AsmSpy/pull/22) and uploaded it to my account. After fixing a few review comments the [package got published](https://chocolatey.org/packages/asmspy/1.0.0).
 
-![choco install asmspy](/images/asmspy_choco.png)
-
-## Automating Chocolatey Releases
+<Figure src="/images/asmspy_choco.png" caption="## Automating Chocolatey Releases" />
 
 Now that I have to manage the AsmSpy Chocolatey package installations, I decided to automate the process of Chocolatey package creation and upload. Since I had used AppVeyor for [automating Click-Once deployment](/blog/automated-clickonce-deployment-of-a-wpf-application-using-appveyor/) of [CLAL](https://github.com/rahulpnath/clal), I decided to use AppVeyor for this.
 
@@ -43,9 +41,7 @@ After playing around with different Appveyor project settings and build scripts,
 
 The AppVeyor team was quick to respond and suggested a possible problem with the Webhook URL not configured under the GitHub repository. The Webhook URL for AppVeyor is available under the projects settings. Since I did not have access to the Settings page of the GitHub repository, I reached out to Mike, who promptly updated the Webhook URL for AppVeyor under GitHub project settings. This fixed the issue of builds not triggering automatically when commits are pushed to the GitHub repository.
 
-![Github webhook url for appveyor](/images/asmspy_github_webhook.png)
-
-### **Creating Chocolatey Package**
+<Figure src="/images/asmspy_github_webhook.png" caption="### **Creating Chocolatey Package**" />
 
 AppVeyor has [support for Chocolatey commands](https://www.appveyor.com/blog/2014/11/06/appveyor-with-a-hint-of-chocolatey) out of the box, which makes it easy to create packages on a successful build. I added in the [nuspec file](https://github.com/mikehadlow/AsmSpy/blob/master/AsmSpy/AsmSpy.nuspec) that defines the Chocolatey Package and added an after-build script to generate the package. AppVeyor exposes [environment variables](https://www.appveyor.com/docs/environment-variables), that are set for every build. In the 'after\_build' scripts I trigger Chocolatey packaging only if the build is triggered by a commit with a tag (APPVEYOR\_REPO\_TAG\_NAME). Every build generates the zip package that can be used to test the current build.
 

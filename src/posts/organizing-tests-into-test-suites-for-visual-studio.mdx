@@ -13,9 +13,7 @@ While working with large code base, that has a lot of tests (unit, integration, 
 
 There are multiple ways that we can do this within Visual Studio and below are some of the options available. I tend to use a mix of all these in my current project. This gives the flexibility to run only the new tests that I am writing while writing new code or set of related tests for the updates that I am making. Once done with the changes, I can run the full suite of unit tests, followed by the integration tests. This reduces the interruption duration while coding and has a direct impact on the overall productivity too. (If you think small interruptions does not matter much think twice!)
 
-![Geek productivity](/images/geek_productivity.jpg)
-
-## Test Traits
+<Figure src="/images/geek_productivity.jpg" caption="## Test Traits" />
 
 Traits are a good way to group tests together and to run them as different suites. It encompasses TestCategory, TestProperty, Priority and Owner. Using [TestCategory](https://msdn.microsoft.com/en-au/library/microsoft.visualstudio.testtools.unittesting.testcategoryattribute.aspx) attribute we can specify the group of the test and the Visual Studio Test Explorer uses this value to group the tests and allows executing tests in specific groups."
 
@@ -52,9 +50,7 @@ function runTests(dllPath) {
 
 Similarly we can have multiple tasks to execute different groups of tests and it will be available in the TRE within Visual Studio as shown below. This approach gives the most flexibility, allowing tests be grouped any way and providing ability to execute tests across the stack of technologies.
 
-![Visual Studio Task Runner Explorer](/images/vs_tre.png)
-
-### Tests Settings File
+<Figure src="/images/vs_tre.png" caption="### Tests Settings File" />
 
 Creating Test Playlist is an easy way to group tests into a playlist and executing them as group. From the Test Explorer, select the tests to be grouped and on right-click, the option to create playlist is available. The saved playlists can be selected from the drop down menu on the top bar for later execution.
 

@@ -32,9 +32,7 @@ Since in the destination system, all the other values were getting populated as 
 
 I copied the resource file text from disassembled code in dotPeek into [Notepad2](http://www.flos-freeware.ch/notepad2.html) (configured to show the line endings) and everything started falling into place. The resource text file from the build generated code ended with LF (\\n), while the one on our development machines had CRLF (\\r\\n). All machines, including the build machines are running Windows and the expected value for \[Environemnt.Newline\](https://msdn.microsoft.com/en-us/library/system.environment.newline(v=vs.110).aspx) is CRLF - \*\* A string containing "\\r\\n" for non-Unix platforms, or a string containing "\\n" for Unix platforms.\*\*
 
-![Difference between build generated and development machine resource file](/images/newline_diff.png)
-
-_Difference between build generated and development machine resource file_
+<Figure src="/images/newline_diff.png" caption="_Difference between build generated and development machine resource file_" />
 
 ### Finding the Root Cause
 

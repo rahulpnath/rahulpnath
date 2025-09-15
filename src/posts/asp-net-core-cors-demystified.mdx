@@ -29,9 +29,7 @@ Two URLs have the same origin if they have the same Scheme, Host, and Port. For 
 -   Host `example.com`
 -   Port `9000`.
 
-![URL Structure of https://example.com:9000/foo.html](/images/cors_url_structure.jpg)
-
-So if any one of them (Scheme, Host, or Port) is different, it's treated as a different origin.
+<Figure src="/images/cors_url_structure.jpg" caption="So if any one of them (Scheme, Host, or Port) is different, it's treated as a different origin." />
 
 ## CORS In Action In ASP Net Application
 
@@ -86,9 +84,7 @@ _The Origins URL specified must not have a trailing slash._
 
 With this code added, the API now asks the browser to relax the Cross-Origin Policy. If we make another request again from the application and inspect the request headers, we can see the `access-control-allow-origin` headers added to the response. It
 
-![HTTP Request header has the Response Headers 'access-control-allow-origin: http://localhost:3000](/images/cors_request_headers.jpg)
-
-### Configurable Origins
+<Figure src="/images/cors_request_headers.jpg" caption="### Configurable Origins" />
 
 Since we will need to run the API from different environments, it's best not to hardcode the Origin URL in the source code. You can move this to the application settings.
 

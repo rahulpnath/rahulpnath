@@ -12,9 +12,7 @@ It’s been almost an year since I have moved to this custom hosted blog and is 
 
 **Setting up Wordpress** on Azure is very easy and is just a matter of few clicks from the [Management Portal](https://manage.windowsazure.com). You can find the detailed steps to get this done [here](http://azure.microsoft.com/en-us/documentation/articles/web-sites-php-web-site-gallery/). By default Azure Web Sites are installed in the root directory of IIS. To move this into a sub-folder of your choice, you can use any FTP client(FileZilla). The connection details can be obtained from the Management Portal as shown in the below screen shot.
 
-![Portal Quick glance](/images/PortalQuickglance.jpg)
-
-![Portal Quick glance 1](/images/PortalQuickglance1.jpg)
+<Figure src="/images/PortalQuickglance.jpg" caption="![Portal Quick glance 1](/images/PortalQuickglance1.jpg)" />
 
 \*\*Mapping your custom domain \*\*to the new wordpress site is about adding a [CName record for awverify or www](http://azure.microsoft.com/en-us/documentation/articles/web-sites-custom-domain-name/) in your Domain dashboard provided by the domain registrar. Once you have the required CName entries you can map the custom domain in the portal using the ‘Manage Domains’ option.
 
@@ -22,9 +20,7 @@ It’s been almost an year since I have moved to this custom hosted blog and is 
 
 \*\*Restoring your content \*\*from my current host was easy as I am using [Vaultpress](http://vaultpress.com) for my site backup and it provides an option to [backup to a different web site too](http://help.vaultpress.com/restore-to-a-new-site/). If not you could also use [FTP to move your current site content which is detailed out here](http://www.davebost.com/2013/07/11/moving-a-wordpress-blog-to-windows-azure-transferring-your-content). Once the content is restored you would need to update the Wordpress Url and Site address url in the General Settings of your blog dashboard. You could also update this directly on the MySQL database in the _wp\_options_ table(_home_ and _siteurl_ property). To connect to the database you would get the connection string details from the portal and you can use [MySQL Workbench](http://www.mysql.com/products/workbench/) to connect to it. You might have to recheck your permalink setting on the Wordpress dashboard to ensure that it is the same as you were using earlier.
 
-![General Settings](/images/AzureGeneralSettings.jpg)
-
-Now you are up an running your blog on Azure!!
+<Figure src="/images/AzureGeneralSettings.jpg" caption="Now you are up an running your blog on Azure!!" />
 
 **Things to look out for:**
 

@@ -31,15 +31,11 @@ Once confirmed it adds in the following firewall rules for the x64 and x86 versi
 
 The Remote Debugging Monitor listens to a port ([each Visual Studio version has a different default](https://docs.microsoft.com/en-us/visualstudio/debugger/remote-debugger-port-assignments?view=vs-2019)) - 4024 for VS 2019. This can be changed under Options if needed. For this example I have turned off Authentication as shown below.
 
-![](/images/remote_debug_running.jpg)
-
-### Azure Portal Settings
+<Figure src="/images/remote_debug_running.jpg" caption="### Azure Portal Settings" />
 
 In the Azure Portal, under the Networking tab for the Virtual Machine,  add an inbound port rule to open the port that msvsmon is listening - 4024 in this case
 
-![](/images/remote_debug_vm_azure_portal.jpg)
-
-## Debugging From Visual Studio
+<Figure src="/images/remote_debug_vm_azure_portal.jpg" caption="## Debugging From Visual Studio" />
 
 Now that everything is set up, we are good to debug the application from our local machine. Make sure the application to be debugged is running in the Virtual Machine. From Debug -> Attach To Process in Visual Studio. Choose Remote (no authentication) under the Connection type and enter the IP address or the fqdn to the VM along with the port number. Shortly you should see the list of applications running on the machine, and you can choose the appropriate app to debug.
 

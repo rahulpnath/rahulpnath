@@ -28,15 +28,11 @@ c:\cert\signtool.exe sign /tr http://timestamp.digicert.com
 
 ```
 
-![Code Signing Azure DevOps](/images/code_sign_azure_devops.jpg)
-
-## Sign Installer
+<Figure src="/images/code_sign_azure_devops.jpg" caption="## Sign Installer" />
 
 Now that we have the DLLs and the executable signed, we need to package them in using the WIX project. By default, building a WIX project rebuilds all the dependent assemblies, which will overwrite the above-signed DLLs. To avoid this make sure to pass in parameters to the build command to not build project references (_/p:BuildProjectReferences=false_), and only package them. The MSI installer on build output can then be signed using the same tool.
 
-![Code Signing Azure DevOps](/images/code_sign_azure_devops_installer.jpg)
-
-## Sign Powershell Scripts
+<Figure src="/images/code_sign_azure_devops_installer.jpg" caption="## Sign Powershell Scripts" />
 
 We also had a few Powershell scripts that were packaged along in a separate application. To sign them you can use the [Set-AuthenticodeSignature](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-authenticodesignature?view=powershell-6) cmdlet. All you need is to get the certificate from the appropriate store and pass it on to the cmdlet along with the files that need to be signed.
 

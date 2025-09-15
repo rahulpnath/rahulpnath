@@ -49,9 +49,7 @@ You also need to specify a return URL (which will be your app URL endpoint), tha
 
 Once you have all the details entered - 'Create user directory'
 
-![](/images/image.png)
-
-You have successfully created both a User Pool and also an App Client.
+<Figure src="/images/image.png" caption="You have successfully created both a User Pool and also an App Client." />
 
 Navigate into the user pool to see the full details.
 
@@ -94,9 +92,7 @@ For this example since I haven't setup an application to listen to this URL to e
 
 Pass in the clientId, clientSecret, grantType, redirectUrl and the code that you received in the call back to the `oauth2/token` endpoint as shown below.
 
-![](/images/image-9.png)
-
-You will get back the idToken, accessToken and also a refreshToken.
+<Figure src="/images/image-9.png" caption="You will get back the idToken, accessToken and also a refreshToken." />
 
 *   **idToken** – Contains user profile information (name, email, etc.) in JWT form; used by the app to identify the user.
 *   **accessToken** – Grants access to protected APIs/resources; contains scopes and permissions.

@@ -62,9 +62,7 @@ __Etag is calculated based on the contents of an object and is not affected by i
 
 The ETag is updated only if an object's contents change. If only the object's metadata changes, the ETag remains the same.
 
-![](/images/image-18.png)
-
-ETag property on an Amazon S3 Object in the AWS Console.
+<Figure src="/images/image-18.png" caption="ETag property on an Amazon S3 Object in the AWS Console." />
 
 The ETag may or may not be an MD5 digest of the object data. Whether or not it is depends on [how the object was created and how it is encrypted](https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html?__readwiseLocation=#checking-object-integrity-etag-and-md5).
 
@@ -132,9 +130,7 @@ You can define a [bucket policy](https://docs.aws.amazon.com/AmazonS3/latest/use
 
 You can define this under the Permissions tab for an S3 bucket in the AWS Console.
 
-![](/images/image-17.png)
-
-Amazon S3 bucket policy to enforce the s3:if-match header is always passed on PutObject requests.
+<Figure src="/images/image-17.png" caption="Amazon S3 bucket policy to enforce the s3:if-match header is always passed on PutObject requests." />
 
 Here is the [list of condition keys](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html#amazons3-policy-keys) for Amazon S3 and `s3:if-match` is one of them.
 

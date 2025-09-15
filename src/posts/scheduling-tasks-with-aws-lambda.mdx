@@ -66,9 +66,7 @@ rate(value unit)
 
 Value is a positive number and unit takes _minute|minutes|hour|hours|day|days_ as values.
 
-![](/images/image-9.png)
-
-EventBridge Lambda Trigger setup with a rate expression of 1 day
+<Figure src="/images/image-9.png" caption="EventBridge Lambda Trigger setup with a rate expression of 1 day" />
 
 The above screenshot shows setting up an EventBridge Lambda Trigger with a rate expression of 1 day - _rate(1 day)._
 
@@ -78,17 +76,13 @@ Once created, you can navigate to the EventBridge rules by clicking the Trigger 
 
 The below screenshot shows the Rule I created for running a Lambda Function every minute.
 
-![](/images/image-11.png)
-
-Amazon EventBridge Rule detail that runs every minute.
+<Figure src="/images/image-11.png" caption="Amazon EventBridge Rule detail that runs every minute." />
 
 You can further edit and customize the rule from Amazon EventBridge. You can also see the AWS Service that the rule triggers to run when it is executed.
 
 The below screenshot shows that the rule triggers an AWS Lambda Function _lambda-schedule_ when the rule is triggered.
 
-![](/images/image-12.png)
-
-### Customizing EventBridge Trigger Payload For Lambda
+<Figure src="/images/image-12.png" caption="### Customizing EventBridge Trigger Payload For Lambda" />
 
 In the current Lambda Function endpoint we are using the `ScheduledEvent` type to handle the incoming Event Bridge Event.
 
@@ -114,9 +108,7 @@ Rate Expressions allows you to specify how often you want a Rule to trigger. How
 
 Cron expressions have six required fields, which are separated by white space.
 
-![](/images/image-14.png)
-
-Cron Expression example Lambda Trigger using AWS EventBridge
+<Figure src="/images/image-14.png" caption="Cron Expression example Lambda Trigger using AWS EventBridge" />
 
 The above screenshot sets up a CRON job to run the function every minute between 4-5 a.m. (UTC) on a Monday and Tuesday.
 
@@ -127,8 +119,6 @@ cron(0/1 4-5 ? * MON-TUE *)
 
 All CRON jobs are set in UTC time, however, if you navigate to the CRON job rule in EventBridge, you can see the time in both UTC and local time zone.
 
-![](/images/image-15.png)
-
-CRON AWS EventBridge Rule detail showing the Event Schedule and the Next 10 trigger dates.
+<Figure src="/images/image-15.png" caption="CRON AWS EventBridge Rule detail showing the Event Schedule and the Next 10 trigger dates." />
 
 The Event Schedule shows the next 10 upcoming triggers in both UTC and Local time to ensure the CRON job is set as expected.

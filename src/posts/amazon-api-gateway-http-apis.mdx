@@ -106,9 +106,7 @@ You can also add in _$default_ route, which acts as a fallback route for request
 
 To create our first GET endpoint, choose Create and enter the route details under Routes in the AWS Console. Below I am creating a `GET /weather-forecast` route.
 
-![Create a new route in API Gateway for HTTP API](/images/api-gateway-http-api-create-route.jpg)
-
-**Create and Attach Integration**
+<Figure src="/images/api-gateway-http-api-create-route.jpg" caption="**Create and Attach Integration**" />
 
 We can create and attach a back-end integration for this route. You can either navigate to the route from the Routes or Integrations menu option under the sidebar.
 
@@ -216,9 +214,7 @@ When creating the API Gateway, a _$default_ stage is automatically created. This
 
 Under Deploy → Stages, you can create a new stage for the API.
 
-![Create a new Stage in API Gateway](/images/api-gateway-http-api-create-stage.jpg)
-
-Create a new Stage in API Gateway api-gateway-http-api-create-stage.jpg
+<Figure src="/images/api-gateway-http-api-create-stage.jpg" caption="Create a new Stage in API Gateway api-gateway-http-api-create-stage.jpg" />
 
 By default, this maps to the same integrations since we have hard-wired the lambda functions when creating the Routes and the integrations.
 

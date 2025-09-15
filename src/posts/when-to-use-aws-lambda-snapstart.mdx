@@ -45,9 +45,7 @@ AWS Lambda creates the VM snapshot and sets up everything when you publish a Lam
 
 When the published Lambda version with SnapStart enabled is invoked, the logs no longer have the initialization phase, so they do not show the Init Duration.
 
-![](/images/image-9.png)
-
-AWS CloudWatch logs for a SnapStart enabled Lambda Function showing Restore Duration.
+<Figure src="/images/image-9.png" caption="AWS CloudWatch logs for a SnapStart enabled Lambda Function showing Restore Duration." />
 
 However, it does show a 'Restore Duration' now, which we will explore shortly.
 
@@ -85,9 +83,7 @@ Before enabling SnapStart, the function has an average Init duration of ~550ms.
 
 After enabling SnapStart, the Restore Duration averages around the same and sometimes even more.
 
-![](/images/image-12.png)
-
-CloudWatch Insight logs showing Init Duration and Restore Duration
+<Figure src="/images/image-12.png" caption="CloudWatch Insight logs showing Init Duration and Restore Duration" />
 
 Enabling SnapStart in these scenarios where the Init duration is already in the milliseconds does not yield much gain to us.
 

@@ -70,9 +70,7 @@ If the same request is made, it will find a matching item in the DynamoDB table 
 
 The default timeout period is 1 hour, which means any request with the same payload during that period will get the recorded response. After the timeout, the record is deleted from the DynamoDB table, and the first new request with the same payload will invoke the Lambda Function again.
 
-![](/images/image-2.png)
-
-Idempotency DynamoDB Table with records populated as we make requests in the API endpoint.
+<Figure src="/images/image-2.png" caption="Idempotency DynamoDB Table with records populated as we make requests in the API endpoint." />
 
 Since the sample function above does not return any value, the data property in the DynamoDB table is empty.
 

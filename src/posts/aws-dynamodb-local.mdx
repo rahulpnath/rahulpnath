@@ -45,9 +45,7 @@ docker run `
 
 The Docker instance is up and running as shown below in the Docker Desktop UI.
 
-![DynamoDb running on docker windows desktop GUI](/images/dynamodb_local_docker.jpg)
-
-## Accessing DynamoDB
+<Figure src="/images/dynamodb_local_docker.jpg" caption="## Accessing DynamoDB" />
 
 The Local DynamoDB is very similar to the instance available in AWS infrastructure. All ways of [accessing the AWS instance](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/AccessingDynamoDB.html) also works for the local.
 
@@ -155,9 +153,7 @@ To get the tool to work, I had to update the AWS config file with the `dynamodb-
 
 Once set, we can browse the local instance as shown below. It allows to browse the tables, add data, and a lot more features.
 
-![Dynobase connected to local DynamoDB listing the data in the table](/images/dynamodb_local_dynobase_scan.jpg)
-
-## SharedDB Mode
+<Figure src="/images/dynamodb_local_dynobase_scan.jpg" caption="## SharedDB Mode" />
 
 DynamoDB Local also supports a single database file version. In this, the same file is used regardless of the region or the access key.
 

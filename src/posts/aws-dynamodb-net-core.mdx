@@ -50,15 +50,11 @@ To store the `WeatherFOrecast` let's create a new table with the same name (you 
 
 In this case, we can only have one Item for a city with a particular date time. If we decide to store only the date part, excluding the time, then only one record for a day.
 
-![Create table in AWS DynamoDB from the Console](/images/aws_dynamodb_create_table_portal.jpg)
-
-To add items to the Table from the portal, use the _Create Item_ button.
+<Figure src="/images/aws_dynamodb_create_table_portal.jpg" caption="To add items to the Table from the portal, use the _Create Item_ button." />
 
 Since we specified City and the Date as the composite primary key, any item added to this table must have those two properties.
 
-![Create Item in DynamoDB table](/images/aws_dynamodb_create_item_portal.jpg)
-
-There can be any other property on the Item and necessarily need not be the same for each item.
+<Figure src="/images/aws_dynamodb_create_item_portal.jpg" caption="There can be any other property on the Item and necessarily need not be the same for each item." />
 
 We can add JSON data to the table as below → On top of City and Date properties, it contains Summary and Temperature in Celsius as our `WeatherForecast` class.
 
@@ -74,9 +70,7 @@ We can add JSON data to the table as below → On top of City and Date propertie
 
 Below is a snapshot of the Table with a few items added to it.
 
-![DynamoDB Table with Items](/images/aws_dynamodb_table_items_portal.jpg)
-
-## Set up App to Use DynamoDB
+<Figure src="/images/aws_dynamodb_table_items_portal.jpg" caption="## Set up App to Use DynamoDB" />
 
 With the data set up in DynamoDB, let's update the Web API application to retrieve the data from DynamoDB.
 
@@ -155,9 +149,7 @@ To set up _ACCESS\_KEY_ and _SECRET\_KEY_ navigate to the [Identity And Access M
 
 In the below case, I have given `arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess` which grants full access to DynamoDB resources.
 
-![Add User in IAM to access DynamoDB](/images/aws_dynamodb_iam_user.jpg)
-
-Run the application, and voila! We have the API now retrieving the data from DynamoDB.
+<Figure src="/images/aws_dynamodb_iam_user.jpg" caption="Run the application, and voila! We have the API now retrieving the data from DynamoDB." />
 
 ### CRUD Operations
 

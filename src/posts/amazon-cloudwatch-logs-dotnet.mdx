@@ -219,9 +219,7 @@ To query JSON log events, a special syntax is to be used:
 
 _eg. {$.count > 10 && $.cityName = “Brisbane”}_ → selects all log events that have a count property greater than 10 with the cityName property as Brisbane.
 
-![JSON based log filtering example with multiple properties](/images/aws-cloudwatch-log-structured-filter.jpg)
-
-## AWS CLoudWatch Log Insights
+<Figure src="/images/aws-cloudwatch-log-structured-filter.jpg" caption="## AWS CLoudWatch Log Insights" />
 
 CloudWatch Log Insights provides richer capabilities to interact with log events. It allows to interactively search and analyze log data and supports a [custom query language](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_QuerySyntax.html).
 
@@ -231,23 +229,17 @@ The query syntax supports custom functions and operations and is not limited to 
 
 It also supports formatting the queried log events in custom formats. You can set it to show just the properties that are important to you in the collapsed view.
 
-![Sample query in aws cloudwatch log insights](/images/aws-cloudwatch-logs-insights.jpg)
-
-### Query Logs Across Applications
+<Figure src="/images/aws-cloudwatch-logs-insights.jpg" caption="### Query Logs Across Applications" />
 
 Log Insights also supports querying across multiple log groups. It is handy in distributed applications where multiple applications are responsible for handling a business use case.
 
 Given a correlation id or a unique id passed across applications, you can filter the data across multiple applications and see the end-to-end flow of events.
 
-![Query across multiple log groups in CloudWatch log insigths](/images/aws-cloudwatch-logs-insights-multiple-log-groups.jpg)
-
-### Saved Queries
+<Figure src="/images/aws-cloudwatch-logs-insights-multiple-log-groups.jpg" caption="### Saved Queries" />
 
 CloudWatch Insights also enables the saving of Queries for later use. These queries can be grouped in folders based on your application needs and are visible to anyone who has access to the CloudWatch in AWS Console.
 
-![Saved queries in CloudWatch Log Insights](/images/aws-cloudwatch-logs-insights-saved-queries.jpg)
-
-## Summary
+<Figure src="/images/aws-cloudwatch-logs-insights-saved-queries.jpg" caption="## Summary" />
 
 CloudWatch Logs provides rich features and capabilities to manage logs when building applications on AWS Infrastructure. Since it allows for a centralized location, it makes setting up and using the infrastructure from various application types easy.
 

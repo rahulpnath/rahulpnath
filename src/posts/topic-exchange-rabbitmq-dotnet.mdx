@@ -133,9 +133,7 @@ channel.QueueBind(queueName, "weather_topic", "aus.nsw.*");
 
 The above code sets up a queue `nsw` with a binding on the `weather_topic` exchange with a binding key `aus.nws.*` that filters all messages for NSW state in Australia.
 
-![](/images/image-5.png)
-
-AWS MQ RabbitMQ Management Console shows a Topic Exchange with the two bindings using wildcards.
+<Figure src="/images/image-5.png" caption="AWS MQ RabbitMQ Management Console shows a Topic Exchange with the two bindings using wildcards." />
 
 To set up a Queue to capture all messages to Australia, let's create a new queue `aus` with the binding using the # (hash) wildcard, as shown below.
 
@@ -148,6 +146,4 @@ channel.QueueBind(queueName, "weather_topic", "aus.#");
 
 Whenever a message comes to the exchange for any state in Australia, a copy gets routed to the `aus` queue. Similarly, when a message arrives for any city in `nsw`, a copy gets sent to both `aus` and `nsw` queue.
 
-![](/images/rabbitmq-topic-exchange-demo.gif)
-
-RabbitMQ Topic Exchange demo using different wildcard options.
+<Figure src="/images/rabbitmq-topic-exchange-demo.gif" caption="RabbitMQ Topic Exchange demo using different wildcard options." />

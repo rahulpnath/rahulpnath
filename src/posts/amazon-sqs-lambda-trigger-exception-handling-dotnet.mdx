@@ -108,9 +108,7 @@ You must first create a queue to designate as DLQ. I have one created from the S
 
 Specify the Queue ARN and the Maximum received count.
 
-![](/images/aws-lambda-trigger-sqs-dead-letter-queue-setup.jpg)
-
-### Maximum Receives Count
+<Figure src="/images/aws-lambda-trigger-sqs-dead-letter-queue-setup.jpg" caption="### Maximum Receives Count" />
 
 The Maximum receives value determines the number of times a message will be retried. If the ReceiveCount for a message exceeds the maximum receive count, SQS moves the message to the associated DLQ.
 
@@ -122,9 +120,7 @@ Any existing messages in the Queue with a ReceiveCount more than the maximum is 
 
 You can inspect this message from the DLQ and decide what action to take next. Based on the message content, the application, and the business processes associated with the messages, you can choose to ignore them (delete from DLQ), reprocess the message later, or fix the Lambda Function and then retry the message again.
 
-![View message details in SQS Console](/images/aws-lambda-trigger-sqs-dead-letter-queue-messages-detail.jpg)
-
-## ReDrive Messages from Dead-letter Queue
+<Figure src="/images/aws-lambda-trigger-sqs-dead-letter-queue-messages-detail.jpg" caption="## ReDrive Messages from Dead-letter Queue" />
 
 _Re-processing messages from Queue is referred to as Redrive._
 

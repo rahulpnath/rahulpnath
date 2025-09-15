@@ -49,9 +49,7 @@ If you are new to DynamoDB, I highly recommend checking out my Getting Started w
 
 Since they are either a Global Secondary Index or a Local Secondary Index, you create them just like creating the other Index. You can do this from the AWS Console UI under the \`Secondary Indexes' section of the DynamoDB table details.
 
-![Create Secondary Index option in AWS Console. You can create Global and Local Index when creating the table.](/images/image.png)
-
-You can create a Local Secondary Index only at the time of DynamoDB table creation.
+<Figure src="/images/image.png" caption="You can create a Local Secondary Index only at the time of DynamoDB table creation." />
 
 You can find more information on Index Creation in the below two blog posts.
 
@@ -73,9 +71,7 @@ The `IsExtermeWeatherConditions` is set on the object only if it was extreme wea
 
 This Sparse Index allows us to get all the cities that had extreme weather conditions given a specific Date.
 
-![](/images/image-1.png)
-
-## Populating DynamoDB Sparse Index From .NET
+<Figure src="/images/image-1.png" caption="## Populating DynamoDB Sparse Index From .NET" />
 
 Based on the programming language you are using to write the DynamoDB items you can conditionally populate the `IsExtermeWeatherConditions` property on the WeatherForecast object.
 

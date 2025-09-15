@@ -31,9 +31,7 @@ Amazon SNS supports two types of Topics
 
 For this article, we will create a Standard SNS Topic, by specifying the name and leaving all other options to default.
 
-![Amazon SNS create new Standard topic from the AWS Console](/images/amazon-sns-create-topic.jpg)
-
-### SNS & .NET
+<Figure src="/images/amazon-sns-create-topic.jpg" caption="### SNS & .NET" />
 
 We will use the ASP NET Core default Web API template as our sample application. The application has a `GET` method to return `WeatherForecast` data by default.
 
@@ -131,9 +129,7 @@ Once you publish the Lambda function to AWS, you can set up a new SNS Subscripti
 
 Grant, the IAM Role of Lambda Function has access to the SNS before adding in the subscription. This is required so that the Lambda function can access the SNS Topic.
 
-![AWS Lambda permissions to access Amazon SNS - In this case it has full access to the specific SNS Topic.](/images/amazon-sns-lambda-permissions.jpg)
-
-Under the Lambda → Triggers, you can add a new Trigger and set up the integration with Amazon SNS.
+<Figure src="/images/amazon-sns-lambda-permissions.jpg" caption="Under the Lambda → Triggers, you can add a new Trigger and set up the integration with Amazon SNS." />
 
 ![Setting up a SNS Trigger for Amazon Lambda. Every time a message is dropped to the Amazon SNS Topic the .NET lambda function will be triggered](/images/amazon-sns-lambda-trigger.jpg)
 
@@ -177,9 +173,7 @@ For the Subscriber, where we want to apply the filter policy, we can edit it in 
 
 Specifying the below policy filters out only the messages which have the Month property set to February. It will filter anything else out.
 
-![Subscription Filter policy to filter out messages from Amazon SNS Topic only for the month of Februrary.](/images/amazon-sns-subscription-filter-policy.jpg)
-
-Filter Policies JSON structure supports different filtering capabilities
+<Figure src="/images/amazon-sns-subscription-filter-policy.jpg" caption="Filter Policies JSON structure supports different filtering capabilities" />
 
 -   **Exact Matching** → Attribute matches one or more values _”Month” : \[”February”\]_
 -   **Prefix Matching →** Attribute includes the keyword _prefix_ and it matches the specified prefix. Below matches _March_ and _May”Month” : \[{”prefix”: “Ma”}\]_
@@ -195,9 +189,7 @@ You can see the Delivery protocols and the associated policies [here](https://do
 
 Once the number of retries is exhausted for a delivery protocol, the message is discarded or sent to a dead-letter-queue (DLQ) attached to the subscription.
 
-![Dead letter Queue (DLQ) attached to a Amazon SNS Subscription.](/images/amazon-sns-subscription-dlq.jpg)
-
-Dead Letter Queue's (DLQ) are attached to a SNS Subscription.
+<Figure src="/images/amazon-sns-subscription-dlq.jpg" caption="Dead Letter Queue's (DLQ) are attached to a SNS Subscription." />
 
 Messages can be tracked and reprocessed from the DLQ as required, based on your application needs and if the Subscriber is back online to process messages.
 

@@ -134,17 +134,13 @@ When adding the Trigger, the S3 is permitted to invoke the Lambda Function. This
 
 The permission added can be seen under the ‘Resource-based policy’ section under the Lambda Function Configuration → Permissions, as shown below.
 
-![The resource-based policy allows S3 to invoke the .NET Lambda Function on a notification.](/images/s3-trigger-lambda-invoke-permission.jpg)
-
-### IAM Policies
+<Figure src="/images/s3-trigger-lambda-invoke-permission.jpg" caption="### IAM Policies" />
 
 Since the Lambda Function uses the `AmazonS3Client` to read the Object metadata on processing the event notification, we need to ensure the Lambda function has the appropriate permissions to talk to S3.
 
 For this, we can edit Lambda’s IAM Role and add an inline policy with the `GetObject` read permission on the S3 storage.
 
-![Update the Lambda IAM Permissions to talk to the S3 Bucket. To read the file data and the metadata, assign the GetObject Read access.](/images/s3-lambda-iam-permissions.jpg)
-
-### Testing Integration
+<Figure src="/images/s3-lambda-iam-permissions.jpg" caption="### Testing Integration" />
 
 Upload a new file to the S3 Bucket to test the end-to-end integration. This triggers an S3 notification, which is sent to the Lambda Function.
 

@@ -87,9 +87,7 @@ The `cdk init` command sets up a predefined structure of files and folders in th
 
 This is your CDK project and helps organize the source code for your CDK application.
 
-![](/images/image-2.png)
-
-CDK project structure for .NET showing the cdk.json file in Visual Studio Code.
+<Figure src="/images/image-2.png" caption="CDK project structure for .NET showing the cdk.json file in Visual Studio Code." />
 
 If you want to learn more about the project structure and each of the files inside, check out this [article](https://docs.aws.amazon.com/cdk/v2/guide/projects.html).
 
@@ -240,17 +238,13 @@ This step is required before deploying CDK apps in a new AWS account or region.
 
 Once bootstrapped, run `cdk deploy` from your command line magic happens 🪄
 
-![](/images/image-3.png)
-
-Running cdk deploy from commandline to deploy AWS CDK to my AWS Account using Windows terminal.
+<Figure src="/images/image-3.png" caption="Running cdk deploy from commandline to deploy AWS CDK to my AWS Account using Windows terminal." />
 
 It will deploy a new Stack to AWS, create the AWS Lambda Function and the DynamoDB table, upload your packaged zip lambda function, deploy it, and ensure that your function has appropriate permissions to write to the DynamoDB table.
 
 If you log into your AWS console under CloudFormations, you can see the newly created stack and its resources.
 
-![](/images/image-4.png)
-
-AWS CloudFormation Stack crated using CDK deploy from .NET.
+<Figure src="/images/image-4.png" caption="AWS CloudFormation Stack crated using CDK deploy from .NET." />
 
 We have successfully set up and deployed our first CDK Stack using .NET.
 

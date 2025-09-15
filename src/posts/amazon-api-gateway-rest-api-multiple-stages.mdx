@@ -122,9 +122,7 @@ You can configure this in AWS Console, under Configuration → Environment Varia
 
 Below I have set the variable _Environment_ to be ‘_test-’_ for the _test-user-service_ Lambda Function.
 
-![Add environment variable for the Lambda Function from the AWS Console.](/images/api-gateway-rest-api-lambda-proxy-lambda-environment-variable.jpg)
-
-### Configuring Lambda Policies Based on Environment
+<Figure src="/images/api-gateway-rest-api-lambda-proxy-lambda-environment-variable.jpg" caption="### Configuring Lambda Policies Based on Environment" />
 
 Now that the Lambda Function connects to the appropriate DynamoDB table based on the Environment variable settle, it also needs to be given the relevant IAM policies to talk to.
 
@@ -148,9 +146,7 @@ Below, the Source ARN specifies the endpoint ARN details that require access. In
 
 TDK star notation details
 
-![Add a resource-based policy to provide the API Gateway permission to invoke the Lambda Function. The Source ARN specifies the endpoint ARN details that require access. In this case, all HTTP Methods under the user resource is given access to invoke the Lambda function. ](/images/api-gateway-rest-api-lambda-stage-permission.jpg)
-
-## Managing API Deployments
+<Figure src="/images/api-gateway-rest-api-lambda-stage-permission.jpg" caption="## Managing API Deployments" />
 
 We have successfully configured the different services and resources to connect based on the Stage it’s running on.
 

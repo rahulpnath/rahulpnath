@@ -22,9 +22,7 @@ There are different ways you can avoid pushing sensitive data into source contro
 
 If you are deploying your application as a Web App on Azure, you can store [application settings and connection strings in Azure](https://azure.microsoft.com/en-us/blog/windows-azure-web-sites-how-application-strings-and-connection-strings-work/). At runtime, Windows Azure Web Sites automatically retrieves these values for you and makes them available to code running in your website. This removes the need for having sensitive data in the configuration file."
 
-![Azure App Settings and Connection Strings](/images/sensitiveData_azure_app_settings.png)
-
-## Release Management Tools
+<Figure src="/images/sensitiveData_azure_app_settings.png" caption="## Release Management Tools" />
 
 Release management tools like Octopus Deploy, Microsoft Release Management, that performs configuration transformation. It supports creating different environments (development, production) and corresponding configurations. On creating a package for an environment, it applies the corresponding environment configurations
 

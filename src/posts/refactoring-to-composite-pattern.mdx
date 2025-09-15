@@ -41,9 +41,7 @@ public List<string> Validate(Account account)
 
 > _Compose objects into tree structures to represent part-whole hierarchies. Composite lets clients treat individual objects and compositions of objects uniformly_
 
-![Composite Pattern](/images/composite_pattern.png)
-
-## Refactoring
+<Figure src="/images/composite_pattern.png" caption="## Refactoring" />
 
 In the Account validation above, the function checks for an email and validates the format, checks for valid billing details, etc. The validations could also extend on to users attached to the account and check if there is at least one user, the user has email, phone number, etc. Each of these validations can be moved into separate classes and composed together in one class so that they are all executed when an account needs to be validated. You can see a tree like hierarchy forming here, and the actual validation is composed of all these validations
 

@@ -79,9 +79,7 @@ When VS creates the Vault, it adds in the user logged into VS to the Access Poli
 
 > If you are not logged in as the same user or not logged in at all the provider will not be able to authenticate with the Key Vault and will fallback to use the dummy values in the configuration file. Alternatively you could specify [connection option avaiable for AzureServiceTokenProvider](https://docs.microsoft.com/en-us/azure/key-vault/service-to-service-authentication#connection-string-support)
 
-![Visual Studio, Azure Key Vault Connected Services](/images/keyVault_connectedService_AccessPolicies.png)
-
-## Secrets and Versioning
+<Figure src="/images/keyVault_connectedService_AccessPolicies.png" caption="## Secrets and Versioning" />
 
 The [AzureKeyVaultConfigBuilder](https://github.com/aspnet/MicrosoftConfigurationBuilders/tree/master/src/Azure) requests to get all the Secrets in the Key Vault at application startup using the [Secrets endoint](https://docs.microsoft.com/en-us/rest/api/keyvault/getsecrets/getsecrets). This call returns all the Secrets in the Key Vault. For whatever keys in the AppSettings that has a match with a Secret in the vault, a request is made to get the [Secret details](https://docs.microsoft.com/en-us/rest/api/keyvault/getsecret/getsecret), which returns the actual Secret value for the keys. Below are the traces of the calls going out captured using [Fiddler](/blog/fiddler-free-web-debugging-proxy/).
 

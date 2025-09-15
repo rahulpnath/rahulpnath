@@ -16,9 +16,7 @@ In the previous post, we explored how to use [Postman for testing API endpoints]
 
 Postman supports the concept of [Collections](https://www.getpostman.com/docs/v6/postman/collections/creating_collections), which are nothing but a Folder to group of saved API requests/Specs. Collections support nesting which means you can add Folders within a collection to further group them. As you can see below the _MyApplication_ and _Postman Echo_ are collections, and there are subfolders inside them which in turn contains API requests. The multi-level hierarchy helps you to organize your requests the way you want to.
 
-![Postman Collections](/images/postman_collections.png)
-
-### Sharing API Specs
+<Figure src="/images/postman_collections.png" caption="### Sharing API Specs" />
 
 Any Collection that you create in Postman is automatically synced to Postman Cloud if you are logged in with an account. It allows you to share collections through a link. With [paid version of Postman](https://www.getpostman.com/pricing) you get to create [team workspaces](https://www.getpostman.com/workspaces), which means a team can collaborate on the shared versions. It allows easy sharing of specs across your team and manages them in a centralized place.
 
@@ -36,9 +34,7 @@ Again as with Collections, Environments are also synced to Postman Cloud when yo
 
 Postman allows you to [publish API specs](https://www.getpostman.com/docs/v6/postman/api_documentation/publishing_public_docs) (even to a custom URL), which can act like your API Documentation. You can publish it per environments and also easily execute them. Publishing is available only if you log in to an account as it requires the API Specs and environment details in the first place.
 
-![Postman Published](/images/postman_published.png)
-
-## Security Considerations
+<Figure src="/images/postman_published.png" caption="## Security Considerations" />
 
 When using the sync feature of Postman (logged in to the application with Postman account), it is [recommended](https://www.getpostman.com/docs/v6/postman_for_publishers/run_button/security) that you do not have any sensitive information (like passwords/tokens) as part of the API request spec/Collection. These should be extracted out as Environment variables and stored as part of the appropriate environment.
 

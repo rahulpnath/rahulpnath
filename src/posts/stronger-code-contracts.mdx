@@ -11,9 +11,7 @@ tags:
 ---
 How often have you gone into a class to see the implementation when consuming the class or an interface? I do this almost every other day and it's mostly to check how the code handles boundary conditions. What does it do when there is no value to return, does it need all parameters etc. Reading code is hard and time-consuming, even if it's a code that you yourself have written a few minutes back. Imagine every developer having to go into the implementation detail anytime they consume a class? Bertrand Meyer in connection with his design of the Eiffel programming language coined the term [Design By Contract](https://en.wikipedia.org/wiki/Design_by_contract), an approach for designing software. The central idea of Design By Contract is to improve the contracts shared between different components in the code base. In this post, we will see how we can improve our C# code and avoid unnecessary guard statements across out code base.
 
-[![Stronger Code Contracts](/images/strong_code_contracts.jpg)](http://nebula.wsimg.com/6e7b8057c7f32b90d4f144424c8a7ae1?AccessKeyId=00F174C5B1CCF865161D&disposition=0&alloworigin=1)
-
-## Leaky Abstraction
+[<Figure src="/images/strong_code_contracts.jpg)](http://nebula.wsimg.com/6e7b8057c7f32b90d4f144424c8a7ae1?AccessKeyId=00F174C5B1CCF865161D&disposition=0&alloworigin=1" caption="## Leaky Abstraction" />
 
 These days in programming we tend to abstract a lot more than what we really need. [Dependency Injection](/blog/tag/dependency-injection/) and use of IOC containers have started forcing ourselves to think that everything needs to be an interface. But essentially this is not the case. But the bigger problem lies not in the abstraction, but on depending on the implementation details after abstracting. A [leaky abstraction](https://en.wikipedia.org/wiki/Leaky_abstraction) is an abstraction that exposes details and limitations of its underlying implementation to its users that should ideally be hidden away.
 

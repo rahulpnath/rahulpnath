@@ -243,9 +243,7 @@ Similarly, we can also page the data backward using the `ScanIndexForward`proper
 
 To go backward in the results, we need to set `ScanIndexForward` as false.
 
-![Based on the ScanIndexForward property, DynamoDB starts reading from the start of the items or from the end. This property is useful to page forward/backwards as required.](/images/image.png)
-
-DynamoDB orders the sort key in ascending order.
+<Figure src="/images/image.png" caption="DynamoDB orders the sort key in ascending order." />
 
 With the `ScanIndexForward` set to true, it starts wit the lowest value and moves forward as it reads items. When the `ScanIndexForward` is set to false, it starts with the max value and goes backward as items are read.
 

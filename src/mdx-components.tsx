@@ -105,6 +105,24 @@ const TechStack = ({ technologies }: { technologies: string[] }) => (
   </div>
 );
 
+const Figure = ({ src, alt, caption, ...props }: { src: string, alt?: string, caption?: string }) => (
+  <figure className="my-8">
+    <Image
+      src={src}
+      alt={alt || caption || ''}
+      width={800}
+      height={400}
+      className="w-full h-auto rounded-lg border border-gray-200"
+      {...props}
+    />
+    {caption && (
+      <figcaption className="text-sm text-gray-600 text-center mt-3 italic">
+        {caption}
+      </figcaption>
+    )}
+  </figure>
+);
+
 // Helper function to generate heading IDs
 const generateHeadingId = (text: string): string => {
   return text
@@ -115,14 +133,26 @@ const generateHeadingId = (text: string): string => {
 
 // Heading components with automatic ID generation
 const createHeading = (level: number) => (props: any) => {
-  const { children, ...rest } = props;
+  const { children, className = '', ...rest } = props;
   const text = typeof children === 'string' ? children : children?.toString?.() || '';
   const id = generateHeadingId(text);
   
-  const HeadingTag = `h${level}` as keyof JSX.IntrinsicElements;
+  const HeadingTag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  
+  // Define styling for each heading level
+  const headingStyles = {
+    1: 'text-4xl font-bold text-gray-900 mt-0 mb-6 tracking-tight leading-tight',
+    2: 'text-2xl font-bold text-gray-900 mt-12 mb-4 tracking-tight leading-tight',
+    3: 'text-xl font-bold text-gray-900 mt-8 mb-3 tracking-tight leading-tight',
+    4: 'text-lg font-bold text-gray-900 mt-6 mb-2 tracking-tight leading-tight',
+    5: 'text-base font-bold text-gray-900 mt-4 mb-2 tracking-tight leading-tight',
+    6: 'text-sm font-bold text-gray-900 mt-3 mb-1 tracking-tight leading-tight'
+  };
+  
+  const combinedClassName = `${headingStyles[level as keyof typeof headingStyles]} ${className}`.trim();
   
   return (
-    <HeadingTag id={id} {...rest}>
+    <HeadingTag id={id} className={combinedClassName} {...rest}>
       {children}
     </HeadingTag>
   );
@@ -139,6 +169,7 @@ export const mdxComponents: MDXComponents = {
   StepCard,
   YoutubeEmbed,
   TechStack,
+  Figure,
   
   // Heading components with auto-generated IDs
   h1: createHeading(1),

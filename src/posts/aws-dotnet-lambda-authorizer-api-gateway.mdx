@@ -160,9 +160,7 @@ We need to set the Authorizer explicitly for each Method endpoint for the API. T
 
 E.g., Below for the `GET` method on the _Users_ resource, set the Authorization to the new _user-service-authorizer_
 
-![Set the .NET Lambda Authorizer on REST API Method Request](/images/api-gateway-lambda-authorizer-set-authorizer-for-method.jpg)
-
-For each method on the REST API, the Authorizer needs to be selected explicitly.
+<Figure src="/images/api-gateway-lambda-authorizer-set-authorizer-for-method.jpg" caption="For each method on the REST API, the Authorizer needs to be selected explicitly." />
 
 You can add Header and Query parameter validations if the Authorizer expects specific values to be present in the HTTP request.
 
@@ -174,9 +172,7 @@ To test our new Custom Lambda Authorizer, deploy the API to a Stage.
 
 Once deployed, make a `GET` or `POST` request to the API endpoint from [Postman](https://www.postman.com/). Pass the token in the _authorizationToken_ HTTP header value.
 
-![Sample API gateway REST API request with the token in HTTP Header for .NET Lambda Authorizer. ](/images/api-gateway-lambda-authorizer-sample-api-request-postman.jpg)
-
-## Caching API Gateway Authorizer Responses
+<Figure src="/images/api-gateway-lambda-authorizer-sample-api-request-postman.jpg" caption="## Caching API Gateway Authorizer Responses" />
 
 Every time we make a call to the Resource endpoint, it now has to make two round-trip calls.
 

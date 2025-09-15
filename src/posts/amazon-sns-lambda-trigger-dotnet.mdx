@@ -94,9 +94,7 @@ Select SNS and provide the Topic name or the ARN to subscribe to and click Add. 
 
 You can also see the newly added SNS Lambda trigger under the Subscription in SNS Topic as shown below.
 
-![SNS Subscriptions showing the Lambda Function trigger.](/images/aws-sns-lambda-trigger-sns-subscriptions.jpg)
-
-### Testing SNS Lambda Trigger Integration
+<Figure src="/images/aws-sns-lambda-trigger-sns-subscriptions.jpg" caption="### Testing SNS Lambda Trigger Integration" />
 
 With the integration set up, any time a new message is published to the SNS Topic, it sends it to all it’s Subscriptions. Using the AWS Console, we can test this by publishing a message.
 
@@ -108,9 +106,7 @@ The message is immediately sent to all Subscribers, including the Lambda functio
 
 As shown below, it logs the SNS message that we just sent. Also note that the number of Records is one.
 
-![aws-sns-lambda-trigger-cloudwatch-log](/images/aws-sns-lambda-trigger-cloudwatch-log.jpg)
-
-## Scaling and Lambda Concurrency
+<Figure src="/images/aws-sns-lambda-trigger-cloudwatch-log.jpg" caption="## Scaling and Lambda Concurrency" />
 
 As events come into SNS it triggers Lambda to process. Lambda creates a new instance if all existing function instances are busy processing previous events. Lambda automatically scales up new instances as more and more messages appear.
 
@@ -156,9 +152,7 @@ The CloudWatch log streams shows 50 stream entries as shown below. Each new Lamb
 
 The Concurrent executions graph under Lambda Function → Monitor also shows the number of Concurrent Lambda functions. Below it shows 50 in this case.
 
-![](/images/aws-sns-lambda-trigger-concurrent-executions.jpg)
-
-### Lambda Concurrency Configuration
+<Figure src="/images/aws-sns-lambda-trigger-concurrent-executions.jpg" caption="### Lambda Concurrency Configuration" />
 
 _[The Functions' Concurrency](https://docs.aws.amazon.com/lambda/latest/dg/invocation-scaling.html) is the number of instances that serve requests at a given time_
 
@@ -174,9 +168,7 @@ Below I have updated the value to 20 for our Lambda Function. This also means I 
 
 If you invoke the LINQPad script again with 50 messages you can see in the Concurrent executions graph, the number of Lambda functions are capped at 20.
 
-![](/images/aws-sns-lambda-trigger-concurrent-executions-update.jpg)
-
-### Asynchronous Invocation
+<Figure src="/images/aws-sns-lambda-trigger-concurrent-executions-update.jpg" caption="### Asynchronous Invocation" />
 
 So what happens to the additional messages that are published to the Topic?
 
@@ -245,17 +237,13 @@ The DLQ can be Amazon SQS or Amazon SNS. Below I have configured to be a SQS.
 
 Before saving the below configuration, ensure that the Lambda Function has permissions to _SendMessage_ to the SQS queue that is set up as the Dead Letter Queue.
 
-![](/images/aws-sns-lambda-trigger-asynchronous-configuration.jpg)
-
-### Handle Stale Subscription Errors
+<Figure src="/images/aws-sns-lambda-trigger-asynchronous-configuration.jpg" caption="### Handle Stale Subscription Errors" />
 
 As long as the Lambda Function is up and running the SNS Subscription Trigger configuration we have set up is valid. However, if we delete the Lambda Function the Subscription becomes Stale.
 
 The Subscription information is not automatically deleted if we delete the Lambda Function. This means SNS will still try and deliver new events to the Lambda Function, but will fail. These are referred to as [Client-side errors.](https://docs.aws.amazon.com/sns/latest/dg/sns-dead-letter-queues.html#why-do-message-deliveries-fail)
 
-![](/images/aws-sns-lambda-trigger-subscription-configuration.jpg)
-
-Amazon SNS doesn’t retry the message delivery due to client-side errors.
+<Figure src="/images/aws-sns-lambda-trigger-subscription-configuration.jpg" caption="Amazon SNS doesn’t retry the message delivery due to client-side errors." />
 
 However you can configure a Dead-letter queue in the SNS Trigger configuration (as shown above), so that messages that fail to be delivered to the subscriber are automatically send the the DLQ.
 

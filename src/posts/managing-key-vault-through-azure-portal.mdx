@@ -13,9 +13,7 @@ You can now manage Key Vault through the Azure portal. Prior to this the Key Vau
 
 In the new Azure portal search for 'key vault' to access this new feature. Or you can go to 'More Services' and scroll down to 'Security + Identity' section in the menu. Selecting Key Vault takes you to all the available Key Vaults under your subscription. You can further filter the Vault's list by the vault name using the filter box or based on your subscriptions.
 
-![Key Vault in Azure Portal](/images/keyvaultportal_menu_option.png)
-
-## Creating Key Vault
+<Figure src="/images/keyvaultportal_menu_option.png" caption="## Creating Key Vault" />
 
 To create a new Key Vault select the 'Create' option. By entering the Vault Name, Subscription, Resource Group and Location you can create a new Key Vault.
 
@@ -23,13 +21,9 @@ To create a new Key Vault select the 'Create' option. By entering the Vault Name
 
 The pricing tier defaults to Standard and it does not support HSM backed keys. This means you will be only able to create Software keys. You can select the Premium pricing tier if you need HSM backed keys. By default the login with which you create the subscription with gets granted access to the vault and is added to the access policies. You can grant additional applications or users access and control the permissions. Below I am adding in an AD application.
 
-![Key Vault Add Access Policy](/images/keyvaultportal_access_policy.png)
+<Figure src="/images/keyvaultportal_access_policy.png" caption="You can specify the Key Permissions and the Secret Permissions that the ServicePrincipal." />
 
-You can specify the Key Permissions and the Secret Permissions that the ServicePrincipal.
-
-![Access Policy set Secret Permissions](/images/keyvaultportal_secretpermissions.png)
-
-### Keys and Secrets
+<Figure src="/images/keyvaultportal_secretpermissions.png" caption="### Keys and Secrets" />
 
 Once the Vault is created you can add in Keys and Secrets into the vault. This can be done by selecting the Vault that was just created from the Vaults list. From here you can manage different aspects of the Vault and also manage Keys and Secrets.
 

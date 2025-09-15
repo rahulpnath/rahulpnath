@@ -26,9 +26,7 @@ Azure SQL supports Azure AD authentication, which means it also supports the [Ma
 
 In this post, let us look at how we can use Manage Service Identity to connect to Azure SQL from a web application running in Azure. Once set up, all we need is the database server details and the database name to connect to the database
 
-[![](/images/asp_net_core_banner.png)](https://www.youtube.com/playlist?list=PL59L9XrzUa-nqfCHIKazYMFRKapPNI4sP)
-
-## Using Azure AD Token to Connect to SQL
+[<Figure src="/images/asp_net_core_banner.png)](https://www.youtube.com/playlist?list=PL59L9XrzUa-nqfCHIKazYMFRKapPNI4sP" caption="## Using Azure AD Token to Connect to SQL" />
 
 Using the [DefaultAzureCredential from Azure Identity SDK we can retrieve token from Azure AD](/blog/defaultazurecredential-from-azure-sdk/). SqlConnection uses this token for authentication. Below is a sample code where the AccessToken property of the SqlConnection is the Azure AD token.
 

@@ -40,9 +40,7 @@ The AWS Management Console only supports the stream's creation on existing table
 
 Under the Exports and streams section of an existing DynamoDB table, you can Enable/Disable a DynamoDB Stream, as shown below.
 
-![Enable DynamoDB Stream on a Table under the Exports and streams section in the AWS Console.](/images/dynamodb-stream-enable-existing-table.jpg)
-
-### Stream View Types
+<Figure src="/images/dynamodb-stream-enable-existing-table.jpg" caption="### Stream View Types" />
 
 When enabling a stream, you need to specify the Stream View Type.
 
@@ -61,9 +59,7 @@ AWS maintains DynamoDB and DynamoDB Streams as two separate endpoints.
 
 Once enabled, you can see the ARN details, the View Type, and any Triggers attached to the Stream, as shown below.
 
-![Once enabled, you can see the Stream details, view type, and attached Triggers under the DynamoDB table details. ](/images/dynamodb-stream-details.jpg)
-
-## Handling DynamoDB Stream Events
+<Figure src="/images/dynamodb-stream-details.jpg" caption="## Handling DynamoDB Stream Events" />
 
 Applications can read and process stream records from the DynamoDB Streams.
 
@@ -209,9 +205,7 @@ We can also use the User object instance to perform business logic and related f
 
 The DynamoDB Stream Lambda trigger has additional configuration options. Navigate to the Trigger option under the Lambda Function and Edit the trigger.
 
-![Setting up Lambda Trigger configuration for the DynamoDB Trigger, batch size and batch window, on the .NET Function.](/images/dynamodb-stream-lambda-trigger-edit-configuration.jpg)
-
-**Batch Size and Batch Window**
+<Figure src="/images/dynamodb-stream-lambda-trigger-edit-configuration.jpg" caption="**Batch Size and Batch Window**" />
 
 **Batch size**  is the number of records sent to the Lambda function in each batch. The **Batch window** specifies the maximum amount of time (in seconds) to gather records before invoking the Function.
 

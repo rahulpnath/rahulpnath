@@ -30,9 +30,7 @@ An Azure Queue Storage lives under a Storage account in Azure. To create a queue
 
 Once created, we can add Queues under the Storage account, as shown below.
 
-![Create a Queue under Storage Account from Azure Portal](/images/azure_storage_account_create_queue.jpg)
-
-## Connecting to Azure Queue from .NET
+<Figure src="/images/azure_storage_account_create_queue.jpg" caption="## Connecting to Azure Queue from .NET" />
 
 With Queue Storage created, we can start using it from our application. Queue Storage is excellent when you want to decouple long-running workloads to happen in the background. It prevents users from having to wait till long precesses are completed.
 
@@ -40,9 +38,7 @@ The NuGet package [Azure.Storage.Queues](https://github.com/Azure/azure-sdk-for-
 
 The `QueueClient` requires a Connection String to authorize and authenticate. It is available from the Azure Portal from the Access Keys section under the Storage Account (as shown below).
 
-![Azure Queue Storage Access Keys](/images/azure_queue_storage_access_keys.jpg)
-
-Azure Queue Storage Access Keys
+<Figure src="/images/azure_queue_storage_access_keys.jpg" caption="Azure Queue Storage Access Keys" />
 
 _Later in the post, I'll show you how to connect to the Queue without a connection string and using Managed Identity._
 

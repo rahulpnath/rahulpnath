@@ -59,9 +59,7 @@ Managed Serviced Identity (MSI) can be turned on through the Azure Portal. Under
 
 > **[A system-assigned managed identity](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview#how-does-the-managed-identities-for-azure-resources-work)** is enabled directly on an Azure service instance. When the identity is enabled, Azure creates an identity for the instance in the Azure AD tenant that's trusted by the subscription of the instance. After the identity is created, the credentials are provisioned onto the instance. The lifecycle of a system-assigned identity is directly tied to the Azure service instance that it's enabled on. If the instance is deleted, Azure automatically cleans up the credentials and the identity in Azure AD.
 
-![](/images/azure_function_msi.jpg)
-
-![](/images/azure_function_msi_on.jpg)
+<Figure src="/images/azure_function_msi.jpg" caption="![](/images/azure_function_msi_on.jpg)" />
 
 Once enabled, you can find the added identity for the Azure function under _Enterprise Applications_ list in the AD directory. Azure internally manages this identity.
 

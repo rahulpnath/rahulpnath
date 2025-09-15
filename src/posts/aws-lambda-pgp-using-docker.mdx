@@ -43,9 +43,7 @@ For encrypting the data, the Sender uses the Recipients Public Key, which can th
 
 To see this in action, first install the [GnuPG tool from here](https://gnupg.org/download/). If you are on Linux or use the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10), you would most likely have this already installed.
 
-![PGP command line help information](/images/gpg_help.jpg)
-
-Type in gpg -h to get details and help on how to use the tool.
+<Figure src="/images/gpg_help.jpg" caption="Type in gpg -h to get details and help on how to use the tool." />
 
 To get started using the tool, we need two certificates - for Sender and Recipient.
 
@@ -127,9 +125,7 @@ gpg --output TestFile.decrypt.txt --decrypt TestFile.txt.asc
 
 ```
 
-![gpg decrypt output with signature verification](/images/gpg_decrypt.jpg)
-
-## PGP From .NET Core
+<Figure src="/images/gpg_decrypt.jpg" caption="## PGP From .NET Core" />
 
 The [Process](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process?view=net-5.0) class in .NET Core provides access to local and remote processes. It enables you to start and stop local system processes.
 
@@ -342,9 +338,7 @@ Head over to your AWS console (or use the AWS CLI) to create a new repository. T
 
 Below I have created '_rahulpnath-test_' repository, with all the default options selected on create.
 
-![Publish Docker images to AWS ECR](/images/aws_lambda_docker_ecr.jpg)
-
-To upload images to this repository, click the '_View push commands_' button to see the commands.
+<Figure src="/images/aws_lambda_docker_ecr.jpg" caption="To upload images to this repository, click the '_View push commands_' button to see the commands." />
 
 It logs into our private ECR repository using the AWS CLI, and then builds, tags, and pushes the image to the repository.
 
@@ -367,9 +361,7 @@ aws ecr-public get-login-password --region us-east-1 | docker login --username A
 
 Once all the above steps are done, you can see there is a new image in the repository that we just created.
 
-![Latest Docker image published to AWS ECR](/images/aws_lambda_docker_ecr_image.jpg)
-
-## Publish To Lambda
+<Figure src="/images/aws_lambda_docker_ecr_image.jpg" caption="## Publish To Lambda" />
 
 Finally, let's publish the Lambda.
 
@@ -381,9 +373,7 @@ Give the function a name and select the Container image using the 'Browse Images
 
 We need two S3 buckets, that we can create the S3 section under the same account/region. The bucket name follows the convention (one ends with '-encrypted') and has all the default options set.
 
-![AWS S3 containers to upload files](/images/aws_lambda_docker_s3.jpg)
-
-### Setup IAM Permissions and Lambda Trigger
+<Figure src="/images/aws_lambda_docker_s3.jpg" caption="### Setup IAM Permissions and Lambda Trigger" />
 
 We need to give the AWS Lambda access to read from the S3 buckets and set a trigger to run the lambda function any time a new file is uploaded to the _PGP-docker_ S3 bucket.
 
@@ -405,9 +395,7 @@ It gives the below options to again select a trigger source (in this case, S3) a
 
 Since we want to encrypt the file any time a new one is added to the bucket, I have registered for the PUT event type.
 
-![Set up lambda trigger when a new file is added to S3 bucket](/images/aws_lambda_s3_trigger.jpg)
-
-### Lambda Timeout
+<Figure src="/images/aws_lambda_s3_trigger.jpg" caption="### Lambda Timeout" />
 
 While putting this post together, I wasted over 2 hours because of this one tiny setting.
 
@@ -417,9 +405,7 @@ So make sure to update this to a larger value so that we have enough time to rea
 
 We can update the timeout under _Configuration → General Configuration_
 
-![AWS Lambda default timeout of 3 sec. Make sure to update to the required value.](/images/aws_labda_timeout.jpg)
-
-## Packaging & Publishing - Visual Studio
+<Figure src="/images/aws_labda_timeout.jpg" caption="## Packaging & Publishing - Visual Studio" />
 
 With AWS Toolkit installed, you can skip most of the above steps and directly publish from Visual Studio. Right-click on the Lambda function project and choose the 'Publish to AWS Lambda...' option.
 

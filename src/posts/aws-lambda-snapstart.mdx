@@ -81,9 +81,7 @@ public class Function
 
 The easiest way to invoke this Lambda function is from the AWS Console. However, invocations from the UI (from the same browser tab) are sequential.
 
-![](/images/image-2.png)
-
-Invoking Lambda Function from the AWS Console, under the Test tab.
+<Figure src="/images/image-2.png" caption="Invoking Lambda Function from the AWS Console, under the Test tab." />
 
 Below is a snapshot of the CloudWatch logs after two invocations from the UI.
 
@@ -127,9 +125,7 @@ This invokes the Lambda Function in parallel, which forces the infrastructure to
 
 You can tell that quickly by looking at the Log stream records created in CloudWatch, as shown below.
 
-![](/images/image-4.png)
-
-CloudWatch LogStreams showing multiple log streams, one per instance of Lambda Function created.
+<Figure src="/images/image-4.png" caption="CloudWatch LogStreams showing multiple log streams, one per instance of Lambda Function created." />
 
 Each log stream record is associated with one instance of Lambda Function.
 
@@ -149,15 +145,11 @@ You can enable SnapStart on a Lambda function under Configuration → General Co
 
 Set the SnapStart option to PublishedVersions to enable SnapStart on your Lambda Function.
 
-![](/images/image-5.png)
-
-Enable Lambda SnapStart under the General Configuration of the Lambda Function.
+<Figure src="/images/image-5.png" caption="Enable Lambda SnapStart under the General Configuration of the Lambda Function." />
 
 Once enabled, you can see this in the General configuration as shown below.
 
-![](/images/image-6.png)
-
-Lambda Function with SnapStart enabled by setting it to PublishedVersions.
+<Figure src="/images/image-6.png" caption="Lambda Function with SnapStart enabled by setting it to PublishedVersions." />
 
 ### Publishing AWS Lambda SnapStart Enabled Version
 
@@ -193,9 +185,7 @@ AWS Lambda does this when you publish a Lambda version with SnapStart enabled.
 
 Any time you publish a new version with SnapStart enabled, you can see this in the CloudWatch logs.
 
-![](/images/image-10.png)
-
-AWS CloudWatch logs for initialization of AWS Lambda SnapStart enabled version.
+<Figure src="/images/image-10.png" caption="AWS CloudWatch logs for initialization of AWS Lambda SnapStart enabled version." />
 
 The Init Duration is in the above logs, which is why there is a slight delay in publishing the version.
 
@@ -221,9 +211,7 @@ With SnapStart enabled Lambda Functions, the Lifecycle differs from a [normal La
 
 You can find the comparison in the Lifecycle in the diagram below.
 
-[![](/images/image-11.png)](https://aws.amazon.com/blogs/compute/starting-up-faster-with-aws-lambda-snapstart/)
-
-AWS Lambda Lifecycle compared between SnapStart and non-SnapStart Lambda Functions.
+[<Figure src="/images/image-11.png)](https://aws.amazon.com/blogs/compute/starting-up-faster-with-aws-lambda-snapstart/" caption="AWS Lambda Lifecycle compared between SnapStart and non-SnapStart Lambda Functions." />
 
 With SnapStart, the function's initialization time—typically the main cause of high startup latency—is replaced by a faster resume phase.
 
@@ -249,9 +237,7 @@ In our Function, we generate a new `ConstructorGuid` property in the function co
 
 Below is the snapshot of the logs running on the non-SnapStart Lambda Function.
 
-![](/images/image-15.png)
-
-Logs showing unique data generated in the constructor code for a non-SnapStart Lambda Function
+<Figure src="/images/image-15.png" caption="Logs showing unique data generated in the constructor code for a non-SnapStart Lambda Function" />
 
 You can see the \`Constructor Id' logged in each of the statements (for a different instance of the Lambda Function) is different.
 
@@ -259,9 +245,7 @@ In this case, the Lambda Function is created new by invoking the Function constr
 
 However, with SnapStart-enabled Lambda Functions, the constructor code is only invoked once when publishing the version.
 
-![](/images/image-14.png)
-
-Logs showing unique data generated in the constructor code for a SnapStart enabled Lambda Function
+<Figure src="/images/image-14.png" caption="Logs showing unique data generated in the constructor code for a SnapStart enabled Lambda Function" />
 
 This means the 'Constructor Id' is only generated once and remains the same for all function invocations.
 
@@ -311,9 +295,7 @@ When the Lambda environment restores a function, these methods will be invoked b
 
 The below logs, with the SnapStart on, show the 'Constructor Id' is unique again across multiple lambda instances after using Runtime Hooks to set the value.
 
-![](/images/image-17.png)
-
-Logs showing data generated in the Runtime hooks for a SnapStart enabled Lambda Function
+<Figure src="/images/image-17.png" caption="Logs showing data generated in the Runtime hooks for a SnapStart enabled Lambda Function" />
 
 We could also move the code retrieving data from S3 into the Hooks to get the latest data from the S3 file whenever a new instance is created.
 

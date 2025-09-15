@@ -9,9 +9,7 @@ tags:
 ---
 _How to sign a PDF using Azure Key Vault?_ - This is one of the questions that I often get regarding Azure Key Vault. In this post, we will explore how to sign a PDF using a certificate in Azure Key Vault. Signing a PDF has various aspects to it which are covered in depth in the white paper - [Digital Signatures for PDF Documents](http://developers.itextpdf.com/books#digsig). We will be using the [iText library](http://itextpdf.com/) to sign the PDF. iText is available as a [Nuget package library](https://www.nuget.org/packages/itext7/). The below image shows the elements that composes a digital signature on the left and actual contents on the right.
 
-![Digitally Signed PDF Contents](/images/adobe_signature.png)
-
-## Signing with a Local Certificate
+<Figure src="/images/adobe_signature.png" caption="## Signing with a Local Certificate" />
 
 When the certificate (along with the private key) is available locally, signing the PDF is straightforward. You can load the certificate as an X509Certificate from the local certificate store using the [thumbprint](https://stackoverflow.com/questions/11115511/how-to-find-certificate-by-its-thumbprint-in-c-sharp). Make sure that the certificate is installed with the Exportable option as shown below.
 

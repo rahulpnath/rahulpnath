@@ -78,9 +78,7 @@ But for now, let's head off to Azure Portal and manually create the resources.
 
 As shown below, create the resources under a Resource Group. _A [Resource Group](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal) is a container that holds related resources for an Azure solution._
 
-![Azure Portal Resource Group with the associated resources](/images/web_app_with_web_job_resources_azure_portal.jpg)
-
-### Create Pipeline
+<Figure src="/images/web_app_with_web_job_resources_azure_portal.jpg" caption="### Create Pipeline" />
 
 To create a new release pipeline under Pipelines → Releases, use the '_New Release Pipeline_' option.
 
@@ -125,9 +123,7 @@ The Task by default uses Zip Deploy unless explicitly specified under the 'Addit
 
 With [Zip Deploy](https://github.com/microsoft/azure-pipelines-tasks/blob/master/Tasks/AzureRmWebAppDeploymentV4/README.md#zip-deploy), it deploys the entire file contents to the wwwroot folder of the Azure App Service. It will overwrite all existing files.
 
-![Azure App Service release pipeline task](/images/web_app_with_web_job_release_pipeline.jpg)
-
-Save and Create a new Release!
+<Figure src="/images/web_app_with_web_job_release_pipeline.jpg" caption="Save and Create a new Release!" />
 
 We have successfully set up a build/release pipeline for a Web App with a Web Job.
 

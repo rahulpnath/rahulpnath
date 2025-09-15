@@ -32,9 +32,7 @@ Select the '_Empty Serverless Application_' blueprint to create a Serverless app
 
 As shown below, it contains the same set of files as we saw in the [previous post on getting started with AWS Lambda](/blog/aws-lambda-net-core/) with the addition of one new file `serverless.template` ;which is the AWS SAM template file.
 
-![AWS Serverless Application Empty blueprint application default items](/images/aws_serverless_template_default_items.jpg)
-
-### AWS Serverless Application Model (SAM)
+<Figure src="/images/aws_serverless_template_default_items.jpg" caption="### AWS Serverless Application Model (SAM)" />
 
 The [AWS Serverless Application Model](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html) (AWS SAM) is an open-source framework that you can use to build serverless applications on AWS. It allows us to define the AWS resources as code - in other words, it's [Infrastructure as Code (IaC)](https://en.wikipedia.org/wiki/Infrastructure_as_code).
 
@@ -169,9 +167,7 @@ Navigating the API URL, it returns the hardcoded message from the AWS lambda →
 
 Each time the application is published, the template and the associated published application package are uploaded to the selected S3 bucket.  You can navigate to the S3 bucket to view the files.
 
-![CloudFormation associated S3 bucket](/images/aws_serverless_cloudformation_s3.jpg)
-
-## Web API using Azure Lambda, API Gateway, and DynamoDB
+<Figure src="/images/aws_serverless_cloudformation_s3.jpg" caption="## Web API using Azure Lambda, API Gateway, and DynamoDB" />
 
 To create a more complex AWS Serverless applications that use a DynamoDB table to store and retrieve data using AWS Lambda's and API Gateway, you can select the 'Blog API using DynamoDB' as the blueprint.
 

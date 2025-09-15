@@ -74,9 +74,7 @@ We can create a new instance of HttpClient and not dispose of for the applicatio
 
 You can [read more about these issues](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#issues-with-the-original-httpclient-class-available-in-net-core) using the HttpClient class directly in the official Microsoft documentation.
 
-[![](/images/asp_net_core_banner.png)](https://www.youtube.com/playlist?list=PL59L9XrzUa-nqfCHIKazYMFRKapPNI4sP)
-
-## Use IHttpClientFactory To Create HttpClient
+[<Figure src="/images/asp_net_core_banner.png)](https://www.youtube.com/playlist?list=PL59L9XrzUa-nqfCHIKazYMFRKapPNI4sP" caption="## Use IHttpClientFactory To Create HttpClient" />
 
 Now that we know the issues let’s see how to fix this. The simplest way is to inject the `IHttpClient Factory` and create a new HttpClient instance from it.
 

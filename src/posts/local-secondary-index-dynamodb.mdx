@@ -73,9 +73,7 @@ The `Create local index` button opens a popup with the details for the LSI.
 
 The important properties required when creating an LSI on a DynamoDB Table, are the SoryKey, the Index name, and the attribute projections.
 
-![LSI creation dialog prompts for the Sort Key, the Index name and also the type of attributes to be projected to the Index.](/images/image-10.png)
-
-❌
+<Figure src="/images/image-10.png" caption="❌" />
 
 _Once a Secondary Index is created, you cannot modify it. You need to delete and recreate it._
 
@@ -121,9 +119,7 @@ If the attributes are missing from the LSI, they are fetched from the base table
 
 In the below screenshot, I have selected the Index which has only the keys projected but selected 'All attributes' to be projected. The query result does show all the attributes on the DynamoDB items.
 
-![DynamoDB Query projecting 'All attributes' from an Index that has Only_Keys projected. It does additional 'fetches' to the base table to populate the missing attributes.](/images/image-14.png)
-
-### Querying DynamoDB LSI Using .NET
+<Figure src="/images/image-14.png" caption="### Querying DynamoDB LSI Using .NET" />
 
 You can use the LSI when querying data from .NET applications.
 

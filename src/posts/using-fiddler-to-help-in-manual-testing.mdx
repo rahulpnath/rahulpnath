@@ -26,9 +26,7 @@ Using the Fiddler composer window (shown in the image below), we can create new 
 
 Fiddler also allows saving raw requests in the Scratchpad tab to execute as and when required. On clicking Execute Fiddler creates an HTTP request from the entered data and sends to the server. To modify requests you can either drag and drop the request from the displayed URL's list into the composer tab or right-click on an entry and _Unlock for Editing_ (keyboard shortcut - F2). After making the changes to the request in the Inspector window, right-click on the request again to Replay -> Reissue ( R).
 
-![Fiddler Composer tab](/images/fiddler_composer.png)
-
-### Testing Error Cases
+<Figure src="/images/fiddler_composer.png" caption="### Testing Error Cases" />
 
 Testing error cases is tricky, especially from a UI level. Things usually don't go wrong in the development/testing environment and [almost never on a developers machine](http://blog.codinghorror.com/the-works-on-my-machine-certification-program/) which makes it very hard to test for cases where something does not work. Fiddler makes it easy to test error scenarios with [AutoResponder](http://docs.telerik.com/fiddler/KnowledgeBase/AutoResponder), which allows returning handcrafted responses for requests, without actually hitting the server.
 

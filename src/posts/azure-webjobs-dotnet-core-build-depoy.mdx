@@ -80,9 +80,7 @@ public class ProcessMessageFunction
 
 The above function is triggered every time a message is dropped in the Azure Storage Queue with the name 'queue.' The function reads the message and drops it back to another queue named 'processed.' It adds a Processed text and the date and time it was processed.
 
-[![](/images/asp_net_core_banner.png)](https://www.youtube.com/playlist?list=PL59L9XrzUa-nqfCHIKazYMFRKapPNI4sP)
-
-## Azure DevOps Pipeline
+[<Figure src="/images/asp_net_core_banner.png)](https://www.youtube.com/playlist?list=PL59L9XrzUa-nqfCHIKazYMFRKapPNI4sP" caption="## Azure DevOps Pipeline" />
 
 Since we are not much interested in what the function is doing, let's move to set up the Build/Deploy pipeline for this Azure Function. I have a sample pipeline set up here (details at the bottom of the post) in case you want to refer to it at any step. You can also check out the video above for the full setup walkthrough.
 

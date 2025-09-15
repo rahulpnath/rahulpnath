@@ -16,9 +16,7 @@ With large scale applications it is very common to have an external cache, to op
 
 > In this blog post we will be seeing how to keep our Repositories clean and separate from the actual providers and provide a persistence ignorant data access to your business layer.
 
-![Repository Pattern Class Diagram](/images/RepositoryPattern.PNG)
-
-### Creating the Repository
+<Figure src="/images/RepositoryPattern.PNG" caption="### Creating the Repository" />
 
 At the bare minimum a repository should be able to provide CRUD (Create Read Update Delete) options, for which we will have a generic interface defined and have implementation of which will be inherited from, for specific repositories.
 

@@ -44,9 +44,7 @@ New-AzureKeyVault -VaultName 'TestKeyVault' -ResourceGroupName
 
 The above scripts creates the key vault under the '_SharedGroup_'. [Resource Groups](https://azure.microsoft.com/en-us/documentation/articles/resource-group-overview/#resource-groups) are logical containers, used to group resources together as required. [Access to azure resources](https://azure.microsoft.com/en-us/documentation/articles/role-based-access-control-configure/) can be assigned at any of the three levels (subscription, resource group or resource) and it inherits down the hierarchy as shown below. Roles can be assigned specifically to a resource, or to resource group (which would mean all to all resources in that group) or at the subscription level (which would apply to all resources/resource groups in that subscription.).
 
-[![RBAC Assignment Scopes](/images/rbac_assignment_scopes.png)](https://acomdpsstorage.blob.core.windows.net/dpsmedia-prod/azure.microsoft.com/en-us/documentation/articles/role-based-access-control-configure/20151006095042/rbacassignmentscopes.png)
-
-### Setting Permission on the resource group
+[<Figure src="/images/rbac_assignment_scopes.png)](https://acomdpsstorage.blob.core.windows.net/dpsmedia-prod/azure.microsoft.com/en-us/documentation/articles/role-based-access-control-configure/20151006095042/rbacassignmentscopes.png" caption="### Setting Permission on the resource group" />
 
 As an administrator I want the newly created user to have permission to interact with the key vault, but not create new or delete existing vaults. I would also want to give the user ability to modify keys and secrets within the vault. Currently since the new user does not have any rights, we should first give him rights to see the vaults in the _SharedGroup_. For this a _Reader_ role from the set of [built in roles](https://azure.microsoft.com/en-us/documentation/articles/role-based-access-control-configure/#built-in-roles) can be assinged, through the new azure portal or powershell.
 

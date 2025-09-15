@@ -47,9 +47,7 @@ The IDE's I commonly use for .NET development are [Visual Studio](https://aws.am
 
 Once installed and setup (follow the docs for instructions), you can start creating different project types from the available templates available. Below is a screenshot from the Visual Studio project creation dialog filtered to AWS Platform type.
 
-![AWS Toolkit Visual Studio Project Templates](/images/aws_toolkit_visual_studio.jpg)
-
-## Setting Up First Project
+<Figure src="/images/aws_toolkit_visual_studio.jpg" caption="## Setting Up First Project" />
 
 Let's create a new project using the '_AWS Lambda Project (.NET Core - C#)_' template option.
 
@@ -121,9 +119,7 @@ The Mock Lambda Test Tool shows up a UI to select the configuration file and the
 
 Since our Function accepts a string, let's choose the 'Hello World' template and pass a string. To trigger the Function, click the Execute Function, and it will simulate an AWS Lambda Function trigger.
 
-![Mock Lambda Tool showing the Function](/images/aws_mock_lambda_tool.jpg)
-
-### Lambda Triggers
+<Figure src="/images/aws_mock_lambda_tool.jpg" caption="### Lambda Triggers" />
 
 Earlier, we triggered the Lambda function manually using the Mock tool. Similarly, we can also use the Lambda Console, API, CLI, etc., to invoke the Lambda.
 
@@ -165,9 +161,7 @@ Clicking the Next button prompts to select an IAM role to grant the Lambda funct
 
 I have given it the [AWSLambdaBasicExecutionRole](https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html#permissions-executionrole-features), which grants permissions to write to CloudWatch logs.
 
-![Upload Lambda Function Advanced Function Details in Visual Studio.](/images/aws_publish_to_aws_lambda_1.jpg)
-
-Click the Upload button to upload and publish the Lambda Function to the selected AWS environment.
+<Figure src="/images/aws_publish_to_aws_lambda_1.jpg" caption="Click the Upload button to upload and publish the Lambda Function to the selected AWS environment." />
 
 The wizard first runs dotnet publish, which generates the compiled DLL, all of its assembly dependency, along with the runtimeconfig.json file (_AWSLambda1.runtimeconfig.json_).
 

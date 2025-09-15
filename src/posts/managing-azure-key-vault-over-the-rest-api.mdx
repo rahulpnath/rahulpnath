@@ -39,9 +39,7 @@ private async Task<string> GetAccessToken(string authority, string resource, str
 
 > _Earlier authentication requests were served from https://login.windows.net (authority URL) which is [now updated](https://blogs.technet.microsoft.com/ad/2015/03/06/simplifying-our-azure-ad-authentication-flows/) to https://login.microsoftonline.com ._
 
-![AD Application access to Azure Service Management API](/images/service_management_adAccess.png)
-
-## Key Vault Management Client
+<Figure src="/images/service_management_adAccess.png" caption="## Key Vault Management Client" />
 
 The [Microsoft.Azure.Management.KeyVault](https://www.nuget.org/packages/Microsoft.Azure.Management.KeyVault/) NuGet package, provides capabilities to connect to the Management API's and manage the Vaults. With the NuGet reference added I can use the _[KeyVaultManagementClient](https://github.com/Azure/azure-sdk-for-net/blob/master/src/ResourceManagement/KeyVaultManagement/KeyVaultManagement/Generated/KeyVaultManagementClient.cs)_.
 

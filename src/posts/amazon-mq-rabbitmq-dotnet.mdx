@@ -37,9 +37,7 @@ To create a RabbitMQ message broker, navigate to Amazon MQ in the AWS Console.
 
 Create a new broker and choose RabbitMQ as the broker engine type, as shown below.
 
-![Create a new Amazon MQ broker using the RabbitMQ broker type.](/images/image-1.png)
-
-Create a new Amazon MQ broker using the RabbitMQ broker type.
+<Figure src="/images/image-1.png" caption="Create a new Amazon MQ broker using the RabbitMQ broker type." />
 
 It then prompts you to choose the deployment mode.
 
@@ -54,15 +52,11 @@ For purposes of this blog post, I am using a Single instance. However, choose Cl
 
 Once done you can configure the broker name, the instance type, username/password and other advanced configuration required.
 
-![Configure RabbitMQ setting in Amazon MQ.](/images/image-3.png)
-
-Configure RabbitMQ setting in Amazon MQ.
+<Figure src="/images/image-3.png" caption="Configure RabbitMQ setting in Amazon MQ." />
 
 Review and create the RabbitMQ broker instance.
 
-![RabbitMQ broker instance up and running and the details as from the AWS console.](/images/image-5.png)
-
-RabbitMQ broker instance up and running and the details as from the AWS console.
+<Figure src="/images/image-5.png" caption="RabbitMQ broker instance up and running and the details as from the AWS console." />
 
 ## Creating .NET Application To Send/Receive Messages From RabbitMQ
 
@@ -220,8 +214,6 @@ The RabbitMQ.Client NuGet package provides a `EventingBasicConsumer` class we ca
 
 The above code sets up the `Received` event handler with the function to process the message, in this case, writing the message body to the console.
 
-![Send and Receive applications in action, working with Amazon MQ RabbitMQ.](/images/rabbitmq-hello.gif)
-
-Send and Receive applications in action, working with Amazon MQ RabbitMQ.
+<Figure src="/images/rabbitmq-hello.gif" caption="Send and Receive applications in action, working with Amazon MQ RabbitMQ." />
 
 `Send >` 'Have a great day 😀'

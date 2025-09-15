@@ -51,9 +51,7 @@ This confirms that there is something happening with the Web application bin out
 
 When building a solution with a Web application project in Visual Studio (VS), I noticed that VS copies all the files from the bin folder of referred projects into the bin of the Web application project. This happens even if you build the shared project alone, as VS notices a change in the files of a dependent project and copies it over. So in this particular case, every time we build the dependent shared project or the worker project (which in turn triggers a build on the shared project), it ended up changing the files in shared projects bin folder, triggering VS to copy it over to the Web application's bin folder. This auto copy happens only for the Web application project and not for the Console/WPF project. ([Yet to find](https://twitter.com/rahulpnath/status/745841691979022336) what causes this auto copy on VS build)
 
-![Double Write Dll conflict](/images/doubleWrite_dll_conflict.jpg)
-
-_Bin folder of Web application and Console application after building Shared project_
+<Figure src="/images/doubleWrite_dll_conflict.jpg" caption="_Bin folder of Web application and Console application after building Shared project_" />
 
 Since **_\[CopyLocal\](https://msdn.microsoft.com/en-us/library/aa984582(v=vs.71).aspx)_**, by default was true for the shared project, Newtonsoft DLLs were also getting copied into the shared project bin and in turn into Web applications bin (by VS). Since the Web application did not build during the above rebuild, it now has a conflicting DLL version of Newtonsoft in its bin folder, that does not match the assembly version it depends on, hence throws the exception, the next time I load the Web application from IIS.
 

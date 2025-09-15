@@ -75,9 +75,7 @@ Now that we have decoupled the application from the Key Vault, we need to see ho
 
 We had seen how to [authenticate a client application with a Key Vault](/blog/authenticating-a-client-application-with-azure-key-vault/) using an Active Directory (AD) application, and how to set various access policies for these application's. Applications should be given only the minimum set of permissions that it requires to operate on, most probably this would be only the read permissions. For [administrative application's](https://github.com/rahulpnath/AzureKeyVaultExplorer) we would want to give all permissions so that it can modify the vault keys/secrets as required. For such a scenario it is best to have, two (or more) separate AD application's created and have separate permissions provided.
 
-![Multiple AD applications to access key vault with different permissions](/images/multiple_ad_application.png)
-
-## What all should be there in my configuration file?
+<Figure src="/images/multiple_ad_application.png" caption="## What all should be there in my configuration file?" />
 
 All your [sensitive information should be moved out of your application configuration file](/blog/moving-sensitive-information-from-configuration-file-to-azure-key-vault/), and Key Vault is the one place to have them all. The application's configuration file should only have the azure key vault url and the AD application id and certificate identifier (thumb print) that can be used to authenticate with the AD. Yes it is advisable to use the [certificate authentication mechanism](/blog/authenticating-a-client-application-with-azure-key-vault/) as opposed to the secret mechanism, if not you would have to put the secret in your configuration file, which would be like 'giving a thief the key to your safe'.Additionally you could also have the key identifier mappings in the configuration file that the application can use to map to key/secret in the vault as we had seen above.
 

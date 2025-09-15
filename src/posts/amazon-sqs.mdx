@@ -31,9 +31,7 @@ You can find the details comparison between the two [here](https://docs.aws.amaz
 
 Create a new queue by specifying the queue name and selecting the queue type. Let’s leave all other settings as default and explore the important ones later in this post.
 
-![Create Queue from Amazon Console](/images/amazon-sqs-create-queue.jpg)
-
-## SQS & .NET
+<Figure src="/images/amazon-sqs-create-queue.jpg" caption="## SQS & .NET" />
 
 We will use the ASP NET Core default Web API template as our sample application. The application has a `GET` method to return `WeatherForecast` data by default.
 
@@ -81,9 +79,7 @@ The AWS Console provides a UI to send and receive messages. It also supports vie
 
 The message is still available to be processed for other consumers even if you view it.
 
-![You can send and receive messages in  the AWS console](/images/amazon-sqs-receive-messages-console.jpg)
-
-You can send and receive messages too from the AWS console.
+<Figure src="/images/amazon-sqs-receive-messages-console.jpg" caption="You can send and receive messages too from the AWS console." />
 
 ### Delay Message
 

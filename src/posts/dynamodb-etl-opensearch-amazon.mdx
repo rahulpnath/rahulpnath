@@ -37,18 +37,14 @@ You can use one or more DynamoDB tables as a source for the data ingestion
 
 The plugin uses a combination of the data export feature and the DynamoDB Streams feature to get the data in near real-time from DynmoDB into OpenSearch.
 
-![](/images/image-16.png)
-
-Point-in-time recovery turned on for DynamoDB table under Backups in AWS Console.
+<Figure src="/images/image-16.png" caption="Point-in-time recovery turned on for DynamoDB table under Backups in AWS Console." />
 
 Before setting up the plugin, ensure that you have
 
 -   Turned on Point-In-Time Recovery (PITR) on DynamoDB Table
 -   Turned on DynamoDB Streams with '**New and old images**' option
 
-![](/images/image-9.png)
-
-DynamoDB Streams turned on For Zero ETL OpenSearch Plugin
+<Figure src="/images/image-9.png" caption="DynamoDB Streams turned on For Zero ETL OpenSearch Plugin" />
 
 The plugin loads the initial data snapshot (using PITR) into an Amazon S3 bucket, which is then imported into OpenSearch. This is to get existing data in the table to OpenSearch.
 
@@ -64,9 +60,7 @@ To create a new ingestion pipeline, navigate to DynamoDB under AWS Console.
 
 Under the Integration tab, you can create a new Integration and set up the Amazon OpenSearch data ingestion pipeline, as shown below.
 
-![](/images/image-10.png)
-
-Creating a new DynamoDB Zero ETL Data ingestion pipeline for Amazon OpenSearch from AWS Console.
+<Figure src="/images/image-10.png" caption="Creating a new DynamoDB Zero ETL Data ingestion pipeline for Amazon OpenSearch from AWS Console." />
 
 This prompts a new page where you can set up the ingestion pipeline details.
 
@@ -159,9 +153,7 @@ The source's IAM Role requires access to the DynamoDB Table to export data, read
 
 You can find more details on the IAM Role configuration for the source [here](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/configure-client-ddb.html#ddb-pipeline-role).
 
-![](/images/image-13.png)
-
-DynamoDB Zero ETL to OpenSearch IAM Role
+<Figure src="/images/image-13.png" caption="DynamoDB Zero ETL to OpenSearch IAM Role" />
 
 The IAM role also requires access to connect to OpenSeach and write data. The configuration for the sink role is more detailed [here](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/pipeline-domain-access.html).
 
@@ -244,9 +236,7 @@ You can restrict to these absolute required permissions if required, which mean 
 
 Once the pipeline configuration is up and running, you should be able to see your DynamoDB data in Amazon OpenSearch.
 
-![](/images/image-15.png)
-
-Amazon OpenSearch Dashboard Dev Tools to run queries
+<Figure src="/images/image-15.png" caption="Amazon OpenSearch Dashboard Dev Tools to run queries" />
 
 The configuration also supports transforming the data from DynamoDB before ingesting it into OpenSearch.
 

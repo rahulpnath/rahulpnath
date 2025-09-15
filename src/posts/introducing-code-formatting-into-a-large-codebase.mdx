@@ -59,9 +59,7 @@ _You should never have to scroll to the right_ - I caught on with this recommend
 
 The [Productivity Power Tools](https://visualstudiogallery.msdn.microsoft.com/d0d33361-18e2-46c0-8ff2-4adea1e34fef) extension for Visual Studio allows adding a Column Guide. A Column Guide reminds developers their full line of code or comments may not fit on a single screen.
 
-![Code Formatting Maximum Width Column Guide in Visual Studio using Power Tools](/images/codeformatting_column_guide.png)
-
-### **Aligning Function Parameters**
+<Figure src="/images/codeformatting_column_guide.png" caption="### **Aligning Function Parameters**" />
 
 Always try to keep the number of parameters as less as possible. In cases where there are more parameters or longer function names, the team must choose a style. There are different styling formats followed when splitting parameters to a new line.
 
@@ -124,9 +122,7 @@ fi
 
 If there are any StyleCop validation errors the commit is aborted, forcing the developer to fix it. The git hooks work fine when committing from a command line or UI tools like Source Tree. However, Visual Studio git plugin does not run the git hooks and fails to do the check.
 
-![StyleCop git hook failing commit in console](/images/code_formatting_git_hook_console.png)
-
-![StyleCop git hook failing commit in Source Tree](/images/code_formatting_git_hook_sourcetree.png)
+<Figure src="/images/code_formatting_git_hook_console.png" caption="![StyleCop git hook failing commit in Source Tree](/images/code_formatting_git_hook_sourcetree.png)" />
 
 Over a period of time, most of the files will get cleaned and remaining can be done all at once with less effort. Once the entire code base passes all StyleCop rules, this can be enforced in the build server. This ensures that no more bad formatted code gets checked into the source control.
 
