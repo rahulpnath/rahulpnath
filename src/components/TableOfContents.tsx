@@ -1,143 +1,256 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-interface Heading {
+interface TOCItem {
   id: string;
   text: string;
   level: number;
 }
 
 interface TableOfContentsProps {
-  content: string;
-  headings?: Heading[];
+  content?: string;
+  className?: string;
 }
 
-const generateId = (text: string): string => {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-};
+export default function TableOfContents({ content, className = '' }: TableOfContentsProps) {
+  const [tocItems, setTocItems] = useState<TOCItem[]>([]);
+  const [activeId, setActiveId] = useState<string>('');
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
-export default function TableOfContents({ content, headings: propsHeadings }: TableOfContentsProps) {
-  const [headings, setHeadings] = useState<Heading[]>(propsHeadings || []);
-  const [activeHeading, setActiveHeading] = useState<string>('');
-
+  // Extract headings from content or from the page
   useEffect(() => {
-    // If headings were provided as props, use them
-    if (propsHeadings && propsHeadings.length > 0) {
-      setHeadings(propsHeadings);
-      return;
-    }
-
-    // Otherwise extract from markdown content
-    if (!content) return;
-    
-    const headingRegex = /^(#{1,6})\s+(.+)$/gm;
-    const extractedHeadings: Heading[] = [];
-    let match;
-
-    while ((match = headingRegex.exec(content)) !== null) {
-      const level = match[1].length;
-      const text = match[2].trim();
-      const id = generateId(text);
+    const extractHeadingsFromDOM = () => {
+      // Get headings from the actual DOM with more specific selectors
+      const headings = document.querySelectorAll('article h1, article h2, article h3, article h4, article h5, article h6, main h1, main h2, main h3, main h4, main h5, main h6');
       
-      extractedHeadings.push({ id, text, level });
-    }
-    
-    setHeadings(extractedHeadings);
-  }, [content, propsHeadings]);
-
-  useEffect(() => {
-    if (headings.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveHeading(entry.target.id);
+      const items: TOCItem[] = Array.from(headings)
+        .filter((heading) => {
+          // Skip headings that are in the header section (article title)
+          return !heading.closest('header');
+        })
+        .map((heading) => {
+          const level = parseInt(heading.tagName.charAt(1));
+          let text = heading.textContent || '';
+          
+          // Clean up the text (remove any extra whitespace)
+          text = text.trim();
+          
+          // Generate or get existing ID
+          let id = heading.id;
+          if (!id) {
+            id = text
+              .toLowerCase()
+              .replace(/[^\w\s-]/g, '')
+              .replace(/\s+/g, '-')
+              .trim();
+            heading.id = id;
           }
+
+          return { id, text, level };
         });
-      },
-      { 
-        rootMargin: '-20% 0% -80% 0%',
-        threshold: 0
+
+      return items;
+    };
+
+    const extractHeadingsFromContent = () => {
+      if (!content) return [];
+      
+      // Parse headings from content using regex
+      const headingRegex = /^(#{2,6})\s+(.+)$/gm;
+      const items: TOCItem[] = [];
+      let match;
+      
+      while ((match = headingRegex.exec(content)) !== null) {
+        const level = match[1].length;
+        const text = match[2].trim();
+        const id = text
+          .toLowerCase()
+          .replace(/[^\w\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .trim();
+        
+        items.push({ id, text, level });
       }
-    );
+      
+      return items;
+    };
 
-    // Observe all heading elements
-    headings.forEach(({ id }) => {
-      const element = document.getElementById(id);
-      if (element) {
-        observer.observe(element);
+    const extractHeadings = () => {
+      const domItems = extractHeadingsFromDOM();
+      
+      if (domItems.length > 0) {
+        setTocItems(domItems);
+      } else if (content) {
+        // Fallback to parsing content
+        const contentItems = extractHeadingsFromContent();
+        setTocItems(contentItems);
       }
-    });
+    };
 
-    return () => observer.disconnect();
-  }, [headings]);
+    // Extract headings after multiple delays to ensure content is fully rendered
+    const timer1 = setTimeout(extractHeadings, 100);
+    const timer2 = setTimeout(extractHeadings, 500);
+    const timer3 = setTimeout(extractHeadings, 1000);
+    
+    // Immediate extraction for content-based parsing
+    if (content) {
+      extractHeadings();
+    }
 
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
+  }, [content]);
+
+  // Handle scroll spy for active heading
+  useEffect(() => {
+    if (tocItems.length === 0) return;
+
+    const handleScroll = () => {
+      const headings = tocItems.map(item => {
+        const element = document.getElementById(item.id);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          return {
+            id: item.id,
+            top: rect.top,
+            element
+          };
+        }
+        return null;
+      }).filter(Boolean);
+
+      // Find the heading that's currently visible (with some offset)
+      const current = headings.find(heading => heading!.top >= -100 && heading!.top <= 200);
+      
+      if (current) {
+        setActiveId(current.id);
+      } else {
+        // If no heading is in the viewport, find the closest one above
+        const aboveViewport = headings.filter(heading => heading!.top < -100);
+        if (aboveViewport.length > 0) {
+          const closest = aboveViewport[aboveViewport.length - 1];
+          setActiveId(closest!.id);
+        }
+      }
+    };
+
+    handleScroll(); // Initial call
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [tocItems]);
+
+  // Smooth scroll to heading
   const scrollToHeading = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      const yOffset = -80; // Account for fixed header
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      const offsetTop = element.offsetTop - 100; // Account for fixed header
+      window.scrollTo({
+        top: offsetTop,
+        behavior: 'smooth'
+      });
     }
   };
 
-  if (headings.length === 0) {
-    return (
-      <div className="hidden lg:block">
-        <nav className="sticky top-24">
-          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Table of Contents</h3>
-            <p className="text-sm text-gray-600 mt-2">Loading...</p>
-          </div>
-        </nav>
-      </div>
-    );
+  if (tocItems.length === 0) {
+    return null;
   }
 
   return (
-    <div className="hidden lg:block">
-      <nav className="sticky top-24 max-h-[calc(100vh-6rem)] overflow-y-auto">
-        <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <svg className="w-5 h-5 mr-2 text-[#823EB7]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-            </svg>
-            Table of Contents
-          </h3>
-          <ul className="space-y-2">
-            {headings.map(({ id, text, level }) => (
-              <li key={id}>
+    <div className={`bg-white border border-gray-200 rounded-lg shadow-sm ${className}`}>
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-gray-100">
+        <h3 className="font-semibold text-gray-900 text-sm">Table of Contents</h3>
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="p-1 rounded hover:bg-gray-100 transition-colors"
+          aria-label={isCollapsed ? 'Expand table of contents' : 'Collapse table of contents'}
+        >
+          <svg 
+            className={`w-4 h-4 text-gray-500 transition-transform ${isCollapsed ? 'rotate-180' : ''}`}
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+      </div>
+
+      {/* TOC Items */}
+      {!isCollapsed && (
+        <nav className="p-4">
+          <ul className="space-y-1">
+            {tocItems.map((item) => (
+              <li key={item.id}>
                 <button
-                  onClick={() => scrollToHeading(id)}
+                  onClick={() => scrollToHeading(item.id)}
                   className={`
-                    w-full text-left text-sm hover:text-[#823EB7] transition-colors duration-200
-                    ${level === 1 ? 'font-semibold text-gray-900' : ''}
-                    ${level === 2 ? 'font-medium text-gray-800 pl-3' : ''}
-                    ${level === 3 ? 'text-gray-700 pl-6' : ''}
-                    ${level === 4 ? 'text-gray-600 pl-9' : ''}
-                    ${level === 5 ? 'text-gray-500 pl-12' : ''}
-                    ${level === 6 ? 'text-gray-500 pl-15' : ''}
-                    ${activeHeading === id ? 'text-[#823EB7] font-medium' : ''}
-                    py-1 block hover:bg-white hover:bg-opacity-60 rounded px-2 -mx-2
+                    block w-full text-left text-sm py-1.5 px-2 rounded transition-all duration-200
+                    hover:bg-gray-50 hover:text-blue-600
+                    ${activeId === item.id 
+                      ? 'text-blue-600 bg-blue-50 font-medium border-l-2 border-blue-600 -ml-2 pl-4' 
+                      : 'text-gray-600'
+                    }
                   `}
+                  style={{ 
+                    paddingLeft: `${(item.level - 1) * 0.75 + 0.5}rem`,
+                    marginLeft: activeId === item.id ? '-0.5rem' : '0'
+                  }}
                 >
-                  <span className={`
-                    block border-l-2 pl-2
-                    ${activeHeading === id ? 'border-[#823EB7]' : 'border-transparent'}
-                  `}>
-                    {text}
-                  </span>
+                  {item.text}
                 </button>
               </li>
             ))}
           </ul>
-        </div>
-      </nav>
+        </nav>
+      )}
+
+      {/* Reading Progress Bar */}
+      <div className="px-4 pb-4">
+        <ReadingProgressBar />
+      </div>
     </div>
   );
+}
+
+// Reading Progress Bar Component
+function ReadingProgressBar() {
+  const progress = useReadingProgress();
+  
+  return (
+    <>
+      <div className="w-full bg-gray-200 rounded-full h-1">
+        <div 
+          className="bg-blue-600 h-1 rounded-full transition-all duration-300"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+      <p className="text-xs text-gray-500 mt-2 text-center">Reading Progress</p>
+    </>
+  );
+}
+
+// Hook for reading progress (can be used separately)
+export function useReadingProgress() {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const updateProgress = () => {
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrolled = (window.scrollY / scrollHeight) * 100;
+      setProgress(Math.min(100, Math.max(0, scrolled)));
+    };
+
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress(); // Initial call
+
+    return () => window.removeEventListener('scroll', updateProgress);
+  }, []);
+
+  return progress;
 }

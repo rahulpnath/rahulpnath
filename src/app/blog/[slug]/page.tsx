@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Image from 'next/image';
 import { mdxComponents } from '@/mdx-components';
+import TableOfContents from '@/components/TableOfContents';
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -26,70 +27,57 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-[Inter,sans-serif]">
-      {/* Minimal Header Navigation */}
-      <nav className="border-b border-gray-100 bg-white">
-        <div className="max-w-4xl mx-auto px-6 py-6">
-          <div className="flex items-center justify-between">
-            <a href="/" className="text-lg font-semibold text-gray-900 hover:text-[#823EB7] transition-colors">
-              Rahul Nath
-            </a>
-            <div className="flex items-center space-x-6 text-sm">
-              <a href="/blog" className="text-gray-600 hover:text-[#823EB7] transition-colors">Blog</a>
-              <a href="/about" className="text-gray-600 hover:text-[#823EB7] transition-colors">About</a>
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-white text-gray-900">
+      {/* Main Layout with Sidebar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Main Content */}
+          <main className="flex-1 lg:max-w-4xl">
+            <article className="
+              prose prose-lg prose-slate max-w-none
+              leading-relaxed
 
-      {/* Clean Professional Blog Layout */}
-      <main className="flex justify-center bg-white py-12 px-4">
-        <article className="
-          max-w-3xl w-full 
-          prose prose-lg prose-slate
-          leading-relaxed
+              /* Headings */
+              prose-headings:font-bold 
+              prose-headings:tracking-tight
+              prose-h1:text-4xl prose-h1:mt-0 prose-h1:mb-6
+              prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4
+              prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
 
-          /* Headings */
-          prose-headings:font-bold 
-          prose-headings:tracking-tight
-          prose-h1:text-4xl prose-h1:mt-0 prose-h1:mb-6
-          prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4
-          prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
+              /* Paragraphs */
+              prose-p:text-lg prose-p:leading-relaxed prose-p:text-gray-800
+              [&_p]:text-lg [&_p]:my-[1em]
 
-          /* Paragraphs */
-          prose-p:text-lg prose-p:leading-relaxed prose-p:text-gray-800
-          [&_p]:text-lg [&_p]:my-[1em]
+              /* Links */
+              prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-a:transition-all
 
-          /* Links */
-          prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-a:transition-all
+              /* Lists */
+              prose-ul:list-disc prose-ol:list-decimal
+              prose-li:mb-2
 
-          /* Lists */
-          prose-ul:list-disc prose-ol:list-decimal
-          prose-li:mb-2
+              /* Blockquotes */
+              prose-blockquote:border-l-4 prose-blockquote:pl-4
+              prose-blockquote:italic prose-blockquote:text-gray-600
 
-          /* Blockquotes */
-          prose-blockquote:border-l-4 prose-blockquote:pl-4
-          prose-blockquote:italic prose-blockquote:text-gray-600
+              /* Inline code */
+              prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5
+              prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
 
-          /* Inline code */
-          prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5
-          prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
+              /* Code blocks */
+              prose-pre:bg-gray-900 prose-pre:text-gray-100
+              prose-pre:rounded-xl prose-pre:p-4
 
-          /* Code blocks */
-          prose-pre:bg-gray-900 prose-pre:text-gray-100
-          prose-pre:rounded-xl prose-pre:p-4
+              /* Images */
+              prose-img:rounded-xl prose-img:my-8
 
-          /* Images */
-          prose-img:rounded-xl prose-img:my-8
+              /* Tables */
+              prose-table:border-collapse prose-table:border prose-table:border-gray-200 prose-table:rounded-lg
+              prose-th:border prose-th:border-gray-200 prose-th:bg-gray-50 prose-th:px-6 prose-th:py-4 prose-th:text-left prose-th:font-semibold
+              prose-td:border prose-td:border-gray-200 prose-td:px-6 prose-td:py-4
 
-          /* Tables */
-          prose-table:border-collapse prose-table:border prose-table:border-gray-200 prose-table:rounded-lg
-          prose-th:border prose-th:border-gray-200 prose-th:bg-gray-50 prose-th:px-6 prose-th:py-4 prose-th:text-left prose-th:font-semibold
-          prose-td:border prose-td:border-gray-200 prose-td:px-6 prose-td:py-4
-
-          /* HR */
-          prose-hr:my-12 prose-hr:border-gray-200
-        ">
+              /* HR */
+              prose-hr:my-12 prose-hr:border-gray-200
+            ">
           {/* Article Header */}
           <header className="mb-12 not-prose">
             <h1 className="text-4xl font-bold text-gray-900 mb-6 leading-tight">
@@ -153,20 +141,29 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </div>
           )}
 
-          {/* Footer Navigation - Clean */}
-          <footer className="mt-20 pt-12 border-t border-gray-100 not-prose">
-            <a
-              href="/blog"
-              className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#823EB7] transition-colors group"
-            >
-              <svg className="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              Back to Blog
-            </a>
-          </footer>
-        </article>
-      </main>
+              {/* Footer Navigation - Clean */}
+              <footer className="mt-20 pt-12 border-t border-gray-100 not-prose">
+                <a
+                  href="/blog"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#823EB7] transition-colors group"
+                >
+                  <svg className="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Back to Blog
+                </a>
+              </footer>
+            </article>
+          </main>
+
+          {/* Sidebar with Table of Contents */}
+          <aside className="lg:w-80 lg:flex-shrink-0">
+            <div className="sticky top-20">
+              <TableOfContents content={post.content} />
+            </div>
+          </aside>
+        </div>
+      </div>
     </div>
   );
 }

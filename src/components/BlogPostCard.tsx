@@ -1,35 +1,27 @@
 'use client'
 
+import Link from 'next/link'
+import Image from 'next/image'
+import { BlogPost } from '@/types/blog'
+
 interface BlogPostCardProps {
-  title: string
-  description: string
-  authorImage: string
-  authorName: string
-  authorTitle: string
-  featureImage: string
-  href: string
+  post: BlogPost
 }
 
-export default function BlogPostCard({
-  title,
-  description,
-  authorImage,
-  authorName,
-  authorTitle,
-  featureImage,
-  href
-}: BlogPostCardProps) {
+export default function BlogPostCard({ post }: BlogPostCardProps) {
   return (
-    <a 
-      href={href}
+    <Link 
+      href={`/blog/${post.slug}`}
       className="block border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 no-underline text-inherit bg-white dark:bg-gray-800 dark:border-gray-700"
     >
       <div className="flex flex-col h-full">
-        {featureImage && (
+        {post.coverImage && (
           <div className="aspect-video overflow-hidden">
-            <img
-              src={featureImage}
-              alt={title}
+            <Image
+              src={post.coverImage}
+              alt={post.title}
+              width={400}
+              height={225}
               className="w-full h-full object-cover"
             />
           </div>
@@ -37,30 +29,61 @@ export default function BlogPostCard({
         
         <div className="p-6 flex flex-col flex-grow">
           <h3 className="text-lg font-semibold mb-2 line-clamp-2 text-gray-900 dark:text-white">
-            {title}
+            {post.title}
           </h3>
           
           <p className="text-gray-600 dark:text-gray-300 mb-4 flex-grow text-sm leading-relaxed">
-            {description}
+            {post.description}
           </p>
+
+          {/* Tags */}
+          {post.tags && post.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {post.tags.slice(0, 3).map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center rounded-md bg-blue-50 dark:bg-blue-900/20 px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-300 ring-1 ring-inset ring-blue-700/10 dark:ring-blue-300/10"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
           
-          <div className="flex items-center space-x-3 mt-auto">
-            {authorImage && (
-              <img
-                src={authorImage}
-                alt={authorName}
-                className="w-8 h-8 rounded-full object-cover"
-              />
-            )}
-            <div className="text-sm">
-              <div className="font-medium text-gray-900 dark:text-white">{authorName}</div>
-              {authorTitle && (
-                <div className="text-gray-500 dark:text-gray-400">{authorTitle}</div>
+          <div className="flex items-center justify-between mt-auto">
+            <div className="flex items-center space-x-3">
+              {post.author.avatar ? (
+                <Image
+                  src={post.author.avatar}
+                  alt={post.author.name}
+                  width={32}
+                  height={32}
+                  className="rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                  <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                    {post.author.name.charAt(0)}
+                  </span>
+                </div>
+              )}
+              <div className="text-sm">
+                <div className="font-medium text-gray-900 dark:text-white">{post.author.name}</div>
+              </div>
+            </div>
+            
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              {new Date(post.publishedAt).toLocaleDateString()}
+              {post.readingTime && (
+                <>
+                  <span className="mx-1">•</span>
+                  {post.readingTime}
+                </>
               )}
             </div>
           </div>
         </div>
       </div>
-    </a>
+    </Link>
   )
 }
