@@ -1,15 +1,15 @@
 ---
 title: "5 Ways to Handle Application Configuration & Secrets With Azure \U0001F510"
 slug: handling-application-configuration
-date: 2021-10-25T00:00:00.000Z
-feature_image: /images/secret.jpg
+date: '2021-10-25'
+feature_image: /content/images/secret.jpg
+tags:
+  - Azure
+  - Dotnet
 excerpt: >-
   Handing application configuration can be tricky. Let's dive into 5 different
   ways we can manage application secrets, configuration, connection strings, etc
   when building an ASP NET Application on Azure.
-tags:
-  - Dotnet
-  - Azure
 ---
 Handing application configuration can be tricky.
 
@@ -17,7 +17,7 @@ When working with .NET applications make sure to use the power of configuration 
 
 Use `IConfiguration` and built in providers to handle configuration.
 
-<iframe src="https://www.youtube.com/embed/wTSu2aCoR7Y" />
+<EmbedCard src="https://www.youtube.com/embed/wTSu2aCoR7Y" />
 
 Here are 5 ways you can handle application configuration when building .NET applications on the Azure Infrastructure.
 
@@ -66,7 +66,7 @@ The above settings in `appsettings.Development.json` overrides values for Key1, 
 
 The default Configuration Providers are set up in such a way that the environment specific configuration files overrides the default `appsettings.json` configuration values.
 
-<iframe src="https://www.youtube.com/embed/UPgHRiLw4is" />
+<EmbedCard src="https://www.youtube.com/embed/UPgHRiLw4is" />
 
 ### Secrets Manager
 
@@ -78,7 +78,7 @@ To add values to Secrets Manager in local Development environment, you can eithe
 
 Values defined in the Secrets Manager overrides those in the appsettings file (both global and environment specific ones).
 
-<iframe src="https://www.youtube.com/embed/PkLLP2tcd28" />
+<EmbedCard src="https://www.youtube.com/embed/PkLLP2tcd28" />
 
 The below value in `secrets.json` (as part of the Secrets Manager) overrides the value for '_ConnectionString_'.
 
@@ -126,13 +126,13 @@ public class MyConfigController: ControllerBase
 
 Running the application and executing the _MyConfig_ endpoint returns the configuration values as expected. _Key1_, _Key3_ and _Key5_ are overridden by the '_appsettings development_' values  and the _ConnectionString_ by '_Secrets Manager_' _value. (as shown below in the Swagger response)._
 
-![App Settings From Different Configuration Sources](/images/configuration_app_settings.jpg)
+<ImageCard src="/content/images/configuration_app_settings.jpg" alt="App Settings From Different Configuration Sources" />
 
 Now that we have the sample application running, let's set up a build-deploy pipeline. This will allow us to automatically deploy the application to various environments (development, test, production etc).
 
 If you are new to setting up DevOps build-deploy pipeline, check out my YouTube series which covers different application deployment scenarios. For this particular
 
-<iframe src="https://www.youtube.com/embed/videoseries?list=PL59L9XrzUa-m7AFDgjWuwm6exyCklc03U" />
+<EmbedCard src="https://www.youtube.com/embed/videoseries?list=PL59L9XrzUa-m7AFDgjWuwm6exyCklc03U" />
 
 ## 1\. Azure DevOps Variables
 
@@ -142,11 +142,11 @@ For hierarchical values '.' (dot) is used as the separator. So in this case to s
 
 The value can set for all releases or specific to the Environment (or Stage). This is set using the _Scope_ option. In the below diagram, _Development_ and _Test_ stand for independent environments and _Release_ stands for all releases.
 
-![Configuration value set in Azure DevOps Release Variables](/images/configuration_azure_devops_variables.jpg)
+<ImageCard src="/content/images/configuration_azure_devops_variables.jpg" alt="Configuration value set in Azure DevOps Release Variables" />
 
 In this case since this is a Web App deployment job, under the deployment task there is an option to enable 'File Transform & Variable Substitution' and specify the files that needs to be substituted. In this case _appsettings.json._
 
-![Azure DevOps Web Application Transform for configuration](/images/configuration_azure_devops_app_settings_transform.jpg)
+<ImageCard src="/content/images/configuration_azure_devops_app_settings_transform.jpg" alt="Azure DevOps Web Application Transform for configuration" />
 
 Variables defined in the release pipeline that match the names in the configuration file will be automatically replaced with the value based on the Stage/Environment they are set for.
 
@@ -156,32 +156,24 @@ Azure resources mostly have a Setting configuration where you can define applica
 
 Values set in the App Settings is usually made available as environment values when running in Azure infrastructure. In this case since we are deploying to an Azure Web App you can set this from the Azure Portal manually or also via the build/deploy pipeline.
 
-![Configuration From Azure App Settings in Web App Configuration](/images/configuration_azure_app_settings.jpg)
+<ImageCard src="/content/images/configuration_azure_app_settings.jpg" alt="Configuration From Azure App Settings in Web App Configuration" />
 
 ## 3\. Azure Key Vault
 
-Azure Key Vault is a cloud-hosted service for managing cryptographic keys and secrets like connection strings, API keys, and similar sensitive information. Key Vault provides centralized storage for application secrets. Check out [my posts on Key Vault](/blog/tag/azure-key-vault/) if you are new to Azure Key Vault and want to learn more.
+Azure Key Vault is a cloud-hosted service for managing cryptographic keys and secrets like connection strings, API keys, and similar sensitive information. Key Vault provides centralized storage for application secrets. Check out [my posts on Key Vault](/tag/azure-key-vault/) if you are new to Azure Key Vault and want to learn more.
 
 You can integrate with Key Vault in two ways
 
 1.  **Deploy Time:** In Azure DevOps you can create Variable Groups and directly integrate with Azure Key Vault and select specific secrets to be applied for your application.
 2.  **Runtime:** Applications can also talk to Key Vault at runtime and retrieve values from it.  The application can pull down values on startup or refresh them periodically or fetch from Key Vault any time it needs it.
 
-<BlogLink
-  href="/blog/connect-net-core-to-azure-key-vault-in-ten-minutes"
-  title="Connect .Net Core To Azure Key Vault In Ten Minutes"
-  description="Access secrets in Azure Key Vault from .Net Core and learn how to elegantly handle when rotating secrets."
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/pfx_security.jpg"
-/>
+<BookmarkCard href="/blog/connect-net-core-to-azure-key-vault-in-ten-minutes" title="Connect .Net Core To Azure Key Vault In Ten Minutes" description="Access secrets in Azure Key Vault from .Net Core and learn how to elegantly handle when rotating secrets." icon="/favicon.ico" />
 
 ## 4\. Azure App Configuration
 
 [Azure App Configuration](https://docs.microsoft.com/en-us/azure/azure-app-configuration/overview) provides a service to centrally manage application settings and feature flags. It allows to centralize application configuration to a single place and have different applications use it.
 
-<iframe src="https://www.youtube.com/embed/VEjYW14WKRM" />
+<EmbedCard src="https://www.youtube.com/embed/VEjYW14WKRM" />
 
 For an ASP NET application you can use the [Microsoft.Azure.AppConfiguration.AspNetCore](https://www.nuget.org/packages/Microsoft.Azure.AppConfiguration.AspNetCore) nuget package to integrate Azure App Configuration to the default Configuration provider. Below is a sample code on how you can do this.
 
@@ -212,22 +204,13 @@ In the past, Azure had different ways to authenticate with the various resources
 
 For resources that support  Managed Identity, the client SDKs also take in the `DefaultAzureCredential` as part of their construction of initialization code.
 
-<BlogLink
-  href="/blog/defaultazurecredential-from-azure-sdk"
-  title="DefaultAzureCredential: Unifying How We Get Azure AD Token"
-  description="Azure Identity library provides Azure Active Directory token authentication support across the Azure SDK"
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/pfx_security.jpg"
-/>
+<BookmarkCard href="/blog/defaultazurecredential-from-azure-sdk" title="DefaultAzureCredential: Unifying How We Get Azure AD Token" description="Azure Identity library provides Azure Active Directory token authentication support across the Azure SDK" icon="/favicon.ico" />
 
 The `DefaultAzureCredential` gets the token based on the environment the application is running. The following credential types if enabled will be tried, in order - EnvironmentCredential, ManagedIdentityCredential, SharedTokenCacheCredential, InteractiveBrowserCredential.
 
 Below is a sample code that uses `DefaultAzureCredential` to connect to Azure App Configuration
 
 ```csharp
-
 Host.CreateDefaultBuilder(args)
   .ConfigureAppConfiguration(configuration => {
     configuration.AddAzureAppConfiguration(options => {

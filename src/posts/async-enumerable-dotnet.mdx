@@ -1,13 +1,16 @@
 ---
-title: "Getting Started with Async Enumerables: A .NET Developer's Guide"
+title: 'Getting Started with Async Enumerables: A .NET Developer''s Guide'
 slug: async-enumerable-dotnet
-date: 2024-07-19
-feature_image: /images/AsyncEnumerable--2-.png
-excerpt: >-
-  AsyncEnumerables enhances eumeration of collections with asynchronous capabilities. In this post, let's explore how C# combines 'yield return' with 'async' and 'await' to create efficient asynchronous data streams and how 'await foreach' lets us effortlessly consume them.
+date: '2024-07-19'
+feature_image: /content/images/2024/07/AsyncEnumerable--2-.png
 tags:
   - Dotnet
   - AWS
+excerpt: >-
+  AsyncEnumerables enhances eumeration of collections with asynchronous
+  capabilities. In this post, let's explore how C# combines 'yield return' with
+  'async' and 'await' to create efficient asynchronous data streams and how
+  'await foreach' lets us effortlessly consume them.
 ---
 Enumeration of collections has been the bread-and-butter of many programs.
 
@@ -15,7 +18,7 @@ But what if we could enhance this familiar concept with asynchronous capabilitie
 
 That's precisely what .NET [Async Enumerable](https://learn.microsoft.com/en-us/archive/msdn-magazine/2019/november/csharp-iterating-with-async-enumerables-in-csharp-8) does.
 
-<iframe src="https://www.youtube.com/embed/u7Q2zlM1QHg?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/u7Q2zlM1QHg?feature=oembed" title="Iterating with Async Enumerables | | Exploring C# and DOTNET | Rahul Nath" />
 
 In this post, let's explore how C# **combines '_yield return_' with '_async' and 'await_'** to create efficient asynchronous data streams and how 'await foreach' lets us effortlessly consume them.
 
@@ -31,15 +34,7 @@ _AWS sponsors this post._
 
 Let's explore our use case for getting all first-x product ratings from the S3 bucket a bit further and see it in action.
 
-<BlogLink
-  href="/blog/amazon-s3-dotnet/"
-  title="Amazon S3 For the .NET Developer: How to Easily Get Started"
-  description="Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/storage-box.jpg"
-/>
+<BookmarkCard href="/blog/amazon-s3-dotnet/" title="Amazon S3 For the .NET Developer: How to Easily Get Started" description="Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 The below code uses the `GetAllFileS3Objects` method to loop through the Amazon S3 bucket using the [AWSSDK.S3](https://www.nuget.org/packages/AWSSDK.S3) Nuget package.
 
@@ -53,7 +48,6 @@ var filteredRatings = ratings
     .Take(50)
     .Select(r => r.Review);
     
-
 Console.WriteLine(string.Join(Environment.NewLine, filteredRatings));
 
 async Task<List<ProductRating>> GetAllRatings(AmazonS3Client s3Client)
@@ -153,7 +147,6 @@ async IAsyncEnumerable<S3Object> GetAllFileS3Objects(AmazonS3Client amazonS3Clie
             yield return s3Object;
     } while (s3ObjectsResponse.IsTruncated);
 }
-
 ```
 
 The function no longer builds up the internal list of objects but instead `yield` returns the items one by one from the batch response.
@@ -184,7 +177,6 @@ async Task<List<ProductRating>> GetAllRatings(AmazonS3Client s3Client)
     
     return productRatings;
 }
-
 ```
 
 Consuming an asynchronous stream of data using await foreach statement in C#.
@@ -214,7 +206,6 @@ async Task<List<ProductRating>> GetAllRatings(AmazonS3Client s3Client)
     
     return filteredProductRatings;
 }
-
 ```
 
 Refactored code to read only the minimum required items from the S3 object to match our required criteria.

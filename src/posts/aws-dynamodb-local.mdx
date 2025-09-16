@@ -1,15 +1,15 @@
 ---
-title: "How to Run and Access DynamoDB Local For Easy Development and Testing"
+title: How to Run and Access DynamoDB Local For Easy Development and Testing
 slug: aws-dynamodb-local
-date: 2021-05-11T00:00:00.000Z
-feature_image: /images/laptop_developer.jpg
+date: '2021-05-11'
+feature_image: /content/images/laptop_developer.jpg
+tags:
+  - AWS
+  - DynamoDB
 excerpt: >-
   Learn how to set up and run DynamoDB database on your local development
   machine. We'll see how to connect using AWS CLI, from .NET application and
   using GUI tools like Dynobase and NoSQL Workbench.
-tags:
-  - AWS
-  - DynamoDB
 ---
 _Amazon DynamoDB is a managed NoSQL database service. It provides fast and predictable performance with seamless scalability._
 
@@ -17,7 +17,7 @@ _Amazon DynamoDB is a managed NoSQL database service. It provides fast and predi
 
 Having the local version helps save time and money when building applications. It is also helpful for spinning up new database instances for automated testing.
 
-<iframe src="https://www.youtube.com/embed/ZHMHQmCLakA" />
+<EmbedCard src="https://www.youtube.com/embed/ZHMHQmCLakA" />
 
 In this blog post, let's explore how to set up a local instance of DynamoDB, access it from applications and the different modes it supports. We will also look at how the various GUI tools can interact with the locally installed database instance.
 
@@ -45,7 +45,9 @@ docker run `
 
 The Docker instance is up and running as shown below in the Docker Desktop UI.
 
-<Figure src="/images/dynamodb_local_docker.jpg" caption="## Accessing DynamoDB" />
+<ImageCard src="/content/images/dynamodb_local_docker.jpg" alt="DynamoDb running on docker windows desktop GUI" />
+
+## Accessing DynamoDB
 
 The Local DynamoDB is very similar to the instance available in AWS infrastructure. All ways of [accessing the AWS instance](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/AccessingDynamoDB.html) also works for the local.
 
@@ -65,9 +67,7 @@ Run `aws configure` from the command line and provide fake keys, as shown below.
 
 ```bash
 aws configure
-
 AWS Access Key ID: "fakeMyKeyId"
-
 AWS Secret Access Key: "fakeSecretAccessKey"
 region: "ap-southeast-2"
 
@@ -99,7 +99,7 @@ For our current set up we have the Access Key id as _fakeMyAccessKeyId_, and the
 
 We can see this file by opening the _cli_ for the Docker instance and listing the files in there (as shown below)
 
-![Docker cli with files listed showing the Dynamodb Local file name highlighted](/images/dynamodb_local_docker_cli.jpg)
+<ImageCard src="/content/images/dynamodb_local_docker_cli.jpg" alt="Docker cli with files listed showing the Dynamodb Local file name highlighted" />
 
 Any actions against this combination of Access Key and Region are stored in this file. If we delete this file, we will lose all data. Similarly, if we use a different Access Key or Region, it will create a new file.
 
@@ -109,15 +109,7 @@ In an earlier post, I had walked through in detail how to get started with [Dyna
 
 Using the [AWSSDK.DynamoDBv2](https://www.nuget.org/packages/AWSSDK.DynamoDBv2/) package and the `DynamoDbContext` class we can connect to the DynamoDB Local instance as well. The setup is very similar to that of connecting to DynamoDB Web Service, as shown below.
 
-<BlogLink
-  href="/blog/aws-dynamodb-net-core"
-  title="AWS DynamoDB For The .NET Developer: How To Easily Get Started"
-  description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API."
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/aws_dynamodb.jpg"
-/>
+<BookmarkCard href="/blog/aws-dynamodb-net-core" title="AWS DynamoDB For The .NET Developer: How To Easily Get Started" description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API." icon="/favicon.ico" />
 
 Instead of specifying the `RegionEndpoint` property, we need to specify the `ServiceURL` and `AuthenticationRegion` properties as part of the AmazonDynamoDbConfig class. Since the database instance depends on the Access Key Id (as we saw before), we need to pass in the `BasicAWSCredentials` with the fake keys.
 
@@ -147,13 +139,15 @@ The configuration to connect to the local instance of DynamoDB is available unde
 
 Set the appropriate Port, Regions, and the Access Key Id.
 
-![Dynobase Offline Settings to configure DynamoDb Local configuration](/images/dynamodb_local_dynobase.jpg)
+<ImageCard src="/content/images/dynamodb_local_dynobase.jpg" alt="Dynobase Offline Settings to configure DynamoDb Local configuration" />
 
 To get the tool to work, I had to update the AWS config file with the `dynamodb-proxy` as shown in the screenshot above.
 
 Once set, we can browse the local instance as shown below. It allows to browse the tables, add data, and a lot more features.
 
-<Figure src="/images/dynamodb_local_dynobase_scan.jpg" caption="## SharedDB Mode" />
+<ImageCard src="/content/images/dynamodb_local_dynobase_scan.jpg" alt="Dynobase connected to local DynamoDB listing the data in the table" />
+
+## SharedDB Mode
 
 DynamoDB Local also supports a single database file version. In this, the same file is used regardless of the region or the access key.
 
@@ -176,7 +170,7 @@ To avoid conflicts with the previous local instance, I have updated the `name` a
 
 It creates a new instance of the DynamoDB Local database, as shown below. Exploring the CLI, it also shows the single database file created.
 
-![DynamoDB shared mode with cli visible, showing the shared-local-instance.db file highlighted](/images/dynamodb_local_shared_docker_cli.jpg)
+<ImageCard src="/content/images/dynamodb_local_shared_docker_cli.jpg" alt="DynamoDB shared mode with cli visible, showing the shared-local-instance.db file highlighted" />
 
 Connecting to `http://localhost:8002` from any region of access key will always fetch data from the single database file.
 
@@ -186,7 +180,7 @@ Connecting to `http://localhost:8002` from any region of access key will always 
 
 Under the _Operation Builder_ (as shown below), we can connect to the local instance specifying the port details.
 
-![NoSQL Workbench showing Operation builder and one table in DynamoDB under the shared mode.](/images/dynamodb_local_nosql_workbench.jpg)
+<ImageCard src="/content/images/dynamodb_local_nosql_workbench.jpg" alt="NoSQL Workbench showing Operation builder and one table in DynamoDB under the shared mode." />
 
 **Note:** With NoSQL Workbench, we can only connect and explore local DynamoDB in Shared mode. The GUI tool does not support specifying Access Key Id, which is required to connect when not in shared mode.
 

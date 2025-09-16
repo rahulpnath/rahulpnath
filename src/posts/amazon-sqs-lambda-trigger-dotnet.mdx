@@ -1,17 +1,17 @@
 ---
-title: "Amazon SQS and AWS Lambda Triggers in .NET"
+title: Amazon SQS and AWS Lambda Triggers in .NET
 slug: amazon-sqs-lambda-trigger-dotnet
-date: 2022-09-21T00:00:00.000Z
-feature_image: /images/amazon-sqs-lambda-triggers-dotnet.jpg
+date: '2022-09-21'
+feature_image: /content/images/amazon-sqs-lambda-triggers-dotnet.jpg
+tags:
+  - AWS
+  - Lambda
 excerpt: >-
   Learn how to process SQS messages from AWS Lambda Function. We will learn how
   to set up and trigger a .NET Lambda Function using SQS and the various
   configurations associated.
-tags:
-  - AWS
-  - Lambda
 ---
-_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
 Amazon Simple Queue Service (SQS) is a fully managed message queuing service.
 
@@ -19,7 +19,7 @@ SQS enables you to decouple applications and build distributed software systems.
 
 AWS Lambda functions can process messages in SQS.
 
-<iframe src="https://www.youtube.com/embed/0V4aeT7oONo" />
+<EmbedCard src="https://www.youtube.com/embed/0V4aeT7oONo" />
 
 In this post, you’ll learn
 
@@ -27,15 +27,7 @@ In this post, you’ll learn
 -   Different Lambda SQS trigger configurations.
 -   Exception handling when processing SQS messages
 
-<BlogLink
-  href="/blog/amazon-sqs"
-  title="Amazon SQS For the .NET Developer: How to Easily Get Started"
-  description="Learn how to get started with Amazon SQS and use it from a .NET Application. We will learn how to send and receive messages, important properties,and concepts that you need to know when using SQS."
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/queue.jpg"
-/>
+<BookmarkCard href="/blog/amazon-sqs" title="Amazon SQS For the .NET Developer: How to Easily Get Started" description="Learn how to get started with Amazon SQS and use it from a .NET Application. We will learn how to send and receive messages, important properties,and concepts that you need to know when using SQS." icon="/favicon.ico" />
 
 ## Build and Deploy .NET Lambda Function
 
@@ -74,7 +66,7 @@ To publish the Lambda function to the AWS account, you can use the Publish to AW
 
 I prefer to set up an automated build/deploy pipeline to publish to your AWS Account for real-world applications. Check out the below for an example of how to set up a Lambda Function deployment pipeline from GitHub Actions.
 
-<iframe src="https://www.youtube.com/embed/U96230YlSJA" />
+<EmbedCard src="https://www.youtube.com/embed/U96230YlSJA" />
 
 ## Setting Up SQS Lambda Trigger
 
@@ -82,13 +74,15 @@ Lambda Triggers can be set up under the Lambda Function or on the SQS.
 
 To add a Lambda trigger from the Lambda function, navigate the Lambda Function. Under Configuration → Triggers, select the ‘_Add Trigger’_ button.
 
-<Figure src="/images/aws-lambda-sqs-trigger.jpg" caption="It prompts a new window with an option to select the source for the trigger." />
+<ImageCard src="/content/images/aws-lambda-sqs-trigger.jpg" alt="To add a Lambda trigger, select the Add trigger option under Configuration → Triggers." />
+
+It prompts a new window with an option to select the source for the trigger.
 
 Choose SQS as the source trigger and specify the SQS queue ARN for which the Lambda function must trigger.
 
 For now, let’s leave the other configuration to default. We will explore it in detail later in this post.
 
-![Select SQS as the source and the SQS Queue ARN details. When a new message comes to the SQS queue, our .NET Lambda Function will be triggered. ](/images/aws-lambda-sqs-trigger-add.jpg)
+<ImageCard src="/content/images/aws-lambda-sqs-trigger-add.jpg" alt="Select SQS as the source and the SQS Queue ARN details. When a new message comes to the SQS queue, our .NET Lambda Function will be triggered. " />
 
 Before clicking the ‘Add’ button, we need to ensure the Lambda Function IAM Role has the required IAM Policies to interact with the SQS.
 
@@ -96,7 +90,7 @@ Before clicking the ‘Add’ button, we need to ensure the Lambda Function IAM 
 
 Navigate to the IAM Role associated with the Lambda Function. You can do this under the Lambda function Configuration → Permissions → Execution role.
 
-![Select the Execution Role under Configuration → Permissions to update the IAM Policies for the .NET Lambda Function.](/images/aws-lambda-sqs-trigger-execution-role.jpg)
+<ImageCard src="/content/images/aws-lambda-sqs-trigger-execution-role.jpg" alt="Select the Execution Role under Configuration → Permissions to update the IAM Policies for the .NET Lambda Function." />
 
 The IAM role specifies the permissions for the Lambda function. Setting up SQS Trigger requires the below [permissions](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html).
 
@@ -106,7 +100,7 @@ The IAM role specifies the permissions for the Lambda function. Setting up SQS T
 
 Add an inline policy to the Lambda function IAM Role and give access to SQS, as shown below.
 
-![Set up inline IAM Policy for the .NET Lambda Function to connect with the SQS. It requires permissions to ReceiveMessage, DeleteMessage and to GetQueueAttributes.](/images/aws-lambda-sqs-trigger-iam-policies.jpg)
+<ImageCard src="/content/images/aws-lambda-sqs-trigger-iam-policies.jpg" alt="Set up inline IAM Policy for the .NET Lambda Function to connect with the SQS. It requires permissions to ReceiveMessage, DeleteMessage and to GetQueueAttributes." />
 
 Specify the minimum permissions required for the Lambda Function to access the SQS queue. Also, specify the Resource ARN for the SQS queue. The Lambda function can only access the specific SQS queue, following the [Principle of Least Privilege](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege).
 
@@ -116,7 +110,7 @@ With the IAM policies applied, go back to the Lambda Trigger setup page and comp
 
 To test the Lambda trigger integration, navigate to the SQS and send a new message.
 
-![Send a test message from the SQS in the AWS Console](/images/aws-lambda-sqs-trigger-send-message.jpg)
+<ImageCard src="/content/images/aws-lambda-sqs-trigger-send-message.jpg" alt="Send a test message from the SQS in the AWS Console" />
 
 As soon as the message arrives in the Queue, it will trigger our .NET Lambda function with the SQSEvent containing one record.
 
@@ -130,7 +124,7 @@ These options affect how the Lambda function is called and is essential to under
 
 You can update the configuration by navigating the Lambda function and editing the trigger configuration.
 
-![The SQS Lambda trigger provides a few configurable options, mainly Batch Size and Batch Window. This affects how the messages are sent to the Lambda function.](/images/aws-lambda-sqs-trigger-configurations.jpg)
+<ImageCard src="/content/images/aws-lambda-sqs-trigger-configurations.jpg" alt="The SQS Lambda trigger provides a few configurable options, mainly Batch Size and Batch Window. This affects how the messages are sent to the Lambda function." />
 
 -   **Batch Size** → This is the largest number of records that will be read from the Queue at once and delivered to the Lambda Function. If you want the Lambda function to process only one message at a time, set this to 1. Setting a higher value does not guarantee the Lambda Functions will be delivered that many records. It only indicates the maximum limit of records.
 -   **Batch Window** → This specifies the time in seconds to wait to gather records to set the Batch Size setting before invoking the Lambda function. E.g., if the Batch size is ten and Batch Window is 30 seconds, it will wait 30 seconds to accumulate ten records. If there are ten records before that, the Function gets invoked immediately. After 30 seconds there still is less than 10, it will invoke the Lambda function with the available records. These settings become more critical when many messages come into your Queue.

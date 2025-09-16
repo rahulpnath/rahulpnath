@@ -1,13 +1,13 @@
 ---
-title: "Introducing Code Formatting into a Large Code Base"
+title: Introducing Code Formatting into a Large Code Base
 slug: introducing-code-formatting-into-a-large-codebase
-date: 2016-10-03T00:00:00.000Z
-feature_image: /images/codeformatting_column_guide.png
+date: '2016-10-03'
+feature_image: /content/images/codeformatting_column_guide.png
+tags:
+  - Programming
 excerpt: >-
   A walk through of popular code formatting rules and using source control hooks
   to introduce styling rules into a large code base.
-tags:
-  - Programming
 ---
 Code Formatting is an important aspect of writing code. If followed well it helps keep the code more readable and easy to work with. Here are some of the different aspects of formatting code and my personal preferences. I then explore options to enforce code formatting and ways to introduce it into an existing code base.
 
@@ -18,7 +18,9 @@ Below are some of the popular formatting rules and those that have a high value 
 One of the most debated topic in code formatting is whether to use tabs or spaces to intend code. I never knew such a debate existed until my most recent project. It had developers from different parts of the world and with different preferences. I came across the below excerpt from Jeff Atwood, to which I completely agree.
 
 > \*Choose tabs, choose spaces, choose whatever layout conventions make sense to you and your team. It doesn't actually matter which coding styles you pick. What does matter is that you, and everyone else on your team, **sticks with those conventions and uses them consistently.\***
+
 > _That said, only a moron would use tabs to format their code._
+
 > _\- [Jeff Atwood](https://blog.codinghorror.com/death-to-the-space-infidels/)_
 
 Settings for these are often available at the IDE level. In Visual Studio this is available under [Options, Text Editor, All Languages, Tabs](https://msdn.microsoft.com/en-us/library/7sffa753.aspx). Be aware of what you choose and make sure you have the same settings across your team members.
@@ -38,7 +40,6 @@ var person = new Person()
 };
 
 ```
-
 ```csharp
 // Refactoring friendly
 var person = new Person()
@@ -55,21 +56,24 @@ var person = new Person()
 _You should never have to scroll to the right_ - I caught on with this recommendation from the book Clean Code ([a recommended read](/blog/language-agnostic-books-for-every-developer-2/)). It is also recommended that a function should fit on the screen, without needing to scroll up or down. This encourages to keep functions short and specific.
 
 > _We should strive to keep our lines short. The old Hollerith limit of 80 is a bit arbitrary, and I’m not opposed to lines edging out to 100 or even 120. But beyond that is probably just careless_
+
 > _\- Uncle Bob_
 
 The [Productivity Power Tools](https://visualstudiogallery.msdn.microsoft.com/d0d33361-18e2-46c0-8ff2-4adea1e34fef) extension for Visual Studio allows adding a Column Guide. A Column Guide reminds developers their full line of code or comments may not fit on a single screen.
 
-<Figure src="/images/codeformatting_column_guide.png" caption="### **Aligning Function Parameters**" />
+<ImageCard src="/content/images/codeformatting_column_guide.png" alt="Code Formatting Maximum Width Column Guide in Visual Studio using Power Tools" />
+
+### **Aligning Function Parameters**
 
 Always try to keep the number of parameters as less as possible. In cases where there are more parameters or longer function names, the team must choose a style. There are different styling formats followed when splitting parameters to a new line.
 
 Allowing parameters to take the **_natural flow of IDE_** (Visual Studio) is the simplest approach. This often leads to poor readability and code cluttering.
 
-![Function Parameters taking natural flow of IDE](/images/codeformatting_functionparameters_naturalflowide.png)
+<ImageCard src="/content/images/codeformatting_functionparameters_naturalflowide.png" alt="Function Parameters taking natural flow of IDE" />
 
 Breaking parameters into separate lines is important for readability. Use the Column guide to decide when to break function parameters into different lines. There are different approaches followed when splitting parameters into new lines. Keeping the first parameter on the same line as the function and then having all other **_parameters on new line aligned with the first parameter_** is another approach. This works well when viewed in the same font and resolution used when writing. When you change font or resolution this kind of formatting falls out of place.
 
-![Function Parameters on new line aligned with first parameter](/images/codeformatting_functionparameters_alignzoom.png)
+<ImageCard src="/content/images/codeformatting_functionparameters_alignzoom.png" alt="Function Parameters on new line aligned with first parameter" />
 
 A better variant of the above style is to have the parameters in the new line aligned to the left. This ensures parameters stay in the same place when changing font or resolutions. The one that I prefer is to have all parameters in a new line. This formatting works well with different font sizes and resolutions.
 
@@ -106,7 +110,6 @@ We can plug into various hooks that source controls give to enforce code formatt
 
 ```bash
 #!/bin/sh
-
 echo "Running Code Analysis"
 ./stylecopcli/StyleCopCLI.exe -cs $(git diff --cached --name-only)
 if [ $? = 2 ]
@@ -122,7 +125,7 @@ fi
 
 If there are any StyleCop validation errors the commit is aborted, forcing the developer to fix it. The git hooks work fine when committing from a command line or UI tools like Source Tree. However, Visual Studio git plugin does not run the git hooks and fails to do the check.
 
-<Figure src="/images/code_formatting_git_hook_console.png" caption="![StyleCop git hook failing commit in Source Tree](/images/code_formatting_git_hook_sourcetree.png)" />
+<ImageCard src="/content/images/code_formatting_git_hook_console.png" alt="StyleCop git hook failing commit in console" /><ImageCard src="/content/images/code_formatting_git_hook_sourcetree.png" alt="StyleCop git hook failing commit in Source Tree" />
 
 Over a period of time, most of the files will get cleaned and remaining can be done all at once with less effort. Once the entire code base passes all StyleCop rules, this can be enforced in the build server. This ensures that no more bad formatted code gets checked into the source control.
 

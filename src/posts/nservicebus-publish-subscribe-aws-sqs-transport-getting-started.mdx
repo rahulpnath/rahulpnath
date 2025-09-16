@@ -1,14 +1,17 @@
 ---
-title: "NServiceBus on AWS SNS:  Learn How To Publish and Subscribe to Events"
+title: 'NServiceBus on AWS SNS:  Learn How To Publish and Subscribe to Events'
 slug: nservicebus-publish-subscribe-aws-sqs-transport-getting-started
-date: 2023-04-18
-feature_image: /images/NServiceBus-Events-on-AWS-SQS--1-.png
-excerpt: >-
-  Let's explore how to publish Events using NServiceBus. We will learn how to
-    Publish Events with NServiceBus,
-    subscribe to Events and how it works under the hood when using AWS SQS Transport.
+date: '2023-04-18'
+feature_image: /content/images/2023/04/NServiceBus-Events-on-AWS-SQS--1-.png
 tags:
   - AWS
+excerpt: >-
+  Let's explore how to publish Events using NServiceBus. We will learn how to
+
+  Publish Events with NServiceBus,
+
+  subscribe to Events and how it works under the hood when using AWS SQS
+  Transport.
 ---
 _This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
@@ -18,7 +21,7 @@ In an earlier blog post, we learned [how to quickly start with NServiceBus on AW
 
 In this blog post, let's explore how to publish Events using NServiceBus.
 
-<iframe src="https://www.youtube.com/embed/6yW9Spw9j_c?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/6yW9Spw9j_c?feature=oembed" title="NServiceBus - Publish/Subscribe AWS SQS Transport Getting Started | .NET ON AWS" />
 
 We will learn how to
 
@@ -48,7 +51,6 @@ public class UserCreatedEvent : IEvent
         CreatedDateTime = createdDateTime;
     }
 }
-
 ```
 
 A user created indicates an action that has happened and can be used to notify other applications interested in it.
@@ -63,13 +65,12 @@ public async Task Handle(
 {
     log.Info($"Processed message for user with Id {message.Id}, and {message.Name}");
 
-    / Create the user
-    / Save To database/persistent store
+    // Create the user
+    // Save To database/persistent store
 
     await context
       .Publish(new UserCreatedEvent(message.Id, DateTimeOffset.UtcNow);
 }
-
 ```
 
 ## Subscribing to Events with NServiceBus
@@ -89,7 +90,7 @@ internal class UserCreatedHandler : IHandleMessages<UserCreatedEvent>
     {
         log.Info($"Payroll Service User created handler for User Id {message.UserId}");
 
-        / handle appropriate for payroll service
+        // handle appropriate for payroll service
 
         return Task.CompletedTask;
     }
@@ -120,11 +121,9 @@ endpointConfiguration.EnableInstallers();
 var endointInstance = await Endpoint.Start(endpointConfiguration);
 
 Console.WriteLine("Press any key to stop");
-
 Console.ReadKey();
 
 await endointInstance.Stop();
-
 ```
 
 If other applications are interested in the same Events, you can add additional handlers for the same Event in those applications as well.
@@ -139,23 +138,13 @@ _NServiceBus uses a combination of Amazon SNS and SQS to deliver Events to multi
 
 Amazon Simple Notification Service (SNS) is a publish-subscribe service managed by AWS. It enables asynchronous communication between the publishers and subscribers using messages.
 
-<BlogLink
-  href="/blog/amazon-sns/"
-  title="Amazon SNS For the .NET Developer: Getting Started Quick and Easy"
-  description="Learn how to get started with Amazon SNS and use it from a .NET application. We will learn about Topics, sending messages to topics, and using Subscriptions to receive messages. We will also learn about Filters, how to use them, and error handling with SNS."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/amazon-sns.jpg"
-/>
+<BookmarkCard href="/blog/amazon-sns/" title="Amazon SNS For the .NET Developer: Getting Started Quick and Easy" description="Learn how to get started with Amazon SNS and use it from a .NET application. We will learn about Topics, sending messages to topics, and using Subscriptions to receive messages. We will also learn about Filters, how to use them, and error handling with SNS." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 An SNS Topic is automatically created for the Event by NServiceBus and adds a subscription to the SQS Queue that the service listens on.  
 
 Any time an Event is published to the SNS Topic, it sends a copy to the SQS Queue.
 
-![](/images/image.png)
-
-NServiceBus uses a combination of Amazon SNS and SQS to deliver Events to multiple subscribers. An SNS Topic is automatically created for the Event, and it adds a subscription to the SQS Queue that the service listens on.
+<ImageCard src="/content/images/2023/04/image.png" alt="NServiceBus uses a combination of Amazon SNS and SQS to deliver Events to multiple subscribers. An SNS Topic is automatically created for the Event, and it adds a subscription to the SQS Queue that the service listens on." caption="NServiceBus uses a combination of Amazon SNS and SQS to deliver Events to multiple subscribers. An SNS Topic is automatically created for the Event, and it adds a subscription to the SQS Queue that the service listens on." />
 
 In this case, we have an SNS Topic created with the name `user_messages-UserCreatedEvent`. It also creates a queue for the `task-force-service` , and a Subscription is added to the SNS queue.
 
@@ -163,23 +152,13 @@ When the `UserCreatedEvent` message is forwarded to the `task-force-service` SQS
 
 When you add more subscribers to the same Event, it adds more Subscriptions to the SNS and delivers a copy of the Event message to all the subscribers.
 
-![](/images/image-1.png)
-
-Multiple Subscriptions are created on the SNS Topic to deliver a copy of the same Event message to different Subscribers.
+<ImageCard src="/content/images/2023/04/image-1.png" alt="Multiple Subscriptions are created on the SNS Topic to deliver a copy of the same Event message to different Subscribers." caption="Multiple Subscriptions are created on the SNS Topic to deliver a copy of the same Event message to different Subscribers." />
 
 Even if the individual applications handling the Event messages are not up and running, a copy of the message is delivered to the Queue. When the application is back up and running, it can process the Events and execute the associated handler functions.
 
 If you want to learn more about decoupling applications using SNS -> SQS, you can check out the blog post below, which I cover in full detail.
 
-<BlogLink
-  href="/blog/amazon-sns-to-lambda-or-sns-sqs-lambda-dotnet/"
-  title="SNS→Lambda Or SNS→SQS→Lambda"
-  description="Should you be processing messages directly from SNS to Lambda or via an SQS Queue? Learn the disadvantages of directly processing messages from SNS and how you can solve those by introducing an SQS Queue in the middle."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/amazon-sns-to-lambda-or-sns-sqs-lambda-dotnet.jpg"
-/>
+<BookmarkCard href="/blog/amazon-sns-to-lambda-or-sns-sqs-lambda-dotnet/" title="SNS→Lambda Or SNS→SQS→Lambda" description="Should you be processing messages directly from SNS to Lambda or via an SQS Queue? Learn the disadvantages of directly processing messages from SNS and how you can solve those by introducing an SQS Queue in the middle." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 ### Large Event Message Sizes
 

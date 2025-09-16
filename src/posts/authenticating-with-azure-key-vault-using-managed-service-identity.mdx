@@ -1,13 +1,13 @@
 ---
-title: "Authenticating with Azure Key Vault Using Managed Service Identity"
+title: Authenticating with Azure Key Vault Using Managed Service Identity
 slug: authenticating-with-azure-key-vault-using-managed-service-identity
-date: 2017-10-18T00:00:00.000Z
-feature_image: /images/keyvault_managed_service_identity.png
+date: '2017-10-18'
+feature_image: /content/images/keyvault_managed_service_identity.png
+tags:
+  - Azure
 excerpt: >-
   Using Managed Service Identity to authenticate a client application to connect
   with Azure Key Vault
-tags:
-  - Azure
 ---
 **_How do you secure the access keys to the Key Vault itself?_**.
 
@@ -19,22 +19,13 @@ Managed Service Identity (MSI) solves this problem by allowing an Azure App Serv
 
 MSI can be enabled through the Azure Portal. E.g., to enable MSI for App Service, the portal has an option as shown below.
 
-![Enable Managed Service Identity for Azure App Service](/images/keyvault_managed_service_identity.png)
+<ImageCard src="/content/images/keyvault_managed_service_identity.png" alt="Enable Managed Service Identity for Azure App Service" />
 
 Once enabled we can add an access policy in the key vault to give permissions to the Azure App service. Search by the app service name and assign the required access policies.
 
-For an application to access the key vault, we need to use _AzureServiceTokenProvider_ from [Microsoft.Azure.Services.AppAuthentication](https://www.nuget.org/packages/Microsoft.Azure.Services.AppAuthentication/) NuGet package. Instead of using the ClientCredential or ClientAssertionCertificate to acquire the token, we will use AzureServiceTokenProvider to acquire the token for us."
+For an application to access the key vault, we need to use _AzureServiceTokenProvider_ from [Microsoft.Azure.Services.AppAuthentication](https://www.nuget.org/packages/Microsoft.Azure.Services.AppAuthentication/) NuGet package. Instead of using the ClientCredential or ClientAssertionCertificate to acquire the token, we will use AzureServiceTokenProvider to acquire the token for us.
 
-<BlogLink
-  href="/blog/defaultazurecredential-from-azure-sdk"
-  title="DefaultAzureCredential: Unifying How We Get Azure AD Token"
-  description="Azure Identity library provides Azure Active Directory token authentication support across the Azure SDK"
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/pfx_security.jpg"
-/>
-
+<BookmarkCard href="/blog/defaultazurecredential-from-azure-sdk" title="DefaultAzureCredential: Unifying How We Get Azure AD Token" description="Azure Identity library provides Azure Active Directory token authentication support across the Azure SDK" icon="/favicon.ico" />
 ```csharp
 var azureServiceTokenProvider = new AzureServiceTokenProvider();
 var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
@@ -52,16 +43,12 @@ _The [AzureServiceTokenProvider](https://azure.microsoft.com/en-us/resources/sam
 For the AzureServiceTokenProvider to work locally we need to install the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) and also setup an environment variable - _AzureServicesAuthConnectionString_. Depending on whether you want to use ClientId/Secret or ClientId/Certificate-based authentication the value for the environment variable changes.
 
 ```text
-
 AzureServicesAuthConnectionString to RunAs=App;AppId=AppId;TenantId=TenantId;AppKey=Secret.
-
 Or
-
 RunAs=App;AppId=AppId;TenantId=TenantId;CertificateThumbprint=Thumbprint;CertificateStoreLocation=CurrentUser
 
 ```
-
-![Get Tenant Id and AppId](/images/kkeyvault_msi_tenantId.png)
+<ImageCard src="/content/images/kkeyvault_msi_tenantId.png" alt="Get Tenant Id and AppId" />
 
 As shown above, you can get the TenantId and AppId from the App Registrations page in the Azure portal. Clicking on the Endpoints button reveals a list of URL's which has the TenantId GUID. The AppId is displayed against each of the AD application. Once you set the environment variable, the application will be able to connect to Key Vault without any additional configuration entries in web/app config.
 

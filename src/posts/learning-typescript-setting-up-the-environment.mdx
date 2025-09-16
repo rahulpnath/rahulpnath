@@ -1,12 +1,13 @@
 ---
-title: "Learning TypeScript: Setting up the Environment"
+title: 'Learning TypeScript: Setting up the Environment'
 slug: learning-typescript-setting-up-the-environment
-date: 2015-12-25
-feature_image: /images/tsc_options.png
-excerpt: >-
-  A short post on setting up the environment for starting with TypeScript, so as to see generated JavaScript real-time.
+date: '2015-12-25'
+feature_image: /content/images/tsc_options.png
 tags:
   - Programming
+excerpt: >-
+  A short post on setting up the environment for starting with TypeScript, so as
+  to see generated JavaScript real-time.
 ---
 > TypeScript is superset of JavaScript and compiles to clean JavaScript output.
 
@@ -14,7 +15,7 @@ tags:
 
 -   **Create folder** To start with lets first create a folder to work in. In this example I would be using npm(Node Package Manager) to get all the required packages. If you are new to Node, then head off to [here](https://nodejs.org/en/) to get started and install the runtime before continuing on.
 
--   **npm init** Once done with the node setup, run the [init](https://docs.npmjs.com/cli/init) command, within the project folder (created above), to initialize the node project. This prompts a series of questions and creates a _package.json_ file with the entered options."
+-   **npm init** Once done with the node setup, run the [init](https://docs.npmjs.com/cli/init) command, within the project folder (created above), to initialize the node project. This prompts a series of questions and creates a _package.json_ file with the entered options.
 -   **npm install -g typescript** If you already have TypeScript installed (which comes in default with Visual Studio 2013 Update 2 onwards) then you can skip this step. If not, run 'npm install -g typescript', which will install it into the global scope.
 -   **Hello World from TypeScript** With the compiler setup, we are good to write out first hello world, for which we create a file with .ts extension.
 
@@ -33,7 +34,6 @@ To compile this manually we need to run the TypeScript compiler (which we instal
 tsc HelloWorld.ts
 
 ```
-
 ```javascript
 function HelloWorld(name) {
   alert('Hello ' + name);
@@ -49,11 +49,12 @@ HelloWorld('TypeScript');
 tsc HelloWorld.ts --watch
 
 ```
-
-![Visual Studio Code Coverage](/images/tsc_options.png)
+<ImageCard src="/content/images/tsc_options.png" alt="Visual Studio Code Coverage" />
 
 The watch switch is only available in the later versions of the compiler. To check whether your version supports it, run tsc alone which will show all the supported commands. If you do not see the watch switch as shown above, you will need to update the TypeScript compiler version. For this check the environment variables to see the path to your current compiler. If this has a path to an older version (possibly to one that Visual Studio installed at _Program Files (x86)\\Microsoft SDKs\\TypeScript_), then remove it. Now do a fresh install using npm, to install the latest version.
 
 Open up both the TypeScript file and the generated JavaScript file in your favorite editor and you will see real-time updates to the JavaScript code, when you update the TypeScript code.  
 
-<Figure src="/images/TypeScript.gif" caption="Hope this helps you with setting up the development environment to learn TypeScript!" />
+<ImageCard src="/content/images/TypeScript.gif" alt="Visual Studio Code Coverage" />
+
+Hope this helps you with setting up the development environment to learn TypeScript!

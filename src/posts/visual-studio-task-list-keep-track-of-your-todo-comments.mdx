@@ -1,13 +1,12 @@
 ---
-title: "Tip of the Week: Visual Studio Task List - Keep Track of Your TODO Comments"
+title: 'Tip of the Week: Visual Studio Task List - Keep Track of Your TODO Comments'
 slug: visual-studio-task-list-keep-track-of-your-todo-comments
-date: 2017-05-03
-feature_image: /images/taskList.png
-excerpt: >-
-  Track your unfinished work in one place.
+date: '2017-05-03'
+feature_image: /content/images/taskList.png
 tags:
   - Productivity
   - Programming
+excerpt: Track your unfinished work in one place.
 ---
 It often happens when coding that I skip over some part and want to come back to it at a later point in time. I leave some comments in the code so that I do not miss it. It can be a bit tricky to keep track of these comments themselves. Before pushing up the changes to [master branch](https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell) or creating a [Pull Request](https://help.github.com/articles/about-pull-requests/), I make sure that all such comments are addressed.
 
@@ -21,10 +20,9 @@ public bool IsInRange(DateTime theDateTime)
 }
 
 ```
+<ImageCard src="/content/images/taskList.png" alt="Visual Studio Task List" />
 
-![Visual Studio Task List](/images/taskList.png)
-
-> _A comment in your code preceded by a comment marker and a predefined token will appear in the Task List window. For example, the above comment has three distinct parts:_"
+> _A comment in your code preceded by a comment marker and a predefined token will appear in the Task List window. For example, the above comment has three distinct parts:_
 
 -   _The comment marker (//)_
 -   _The token (TODO)_
@@ -32,7 +30,7 @@ public bool IsInRange(DateTime theDateTime)
 
 Visual Studio by default has TODO, HACK and UNDONE as tokens. You can modify this under Options -> Task List. New custom tokens can be added as required and used instead of the default ones.
 
-![Visual Studio, Customize Task List](/images/taskList_customize.png)
+<ImageCard src="/content/images/taskList_customize.png" alt="Visual Studio, Customize Task List" />
 
 When in a multi-member team you can either use custom tokens per member or append the comment with your name or feature name. The Task List provides Search feature with which you can filter the tasks created by you or for the feature you are working.
 

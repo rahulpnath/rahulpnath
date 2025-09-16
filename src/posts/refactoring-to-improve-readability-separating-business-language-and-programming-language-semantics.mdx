@@ -1,12 +1,14 @@
 ---
-title: ">-   Refactoring to Improve Readability - Separating Business Language and   Programming Language Semantics"
+title: >-
+  Refactoring to Improve Readability - Separating Business Language and
+  Programming Language Semantics
 slug: >-
   refactoring-to-improve-readability-separating-business-language-and-programming-language-semantics
-date: 2016-07-18T00:00:00.000Z
-feature_image: /images/readable_code.jpg
-excerpt: Code should be readable and easy to reason about.
+date: '2016-07-18'
+feature_image: /content/images/readable_code.jpg
 tags:
   - Programming
+excerpt: Code should be readable and easy to reason about.
 ---
 Often we write ourselves or come across code that has both business language and the programming language semantics mixed together. This makes it very hard to reason about the code and also fix any issues. It's easier to read code that is composed of different smaller individual functions doing a single thing.
 
@@ -16,7 +18,7 @@ If you follow the _One Level of Abstraction per Function Rule_ or the _Stepdown 
 
 Recently while fixing a bug in one of the applications that I am currently working on, I came across a code with the business and programming language semantics mixed together. This made it really hard to understand the code and fixing it. So I decided to refactor it a bit before fixing the bug.
 
-[![Code should be readable](/images/readable_code.jpg)](http://www.slideshare.net/kvg452/the-art-of-readable-code-31322040)
+<ImageCard src="/content/images/readable_code.jpg" alt="Code should be readable" />
 
 The application is a subscription based service for renting books, videos, games etc. and enabled customers to have different subscription plans and terms. Currently, we are migrating away from the custom built billing module that the application uses to a SAAS based billing provider to make invoicing and billing easy and manageable. In code, a _Subscription_ holds a list of _SubscriptionTerm_ items, that specifies the different terms that a customer has for the specific subscription. A term typically has a start date, an optional end date and a price for that specific term. A null end date indicates that the subscription term is valid throughout the customer lifetime in the system.
 
@@ -159,7 +161,6 @@ public void OverlappingDatesReturnsExpected(
 }
 
 ```
-
 ```csharp
 //  IsOverlapping in DateRange
 public bool IsOverlapping(DateRange dateRange)
@@ -189,7 +190,6 @@ public bool IsOverlapping(SubscriptionTerm term)
 }
 
 ```
-
 ```csharp
 // Validator after Refactoring
 public bool Validate(Subscription subscription)

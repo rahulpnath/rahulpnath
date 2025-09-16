@@ -1,13 +1,13 @@
 ---
-title: "Scheduling Recurring Jobs With a Cool-Off Period"
+title: Scheduling Recurring Jobs With a Cool-Off Period
 slug: scheduling-recurring-jobs-with-a-cool-off-period
-date: 2017-12-24T00:00:00.000Z
-feature_image: /images/scheduling_jobs.jpg
-excerpt: Scheduling jobs at different time intervals and pausing them in between.
+date: '2017-12-24'
+feature_image: /content/images/scheduling_jobs.jpg
 tags:
   - Programming
+excerpt: Scheduling jobs at different time intervals and pausing them in between.
 ---
-[![Scheduling](/images/scheduling_jobs.jpg)](https://flic.kr/p/8ys6Hs)
+<ImageCard src="/content/images/scheduling_jobs.jpg" alt="Scheduling" />
 
 At one of my clients, they had a requirement of scheduling various rules to sent our alert messages via SMS, Email, etc. A Rule consists of below and a few other properties
 
@@ -30,7 +30,7 @@ All Rules are stored in a database. New rules can be added and existing ones upd
 
 ```
 
-Because of my past good experiences with [HangFire](https://www.hangfire.io/) I initially set off using that only to discover soon that it can schedule jobs only to the minute level. Even though this is a [feature that has been discussed for a long time](https://github.com/HangfireIO/Hangfire/issues/167), it's yet to be implemented. Since some of the rules are critical to the business, they want to be notified as soon as possible. This means having a polling interval in seconds for those rules."
+Because of my past good experiences with [HangFire](https://www.hangfire.io/) I initially set off using that only to discover soon that it can schedule jobs only to the minute level. Even though this is a [feature that has been discussed for a long time](https://github.com/HangfireIO/Hangfire/issues/167), it's yet to be implemented. Since some of the rules are critical to the business, they want to be notified as soon as possible. This means having a polling interval in seconds for those rules.
 
 After reaching out to my [friends at Readify](/blog/finding-a-job-abroad/), I decided to use [Quartz.net](https://www.quartz-scheduler.net/). Many had good experiences using it in the past and recommended it highly. One another option that came up was [FluentScheduler](https://github.com/fluentscheduler/FluentScheduler). There was no particular reason to go with Quartz.net.
 

@@ -1,21 +1,21 @@
 ---
-title: "Understand CORS and Learn How to Enable it for Your ASP NET API"
+title: Understand CORS and Learn How to Enable it for Your ASP NET API
 slug: asp-net-core-cors-demystified
-date: 2020-12-01T00:00:00.000Z
-feature_image: /images/cors_bridge.jpg
+date: '2020-12-01'
+feature_image: /content/images/cors_bridge.jpg
+tags:
+  - Dotnet
+  - Programming
 excerpt: >-
   Cross Origin Resource Sharing or CORS in short is a W3C standard that allows a
   server to relax the same-origin policy. Learn more about CORS, how to enable
   it for an ASP NET Web API, Preflight requests and more.
-tags:
-  - Dotnet
-  - Programming
 ---
 Browser security prevents a web page from making requests to a different domain than the one that served the web page. This restriction is called the same-origin policy. The same-origin policy prevents a malicious site from reading sensitive data from another site.
 
 Sometimes, you might want to allow other sites to make cross-origin requests to your application. This is when you have an API hosted independently to your web applications talking to the API.
 
-<iframe src="https://www.youtube.com/embed/vP--GB5ZEMU" />
+<EmbedCard src="https://www.youtube.com/embed/vP--GB5ZEMU" />
 
 In such scenarios, we need to enable CORS support on the API so that the web application can call it.
 
@@ -29,7 +29,9 @@ Two URLs have the same origin if they have the same Scheme, Host, and Port. For 
 -   Host `example.com`
 -   Port `9000`.
 
-<Figure src="/images/cors_url_structure.jpg" caption="So if any one of them (Scheme, Host, or Port) is different, it's treated as a different origin." />
+<ImageCard src="/content/images/cors_url_structure.jpg" alt="URL Structure of https://example.com:9000/foo.html" />
+
+So if any one of them (Scheme, Host, or Port) is different, it's treated as a different origin.
 
 ## CORS In Action In ASP Net Application
 
@@ -44,7 +46,7 @@ To understand CORS better, let’s first simulate an error to see it in action. 
 
 Now when we hit the React application running on `localhost:3000`, it will throw an error in the Console as below.
 
-![](/images/cors_browser_console_error.jpg)
+<ImageCard src="/content/images/cors_browser_console_error.jpg" alt="" />
 
 This is because of CORS. We have an application running on one origin (http://localhost:3000) trying to access an application/API running on another origin (http://localhost:5001). Note in this case, the ports are different, which makes them different origins.
 
@@ -84,7 +86,9 @@ _The Origins URL specified must not have a trailing slash._
 
 With this code added, the API now asks the browser to relax the Cross-Origin Policy. If we make another request again from the application and inspect the request headers, we can see the `access-control-allow-origin` headers added to the response. It
 
-<Figure src="/images/cors_request_headers.jpg" caption="### Configurable Origins" />
+<ImageCard src="/content/images/cors_request_headers.jpg" alt="HTTP Request header has the Response Headers 'access-control-allow-origin: http://localhost:3000" />
+
+### Configurable Origins
 
 Since we will need to run the API from different environments, it's best not to hardcode the Origin URL in the source code. You can move this to the application settings.
 
@@ -149,9 +153,7 @@ options.AddDefaultPolicy(builder =>
 
 Inspecting the Network Request from the application running on `localhost:3000` we can see two requests - One `OPTIONS` and one `GET` call.
 
-![The OPTIONS Network call with the access-control-* headers.](/images/cors_preflight_options_call.jpg)
-
-[![](/images/asp_net_core_banner.png)](https://www.youtube.com/playlist?list=PL59L9XrzUa-nqfCHIKazYMFRKapPNI4sP)
+<ImageCard src="/content/images/cors_preflight_options_call.jpg" alt="The OPTIONS Network call with the access-control-* headers." /><ImageCard src="/content/images/asp_net_core_banner.png" alt="" />
 
 ## CORS ≠ SECURITY
 

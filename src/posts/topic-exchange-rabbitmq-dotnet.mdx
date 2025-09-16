@@ -1,19 +1,21 @@
 ---
-title: "RabbitMQ Topic Exchange Explained"
+title: RabbitMQ Topic Exchange Explained
 slug: topic-exchange-rabbitmq-dotnet
-date: 2024-04-15T00:00:00.000Z
-feature_image: /images/RabbitMQ---Topic-Exchange.png
+date: '2024-04-15'
+feature_image: /content/images/2024/04/RabbitMQ---Topic-Exchange.png
+tags:
+  - RabbitMQ
+  - AWS
 excerpt: >-
   Topic Exchanges in RabbitMQ route messages based on wildcard matches on the
   message routing key specified on the queue binding.
-    With Topic Exchanges, consumers can subscribe to topics they are interested in, like subscribing to a feed or individual tags.
-tags:
-  - AWS
-  - RabbitMQ
+
+  With Topic Exchanges, consumers can subscribe to topics they are interested
+  in, like subscribing to a feed or individual tags.
 ---
 An Exchange in RabbitMQ is a routing mechanism to send messages to queues.
 
-RabbitMQ supports four Exchange Types: Topic Exchange, [**Direct Exchange**](/blog/direct-exchange-rabbitmq-dotnet/)**,** [Fanout Exchange](/blog/fanout-exchange-rabbitmq-dotnet/), [Headers Exchange](/blog/headers-exchange-rabbitmq-dotnet/)."
+RabbitMQ supports four Exchange Types: Topic Exchange, [**Direct Exchange**](/blog/direct-exchange-rabbitmq-dotnet/)**,** [Fanout Exchange](/blog/fanout-exchange-rabbitmq-dotnet/), [Headers Exchange](/blog/headers-exchange-rabbitmq-dotnet/).
 
 In this blog post, let's understand
 
@@ -21,7 +23,7 @@ In this blog post, let's understand
 -   Routing messages in Topic Exchange
 -   RabbitMQ Topic Exchange From a .NET application.
 
-<iframe src="https://www.youtube.com/embed/bX0wmezRomI?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/bX0wmezRomI?feature=oembed" title="TOPIC EXCHANGE TYPE | RabbitMQ from DOTNET | Amazon MQ" />
 
 I use [Amazon MQ](https://aws.amazon.com/amazon-mq/?ref=rahulpnath.com), a managed message broker service that supports ActiveMQ and RabbitMQ engine types, to host my RabbitMQ instance. However, you can use [one of the various options that RabbitMQ provides](https://www.rabbitmq.com/download.html?ref=rahulpnath.com) to host your instance,
 
@@ -43,7 +45,7 @@ Topic exchanges route messages to one or many queues based on matching between a
 
 You can use wildcards when specifying a Binding key, and all messages with a routing key matching the wildcard are considered matches.
 
-![](/images/image-4.png)
+<ImageCard src="/content/images/2024/04/image-4.png" alt="" />
 
 The message routing key in a Topic Exchange is usually a list of words delimited by dots. This makes it easy to use wildcards to filter messages. e.g. _color.orange, aus.nsw.syd, stock.usd.nyse_ etc
 
@@ -66,15 +68,7 @@ We will use a NuGet package, [RabbitMQ.Client](https://www.nuget.org/packages/R
 
 If you are new to building RabbitMQ from .NET applications, check out the Getting Started article below.
 
-<BlogLink
-  href="/blog/amazon-mq-rabbitmq-dotnet/"
-  title="Amazon MQ RabbitMQ: A Reliable Messaging Solution for Your .NET Projects"
-  description="RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let’s learn how to get started using RabbitMQ on Amazon MQ from .NET application."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/rabbit-mq-dotnet.png"
-/>
+<BookmarkCard href="/blog/amazon-mq-rabbitmq-dotnet/" title="Amazon MQ RabbitMQ: A Reliable Messaging Solution for Your .NET Projects" description="RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let’s learn how to get started using RabbitMQ on Amazon MQ from .NET application." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 ### Create and Send Messages to RabbitMQ Topic Exchange From .NET
 
@@ -96,7 +90,6 @@ using var channel = connection.CreateModel();
 
 var exchangeName = "weather_topic";
 channel.ExchangeDeclare(exchangeName, ExchangeType.Topic);
-
 ```
 
 When sending a message, the sender specifies the Exchange and the routing key.
@@ -104,7 +97,6 @@ When sending a message, the sender specifies the Exchange and the routing key.
 ```csharp
 var body = Encoding.UTF8.GetBytes(message);
 channel.BasicPublish(exchangeName, routingKey, null, body);
-
 ```
 
 ### Set up Binding on RabbitMQ Topic Exchange From .NET
@@ -128,12 +120,11 @@ using var channel = connection.CreateModel();
 var queueName = "nsw";
 channel.QueueDeclare(queueName, false, false, false, null);
 channel.QueueBind(queueName, "weather_topic", "aus.nsw.*");
-
 ```
 
 The above code sets up a queue `nsw` with a binding on the `weather_topic` exchange with a binding key `aus.nws.*` that filters all messages for NSW state in Australia.
 
-<Figure src="/images/image-5.png" caption="AWS MQ RabbitMQ Management Console shows a Topic Exchange with the two bindings using wildcards." />
+<ImageCard src="/content/images/2024/04/image-5.png" alt="AWS MQ RabbitMQ Management Console shows a Topic Exchange with the two bindings using wildcards." caption="AWS MQ RabbitMQ Management Console shows a Topic Exchange with the two bindings using wildcards." />
 
 To set up a Queue to capture all messages to Australia, let's create a new queue `aus` with the binding using the # (hash) wildcard, as shown below.
 
@@ -141,9 +132,8 @@ To set up a Queue to capture all messages to Australia, let's create a new queue
 var queueName = "aus";
 channel.QueueDeclare(queueName, false, false, false, null);
 channel.QueueBind(queueName, "weather_topic", "aus.#");
-
 ```
 
 Whenever a message comes to the exchange for any state in Australia, a copy gets routed to the `aus` queue. Similarly, when a message arrives for any city in `nsw`, a copy gets sent to both `aus` and `nsw` queue.
 
-<Figure src="/images/rabbitmq-topic-exchange-demo.gif" caption="RabbitMQ Topic Exchange demo using different wildcard options." />
+<ImageCard src="/content/images/2024/04/rabbitmq-topic-exchange-demo.gif" alt="RabbitMQ Topic Exchange demo using different wildcard options." caption="RabbitMQ Topic Exchange demo using different wildcard options." />

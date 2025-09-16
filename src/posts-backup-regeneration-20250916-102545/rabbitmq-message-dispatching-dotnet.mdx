@@ -1,0 +1,130 @@
+---
+title: >-
+  Efficient Message Distribution with RabbitMQ: Understanding Round Robin and
+  Fair Dispatching Modes
+slug: rabbitmq-message-dispatching-dotnet
+date: '2024-02-14'
+feature_image: /images/RabbitMQ---Message-Dispatching.png
+excerpt: >-
+  Dispatching modes play a crucial role in task distribution among multiple
+  workers. Learn how the two message dispatching modes - Round robin and Fair
+  dispatching - work in RabbitMQ.
+---
+A Work queue, or a Task queue, is a mechanism used in message-based systems to distribute and parallelize tasks or jobs across multiple workers.
+
+When using RabbitMQ, Dispatching modes play a crucial role in task distribution among multiple workers.
+
+In this post, let’s learn the two message dispatch modes in RabbitMQ and how it affects the consumers pulling work from the Queues.
+
+<iframe src="https://www.youtube.com/embed/HRudM2WTXHM?feature=oembed" />
+
+_This article is sponsored by AWS and is part of my_ [_RabbitMQ Series_](/blog/tag/rabbitmq/)_._
+
+For this post, I will use [Amazon MQ](https://aws.amazon.com/amazon-mq/), a managed message broker service that supports ActiveMQ and RabbitMQ engine types.
+
+However, you can use [one of the various options that RabbitMQ provides](https://www.rabbitmq.com/download.html?ref=rahulpnath.com) to host your instance, including a local Docker instance.
+
+<PostCard 
+  title="Amazon MQ RabbitMQ: A Reliable Messaging Solution for Your .NET Projects"
+  description="RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let’s learn how to get started using RabbitMQ on Amazon MQ from .NET application."
+  slug="amazon-mq-rabbitmq-dotnet/"
+  image="/images/rabbit-mq-dotnet.png"
+/>
+
+The main idea of using a work queue is to offload resource-intensive tasks to a different process in the background or to be scheduled. This removes the need to wait for the task to be completed on synchronous application interaction points.
+
+This concept is especially useful in user interactions flows on web pages and applications and also during machine to machine interaction over an API.
+
+## Rabbit MQ and .NET Consumer
+
+Below is a sample .NET consumer that pulls work from a RabbitMQ (in my case, one hosted on Amazon MQ).
+
+```csharp
+consumer.Received += (model, ea) =>
+{
+    var body = ea.Body.ToArray();
+    var message = Encoding.UTF8.GetString(body);
+    Console.WriteLine($"[x] Received message {message}");
+    if (message.Contains("exception"))
+    {
+        Console.WriteLine("Error in processing");
+        channel.BasicReject(ea.DeliveryTag, false);
+        throw new Exception("Error in processing");
+    }
+    if (int.TryParse(message, out var delayTime))
+        Thread.Sleep(delayTime * 1000);
+    
+    / Additional processing for this message
+    Console.WriteLine($"Processed message {message}");
+    channel.BasicAck(deliveryTag: ea.DeliveryTag, false);
+};
+```
+
+If the message is an integer value, it waits for that many seconds in the processing step. This is purely to simulate an artificial delay that we can use to understand the dispatch modes in RabbitBQ.
+
+To understand dispatch modes, we need 2 more consumers pulling work from the same Queue. So go ahead and fire up a couple of consumers to follow along on how the message gets processed.
+
+## RabbitMQ: Round-robin Dispatching
+
+With Round-robin dispatching, RabbitMQ sends messages to the next consumer, in sequence.
+
+With this mode, every consumer will get same number of messages to process (assuming they all start around the same time).
+
+Based on the order in which the consumers start-up and register with RabbitMQ, messages are dispatched in sequence to these consumers as they arrive in the queue.
+
+### Drawback of Round-robin Dispatching
+
+Not all work is created equal.
+
+Some messages might take more time than others. This means a consumer might be held up processing a large message and still receive another message because it is the next one in sequence.
+
+Other consumers might be free and ready to process the messages immediately, but they will be blocked as they were delivered to a busy consumer.
+
+Spin up two consumers to simulate this with the consumer code above. Send messages with integer values → `1, 50, 1, 2, 1, 2, 1, 2` etc.
+
+The second consumer will be blocked by the message that takes `50` seconds to process and all the subsequent alternate messages delivered to that consumer will be blocked until 50 seconds are passed.
+
+Round-robin dispatching works great in scenarios where all messages are equal and take the same time to process.
+
+## RabbitMQ: Fair Dispatching
+
+Fair Dispatch ensures a more balanced distribution, preventing one worker from overloading with tasks while others remain idle.
+
+Instead of blindly dispatching every n-th message to the n-th consumer, Fair dispatching sends the messages to the consumers ready to pick up work.
+
+To enable Fair dispatching, when registering the consumer with RabbitMQ we need to specify the number of unacknowledged messages that the consumer can hold.
+
+💡
+
+Prefetch count in RabbitMQ limits the number of unacknowledged (not handled) messages in a consumer.
+
+This is easily done using the `BasicQos` method on the channel and specifying the `prefetchCount` property.
+
+```csharp
+channel.BasicQos(prefetchSize:0, prefetchCount:1, global:false);
+```
+
+This tells RabbitMQ not to give more than one message to a worker at a time.
+
+So RabbitMQ will not dispatch a new message to a worker until it has processed and acknowledged the previous one. It will wait for any consumer to be free and dispatch it to that consumer.
+
+### Fair Dispatching and Manual Acknowledgement
+
+One thing to note is that setting `prefetchCount` only makes sense when you have Manual Acknowledgement.
+
+<PostCard 
+  title="Exploring Manual and Automatic Acknowledgment in RabbitMQ with .NET"
+  description="Delivery processing acknowledgements from consumers are referred to as acknowledgements in messaging protocols. Let’s learn automatic and manual ack modes in RabbitMQ."
+  slug="rabbitmq-consumer-ack-dotnet/"
+  image="/images/_RabbitMQ---ACK.png"
+/>
+
+We saw that with Automatic acknowledgment mode, messages are considered to be successfully delivered as soon as they are sent.
+
+So, even if we were to set a `prefetchCount`, as soon a message gets delivered to a consumer it's consider as processed by RabbitMQ, even if the consumer is still processing the message.
+
+<iframe src="https://www.youtube.com/embed/jrLbUz_5Aiw?feature=oembed" />
+
+So when setting, `prefetchCount` make sure you are manually acknowledging the messages being processed.
+
+With our previous example of 2 consumers in Fair dispatching mode, if we send messages with integer values → `1, 50, 1, 2, 1, 2, 1, 2` etc.; once the second consumer is blocked by the message that takes 50 seconds, all subsequent messages will be delivered to the other consumer until the 50-sec task is completed. Once that becomes free, subsequent messages will be delivered to that consumer.

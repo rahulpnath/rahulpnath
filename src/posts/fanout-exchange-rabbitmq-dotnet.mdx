@@ -1,15 +1,15 @@
 ---
-title: "RabbitMQ Fanout Exchange Explained"
+title: RabbitMQ Fanout Exchange Explained
 slug: fanout-exchange-rabbitmq-dotnet
-date: 2024-03-21T00:00:00.000Z
-feature_image: /images/RabbitMQ---Fanout-Exchange.png
+date: '2024-03-21'
+feature_image: /content/images/2024/03/RabbitMQ---Fanout-Exchange.png
+tags:
+  - RabbitMQ
+  - AWS
 excerpt: >-
   A Fanout Exchange type in RabbitMQ routes messages to all of the queues bound
   to it, ignoring the routing key. Let's understand how to set up a Fanout
   Exchange and how it routes messages to consumers.
-tags:
-  - AWS
-  - RabbitMQ
 ---
 An Exchange in RabbitMQ is a routing mechanism to send messages to queues.
 
@@ -20,7 +20,7 @@ RabbitMQ supports four different Exchange Types.
 -   Headers Exchange
 -   [**Direct Exchange**](/blog/direct-exchange-rabbitmq-dotnet/)
 
-<iframe src="https://www.youtube.com/embed/NUASc6djZqE?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/NUASc6djZqE?feature=oembed" title="FANOUT EXCHANGE TYPE  | RabbitMQ from DOTNET | Amazon MQ" />
 
 In this blog post, let's understand
 
@@ -40,9 +40,7 @@ When a new message is published to a Fanout exchange, a copy is delivered to all
 
 Fanout exchanges are ideal for broadcasting messages.
 
-![](/images/image-3.png)
-
-Fanout Exchange routes messages to all queues bound to it. It ignores the routing keys on the messages and the Binding if any are specified.
+<ImageCard src="/content/images/2024/03/image-3.png" alt="Fanout Exchange routes messages to all queues bound to it. It ignores the routing keys on the messages and the Binding if any are specified." caption="Fanout Exchange routes messages to all queues bound to it. It ignores the routing keys on the messages and the Binding if any are specified." />
 
 Fanout exchange ignores the routing keys on the messages and any Binding keys if specified.
 
@@ -52,15 +50,7 @@ We will use a NuGet package, [RabbitMQ.Client](https://www.nuget.org/packages/Ra
 
 If you are new to building RabbitMQ from .NET applications, check out the Getting Started article below.
 
-<BlogLink
-  href="/blog/amazon-mq-rabbitmq-dotnet/"
-  title="Amazon MQ RabbitMQ: A Reliable Messaging Solution for Your .NET Projects"
-  description="RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let’s learn how to get started using RabbitMQ on Amazon MQ from .NET application."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/rabbit-mq-dotnet.png"
-/>
+<BookmarkCard href="/blog/amazon-mq-rabbitmq-dotnet/" title="Amazon MQ RabbitMQ: A Reliable Messaging Solution for Your .NET Projects" description="RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let’s learn how to get started using RabbitMQ on Amazon MQ from .NET application." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 ### Creating RabbitMQ Fanout Exchange From .NET
 
@@ -82,14 +72,12 @@ using var channel = connection.CreateModel();
 
 var exchangeName = "weather_fanout";
 channel.ExchangeDeclare(exchangeName, ExchangeType.Fanout);
-
 ```
 
 When sending a message, the sender specifies the Exchange and routing key.
 
 ```csharp
 channel.BasicPublish(exchangeName, routingKey, null, body);
-
 ```
 
 When sending to a Fanout Exchange, the `routingKey` can be empty as the exchange ignores it.
@@ -115,14 +103,13 @@ using var channel = connection.CreateModel();
 var queueName = "nsw";
 channel.QueueDeclare(queueName, false, false, false, null);
 channel.QueueBind(queueName, "weather_fanout", string.Empty);
-
 ```
 
 The above code sets up a queue `nsw` and sets up a binding with the Fanout exchange (`weather_fanout`) we created earlier.
 
 You can create multiple queues and bind with the same exchange, if multiple consumers are interested in the messages coming to the Exchange.
 
-<Figure src="/images/image-4.png" caption="Fanout Exchange in AWS MQ RabbitMQ console showing the two queues and the bindings." />
+<ImageCard src="/content/images/2024/03/image-4.png" alt="Fanout Exchange in AWS MQ RabbitMQ console showing the two queues and the bindings." caption="Fanout Exchange in AWS MQ RabbitMQ console showing the two queues and the bindings." />
 
 For example, In this case, the `weather_fanout` exchange can be used to broadcast critical weather alerts, and all consumers are interested in it. To register other Queues, we can repeat the queue declaration and binding.
 
@@ -130,9 +117,8 @@ For example, In this case, the `weather_fanout` exchange can be used to broadcas
 var queueName = "qld";
 channel.QueueDeclare(queueName, false, false, false, null);
 channel.QueueBind(queueName, "weather_fanout", string.Empty);
-
 ```
 
 Any time a message is sent to the Exchange, a copy of it is sent to both `qld` and `nsw` Queues and the consumers listening on those queues can process the messages.
 
-<Figure src="/images/RabbitMQ-Fanout-Exchange.gif" caption="RabbitMQ Fanout exchange sending messages to all bounded queues." />
+<ImageCard src="/content/images/2024/03/RabbitMQ-Fanout-Exchange.gif" alt="RabbitMQ Fanout exchange sending messages to all bounded queues." caption="RabbitMQ Fanout exchange sending messages to all bounded queues." />

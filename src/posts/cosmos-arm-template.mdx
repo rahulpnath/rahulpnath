@@ -1,24 +1,28 @@
 ---
-title: "How To Create An ARM Template For Cosmos DB"
+title: How To Create An ARM Template For Cosmos DB
 slug: cosmos-arm-template
-date: 2020-11-05
-feature_image: /images/arm_template.png
-excerpt: >-
-  Learn how to create an ARM template to deploy Azure Cosmos DB with dynamic containers. With this template you can keep adding containers as you build the application.
+date: '2020-11-05'
+feature_image: /content/images/arm_template.png
 tags:
   - Azure
+excerpt: >-
+  Learn how to create an ARM template to deploy Azure Cosmos DB with dynamic
+  containers. With this template you can keep adding containers as you build the
+  application.
 ---
 ARM Templates always overwhelmed me for its size and various attributes and values. After having discovered the ways to author them, these are less intimidating than before.
 
-I now use either the [Visual Studio Resource Group Project](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/create-visual-studio-deployment-project?WT.mc_id=AZ-MVP-5003875) or the [ARM Tools extensions for VS Code](https://marketplace.visualstudio.com/items?itemName=msazurermtools.azurerm-vscode-tools) for authoring ARM templates. It has significantly reduced the time and energy required to create an ARM template."
+I now use either the [Visual Studio Resource Group Project](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/create-visual-studio-deployment-project?WT.mc_id=AZ-MVP-5003875) or the [ARM Tools extensions for VS Code](https://marketplace.visualstudio.com/items?itemName=msazurermtools.azurerm-vscode-tools) for authoring ARM templates. It has significantly reduced the time and energy required to create an ARM template.
 
 In this blog post, I will use the VS Code Extension to create an ARM template to create a Cosmos DB account, database, and containers.
 
-<iframe src="https://www.youtube.com/embed/p_vySBLni00" />
+<EmbedCard src="https://www.youtube.com/embed/p_vySBLni00" />
 
 If you are new or getting started with Azure Cosmos DB, it's good to get an idea of the [Azure Cosmos DB resource model](https://docs.microsoft.com/en-us/azure/cosmos-db/account-databases-containers-items?WT.mc_id=AZ-MVP-5003875). To start using Azure Cosmos DB, we need to create an Azure Cosmos account (1), a database (2) in it, and containers (3) inside them. Below is a snapshot from the Azure Portal Data Explorer showing this hierarchy.
 
-<Figure src="/images/cosmos_resource_model_hierarchy.jpg" caption="## ARM Template" />
+<ImageCard src="/content/images/cosmos_resource_model_hierarchy.jpg" alt="" />
+
+## ARM Template
 
 In an empty working folder, let's create a new file for our ARM template and name it _azuredeploy.json_ (you can choose any name for the file, but will see later why I chose this specific name.). Once you have the VS Code extension for ARM Template installed, open your working folder/file in VS Code editor.
 
@@ -26,7 +30,7 @@ In an empty working folder, let's create a new file for our ARM template and nam
 
 In an empty JSON file, typing `arm` or using the 'Trigger Suggest' (shortcut in VS Code; for me, it is Ctrl + Space) will show a list of scaffolding snippets to create an ARM template.
 
-!['ARM Template scaffolding snippets in VS Code'](/images/cosmos_arm_template_vscode_new.jpg)
+<ImageCard src="/content/images/cosmos_arm_template_vscode_new.jpg" alt="'ARM Template scaffolding snippets in VS Code'" />
 
 By selecting the arm! Snippet from the list scaffolds the [ARM template structure](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-syntax?WT.mc_id=AZ-MVP-5003875#template-format).
 
@@ -38,7 +42,9 @@ We need to create the Cosmos account, the database, and containers within our te
 2.  arm-cosmos-sql-database
 3.  arm-cosmos-sql-container
 
-<Figure src="/images/cosmos_arm_template_resources.jpg" caption="### Adding Resources" />
+<ImageCard src="/content/images/cosmos_arm_template_resources.jpg" alt="" />
+
+### Adding Resources
 
 Let's see one of them in detail and how to create the resource with the snippet. Selecting the arm-cosmos-account will scaffold the template to create the Cosmos account.
 
@@ -50,7 +56,7 @@ ARM Parameters helps us make the template configurable. Parameters are added to 
 
 I have added a parameter accountName of type string. It specifies the Cosmos account name when we use the ARM template to deploy (more on that later).
 
-![](/images/cosmos_arm_template_parameters.jpg)
+<ImageCard src="/content/images/cosmos_arm_template_parameters.jpg" alt="" />
 
 Even though ARM templates are JSON files, it supports using expressions to extend the JSON values available within the template.
 
@@ -216,7 +222,7 @@ Rather than passing parameters inline when running the ARM template, it's easier
 
 With the VS Code extension, it is easier to create this file. It prompts an option above the ARM template file's parameters section, as shown below, to '_Select or create a parameter file_'.
 
-![](/images/cosmos_arm_parameters.jpg)
+<ImageCard src="/content/images/cosmos_arm_parameters.jpg" alt="" />
 
 It supports creating a new parameter file or choosing an existing one from disk. Selecting '_New'_ prompts to select specific parameters or parameters defined in the template and then allows you to save the file to disk.
 
@@ -271,7 +277,7 @@ You can run the same script above by adding more containers to the array object 
 
 ARM templates can be used in Build/Deploy pipelines, and you can automate creating resources for different environments (DEV, TEST, UAT, PROD, etc.).
 
-<iframe src="https://www.youtube.com/embed/3IRwtbGlshk" />
+<EmbedCard src="https://www.youtube.com/embed/3IRwtbGlshk" />
 
 ## [Azure Quickstart Templates](https://github.com/Azure/azure-quickstart-templates/tree/master/101-cosmosdb-sql-multiple-containers)
 

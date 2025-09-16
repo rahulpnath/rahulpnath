@@ -1,10 +1,8 @@
 ---
-title: "Why You Should Avoid Command Handlers Calling Other Commands?"
+title: Why You Should Avoid Command Handlers Calling Other Commands?
 slug: avoid-commands-calling-commands
-date: 2021-01-11
-feature_image: /images/sticky_notes.jpg
-excerpt: >-
-  One of the patterns that I keep coming back to when building ASP NET Applications is the Command Query Separation (CQS) pattern. Fundamentally, the pattern separates the code to read...
+date: '2021-01-11'
+feature_image: /content/images/sticky_notes.jpg
 tags:
   - Programming
 ---
@@ -12,11 +10,11 @@ One of the patterns that I keep coming back to when building ASP NET Application
 
 By separating the Commands and Queries, the code is more focused on the task performed. If you are familiar with the Create-Read-Update-Delete (CRUD) pattern, you can think of Queries as 'R' and Commands for 'CUD.'
 
-![](/images/cqrs_pattern.jpg)
+<ImageCard src="/content/images/cqrs_pattern.jpg" alt="" />
 
 The [MediatR](https://github.com/jbogard/MediatR) library provides an in-process messaging solution and enables applying CQS pattern to our application code. The library support Commands, Queries, Notifications, Events, and a lot more make it easy to follow the CQS pattern.
 
-<iframe src="https://www.youtube.com/embed/XE1w52pNYr8" />
+<EmbedCard src="https://www.youtube.com/embed/XE1w52pNYr8" />
 
 Let's see an example below of a Command handler for creating a new Order in an application.
 

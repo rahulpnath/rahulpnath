@@ -2,6 +2,12 @@ import type { MDXComponents } from "mdx/types";
 import PostCard from "./components/PostCard";
 import BlogPostCard from "./components/BlogPostCard";
 import BlogLink from "./components/BlogLink";
+import AuthorCard from "./components/AuthorCard";
+import BookmarkCard from "./components/BookmarkCard";
+import EmbedCard from "./components/EmbedCard";
+import ImageCard from "./components/ImageCard";
+import TableOfContents from "./components/TableOfContents";
+import Search from "./components/Search";
 import Image from "next/image";
 
 // Custom components for better MDX styling
@@ -164,6 +170,12 @@ export const mdxComponents: MDXComponents = {
   PostCard,
   BlogPostCard,
   BlogLink,
+  AuthorCard,
+  BookmarkCard,
+  EmbedCard,
+  ImageCard,
+  TableOfContents,
+  Search,
   Callout,
   HighlightBox,
   StepCard,
@@ -192,7 +204,7 @@ export const mdxComponents: MDXComponents = {
       {...props}
       width={800}
       height={400}
-      className="w-full h-auto rounded-lg border border-gray-200 my-6"
+      className="w-full h-auto rounded-lg border border-gray-200"
       alt={props.alt || ''}
     />
   ),
@@ -209,6 +221,12 @@ export const mdxComponents: MDXComponents = {
   ),
   td: (props: any) => (
     <td className="border border-gray-200 px-4 py-2 text-gray-700" {...props} />
+  ),
+  figcaption: (props: any) => (
+    <figcaption className="text-sm text-gray-600 text-center mt-3 mb-6 italic" {...props} />
+  ),
+  figure: (props: any) => (
+    <figure className="my-8" {...props} />
   ),
   a: (props: any) => {
     const isExternal = props.href?.startsWith('http') && !props.href?.includes('rahulpnath.com');

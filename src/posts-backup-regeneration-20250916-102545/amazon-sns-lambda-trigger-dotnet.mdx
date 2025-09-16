@@ -1,0 +1,265 @@
+---
+title: Amazon SNS and AWS Lambda Triggers in .NET
+slug: amazon-sns-lambda-trigger-dotnet
+date: '2022-09-26'
+feature_image: /images/amazon-sns-lambda-triggers-dotnet.jpg
+excerpt: >-
+  Learn how to process SNS messages from AWS Lambda Function. We will learn how
+  to set up and trigger a .NET Lambda Function using SNS, understand scaling and
+  lambda concurrency and how to handle exceptions when processing messages.
+---
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
+
+Amazon Simple Notification Service or SNS, is a publish-subscribe service, managed by AWS.
+
+It enables asynchronous communication between the publishers and subscribers using messages.
+
+You can use AWS Lambda function subscribe to notifications coming into an SNS and process them real time.
+
+<iframe src="https://www.youtube.com/embed/vIR1Mqa8Lo8" />
+
+In this post, we will learn
+
+-   Build and Deploy an AWS Lambda Function to handle SNS messages.
+-   Set Up SNS Lambda Trigger
+-   Scaling and Lambda Concurrency
+-   Exception Handling when processing SNS messages.
+
+[
+
+Amazon SNS For the .NET Developer: Getting Started Quick and Easy
+
+Learn how to get started with Amazon SNS and use it from a .NET application. We will learn about Topics, sending messages to topics, and using Subscriptions to receive messages. We will also learn about Filters, how to use them, and error handling with SNS.
+
+![](/favicon.ico)Rahul NathRahul Pulikkot Nath
+
+![](/images/amazon-sns.jpg)
+
+](/blog/amazon-sns)
+
+## Build and Deploy .NET AWS Lambda Function
+
+[AWS Lambda](/blog/aws-lambda-net-core/) is Amazon’s answer to serverless compute services. It allows running code with zero administration of the infrastructure that the code is running on.
+
+Make sure to install the AWS Toolkit ([Visual Studio](https://aws.amazon.com/visualstudio/), [Rider](https://aws.amazon.com/rider/), [VS Code](https://aws.amazon.com/visualstudiocode/)) and [set up Credentials for the local development environment](/blog/amazon-credentials-dotnet/).  This helps you to quickly develop .NET application on the AWS infrastructure and also deploy them quickly to your AWS Accounts.
+
+With the AWS Toolkit installed, from the new project template select AWS Lambda Lambda Project template and choose SQS blueprint. This creates AWS Lambda function template project with a `Function.cs` class with everything required to handle SQS events, as shown below.
+
+```csharp
+public async Task FunctionHandler(SNSEvent evnt, ILambdaContext context)
+{
+    context.Logger.LogInformation($"Received message with Records {evnt.Records.Count}");
+    foreach (var record in evnt.Records)
+    {
+        await ProcessRecordAsync(record, context);
+    }
+}
+
+private async Task ProcessRecordAsync(SNSEvent.SNSRecord record, ILambdaContext context)
+{
+    context.Logger.LogInformation($"Processed record {record.Sns.Message}");
+
+    / TODO: Do interesting work based on the new message
+    await Task.CompletedTask;
+}
+
+```
+
+The `SNSEvent` class represents the SNS notification message. It contains a list of `SNSRecord` objects in the Records property. The default function handler, loops through the `Records` and processes the individual messages by calling the `ProcessRecordAsync` method.
+
+> _Lambda `SNSEvent` notification message always contains one record in the `Records` property._
+
+I have added an addition log statement to see the total count of records in the `SNSEvent`. _This will always be one._
+
+In a real-world application, `ProcessRecordAsync` method will contain business or application specific logic. For now all it does is simply log the message content in the SNS record.
+
+### Deploy Lambda Function
+
+To publish the Lambda function to AWS account, you can use the Publish to AWS Lambda option that the AWS Toolkit provides. With you [development environment connected your AWS account](/blog/amazon-credentials-dotnet/), you can directly publish the new lambda function.
+
+For real-world applications, I prefer to setup an automated build/deploy pipeline to publish to your AWS Account.  Check out the below for an example on how to setup a Lambda Function deployment pipeline from GitHub Actions.
+
+<iframe src="https://www.youtube.com/embed/U96230YlSJA" />
+
+## Set Up SNS Lambda Trigger
+
+Lambda Triggers can be set up under the Lambda Function or on the SQS.
+
+To add a a Lambda trigger from the Lambda function, navigate the the Lambda Function. Under Configuration → Triggers, select ‘_Add Trigger’_ button. This prompts a new window to select the trigger source.
+
+![Select SNS as the source and specify the SNS Topic name or ARN to set up the Lambda trigger.](/images/aws-sns-lambda-trigger-create.jpg)
+
+Select SNS and provide the Topic name or the ARN to subscribe to and click Add. This automatically adds permissions for the SNS Topic to invoke the Lambda Function any time a message arrives in the Topic.
+
+You can also see the newly added SNS Lambda trigger under the Subscription in SNS Topic as shown below.
+
+![SNS Subscriptions showing the Lambda Function trigger.](/images/aws-sns-lambda-trigger-sns-subscriptions.jpg)
+
+### Testing SNS Lambda Trigger Integration
+
+With the integration set up, any time a new message is published to the SNS Topic, it sends it to all it’s Subscriptions. Using the AWS Console, we can test this by publishing a message.
+
+Navigate to SNS and choose Publish message and provide the relevant details and publish the message.
+
+![Test send a message to Amazon SNS from the console.](/images/aws-sns-lambda-trigger-publish-message.jpg)
+
+The message is immediately sent to all Subscribers, including the Lambda function we just added. If we navigate to the Lambda Function and navigate to the associated log group for the function we can see the Lambda function execution details.
+
+As shown below, it logs the SNS message that we just sent. Also note that the number of Records is one.
+
+![aws-sns-lambda-trigger-cloudwatch-log](/images/aws-sns-lambda-trigger-cloudwatch-log.jpg)
+
+## Scaling and Lambda Concurrency
+
+As events come into SNS it triggers Lambda to process. Lambda creates a new instance if all existing function instances are busy processing previous events. Lambda automatically scales up new instances as more and more messages appear.
+
+When number of messages decreases, Lambda stops unused instances.
+
+### Sending a Spike of Messages
+
+The below [LINQPad](https://www.linqpad.net/) script, creates and publishes 50 messages in batches of 10 to our SNS Topic.
+
+It uses the `AmazonSimpleNotificationServiceClient` to batch publish the messages.
+
+```csharp
+async Task Main()
+{
+	var client = new Amazon.SimpleNotificationService.AmazonSimpleNotificationServiceClient();
+	var publishBatchEntries = Enumerable.Range(1, 50).Select(e => new PublishBatchRequestEntry()
+	{
+		Id = Guid.NewGuid().ToString(),
+		Message = $"Test {e}",
+		Subject = $"Test {e}"
+	}).ToList();
+
+	await Task
+	.WhenAll(publishBatchEntries
+		.Batch(10)
+		.Select(async batch => await client.PublishBatchAsync(new PublishBatchRequest()
+		{
+			TopicArn = "arn:aws:sns:ap-southeast-2:189107071895:user-changes",
+			PublishBatchRequestEntries = batch.ToList()
+		}
+	)));
+}
+
+```
+
+Since there is a limit of ten messages per batch, it batches the total records in batches of 10 and issues a `PublishBatchRequest`.
+
+As soon as the messages hit the Topic, our Lambda functions are triggered. Since there are a total of 50 messages sent, 50 Lambda instances are created and process the messages immediately.
+
+The CloudWatch log streams shows 50 stream entries as shown below. Each new Lambda function instances creates a new log stream entry.
+
+![](/images/aws-sns-lambda-trigger-message-spike.jpg)
+
+The Concurrent executions graph under Lambda Function → Monitor also shows the number of Concurrent Lambda functions. Below it shows 50 in this case.
+
+![](/images/aws-sns-lambda-trigger-concurrent-executions.jpg)
+
+### Lambda Concurrency Configuration
+
+_[The Functions' Concurrency](https://docs.aws.amazon.com/lambda/latest/dg/invocation-scaling.html) is the number of instances that serve requests at a given time_
+
+The Concurrency section under the Lambda function allows to control the concurrency configuration. The concurrency quota is not per-function; it applies to all the functions in the Region and account.
+
+![](/images/aws-sns-lambda-trigger-concurrency-configuration.jpg)
+
+The Lambda Functions concurrency configuration can be updated to reserve a fixed number of instances for the specific function. This guarantess the maximum number of concurrent instances for the function.
+
+Below I have updated the value to 20 for our Lambda Function. This also means I am taking away 20 from the total unreserved account concurrency count.
+
+![](/images/aws-sns-lambda-trigger-concurrency-configuration-edit.jpg)
+
+If you invoke the LINQPad script again with 50 messages you can see in the Concurrent executions graph, the number of Lambda functions are capped at 20.
+
+![](/images/aws-sns-lambda-trigger-concurrent-executions-update.jpg)
+
+### Asynchronous Invocation
+
+So what happens to the additional messages that are published to the Topic?
+
+SNS invokes Lambda Function asynchronously. This means when the function is invoked it does not wait for a response from the Lambda code. It hands of the message to Lambda and it’s Lambda’s responsibility to handle the rest.
+
+![SNS Triggers Lambda Function asynchronously. Messages are delivered to a queue on the Lambda side and it’s the Lambda’s responsibility to process the messages.](/images/aws-lambda-function-asynchronous-processing.jpg)
+
+SNS Triggers Lambda Function asynchronously. Messages are delivered to a queue on the Lambda side and it’s the Lambda’s responsibility to process the messages.
+
+Lambda queue’s the events before sending them to the Function code.
+
+This means any additional messages remain in the queue until there are Function instances to process them or gets removed after a timeout period (default 6 hours).
+
+## Exception Handling When Processing SNS Messages
+
+Events are getting processed as them come into the SNS Topic. Great!
+
+But what happens on an exception processing the message in the Lambda Function?
+
+Let’s explore what happens when there is an error in processing the message in the Lambda Function. Error’s can be due to various reasons; Unhandled code path, a null reference exception or error with a third-party integration service.
+
+### Simulating Exception in .NET Lambda
+
+To simulate an exception in the .NET Lambda function, let’s add a condition to the `ProcessRecordAsync` method. If the `Subject` of the message contains the word ‘Exception’, we throw an exception in processing.
+
+This is easy to simulate for us, when sending messages to SNS.
+
+```csharp
+private async Task ProcessRecordAsync(SNSEvent.SNSRecord record, ILambdaContext context)
+{
+    if (record.Sns.Subject.Contains("Exception"))
+    {
+        context.Logger.LogError($"cannot process message {record.Sns.Message}");
+        throw new Exception("Message cannot be processed");
+    }
+
+    context.Logger.LogInformation($"Processed record {record.Sns.Message}");
+
+    / TODO: Do interesting work based on the new message
+    await Task.CompletedTask;
+}
+
+```
+
+### Default Retry Behaviour
+
+By default, the Lambda retires the message 2 times on an exception when processing the message asynchronoulsly.
+
+This is configured under Configuration → Asynchronous invocation section.
+
+It also specified the maximum age of event as 6 hours, which means the message will be discarded after that time if not processed.
+
+![](/images/aws-sns-lambda-trigger-asynchronous-configuration.jpg)
+
+With the default configuration, we will see the message processed 3 times - 1 on the notification + 2 retries. The first retry is after 1 minute of the original notification and then 2 minutes after the first retry.
+
+If the errors in processing the notification is due to transient errors (which go away with time), it might get processed the second time. But for errors that aren’t transient (like in out case, since it always has the word ‘Exception’), it will retry 2 times and then be discarded. The notification is completely lost.
+
+### Lambda Asynchronous Invocation Configuration
+
+To prevent notification from being lost after 2 retries, we can update the Asynchronous configuration and specify a Dead-letter queue (DLQ).
+
+Any messages that cannot be processed after the specified number of Retry attempts (0, 1 or 2), it will be moved to the specified Dead Letter Queue.
+
+The DLQ can be Amazon SQS or Amazon SNS. Below I have configured to be a SQS.
+
+Before saving the below configuration, ensure that the Lambda Function has permissions to _SendMessage_ to the SQS queue that is set up as the Dead Letter Queue.
+
+![](/images/aws-sns-lambda-trigger-asynchronous-configuration.jpg)
+
+### Handle Stale Subscription Errors
+
+As long as the Lambda Function is up and running the SNS Subscription Trigger configuration we have set up is valid. However, if we delete the Lambda Function the Subscription becomes Stale.
+
+The Subscription information is not automatically deleted if we delete the Lambda Function. This means SNS will still try and deliver new events to the Lambda Function, but will fail. These are referred to as [Client-side errors.](https://docs.aws.amazon.com/sns/latest/dg/sns-dead-letter-queues.html#why-do-message-deliveries-fail)
+
+![](/images/aws-sns-lambda-trigger-subscription-configuration.jpg)
+
+Amazon SNS doesn’t retry the message delivery due to client-side errors.
+
+However you can configure a Dead-letter queue in the SNS Trigger configuration (as shown above), so that messages that fail to be delivered to the subscriber are automatically send the the DLQ.
+
+You can also set up [Filter Policies in the SNS Subscription Configuration.](https://docs.aws.amazon.com/sns/latest/dg/sns-message-filtering.html) This is used to filter messages that a subscriber receives.
+
+So if you are only interested in specific kinds of messages (based on message properties or attributes), you can specify the Filters. It is a JSON object structure, and you can add multiple filters to a trigger configuration. If the messages do not pass the filter criteria, they are not send to the Lambda Function.
+
+I hope this helped you to get started with Amazon SNS and AWS Lambda Triggers from a .NET application.

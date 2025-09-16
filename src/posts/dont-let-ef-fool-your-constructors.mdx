@@ -1,13 +1,13 @@
 ---
 title: Don't Let Entity Framework Fool Your Constructors!
 slug: dont-let-ef-fool-your-constructors
-date: 2020-04-01T00:00:00.000Z
-feature_image: /images/coding.jpg
+date: '2020-04-01'
+feature_image: /content/images/coding.jpg
+tags:
+  - Programming
 excerpt: >-
   Any state that an object can be in must be representable through the class
   constructor.
-tags:
-  - Programming
 ---
 In the previous post, [Back To Basics: Constructors and Enforcing Invariants](/blog/constructor-and-constraints/), we saw the importance of having well-defined constructors and how they help us maintain invariants. Most projects I work on use Entity Framework for the database interactions. We usually have the same Domain Model mapped to the database structure using the [Fluent API Configuration](https://www.learnentityframeworkcore.com/configuration/fluent-api). The configurations help keep the Domain Model agnostic of the database dependencies and mappings. The fluent configurations "act as a DTO class without needing to define one explicitly" and keeps the Domain classes 'clean'.
 

@@ -1,14 +1,14 @@
 ---
-title: "3 Different Ways To Do Data Pagination from Amazon DynamoDB Using .NET"
+title: 3 Different Ways To Do Data Pagination from Amazon DynamoDB Using .NET
 slug: dynamodb-pagination
-date: 2023-03-02T00:00:00.000Z
-feature_image: /images/DynamoDB-Pagination.png
-excerpt: >-
-  Learn how to use Dynamodb pagination to retrieve large amounts of data stored
-  in the table.s.
+date: '2023-03-02'
+feature_image: /content/images/2023/03/DynamoDB-Pagination.png
 tags:
   - AWS
   - DynamoDB
+excerpt: >-
+  Learn how to use Dynamodb pagination to retrieve large amounts of data stored
+  in the table.s.
 ---
 DynamoDB charges for reading, writing, and storing data in your DynamoDB tables.
 
@@ -16,7 +16,7 @@ As a rule of thumb, when querying data, you can consider that each record that y
 
 Pagination helps with breaking down the items into smaller groups and loading them as required.
 
-<iframe src="https://www.youtube.com/embed/IXz04U73MxA?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/IXz04U73MxA?feature=oembed" title="AWS DynamoDB PAGINATION | .NET ON AWS | AWS Serverless | Amazon" />
 
 In this post, let’s learn how to implement pagination when querying and retrieving data from DynamoDB.
 
@@ -36,15 +36,7 @@ This means you cannot implement the typical page number style of pagination with
 
 When using pagination over DynamoDB, it’s easier to have an infinite scroll or continuous scroll kind of paging data UI style. When using this style, as you scroll to the end of the list that is currently displayed, the next set of items is automatically loaded.
 
-<BlogLink
-  href="/blog/aws-dynamodb-net-core/"
-  title="AWS DynamoDB For The .NET Developer: How To Easily Get Started"
-  description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/aws_dynamodb.jpg"
-/>
+<BookmarkCard href="/blog/aws-dynamodb-net-core/" title="AWS DynamoDB For The .NET Developer: How To Easily Get Started" description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 ## When Does DynamoDB Start Paginating?
 
@@ -76,7 +68,6 @@ public class PagedResult<T> where T: class
     public List<T> Items { get; set; }
     public string NextPageKey { get; set; }
 }
-
 ```
 
 The `PagedResult` class has two properties - one, a list of Items that are returned in the current query and the `NextPageKey` to use to retrieve the next set of items.
@@ -85,7 +76,7 @@ The value for the `NextPageKey` is based on the method we use to implement pagin
 
 The `NextPageKey` can be used in subsequent Query requests to DynamoDB to explicitly set the start key from where it should fetch the results. The `ExclusiveStartKey` property is used for this on the Query requests.
 
-<iframe src="https://www.youtube.com/embed/iv6OKueqBd4?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/iv6OKueqBd4?feature=oembed" title="AWS DynamoDB QUERYING | .NET ON AWS | AWS Serverless | Amazon" />
 
 So let's get to see the different methods and the associated values of `NextPageKey`.
 
@@ -112,7 +103,6 @@ return new PagedResult<WeatherForecast>()
     Items = items,
     NextPageKey = nextPageKey
 };
-
 ```
 
 **Note**: _We need to use the special `JsonSerializerOptions` to ensure that the DynamoDB types are serialized and deserialized as expected._
@@ -130,7 +120,6 @@ var exclusiveStartKey= string.IsNullOrEmpty(pageKey)
         ExclusiveStartKey = exclusiveStartKey,
         Limit = 5,
     }
-
 ```
 
 With the `ExclusiveStartKey` set, DynamoDB reads items only from that item and returns the next set of items. It fetches up to a maximum items as specified by the `Limit` property (5 in this case), or 1MB is reached.
@@ -179,7 +168,6 @@ string cityName, DateTime? lastReadItem)
     });
     return new PagedResult<WeatherForecast>(data,  data.MaxBy(a => a.Date)?.Date.ToString(AWSSDKUtils.ISO8601DateFormat));
 }
-
 ```
 
 In the above code, given the last read/known DateTime (Range Key), we construct the `ExclusiveStartKey` and pass that to the DynamoDB request.
@@ -228,7 +216,6 @@ public async Task<PagedResult<WeatherForecast>> GetAllForCityPagedWithKeyConditi
         Items = items,
         NextPageKey = nextPageKey
     };
-
 ```
 
 In this case, since Date is a [reserved keyword](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ReservedWords.html) in DynamoDB, so I use a placeholder property to specify the property name (_#date_). The actual property name is passed as part of the `ExpressionAttributeNames` property, which specifies a map for the placeholder property.
@@ -243,7 +230,9 @@ Similarly, we can also page the data backward using the `ScanIndexForward`proper
 
 To go backward in the results, we need to set `ScanIndexForward` as false.
 
-<Figure src="/images/image.png" caption="DynamoDB orders the sort key in ascending order." />
+<ImageCard src="/content/images/2023/03/image.png" alt="Based on the ScanIndexForward property, DynamoDB starts reading from the start of the items or from the end. This property is useful to page forward/backwards as required." />
+
+DynamoDB orders the sort key in ascending order.
 
 With the `ScanIndexForward` set to true, it starts wit the lowest value and moves forward as it reads items. When the `ScanIndexForward` is set to false, it starts with the max value and goes backward as items are read.
 

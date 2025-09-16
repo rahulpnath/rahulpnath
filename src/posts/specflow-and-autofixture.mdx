@@ -1,19 +1,19 @@
 ---
-title: "How To Easily Generate Data For SpecFlow Tests"
+title: How To Easily Generate Data For SpecFlow Tests
 slug: specflow-and-autofixture
-date: 2020-08-04T00:00:00.000Z
-feature_image: /images/random_data.jpg
-excerpt: Automatically generate data using AutoFixture when writing SpecFlow tests.
+date: '2020-08-04'
+feature_image: /content/images/random_data.jpg
 tags:
   - Testing
+excerpt: Automatically generate data using AutoFixture when writing SpecFlow tests.
 ---
 I have been playing around with SpecFlow for writing tests at one of my recent clients.
 
 > [SpecFlow](https://specflow.org/) is a .NET open-source framework for [Behavior Driven Development](https://specflow.org/bdd/) (BDD). BDD aims to create a shared understanding of how an application must behave.
 
-The [Getting Started section](https://specflow.org/getting-started/) in the official documentation helped me set up the SpecFlow test project and get started with my first tests."
+The [Getting Started section](https://specflow.org/getting-started/) in the official documentation helped me set up the SpecFlow test project and get started with my first tests.
 
-Populating data is an integral part of writing tests. Most of the time, we are forced to set up much more data than we care about for a test. This might be because of validation on an API endpoint, a [constructor forcing you to give valid values for all the properties](/blog/constructor-and-constraints/). Setting up these unnecessary data pollutes the tests, makes writing tests less enjoyable. It also makes the tests tightly coupled and [hard to refactor](/blog/tag/refactoring/).
+Populating data is an integral part of writing tests. Most of the time, we are forced to set up much more data than we care about for a test. This might be because of validation on an API endpoint, a [constructor forcing you to give valid values for all the properties](/blog/constructor-and-constraints/). Setting up these unnecessary data pollutes the tests, makes writing tests less enjoyable. It also makes the tests tightly coupled and [hard to refactor](/tag/refactoring/).
 
 In this post, let's look at a simple test written in SpecFlow and how we can progressively improve it by removing explicit test data set up.
 
@@ -26,19 +26,12 @@ Let's look at an API with a Customer endpoint, which takes in a Customer object 
 To set up the SpecFlow test project, I created a .Net Core project and added the below NuGet packages.
 
 ```powershell
-
 Install-Package SpecFlow
-
 Install-Package  SpecFlow.Tools.MsBuild.Generation
-
 Install-Package SpecFlow.xunit
-
 Install-Package  xunit.runner.visualstudio
-
 Install-Package  Microsoft.AspNetCore.Mvc.Testing
-
 Install-Package Microsoft.NET.Test.Sdk
-
 Install-Package Shouldly -Prerelease
 
 ```
@@ -51,7 +44,6 @@ Below is a sample test for my API. As expected with BDD tests, it does not need 
 
 ```bdd
 @subcutaneous
-
 Scenario: Add a Customer
     Given I POST a valid customer to the API
     When I GET the customer using  the API
@@ -167,15 +159,8 @@ We don't have to create a Customer class explicitly again!
 In the BeforeScenario hook, we are still manually creating the Customer object and forced to specify all the dummy values. If a new property is added, we still need to update it here. We have only been able to move the problem to a different place; the problem still exists.
 
 > [AutoFixture](https://github.com/AutoFixture/AutoFixture) is an Open Source Library that helps automate test data generation. It offers a generic implementation of the Test Data Builder Pattern.
-<BlogLink
-  href="/blog/populating-data-for-tests"
-  title="Populating Data for Tests"
-  description="Different scenarios of test data generation."
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/test_data.jpg"
-/>
+
+<BookmarkCard href="/blog/populating-data-for-tests" title="Populating Data for Tests" description="Different scenarios of test data generation." icon="/favicon.ico" />
 
 To setup AutoFixture, let's add the AutoFixture NuGet package to our test library. We can now start using it to generate dummy data for us.
 
@@ -206,7 +191,7 @@ Now you might ask, at times, I do care of some of these property values.
 
 _What do I do in that case?_ - Don't worry; I will show you exactly how later below.
 
-<iframe src="https://www.youtube.com/embed/videoseries?list=PL59L9XrzUa-mItWClbGuMEK5oQpU2onCq" />
+<EmbedCard src="https://www.youtube.com/embed/videoseries?list=PL59L9XrzUa-mItWClbGuMEK5oQpU2onCq" />
 
 ## Automating Data Generation for All Models & Entities
 
@@ -332,7 +317,6 @@ For some tests, you might be interested in a subset of the object's properties. 
 
 ```csharp
 @unit
-
 Scenario: Full Name is First Name plus Last Name
     Given I have a valid customer
     When I set First name as 'Rahul' and Last name as 'Nath'

@@ -1,26 +1,26 @@
 ---
-title: "How To Easily Make Your .NET AWS Lambda Function Idempotent"
+title: How To Easily Make Your .NET AWS Lambda Function Idempotent
 slug: idempotent-lambda-functions-dotnet
-date: 2023-12-04T00:00:00.000Z
-feature_image: /images/Powertools---Idempotency.png
-excerpt: >-
-  Let's learn how to get started using the Powertools Idempotency package, some
-  key features, and how it easily fits into your existing Lambda Functions.
+date: '2023-12-04'
+feature_image: /content/images/2023/11/Powertools---Idempotency.png
 tags:
   - AWS
   - Lambda
+excerpt: >-
+  Let's learn how to get started using the Powertools Idempotency package, some
+  key features, and how it easily fits into your existing Lambda Functions.
 ---
 Idempotency refers to the property of a function that produces the same result regardless of how many times it is executed with the same input parameters.
 
 Idempotency is particularly important in distributed systems, where messages may be retried due to failures, timeouts, or other issues. Idempotency ensures the system remains consistent without unintended side effects, even if a request is duplicated or repeated.
 
-<iframe src="https://www.youtube.com/embed/v-A8iP0hSLQ?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/v-A8iP0hSLQ?feature=oembed" title="IDEMPOTENCY - Powertools for AWS Lambda | .NET ON AWS | Serverless | Amazon" />
 
 The [Powertools Idempotency utility](https://docs.powertools.aws.dev/lambda/dotnet/utilities/idempotency/) makes it easy to convert your Lambda functions into idempotent operations that are safe to retry.
 
 In this blog post, let's learn how to get started using the Powertools Idempotency package, some key features, and how it easily fits into your existing Lambda Functions.
 
-_This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/tag/aws/)_._
 
 ## .NET Lambda Function and Powertools Idempotency Package
 
@@ -44,7 +44,6 @@ public async Task AddWeatherData([FromBody] WeatherForecast weatherForecast)
     await Task.Delay(TimeSpan.FromSeconds(5));
     await dynamoDBContext.SaveAsync(weatherForecast);
 }
-
 ```
 
 The Lambda Function sample uses [Lambda Annotations Framework](/blog/lambda-annotation-framework-crud-api/) , which makes it extremely easy to build Lambda Functions in .NET.
@@ -59,7 +58,6 @@ public Functions(IDynamoDBContext dynamoDBContext)
     this.dynamoDBContext = dynamoDBContext;
     Idempotency.Configure(builder => builder.UseDynamoDb("IdempotencyTable"));
 }
-
 ```
 
 _Ensure that the Lambda Function has appropriate rights to talk to the `IdempotencyTable`._
@@ -70,7 +68,7 @@ If the same request is made, it will find a matching item in the DynamoDB table 
 
 The default timeout period is 1 hour, which means any request with the same payload during that period will get the recorded response. After the timeout, the record is deleted from the DynamoDB table, and the first new request with the same payload will invoke the Lambda Function again.
 
-<Figure src="/images/image-2.png" caption="Idempotency DynamoDB Table with records populated as we make requests in the API endpoint." />
+<ImageCard src="/content/images/2023/12/image-2.png" alt="Idempotency DynamoDB Table with records populated as we make requests in the API endpoint." caption="Idempotency DynamoDB Table with records populated as we make requests in the API endpoint." />
 
 Since the sample function above does not return any value, the data property in the DynamoDB table is empty.
 
@@ -90,7 +88,6 @@ public async Task AddWeatherData(APIGatewayHttpApiV2ProxyRequest request, [Idemp
     await Task.Delay(TimeSpan.FromSeconds(5));
     await dynamoDBContext.SaveAsync(weatherForecast);
 }
-
 ```
 
 You can further customize the IdempotencyKey to use specific properties from the object payload.
@@ -109,7 +106,6 @@ public Functions(IDynamoDBContext dynamoDBContext)
               optionsBuilder.WithEventKeyJmesPath("[CityName, Date]"))
         .UseDynamoDb("IdempotencyTable"));
 }
-
 ```
 
 Any requests with the same `CityName` and `Date` property will be treated as an idempotent request during the timeout period.
@@ -135,7 +131,6 @@ public Functions(IDynamoDBContext dynamoDBContext)
             .WithPayloadValidationJmesPath("TemperatureC"))
         .UseDynamoDb("IdempotencyTable"));
 }
-
 ```
 
 Any subsequent requests with the same `CityName` and `Date` property, with a different `TemperatureC` property will throw an **`IdempotencyValidationException.`**

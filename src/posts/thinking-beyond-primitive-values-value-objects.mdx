@@ -1,9 +1,7 @@
 ---
-title: "Thinking Beyond Primitive Values: Value Objects"
+title: 'Thinking Beyond Primitive Values: Value Objects'
 slug: thinking-beyond-primitive-values-value-objects
-date: 2016-03-11
-excerpt: >-
-  When modelling objects for our application, we use primitive values to represent their attributes or properties. By primitive values, I refer to all the primitive types (like Byte, Boolean, Int,...
+date: '2016-03-11'
 tags:
   - Programming
 ---
@@ -113,7 +111,6 @@ Once you start using more and more Value Objects you will naturally get good at 
 Extracting these into Value Objects helps pull in a lot of '_procedural code_' into the Value Object, as shown below. Even if the extension numbers format changes, we have a single place to contain this change and can avoid a rippling change. We can also have static factory methods to assist in creating these Value Object and helps make the code readable like the _CreateFromBytes_ method below.
 
 ```csharp
-
 PhoneNumber phoneNumber;
 ... // Lot of other code
 if(phoneNumber.IsAnExtension())
@@ -156,10 +153,8 @@ The implicit operator enables us to use UserName and string side-by-side and it 
 
 ```csharp
 string lastName = "Nath";
-
 UserName firstName = "Rahul";
 string fullNameString = string.Format("{0} {1}", firstName , lastName);
-
 UserName fullName = fullNameString;
 
 ```

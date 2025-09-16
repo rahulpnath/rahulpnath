@@ -1,9 +1,7 @@
 ---
-title: "Handling Too Many Request Error with Auth0 Using Polly"
+title: Handling Too Many Request Error with Auth0 Using Polly
 slug: handling-too-many-requests-error-auth0
-date: 2019-06-10
-excerpt: >-
-  When interacting with third-party services over the network, it is good to have a fault handling and resilience strategy in place.  Some libraries have built-in capabilities while for others you...
+date: '2019-06-10'
 tags:
   - Programming
 ---
@@ -24,7 +22,7 @@ public async Task<User[]> GetAllUsers()
            page: pagedList?.Paging.Start / PageSize + 1 ?? 0,
            perPage: PageSize,
            includeTotals: true,
-           sort: "email:1");"
+           sort: "email:1");
 
         results.AddRange(pagedList);
 

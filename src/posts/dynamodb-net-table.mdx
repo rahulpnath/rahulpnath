@@ -1,21 +1,25 @@
 ---
-title: ".NET DynamoDB SDK: Understanding Table Name Conventions and DynamoDBTable Attribute"
+title: >-
+  .NET DynamoDB SDK: Understanding Table Name Conventions and DynamoDBTable
+  Attribute
 slug: dynamodb-net-table
-date: 2023-07-12
-feature_image: /images/DynamoDB-Table-Name-Conventions.png
-excerpt: >-
-  The DynamoDB .NET SDK by default uses conventions to determine the Table name. However, it supports different options to configure and customize the name. Learn how to achieve this in this post.
+date: '2023-07-12'
+feature_image: /content/images/2023/07/DynamoDB-Table-Name-Conventions.png
 tags:
   - AWS
   - DynamoDB
+excerpt: >-
+  The DynamoDB .NET SDK by default uses conventions to determine the Table name.
+  However, it supports different options to configure and customize the name.
+  Learn how to achieve this in this post.
 ---
-The [.NET DynamoDB SDK](https://www.nuget.org/packages/AWSSDK.DynamoDBv2) by default uses conventions to resolve Table Names."
+The [.NET DynamoDB SDK](https://www.nuget.org/packages/AWSSDK.DynamoDBv2) by default uses conventions to resolve Table Names.
 
 The name of the class used in the DynamoDB SDK operations is used as the Table Name by default. For example, if the class is `WeatherForecast`, the DynamoDB SDK by default looks for a table with the name 'WeatherForecast'.
 
 However, there are ways you can customize this name and override it based on your application and the environment it is running.
 
-<iframe src="https://www.youtube.com/embed/Ib0rzQHV7hE?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/Ib0rzQHV7hE?feature=oembed" title="DynamoDB Table Name Conventions | .NET ON AWS | AWS Serverless | Amazon" />
 
 _This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
@@ -27,15 +31,7 @@ In this blog post, let's explore
 
 If you are new to DynamoDB, I highly recommend checking out my Getting Started with AWS DynamoDB For the .NET Developer blog post below, where I also show you how to set up the table used in this blog post.
 
-<BlogLink
-  href="/blog/aws-dynamodb-net-core/"
-  title="AWS DynamoDB For The .NET Developer: How To Easily Get Started"
-  description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/aws_dynamodb.jpg"
-/>
+<BookmarkCard href="/blog/aws-dynamodb-net-core/" title="AWS DynamoDB For The .NET Developer: How To Easily Get Started" description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 ## Default Table Name Convention Used By DynamoDB .NET
 
@@ -55,7 +51,6 @@ await _dynamoDbContext
      
 await _dynamoDbContext.SaveAsync<WeatherForecast>(data);
                
-
 ```
 
 By default, the SDK uses the `nameof(WeatherForecast)` to automatically determine the DynamoDB Table Name.
@@ -91,7 +86,6 @@ var dynamoDBContext = new DynamoDBContext(
 
 builder.Services.AddSingleton<IAmazonDynamoDB>(dynamoDbClient);
 builder.Services.AddSingleton<IDynamoDBContext>(dynamoDBContext);
-
 ```
 
 The prefix value by itself can come from the [application configuration file](https://youtu.be/5GlgHV_12-k).
@@ -112,7 +106,6 @@ return await _dynamoDbContext
             OverrideTableName = "WeatherForecastTable"
         })
     .GetRemainingAsync();
-
 ```
 
 This overrides the convention-based table name from the type and uses the value specified in the `OverrideTableName` property and also prefixes it with the value in the `TableNamePrefix`.
@@ -133,7 +126,6 @@ public class WeatherForecastTable
    public DateTime Date { get; set; }
    ...
 }
-
 ```
 
 Any time you use this type with the `DynamoDBContext`, it uses the name from the `DynamoDBTable` attribute if specified on the type.

@@ -1,13 +1,15 @@
 ---
-title: "AWS Lambda For The .NET Developer: How To Easily Get Started"
+title: 'AWS Lambda For The .NET Developer: How To Easily Get Started'
 slug: aws-lambda-net-core
-date: 2021-03-17
-feature_image: /images/aws_lambda.jpg
-excerpt: >-
-  Learn how to get started with AWS Lambda with .NET Core by building out a simple function and deploying to AWS. We will also see how to set up local development environment using the AWS Toolkit.
+date: '2021-03-17'
+feature_image: /content/images/aws_lambda.jpg
 tags:
   - AWS
   - Lambda
+excerpt: >-
+  Learn how to get started with AWS Lambda with .NET Core by building out a
+  simple function and deploying to AWS. We will also see how to set up local
+  development environment using the AWS Toolkit.
 ---
 Early this year, I joined [OFX.com](http://ofx.com/) and have been working with the [Global Currency Account](https://www.ofx.com/en-us/business/global-currency-account/) team.
 
@@ -15,11 +17,11 @@ The company is entirely on AWS Cloud Service. Much of my experience with Cloud p
 
 This calls for some [new learning](/blog/ultralearning-book-summary/), and I am excited about it. In this post, I explore AWS Lambda for anyone just getting started with it.
 
-[AWS Lambda For The .NET Developer](https://www.udemy.com/course/aws-lambda-dotnet/?referralCode=981481B991C2890BD448)
+<BookmarkCard href="https://www.udemy.com/course/aws-lambda-dotnet/?referralCode=981481B991C2890BD448" title="AWS Lambda For The .NET Developer" description="Learn to build Serverless Applications on AWS" icon="https://www.udemy.com/staticx/udemy/images/v7/apple-touch-icon.png" />
 
-[AWS Lambda](https://aws.amazon.com/lambda/) is Amazon's answer to serverless compute services. It allows running code with zero administration of the infrastructure that the code is running on."
+[AWS Lambda](https://aws.amazon.com/lambda/) is Amazon's answer to serverless compute services. It allows running code with zero administration of the infrastructure that the code is running on.
 
-<iframe src="https://www.youtube.com/embed/IHIJFVUQyFY" />
+<EmbedCard src="https://www.youtube.com/embed/IHIJFVUQyFY" />
 
 AWS Lambda allows us to upload the code as a ZIP file or container image, and AWS takes care of allocating the compute execution power required to run the code.
 
@@ -47,7 +49,9 @@ The IDE's I commonly use for .NET development are [Visual Studio](https://aws.am
 
 Once installed and setup (follow the docs for instructions), you can start creating different project types from the available templates available. Below is a screenshot from the Visual Studio project creation dialog filtered to AWS Platform type.
 
-<Figure src="/images/aws_toolkit_visual_studio.jpg" caption="## Setting Up First Project" />
+<ImageCard src="/content/images/aws_toolkit_visual_studio.jpg" alt="AWS Toolkit Visual Studio Project Templates" />
+
+## Setting Up First Project
 
 Let's create a new project using the '_AWS Lambda Project (.NET Core - C#)_' template option.
 
@@ -55,13 +59,13 @@ Selecting the option from the template list prompts you to choose the AWS Bluepr
 
 Blueprints contain some code (to get started) based on the type of trigger used to invoke the AWS Lambda function.
 
-![AWS Lambda Select Blueprint dialog Visual Studio](/images/aws_select_blueprint.jpg)
+<ImageCard src="/content/images/aws_select_blueprint.jpg" alt="AWS Lambda Select Blueprint dialog Visual Studio" />
 
 In this case, let's select an Empty Function and set it up all ourselves to understand what is happening.
 
 The project created has one class file, `Function.cs`, which contains the code to run when the AWS Lambda function gets invoked.
 
-![AWS Lambda Empty template project files in Solution Explorer](/images/aws_project_files.jpg)
+<ImageCard src="/content/images/aws_project_files.jpg" alt="AWS Lambda Empty template project files in Solution Explorer" />
 
 It contains two Nuget packages `[Amazon.Lambda.Core`\](https://www.nuget.org/packages/Amazon.Lambda.Core/) and `[Amazon.Lambda.Serialization.SystemTextJson](https://www.nuget.org/packages/Amazon.Lambda.Serialization.SystemTextJson/)`.
 
@@ -83,7 +87,7 @@ The default `Function` class looks like below, with a method `FunctionHandler` t
 ```json
 using Amazon.Lambda.Core;
 
-/ Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
+// Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
 
 namespace AWSLambda1
@@ -91,13 +95,13 @@ namespace AWSLambda1
     public class Function
     {
 
-        / <summary>
-        / A simple function that takes a string and does a ToUpper
-        / </summary>
-        / <param name="input"></param>
-        / <param name="context"></param>
+        /// <summary>
+        /// A simple function that takes a string and does a ToUpper
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="context"></param>
 
-        / <returns></returns>
+        /// <returns></returns>
         public string FunctionHandler(string input, ILambdaContext context)
         {
             return input.ToUpper();
@@ -119,7 +123,9 @@ The Mock Lambda Test Tool shows up a UI to select the configuration file and the
 
 Since our Function accepts a string, let's choose the 'Hello World' template and pass a string. To trigger the Function, click the Execute Function, and it will simulate an AWS Lambda Function trigger.
 
-<Figure src="/images/aws_mock_lambda_tool.jpg" caption="### Lambda Triggers" />
+<ImageCard src="/content/images/aws_mock_lambda_tool.jpg" alt="Mock Lambda Tool showing the Function" />
+
+### Lambda Triggers
 
 Earlier, we triggered the Lambda function manually using the Mock tool. Similarly, we can also use the Lambda Console, API, CLI, etc., to invoke the Lambda.
 
@@ -155,17 +161,19 @@ The easiest way to publish the AWS Lambda function to AWS infrastructure is to r
 
 _In real-life projects, you would set up a build-deploy pipeline to automate this, which we will see later._
 
-![Upload Lambda Function dialog in Visual Studio.](/images/aws_publish_to_aws_lambda.jpg)
+<ImageCard src="/content/images/aws_publish_to_aws_lambda.jpg" alt="Upload Lambda Function dialog in Visual Studio." />
 
 Clicking the Next button prompts to select an IAM role to grant the Lambda function the necessary permissions to run and connect to other services.
 
 I have given it the [AWSLambdaBasicExecutionRole](https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html#permissions-executionrole-features), which grants permissions to write to CloudWatch logs.
 
-<Figure src="/images/aws_publish_to_aws_lambda_1.jpg" caption="Click the Upload button to upload and publish the Lambda Function to the selected AWS environment." />
+<ImageCard src="/content/images/aws_publish_to_aws_lambda_1.jpg" alt="Upload Lambda Function Advanced Function Details in Visual Studio." />
+
+Click the Upload button to upload and publish the Lambda Function to the selected AWS environment.
 
 The wizard first runs dotnet publish, which generates the compiled DLL, all of its assembly dependency, along with the runtimeconfig.json file (_AWSLambda1.runtimeconfig.json_).
 
-![AWS Lambda Uploading Log in Visual Studio](/images/aws_publish_log.jpg)
+<ImageCard src="/content/images/aws_publish_log.jpg" alt="AWS Lambda Uploading Log in Visual Studio" />
 
 The runtime config contains the information about the dotnet version and helps the AWS Lambda configure the runtime environment. Below is the generated config (which is generated by specifying _/p:GenerateRuntimeConfigurationFiles=true_ by the [Toolkit](https://docs.aws.amazon.com/lambda/latest/dg/csharp-package.html))
 
@@ -186,7 +194,7 @@ If the _Open Lambda Function view after upload complete_ is checked in the wizar
 
 If not, you can manually do this from the _AWS Explorer_ (that is part of the AWS Toolkit), which is available from View → AWS Explorer. Navigate to AWS Lambda and select the Lambda function that you just deployed.
 
-![AWS Explorer in Visual Studio to view deployed Lambda function](/images/aws_lambda_visual_studio_explorer.jpg)
+<ImageCard src="/content/images/aws_lambda_visual_studio_explorer.jpg" alt="AWS Explorer in Visual Studio to view deployed Lambda function" />
 
 You can invoke the Lambda that we just deployed to AWS from within Visual Studio (manually). The response is all uppercase of the Request payload as expected from the Function.
 
@@ -194,7 +202,7 @@ You can invoke the Lambda that we just deployed to AWS from within Visual Studio
 
 Alternatively, you can also navigate to [AWS Console](https://aws.amazon.com/console/), navigate to Lambda in the appropriate region to view the deployed Lambda.
 
-![AWS Lambda in AWS Console](/images/aws_lambda_console.jpg)
+<ImageCard src="/content/images/aws_lambda_console.jpg" alt="AWS Lambda in AWS Console" />
 
 We can trigger the Lambda Function from here and also update various configurations. If you want to assign different triggers, that's possible from here as well. Manually uploading a new zip package file is also possible from the console.
 

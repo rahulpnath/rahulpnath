@@ -1,10 +1,8 @@
 ---
-title: "Windows Phone Series: Bing Maps and Turn-by-Turn Navigation"
+title: 'Windows Phone Series: Bing Maps and Turn-by-Turn Navigation'
 slug: windows-phone-series-bing-maps-and-turn-by-turn-navigation
-date: 2014-03-07
-feature_image: /images/Bing_wp_simulator_geolocation.jpg
-excerpt: >-
-  Many applications today provide features that integrate with users location and provide information on a map based on that. In this blog will see how we can use the Bing...
+date: '2014-03-07'
+feature_image: /content/images/Bing_wp_simulator_geolocation.jpg
 tags:
   - Dotnet
 ---
@@ -13,7 +11,7 @@ Many applications today provide features that integrate with users location and 
 To use Maps in windows phone application, you would need to add a reference to ‘_Microsoft.Phone.Controls.Maps_’ once you create a new Windows phone project. Add the maps control to the application as below to display current location or other map related features.
 
 ```xml
-<maps:Map Grid.Row="1" Name="mapBing"  AnimationLevel="None" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch""
+<maps:Map Grid.Row="1" Name="mapBing"  AnimationLevel="None" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
           CopyrightVisibility="Collapsed"  LogoVisibility="Collapsed"
           ZoomBarVisibility="Collapsed"
           ZoomLevel="12" CredentialsProvider="BING MAPS API KEY" >
@@ -34,7 +32,6 @@ This adds a map user control to the application and also different layers to the
 The  first thing that we would want is to track our location, so that we could provide information related to our current location. For this we use the [GeoCoordinateWatcher](http://msdn.microsoft.com/en-us/library/system.device.location.geocoordinatewatcher\(v=vs.110\).aspx), that provides the location information based in latitude and longitude. Registering for the PositionChanged event will update us whenver the location information related to the user has changed, so that we can update/obtain the real time location of the user if he is on the move. Once we have the user location co-ordinates, we can use the [Location API](http://msdn.microsoft.com/en-us/library/ff701715.aspx), to get the location name.
 
 ```csharp
-
 GeoPosition myPosition;
 
 private void TrackMe()
@@ -71,7 +68,6 @@ void myWatcher_PositionChanged(object sender, GeoPositionChangedEventArgs e)
 Location points are depicted on maps using the Pushpin user control. Now that we have the users location, we need to get the destination where the user wants to go. We have added a simple panorama control where in one of them has a map and the other has the details to enter the destination location. Once the user enters the destination location name, we need to get the co-ordinates of this location. For this we use the Location API again but with a different endpoint. We might get multiple responses for the same location name, for which we add destination pushpins to the map, so that user can select the correct location from the map that he intends to go. On getting confirmation on the destination point, we now need to get the route from the current location to the destination location. A route is nothing but a set of co-ordinates between the start and the destination that the user will have to pass through to reach the final destination. You can use the [Routes API](http://msdn.microsoft.com/en-us/library/ff701705.aspx) or consume it adding a service reference to [http://dev.virtualearth.net/webservices/v1/routeservice/routeservice.svc/mex](http://dev.virtualearth.net/webservices/v1/routeservice/routeservice.svc/mex)
 
 ```csharp
-
 RouteServiceClient routeService = new RouteServiceClient("BasicHttpBinding_IRouteService");
 
 routeService.CalculateRouteCompleted += (sender, e) =&gt;
@@ -115,12 +111,12 @@ private void SpeakText(string message)
 
 You could add on more features to this using the different location related api’s that are available and provide the user a more enhanced experience.
 
-<Figure src="/images/Bing_wp_route.jpg" caption="![Bing_wp_place_search](/images/Bing_wp_place_search.jpg)" />
+<ImageCard src="/content/images/Bing_wp_route.jpg" alt="Bing_wp_route" /><ImageCard src="/content/images/Bing_wp_place_search.jpg" alt="Bing_wp_place_search" /><ImageCard src="/content/images/Bing_wp_directions_text.jpg" alt="Bing_wp_directions_text" />
 
-<Figure src="/images/Bing_wp_directions_text.jpg" caption="**Testing**" />
+**Testing**
 
 Using the [additional tools along with the phone emulator](http://msdn.microsoft.com/en-us/library/windowsphone/develop/hh202933\(v=vs.105\).aspx), you can simulate location changes and also be at any location without actually being there and test. The emulator also provides a lot of functionality to simulate movement along a specific route and fire location changes in fixed amount of time etc, that come handy while testing.
 
-![Bing_wp_simulator_geolocation](/images/Bing_wp_simulator_geolocation.jpg)
+<ImageCard src="/content/images/Bing_wp_simulator_geolocation.jpg" alt="Bing_wp_simulator_geolocation" />
 
 You could also install it on to a phone and dash out to test it for yourself in your real-time location and reach the coffee-shop faster!. Find the sample code [here](https://github.com/rahulpnath/Blog/tree/master/SimpleGPS) and feel free to use it.

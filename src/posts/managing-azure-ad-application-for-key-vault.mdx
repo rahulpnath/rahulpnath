@@ -1,12 +1,12 @@
 ---
-title: "Managing Azure AD Application for Key Vault"
+title: Managing Azure AD Application for Key Vault
 slug: managing-azure-ad-application-for-key-vault
-date: 2015-06-27T00:00:00.000Z
+date: '2015-06-27'
+tags:
+  - Azure
 excerpt: >-
   This post looks into the life cycle of managing an Azure AD application that
   is used to secure access to Key Vault.
-tags:
-  - Azure
 ---
 > Please check [here](/blog/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/) for scripts using the latest PowerShell cmdlets.
 
@@ -45,7 +45,6 @@ To associate the application created with the Key Vault, we need to create a ser
 
 ```powershell
 $servicePrincipal = New-AzureADServicePrincipal -ApplicationId $adApplication.ApplicationId
-
 Set-AzureKeyVaultAccessPolicy -VaultName 'KeyVaultRahul' -ObjectId  $servicePrincipal.Id -PermissionsToKeys all -PermissionsToSecrets all
 $ServicePrincipal.ApplicationId #Outputs the ServicePrincipalName/AppPrincipalId
 
@@ -65,7 +64,6 @@ $rawCertData = $x509Certificate2.GetRawCertData()
 $credentialValue = [System.Convert]::ToBase64String($rawCertData)
 $startDate= [System.DateTime]::Now
 $endDate = $startDate.AddYears(1)
-
 New-MsolServicePrincipalCredential -ServicePrincipalName $ServicePrincipal.ApplicationId -Type Asymmetric -Value $credentialValue -StartDate $startDate -EndDate   $endDate
 
 ```
@@ -76,7 +74,6 @@ Whenever a credential gets compromised or as part of regular credential refresh,
 
 ```powershell
 $servicePrincipalCredential = Get-MsolServicePrincipalCredential -ServicePrincipalName $ServicePrincipal.ApplicationId -ReturnKeyValues 0
-
 Remove-MsolServicePrincipalCredential -ServicePrincipalName $ServicePrincipal.ApplicationId -KeyIds $servicePrincipalCredential[0].KeyId
 
 ```
@@ -86,15 +83,10 @@ Remove-MsolServicePrincipalCredential -ServicePrincipalName $ServicePrincipal.Ap
 The [Remove-MsolServicePrincipal](https://msdn.microsoft.com/en-us/library/azure/dn194113.aspx) cmdlet removes a service principal from Microsoft Azure Active Directory, by specifying objectID/applicationID/ServicePrincipalName to identify the service principal.
 
 ```powershell
-
 Remove-MsolServicePrincipal -ObjectId <Guid>
-
 Or
-
 Remove-MsolServicePrincipal -AppPrincipalId <Guid>
-
 Or
-
 Remove-MsolServicePrincipal -ServicePrincipalName <string>
 
 ```

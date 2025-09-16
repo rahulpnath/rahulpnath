@@ -1,21 +1,19 @@
 ---
-title: "Refactoring to Improve Testability: Extracting Dependencies"
+title: 'Refactoring to Improve Testability: Extracting Dependencies'
 slug: refactoring-to-improve-testability-extracting-dependencies
-date: 2016-04-03
-feature_image: /images/coding.jpg
-excerpt: >-
-  !Refactoring(/images/coding.jpg)(https://pixabay.com/en/code-data-programming-code-944504/)  In the earlier post, Removing Unnecessary Dependencies(GHOSTURL/blog/refactoring-to-improve-testability-removing-unnecessary-dependencies/), we saw how having an unnecessary dependency hinders testability. In this post we will see just the opposite of that -...
+date: '2016-04-03'
+feature_image: /content/images/coding.jpg
 tags:
-  - Programming
   - Testing
+  - Programming
 ---
-[![Refactoring](/images/coding.jpg)](https://pixabay.com/en/code-data-programming-code-944504/)
+<ImageCard src="/content/images/coding.jpg" alt="Refactoring" />
 
 In the earlier post, [Removing Unnecessary Dependencies](/blog/refactoring-to-improve-testability-removing-unnecessary-dependencies/), we saw how having an unnecessary dependency hinders testability. In this post we will see just the opposite of that - extracting functionality out of a class and creating another class to separate responsibilities, making it easier to test and adhere to [Single Responsibility Principle](https://blog.8thlight.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html)(SRP).
 
 > _Violating Single Responsibility Principle makes writings tests harder._
 
-Some of the common tests smell (from XUnit Test Patterns by Gerard Meszaros, [a recommended read](/blog/language-agnostic-books-for-every-developer-2/)) that helps me to find these dependencies are [Hard-To-Test Code](http://xunitpatterns.com/Hard%20to%20Test%20Code.html) and [Fragile Tests](http://xunitpatterns.com/Fragile%20Test.html). In this post we will explore the refactoring with the help of an example - I have to process usages (anything like electricity, internet, water etc.) for a list of locations aggregated over for a day. There is a repository where the last processed date for the location is stored, and whenever this process runs we have to process for all the days from the last processed date till the current day."
+Some of the common tests smell (from XUnit Test Patterns by Gerard Meszaros, [a recommended read](/blog/language-agnostic-books-for-every-developer-2/)) that helps me to find these dependencies are [Hard-To-Test Code](http://xunitpatterns.com/Hard%20to%20Test%20Code.html) and [Fragile Tests](http://xunitpatterns.com/Fragile%20Test.html). In this post we will explore the refactoring with the help of an example - I have to process usages (anything like electricity, internet, water etc.) for a list of locations aggregated over for a day. There is a repository where the last processed date for the location is stored, and whenever this process runs we have to process for all the days from the last processed date till the current day.
 
 The existing code looks like below, which loops through a list of locations passed in, fetches the last processed date from a repository , gets all the days to be processed till today (_DateTime.Now.Date_) and processes them for all the days.
 

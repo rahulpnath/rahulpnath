@@ -1,15 +1,17 @@
 ---
-title: "Use Tests As A Feedback Tool To Improve Code"
+title: Use Tests As A Feedback Tool To Improve Code
 slug: tests-as-a-feedback-tool
-date: 2017-06-01T00:00:00.000Z
-feature_image: /images/test_feedback.png
-excerpt: Listen to tests and act on it to improve the code you are writing.
+date: '2017-06-01'
+feature_image: /content/images/test_feedback.png
 tags:
   - Testing
+excerpt: Listen to tests and act on it to improve the code you are writing.
 ---
 A unit test suite provides immediate feedback when you make a change. A passing test suite gives the confidence on the changes made. It's the confidence that the team has on the tests suite that matters more than the [code coverage number](/blog/is-code-coverage-a-lie/). Tests also provide feedback about the code. It suggests how easy or difficult it is to use the code just written since tests are the first consumers of the code. Different kinds of [Test Smells](http://xunitpatterns.com/Test%20Smells.html) indicates a problem with the code that is getting tested or the test code itself and provides feedback to improve it.
 
-<Figure src="/images/test_feedback.png" caption="Let's take a look at a couple of Test Smells and see what changes can be made to improve the code." />
+<ImageCard src="/content/images/test_feedback.png" alt="Test Feedback" />
+
+Let's take a look at a couple of Test Smells and see what changes can be made to improve the code.
 
 ### Multiple Asserts on Class Properties
 
@@ -220,6 +222,7 @@ It often happens that we get into discussions on whether a function should be pr
 Tests should be through public API of the class. If it gets difficult to test through the API, it hints that the code is dealing with different responsibilities or has too many dependencies.
 
 > _There are valid use cases for the private and internal access modifiers, but the majority of the time I see private and internal code, it merely smells of poor design. If you change the design, you could make types and members public, and feel good about it._
+
 > \-[_Unit Testing Internals, Mark Seemann_](http://blog.ploeh.dk/2015/09/22/unit-testing-internals/)
 
 Consider refactoring your code so that it is easier to test. Tests are the first consumers of code, and it helps shape the public API and the way it gets consumed. It is fine to have tests affect the way you write code. What is not fine is to have explicit loops within the production code, just for test code. The problem with having such code is that the other code loop never gets tested.

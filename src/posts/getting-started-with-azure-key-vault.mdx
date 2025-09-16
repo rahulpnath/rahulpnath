@@ -1,14 +1,8 @@
 ---
-title: "Getting Started with Azure Key Vault"
+title: Getting Started with Azure Key Vault
 slug: getting-started-with-azure-key-vault
-date: 2015-01-25T00:00:00.000Z
-feature_image: /images/azurekeyvault_overview.png
-excerpt: >-
-  > Please check
-  here(GHOSTURL/blog/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/)
-  for scripts using the latest PowerShell cmdlets.  Azure Key Vault service is a
-  cloud hosted, HSM(Hardware Security Modules)-backed service for managing
-  cryptographic keys and other...
+date: '2015-01-25'
+feature_image: /content/images/azurekeyvault_overview.png
 tags:
   - Azure
 ---
@@ -16,7 +10,9 @@ tags:
 
 Azure Key Vault service is a cloud hosted, HSM(Hardware Security Modules)-backed service for managing cryptographic keys and other secrets. With Azure Key Vault, the process of managing and controlling the keys required for an application or multiple applications for an enterprise can be handled at a centralized place. Also these sensitive information no longer needs to be exposed in the application's configuration file or in database. Keys can be created in the vault and accessed via url's by the required application. Operations against the Key Vault are authenticated and authorized using Azure Active Directory. So in short all that a developer would need to know are the URI's for the keys, the [sdk/api](https://msdn.microsoft.com/en-us/library/azure/dn903625.aspx) to access the vault features and also on the mechanism to authenticate against the AD application (an appId/client secret or appId/certificate).
 
-<Figure src="/images/azurekeyvault_overview.png" caption="## Key Types" />
+<ImageCard src="/content/images/azurekeyvault_overview.png" alt="Azure Key Vault Overview" />
+
+## Key Types
 
 The initial release of Azure Key Vault only supports RSA keys (asymmetric cryptography) - it supports both software and HSM processed keys, and are represented as JSON Web Key objects. In future there might be more support for the different key types that are there in cryptography. For those who are new to cryptography or needs a quick recap on cryptography algorithms:
 
@@ -24,32 +20,28 @@ The initial release of Azure Key Vault only supports RSA keys (asymmetric crypto
 
 Symmetric cryptography, uses the same key to encrypt and decrypt the data. The keys are shared between the identities that require to transfer the encrypted data.
 
-<Figure src="/images/symmetric_encryption.png" caption="### **Asymmetric Cryptography**" />
+<ImageCard src="/content/images/symmetric_encryption.png" alt="Symmetric Encryption" />
+
+### **Asymmetric Cryptography**
 
 Asymmetric cryptography, also known as public key cryptography uses two separate keys - a public key and private key. The public key can be used to encrypt the data or to verify a digital signature whereas the private key is used to decrypt the text or to digital sign.
 
-![Asymmetric Encryption](/images/asymmetric_encryption.png)
+<ImageCard src="/content/images/asymmetric_encryption.png" alt="Asymmetric Encryption" />
 
 To create a new key in the Azure Key Vault, first we need to create the vault, using powershell scripts. You would need to install [azure module version 0.8.13 version or higher](/blog/azure-key-vault-and-powershell-module-version/) for the key vault scripts to execute. Detailed steps on creating the vault and keys is documented [here](http://azure.microsoft.com/en-in/documentation/articles/key-vault-get-started/). Once we have the key created we can get the attributes of the key, using _Get-AzureKeyVaultKey_. This is as per the [JSON Web Key(JWK) format](https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#page-25). The '_n/e_' values in the below key are for the RSA key type(_kty_), showing the public key information.
 
 ```powershell
-
 PS C:\> Get-AzureKeyVaultKey -Name rahulkey -VaultName testvaultrahul
 
 
 Attributes : Microsoft.Azure.Commands.KeyVault.Models.KeyAttributes
-
 Key        : {"kid":"https://testvaultrahul.vault.azure.net/keys/rahulkey/0f653b06c1d94159bc7090596bbf7784","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","w
              rapKey","unwrapKey"],"n":"xAXdHg5IAiU44GLM41hrCgfbEf8vg414lwIXBRHwPH-GTdQo3x5hMyvEtT26udcWLeRDDYGQxquuQ03ChXmXaE1Z8rdDpuaciJVoTB8wA_icr4Ww4ld0zuk9Nf31sVP-T_
              UiYBpg_3MdwbDvO53udtknLWnXEa-Y-NXlCwUus6LOtfoG1_oVg5B5OFfcW993Zb44C3ZMoOESa-fW0eT6OefBJOgXwGG5gB-zAB2D7uzhStu3Cp4OiFELQSAS4gpt2GCUI76YkTfq8jnIJ7bi5cYzUb-Sv2
              9nkiwJV9I7hN6wuoz1gNRoJJVisBtidiFd8EYYuCGB3AH8OWbWS_sXEw","e":"AQAB"}
-
 VaultName  : testvaultrahul
-
 Name       : rahulkey
-
 Version    : 0f653b06c1d94159bc7090596bbf7784
-
 Id         : https://testvaultrahul.vault.azure.net/keys/rahulkey/0f653b06c1d94159bc7090596bbf7784
 
 ```

@@ -1,10 +1,8 @@
 ---
-title: "TypeScript: Use Sum Types To Your Advantage When Modelling Data"
+title: 'TypeScript: Use Sum Types To Your Advantage When Modelling Data'
 slug: typescript-sum-types
-date: 2020-02-24
-feature_image: /images/typescript_sum_types.jpg
-excerpt: >-
-  Recently I was working at a client, and we had to take online payment for the service they provide. There were two options to pay - either in part or...
+date: '2020-02-24'
+feature_image: /content/images/typescript_sum_types.jpg
 tags:
   - Programming
 ---
@@ -62,3 +60,5 @@ The data is now expressive and indicates what fields apply to the relevant payme
 When using the PaymentOption Sum Type we can conditionally check for the type of option it represents using the 'type' property, also referred to as the '_discriminant_'. Once we case it to a specific type, TypeScript is intelligent enough to restrict us to the properties that type has defined. For, e.g. if it a 'full' payment, refundableBond (or any of the other properties that are only applicable to a 'part' payment option) cannot be accessed. It makes it extremely useful when consuming Sum types and makes it less error-prone.
 
 No longer do we need to keep track of when data will and will not be populated. Having conditional properties on an interface or a class creates confusion. It makes it harder to deal with the data and the various combinations it can take. Tend to avoid this as much as possible. I hope this gives you an idea to take away and implement for your problem.
+
+<EmbedCard src="https://codesandbox.io/embed/using-sum-types-to-model-data-esl5j?fontsize=14&hidenavigation=1&theme=dark" title="Using Sum Types to Model Data" />

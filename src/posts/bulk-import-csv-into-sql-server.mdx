@@ -1,9 +1,7 @@
 ---
-title: "Bulk Import CSV Files Into SQL Server Using SQLBulkCopy and CSVHelper"
+title: Bulk Import CSV Files Into SQL Server Using SQLBulkCopy and CSVHelper
 slug: bulk-import-csv-into-sql-server
-date: 2019-07-30
-excerpt: >-
-  My recent project got me back into some long lost technologies, including Excel sheets, vb scripts, Silverlight, bash scripts, and whatnot. Amongst one of the things was a bash script...
+date: '2019-07-30'
 tags:
   - Programming
 ---
@@ -11,7 +9,7 @@ My recent project got me back into some long lost technologies, including Excel 
 
 ## Challenges with BCP Utility
 
-The [bcp Utility](https://docs.microsoft.com/en-us/sql/tools/bcp-utility?view=sql-server-2017) is one of the best possible options to use from a command line to bulk import data from CSV files. However, the bcp utility requires the fields (columns) in the CSV data file to match the order of the columns in the SQL table. The columns counts must also match. Both were not the case in my scenario. The way that you can work around this using bcp is by providing a [Format File](https://docs.microsoft.com/en-us/sql/relational-databases/import-export/use-a-format-file-to-map-table-columns-to-data-file-fields-sql-server?view=sql-server-2017)."
+The [bcp Utility](https://docs.microsoft.com/en-us/sql/tools/bcp-utility?view=sql-server-2017) is one of the best possible options to use from a command line to bulk import data from CSV files. However, the bcp utility requires the fields (columns) in the CSV data file to match the order of the columns in the SQL table. The columns counts must also match. Both were not the case in my scenario. The way that you can work around this using bcp is by providing a [Format File](https://docs.microsoft.com/en-us/sql/relational-databases/import-export/use-a-format-file-to-map-table-columns-to-data-file-fields-sql-server?view=sql-server-2017).
 
 -   CSV file columns must match order and count of the SQL table
 
@@ -66,7 +64,6 @@ Explicitly marking the empty values as null (as in the code above) solves the pr
 The above code worked all file until there were some CSV files which had comma as a valid value for few of the columns, as shown below.
 
 ```csv
-
 Id,Name,Address,Qty
 1,Rahul,"Castlereagh St, Sydney NSW 2000",10
 
@@ -75,9 +72,7 @@ Id,Name,Address,Qty
 Splitting on comma no longer works as expected, as it also splits the address into two-part. Using a NuGet package for reading the CSV data made more sense and decided to switch to [CSVHelper](https://github.com/JoshClose/CsvHelper). Even though CSVHelper is intended to work with strong types, it does work with generic types  - thanks to dynamics. Generating types for each CSV format is equivalent to generating a format file required for the bcp utility.
 
 ```csharp
-
 List<dynamic> rows;
-
 List<string> columns;
 using (var reader = new StreamReader(file))
 using (var csv = new CsvReader(reader))

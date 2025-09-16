@@ -1,12 +1,12 @@
 ---
-title: "Azure AD Custom Attributes and Optional Claims from an ASP.Net Application"
+title: Azure AD Custom Attributes and Optional Claims from an ASP.Net Application
 slug: azure-ad-custom-attributes-and-optional-claims-from-an-asp-dot-net-application
-date: 2018-12-10T00:00:00.000Z
-feature_image: /images/AzureAd_schema_extension_optionalClaims.png
-excerpt: Adding and retrieving custom attributes from an Azure AD
+date: '2018-12-10'
+feature_image: /content/images/AzureAd_schema_extension_optionalClaims.png
 tags:
-  - Dotnet
   - Azure
+  - Dotnet
+excerpt: Adding and retrieving custom attributes from an Azure AD
 ---
 When using Azure Active Directory for managing your users, it is a common requirement to add additional attributes to your Users like SkypeId, employee code, EmployeeId and similar. Even though this happens to be a common need, getting this done is not that straightforward. This post describes how you can get additional properties on User objects in Azure AD.
 
@@ -19,8 +19,7 @@ Azure AD user has a set of [default properties](https://docs.microsoft.com/en-us
 > _[Azure AD supports](https://docs.microsoft.com/en-us/graph/extensibility-overview#azure-ad-directory-schema-extensions) a similar type of extension, known as directory schema extensions, on a few directory object resources. Although you have to use the Azure AD Graph API to create and manage the definitions of directory schema extensions, you can use the Microsoft Graph API to add, get, update and delete data in the properties of these extensions._
 
 ```json
-
-POST https://graph.windows.net/contoso.onmicrosoft.com/applications/"
+POST https://graph.windows.net/contoso.onmicrosoft.com/applications/
     <applicationObjectId>/extensionProperties?api-version=1.5 HTTP/1.1
 {
     "name": "employeeCode<optionalEnvironmentName>",
@@ -41,7 +40,6 @@ If you have multiple environments (like Dev, Test, UAT, Prod) all pointing to th
 Now that we have the extension property created on the AD application, we can set the property on the User object. If you want to set this manually, you can use the [GraphExplorer website](https://graphexplorer.azurewebsites.net/) again to do this.
 
 ```json
-
 PATCH https://graph.windows.net/contoso.onmicrosoft.com/users
         /jim@contoso.onmicrosoft.com?api-version=1.5
 {
@@ -52,8 +50,7 @@ PATCH https://graph.windows.net/contoso.onmicrosoft.com/users
 
 In our case it was not a one-off case of updating the User object, so better wanted this to be automated. Employee codes were available from a database with the associated Azure AD email address. So we created a windows service job that would sync these codes to Azure AD. You can write to Azure AD schema extension properties using [Microsoft Graph API](https://developer.microsoft.com/en-us/graph). Add a reference to the [Microsoft Graph NuGet package](https://www.nuget.org/packages/Microsoft.Graph), and you are all set to go. For the Graph API to authenticate, use a different Azure AD app (separate to the one that you registered the extension property on, which the web app uses to authenticate), just because it needs additional permissions as well and it is a good idea to isolate that. Under Settings -> Required Permissions, Add Microsoft Graph and provide the relevant permissions for it to write the user's profile/directory data.
 
-![Azure AD Graph API Permissions](/images/azureAd_GraphApi_Permissions.png)
-
+<ImageCard src="/content/images/azureAd_GraphApi_Permissions.png" alt="Azure AD Graph API Permissions" />
 ```csharp
 private static async Task<GraphServiceClient> GetGraphApiClient()
 {
@@ -80,7 +77,6 @@ private static async Task<GraphServiceClient> GetGraphApiClient()
 }
 
 ```
-
 ```csharp
 private async Task UpdateEmployeeCode(
     string employeeCodePropertyName, GraphServiceClient graphApiClient, Employee employee)
@@ -104,8 +100,7 @@ Looping through all the employee codes, you can update all of them into Azure AD
 
 With the Azure AD updated with the employee code for each user, we can now set up the AD application to return the additional property as part of the claims, when the web application authenticates with it. The application manifest of the Azure AD application needs to be modified to return the extension property as part of the claims. By default [optionalClaims property](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-optional-claims#configuring-optional-claims) is set to null and you can update it with the below values.
 
-![Azure AD Application Manifest - Optional Claims](/images/AzureAd_schema_extension_optionalClaims.png)
-
+<ImageCard src="/content/images/AzureAd_schema_extension_optionalClaims.png" alt="Azure AD Application Manifest - Optional Claims" />
 ```json
 "optionalClaims": {
     "idToken": [
@@ -124,7 +119,7 @@ With the Azure AD updated with the employee code for each user, we can now set u
 
 I updated the idToken property as the .Net Core Web Application was using JWT ID token. If you are unsure of what token you can use [Fiddler](/blog/fiddler-free-web-debugging-proxy/) to find what kind of token is used (as shown below).
 
-![Id token returned](/images/AzureAd_idToken.png)
+<ImageCard src="/content/images/AzureAd_idToken.png" alt="Id token returned" />
 
 With the optonalClaims set, the web application is all set to go. For an authenticated user (with the extension property set), the extension property is available as part of claims. The claim type will be `_extn.employeeCode<optionalEnvironmentNam>_`. The below code can be used to extract the employee code from the claim.
 

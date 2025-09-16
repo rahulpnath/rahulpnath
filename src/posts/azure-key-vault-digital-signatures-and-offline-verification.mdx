@@ -1,12 +1,13 @@
 ---
-title: "Azure Key Vault: Digital Signatures and Offline Verification"
+title: 'Azure Key Vault: Digital Signatures and Offline Verification'
 slug: azure-key-vault-digital-signatures-and-offline-verification
-date: 2016-11-15
-feature_image: /images/verify_signature.png
-excerpt: >-
-  Explore using Digital Signatures with Azure Key Vault and how to verify signatures offline.
+date: '2016-11-15'
+feature_image: /content/images/verify_signature.png
 tags:
   - Azure
+excerpt: >-
+  Explore using Digital Signatures with Azure Key Vault and how to verify
+  signatures offline.
 ---
 Digital Signature is a mechanism to ensure the validity of a digital document or message. Digital signatures use [asymmetric cryptography](/blog/getting-started-with-azure-key-vault/) - uses a public and private key pair.
 
@@ -14,7 +15,7 @@ Digital Signature is a mechanism to ensure the validity of a digital document or
 
 The below diagram shows the overview of the different steps involved in the Digital Signature process. We generate a hash of the data that we need to protect and encrypt the hash value using a private key pair. This signed hash is sent along with the original data. The receiver generates a hash of the data received and also decrypts the attached signature using the public key. If both the hashes are same, the signature is valid, and the document has not been tampered with.
 
-[![Azure Key Vault - Verify Signature Offline](/images/signing_verification.png)](https://commons.wikimedia.org/wiki/File:Digital_Signature_diagram.svg)
+<ImageCard src="/content/images/signing_verification.png" alt="Azure Key Vault - Verify Signature Offline" />
 
 Azure Key Vault supports sign and verify operations and can be used to implement Digital Signatures. In this post, we will explore how to sign and verify a message using Key Vault. Verifying the hash locally is the recommended approach as per the [documentation](https://msdn.microsoft.com/en-us/library/azure/dn903623.aspx#BKMK_KeyOperations) and we will explore how this can be achieved.
 
@@ -27,7 +28,7 @@ Sign and Verify operations on Key Vault are allowed only on hashed data. So the 
 -   _RS256: RSASSA-PKCS-v1\_5 using SHA-256. The application supplied digest value must be computed using SHA-256 and must be 32 bytes in length._
 -   _RS384: RSASSA-PKCS-v1\_5 using SHA-384. The application supplied digest value must be computed using SHA-384 and must be 48 bytes in length._
 -   _RS512: RSASSA-PKCS-v1\_5 using SHA-512. The application supplied digest value must be computed using SHA-512 and must be 64 bytes in length._
--   _RSNULL: See \[RFC2437\], a specialized use-case to enable certain TLS scenarios._"
+-   _RSNULL: See \[RFC2437\], a specialized use-case to enable certain TLS scenarios._
 
 The below code sample uses SHA-256 hashing algorithm to hash and sign the data.
 

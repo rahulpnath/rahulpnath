@@ -1,0 +1,121 @@
+---
+title: AWS Lambda For The .NET Developer
+slug: aws-lambda-dotnet-developer
+date: '2023-05-07'
+feature_image: /images/AWS-Lambda.png
+excerpt: >-
+  This blog post is a collection of other posts that covers various aspects of
+  AWS Lambda and other services you can integrate with when building serverless
+  applications on Lambda.
+---
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
+
+AWS Lambda is a serverless compute service provided by AWS that allows you to run code without the need to manage servers.
+
+Upload your code to Lambda, and it handles the rest, including scaling and availability.
+
+This blog post is a collection of other posts that covers various aspects of AWS Lambda and other services you can integrate with when building serverless applications on Lambda.
+
+## Getting Started With AWS Lambda
+
+If you are completely new to AWS Lambda and just getting started, check out my getting started article below.
+
+<PostCard 
+  title="AWS Lambda For The .NET Developer: How To Easily Get Started"
+  description="Learn how to get started with AWS Lambda with .NET Core by building out a simple function and deploying to AWS. We will also see how to set up local development environment using the AWS Toolkit."
+  slug="aws-lambda-net-core/"
+  image="/images/aws_lambda.jpg"
+/>
+
+It covers setting up the tools and development environment to build AWS Lambda Functions and write and test our first Lambda Function on a local machine and deploying to AWS.
+
+If you want a more structured course, you can also get my Udemy Course on [AWS Lambda For The .NET Developer](https://bit.ly/aws-lambda-udemy)
+
+Also, check out the below articles to have an understanding of the Lambda Lifecycle and if you want to run docker images on AWS Lambda.
+
+-   [Why You Should Care About Lambda Lifecycle As A .NET Developer?](/blog/lambda-lifecycle-and-net/)
+-   [How To PGP Encrypt An S3 File Using AWS Lambda Running Docker Images](/blog/aws-lambda-pgp-using-docker/)
+
+## AWS Lambda Triggers
+
+AWS Lambda Triggers allow you to execute your Lambda function in response to a specific event or trigger. This event-driven architecture allows you to integrate your Lambda functions with other AWS services and execute your code in a serverless environment.
+
+With a variety of triggers available, you can easily build powerful serverless applications that can scale on demand and automatically respond to different types of events.
+
+### DynamoDB Triggers
+
+DynamoDB Triggers allow you to automatically invoke a Lambda function in response to specific actions on a DynamoDB table, such as item updates, inserts, or deletions.
+
+DynamoDB Triggers enable you to build powerful and scalable applications that can automatically respond to changes in your DynamoDB tables without the need for any polling or manual intervention.
+
+Check out the below articles to understand more about DynamoDB and AWS Lambda Triggers.
+
+-   [AWS DynamoDB For The .NET Developer: How To Easily Get Started](/blog/aws-dynamodb-net-core/)
+-   [DynamoDB Streams and AWS Lambda Trigger in .NET](/blog/aws-dynamodb-streams-lambda-triggers-dotnet/)
+-   [How to Handle Exceptions When Processing DynamoDB Stream Events in .NET Lambda Function](/blog/aws-dynamodb-streams-lambda-triggers-exception-handling-dotnet/)
+
+### S3 Triggers
+
+Amazon S3 Triggers allow you to automatically invoke a Lambda function in response to specific events on an S3 bucket, such as object creation, deletion, or modification.
+
+With S3 Triggers, you can easily integrate your Lambda functions with your S3 buckets and automate your workflows, making your applications more efficient and reducing the need for manual intervention.
+
+Check out the below articles to understand more about Amazon S3 and AWS Lambda Triggers.
+
+-   [Amazon S3 For the .NET Developer: How to Easily Get Started](/blog/amazon-s3-dotnet/)
+-   [Amazon S3 and AWS Lambda Triggers in .NET](/blog/amazon-s3-lambda-triggers-dotnet/)
+
+### SQS Triggers
+
+Amazon Simple Queue Service (SQS) is a fully managed message queuing service that enables you to decouple and scale microservices, distributed systems, and serverless applications.
+
+SQS Triggers allow you to automatically invoke a Lambda function in response to messages in an Amazon Simple Queue Service (SQS) queue.
+
+With SQS Triggers, you can easily integrate your Lambda functions with your SQS queues and build resilient, loosely coupled, fault-tolerant systems.
+
+Check out the below articles to understand more about Amazon SQS and AWS Lambda Triggers.
+
+-   [Amazon SQS For the .NET Developer: How to Easily Get Started](/blog/amazon-sqs/)
+-   [Amazon SQS and AWS Lambda Triggers in .NET](/blog/amazon-sqs-lambda-trigger-dotnet/)
+-   [How to Handle Exceptions When Processing SQS Messages in .NET Lambda Function](/blog/amazon-sqs-lambda-trigger-exception-handling-dotnet/)
+
+### SNS Triggers
+
+Amazon Simple Notification Service (SNS) is a fully managed pub/sub messaging service that enables you to send and receive messages from distributed systems, microservices, and serverless applications.
+
+SNS Triggers allow you to automatically invoke a Lambda function in response to messages published to an Amazon Simple Notification Service (SNS) topic.
+
+With SNS Triggers, you can easily integrate your Lambda functions with your SNS topics and build highly responsive and event-driven systems.
+
+Check out the below articles to understand more about Amazon SQS and AWS Lambda Triggers.
+
+-   [Amazon SNS For the .NET Developer: Getting Started Quick and Easy](/blog/amazon-sns/)
+-   [Amazon SNS and AWS Lambda Triggers in .NET](/blog/amazon-sns-lambda-trigger-dotnet/)
+-   [SNS→Lambda Or SNS→SQS→Lambda](/blog/amazon-sns-to-lambda-or-sns-sqs-lambda-dotnet/)
+
+## Building APIs with AWS Lambda
+
+There are several ways to build APIs on AWS Lambda, including using API Gateway, Function URLs, and hosting ASP.NET Core Applications.
+
+### Amazon API Gateway
+
+API Gateway provides a fully managed solution for creating and managing RESTful APIs that can be integrated with Lambda functions. It offers a wide range of API management tools and features such as caching, rate limiting, and authentication.
+
+-   [Amazon API Gateway - Introduction To Building REST APIs](/blog/amazon-api-gateway-rest-api-introduction/)
+-   [How To Build an API Gateway REST API Using AWS Lambda Proxy Integration?](/blog/amazon-api-gateway-rest-api-lambda-proxy-integration/)
+-   [Using .NET AWS Lambda Authorizer To Secure API Gateway REST API](/blog/aws-dotnet-lambda-authorizer-api-gateway/)
+
+### Function URLs
+
+Function URLs allow you to quickly and easily invoke your Lambda functions over HTTP without the need for any additional infrastructure. This approach is ideal for simple APIs that do not require advanced API management features.
+
+-   [Function URLs - Quick and Easy way to Invoke AWS Lambda Functions over HTTP](/blog/function-urls-in-aws-lambda-dotnet/)
+-   [How To Secure and Authenticate AWS Lambda Function URLs](/blog/how-to-secure-and-authenticate-lambda-function-urls/)
+
+### Hosting ASP.NET Core
+
+Hosting ASP.NET Core applications on Lambda functions enables you to build and deploy full-featured web APIs using familiar development tools and frameworks.
+
+-   [How To Build and Host ASP NET Core Applications on AWS Lambda Functions](/blog/asp-net-core-on-aws-lambda/)
+
+I hope this helps you get a good understanding of AWS Lambda and how to integrate it with other AWS Services from your .NET application.

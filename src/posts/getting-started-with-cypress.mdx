@@ -1,10 +1,8 @@
 ---
-title: "Getting Started With Cypress: An End-to-End Testing Framework"
+title: 'Getting Started With Cypress: An End-to-End Testing Framework'
 slug: getting-started-with-cypress
-date: 2020-04-23
-feature_image: /images/cypress_quotes.jpg
-excerpt: >-
-  Cypress is a next-generation front end testing tool built for the modern web. It is the next generation Selenium and enables us to write tests faster, easier, and reliable. Some...
+date: '2020-04-23'
+feature_image: /content/images/cypress_quotes.jpg
 tags:
   - Testing
 ---
@@ -13,9 +11,9 @@ Cypress is a next-generation front end testing tool built for the modern web. It
 -   **Time Travel**: Cypress takes snapshots while running the tests and enables hovering over each to see the application state during each step.
 -   **Real-time reloads**: Cypress automatically reloads any time a test is changed.
 -   **Automatic waiting**: No more adding waits and sleeps to the tests. It was one thing I hated about writing Selenium tests, and Cypress automatically does that work. It works awesome!
--   **Familiar tools**: Writing tests is a breeze with Cypress and is [built on top of exiting tools](https://docs.cypress.io/guides/references/bundled-tools.html#Mocha) and frameworks."
+-   **Familiar tools**: Writing tests is a breeze with Cypress and is [built on top of exiting tools](https://docs.cypress.io/guides/references/bundled-tools.html#Mocha) and frameworks.
 
-<iframe src="https://www.youtube.com/embed/CAcmLCI0B6U" />
+<EmbedCard src="https://www.youtube.com/embed/CAcmLCI0B6U" />
 
 Cypress comes with a [lot more features](https://www.cypress.io/features) and is worth checking out. In this post, we will look at how to get started with Cypress and a few approaches to set up data required for testing the application.
 
@@ -48,7 +46,7 @@ With Cypress installed in your project, use one of the approaches mentioned to [
 
 Typically my first tests are to check the whole set up is working fine. So testing the app is launching, and rendering the expected elements is a good start. In this case, we are displaying a list of quotes and a 'Create Quote' button. A good test might be to test for the existence of the button and the title text.
 
-![](/images/cypress_quotes.jpg)
+<ImageCard src="/content/images/cypress_quotes.jpg" alt="" />
 
 Add a new file (_quotes.spec.ts_) under the _cypress/integration_ folder. I prefer grouping tests into folders under the integration folder for better management. The _findByText_ from the [Cypress Testing Library](https://testing-library.com/docs/cypress-testing-library/intro) checks for the existence of elements with the specified text, in our case, the header label and the button text.
 

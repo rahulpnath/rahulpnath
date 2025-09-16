@@ -1,17 +1,20 @@
 ---
-title: "Deploying a .NET Web API on Amazon ECS: A Step-by-Step Guide"
+title: 'Deploying a .NET Web API on Amazon ECS: A Step-by-Step Guide'
 slug: amazon-ecs-dotnet-api-hosting
-date: 2024-07-29
-feature_image: /images/ECS-ASP-NET.png
-excerpt: >-
-  Let's learn some of the core concepts of ECS, while deploying an ASP NET Web API application on Amazon ECS using Fargate.
-    we will explore some key components of ECS, including task definitions, tasks, services clusters, etc.
+date: '2024-07-29'
+feature_image: /content/images/2024/07/ECS-ASP-NET.png
 tags:
   - AWS
+excerpt: >-
+  Let's learn some of the core concepts of ECS, while deploying an ASP NET Web
+  API application on Amazon ECS using Fargate. 
+
+  we will explore some key components of ECS, including task definitions, tasks,
+  services clusters, etc.
 ---
 Amazon Elastic Container Service (ECS) is a fully managed container orchestration service that helps you to more efficiently deploy, manage, and scale containerized applications.
 
-<iframe src="https://www.youtube.com/embed/C8cyryjYn8I?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/C8cyryjYn8I?feature=oembed" title="Amazon ECS - Getting Started | Hosting ASP NET on ECS | .NET ON AWS" />
 
 In this post, we will explore some key components of ECS, including task definitions, tasks, services, clusters, etc.
 
@@ -29,7 +32,7 @@ Thank you AWS for sponsoring this post in the [ECS Series](/blog/tag/ecs/).
 
 **Task:** An instantiation of a Task Definition, representing a running container or set of containers.
 
-<Figure src="/images/image-26.png" caption="Core Concepts of ECS and how they are related" />
+<ImageCard src="/content/images/2024/07/image-26.png" alt="Core Concepts of ECS and how they are related" caption="Core Concepts of ECS and how they are related" />
 
 **Service:** A configuration that maintains a specified number of tasks running simultaneously, providing features like auto-scaling and load balancing.
 
@@ -61,25 +64,17 @@ Once you have the toolkit installed, right-click on your project. In this case, 
 
 Choose 'Publish to AWS...' option to deploy to ECS.
 
-<Figure src="/images/image-15.png" caption="Publish to AWS option to deploy ASP NET API to ECS Fargate from within Visual Studio" />
+<ImageCard src="/content/images/2024/07/image-15.png" alt="Publish to AWS option to deploy ASP NET API to ECS Fargate from within Visual Studio" caption="Publish to AWS option to deploy ASP NET API to ECS Fargate from within Visual Studio" />
 
 Ensure your local environment has the appropriate credentials to talk to your AWS account.
 
 Check out [AWS Free Tier](https://aws.amazon.com/free), if you don't have an AWS account. I highly recommend following along with the post to learn ECS better.
 
-<BlogLink
-  href="/blog/amazon-credentials-dotnet/"
-  title="Learn How To Manage Credentials When Building .NET Application on AWS"
-  description="Learn different ways to set up and manage credentials and sensitive information when building .NET applications on AWS. We will also touch upon some of the tools and utilities that I have set up on my local development machine to make working with AWS easier."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/secure-key.jpg"
-/>
+<BookmarkCard href="/blog/amazon-credentials-dotnet/" title="Learn How To Manage Credentials When Building .NET Application on AWS" description="Learn different ways to set up and manage credentials and sensitive information when building .NET applications on AWS. We will also touch upon some of the tools and utilities that I have set up on my local development machine to make working with AWS easier." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 Choose ASP NET Core App to Amazon ECS using the AWS Fargate option from the list presented to deploy the API to ECS.
 
-<Figure src="/images/image-17.png" caption="Visual Studio AWS Toolkit deploy ASP NET to ECS Fargate" />
+<ImageCard src="/content/images/2024/07/image-17.png" alt="Visual Studio AWS Toolkit deploy ASP NET to ECS Fargate" caption="Visual Studio AWS Toolkit deploy ASP NET to ECS Fargate" />
 
 The Toolkit also provides an option to Edit the default settings using the Edit Settings button.
 
@@ -91,14 +86,13 @@ builder.Services.AddHealthChecks();
 var app = builder.Build();
 
 app.MapHealthChecks("/healthz");
-
 ```
 
 Add the above code to your `Program.cs` to enable health check endpoints. This add an endpoint at the `/healthz` URL.
 
 Let's update the ECS publish settings and provide the Health Check endpoint we just added, as shown below.
 
-<Figure src="/images/image-18.png" caption="Visual Studio AWS Toolkit specify health check endpoint for ECS Fargate cluster" />
+<ImageCard src="/content/images/2024/07/image-18.png" alt="Visual Studio AWS Toolkit specify health check endpoint for ECS Fargate cluster" caption="Visual Studio AWS Toolkit specify health check endpoint for ECS Fargate cluster" />
 
 This is the URL that ECS will use to poll a deployed instance of our application to ensure that it is up and running successfully. If a valid response is not received, ECS will automatically kill the instance and recreate a new one.
 
@@ -106,11 +100,11 @@ Click Publish.
 
 This publishes our API application to ECS. You can see the different steps involved in the publishing.
 
-<Figure src="/images/image-20.png" caption="Visual Studio AWS Toolkit status of deploying .NET API to ECS with Fargate" />
+<ImageCard src="/content/images/2024/07/image-20.png" alt="Visual Studio AWS Toolkit status of deploying .NET API to ECS with Fargate" caption="Visual Studio AWS Toolkit status of deploying .NET API to ECS with Fargate" />
 
 You can also see the Cloudformation template deploy progress in your AWS account, while the application is being published as shown below.
 
-<Figure src="/images/image-19.png" caption="Status of the CloudFormation template being run as part of the CDK deploy step from AWS Toolkit" />
+<ImageCard src="/content/images/2024/07/image-19.png" alt="Status of the CloudFormation template being run as part of the CDK deploy step from AWS Toolkit" caption="Status of the CloudFormation template being run as part of the CDK deploy step from AWS Toolkit" />
 
 Once the deployment is complete, you can navigate to the load balancer URL, also shown in the Visual Studio publish UI output section (highlighted above in the image).
 
@@ -124,7 +118,7 @@ AWS provides a view from the Clusters, which lists the Services running in the C
 
 Below, you can see our cluster with one service that is running.
 
-<Figure src="/images/image-21.png" caption="ECS Cluster details with 1 service running." />
+<ImageCard src="/content/images/2024/07/image-21.png" alt="ECS Cluster details with 1 service running." caption="ECS Cluster details with 1 service running." />
 
 The service has three tasks running inside that, which is the default count that the Visual Studio AWS Toolkit sets for the `DesiredCount` of tasks.
 
@@ -132,18 +126,18 @@ This means three instances of that task definition are running inside our cluste
 
 Navigating into the Services reveals more details, such as the load balancer attached to the service and the tasks running as part of it.
 
-<Figure src="/images/image-22.png" caption="Details of the Service running in our ECS cluster, which has the load balancer attached to it." />
+<ImageCard src="/content/images/2024/07/image-22.png" alt="Details of the Service running in our ECS cluster, which has the load balancer attached to it." caption="Details of the Service running in our ECS cluster, which has the load balancer attached to it." />
 
 You can also see that the Tasks are running on Fargate instances.
 
-<Figure src="/images/image-23.png" caption="Tasks running as part of the ECS service, which all points to the same Task Definition file." />
+<ImageCard src="/content/images/2024/07/image-23.png" alt="Tasks running as part of the ECS service, which all points to the same Task Definition file." caption="Tasks running as part of the ECS service, which all points to the same Task Definition file." />
 
 All three tasks have the exact Task definition, which defines which docker image it runs, its memory and CPU size, etc, as shown below.
 
-<Figure src="/images/image-24.png" caption="Task Definition showing the memory, CPU, the docker image used etc." />
+<ImageCard src="/content/images/2024/07/image-24.png" alt="Task Definition showing the memory, CPU, the docker image used etc." caption="Task Definition showing the memory, CPU, the docker image used etc." />
 
 If any task instance faults or becomes unresponsive, ECS will automatically terminate it and bring up a new instance from our task definition.
 
 _PS: Make sure to delete all resources that the Toolkit created so that you don't use up all your free account limits or unnecessarily spend money._
 
-<Figure src="/images/image-25.png" caption="Clean up all resources created by deleting the entire CloudFormation stack." />
+<ImageCard src="/content/images/2024/07/image-25.png" alt="Clean up all resources created by deleting the entire CloudFormation stack." caption="Clean up all resources created by deleting the entire CloudFormation stack." />

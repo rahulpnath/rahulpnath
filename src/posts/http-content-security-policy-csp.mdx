@@ -1,22 +1,21 @@
 ---
-title: "HTTP Content Security Policy (CSP)"
+title: HTTP Content Security Policy (CSP)
 slug: http-content-security-policy-csp
-date: 2018-07-24T00:00:00.000Z
-feature_image: /images/content-security-policy.png
-excerpt: Prevent execution of malicious content in the context of your website.
+date: '2018-07-24'
+feature_image: /content/images/content-security-policy.png
 tags:
   - Programming
+excerpt: Prevent execution of malicious content in the context of your website.
 ---
 _This article is part of a series of articles - [Ok I have got HTTPS! What Next?](/blog/ok-i-have-got-https-what-next/). In this post, we explore how to use HSTS security header and the issues it solves._
 
 Content Security Policy (CSP) is a security response header or a `<meta>` element that instructs the browser, sources of information that it should trust for our website. A browser that supports CSP's then treats this list specified as a whitelist and only allows resources to be loaded only for those sources. CSP's allow you to specify source locations for a variety of resource types which are referred to as [fetch directives](https://developer.mozilla.org/en-US/docs/Glossary/Fetch_directive)(e.g. \_script-src, img-src,style-src\* etc).
 
-![Content Security Policy](/images/content-security-policy.png)
+<ImageCard src="/content/images/content-security-policy.png" alt="Content Security Policy" />
 
 CSP is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware.
 
 ```text
-
 Content-Security-Policy: default-src 'self' *.rahulpnath.com
 
 ```
@@ -51,8 +50,7 @@ To modify the request/response in-flight you can use one of the most powerful fe
 
 Using the below script, we can inject 'Content-Security-Policy' header whenever the request matches a specific criteria.
 
-![Fiddler Script to update CSP](/images/https_csp_fiddler_script.png)
-
+<ImageCard src="/content/images/https_csp_fiddler_script.png" alt="Fiddler Script to update CSP" />
 ```javascript
 // Fiddler Script - Inject CSP Header
 if (oSession.HostnameIs('rahulpnath.com')) {
@@ -71,7 +69,6 @@ The _Content-Security-Policy\_Report-Only_ header allows to test the header sett
 Below is an example of a CSP violation POST request send from the browser to the report URL that I had specified for this blog. I am using an endpoint from the [Report URI](https://report-uri.com/) service (more on this later)
 
 ```json
-
 POST https://rahulpnath.report-uri.com/r/d/csp/reportOnly HTTP/1.1
 {
     "csp-report": {
@@ -101,13 +98,15 @@ The [CSP Fiddler Extension](https://github.com/david-risney/CSP-Fiddler-Extensio
 
 > _The extension adds mock Content-Security-Policy-Report-Only headers to servers' responses and uses the report-uri https://fiddlercsp.deletethis.net/unsafe-inline. The extension then listens to the specified report-uri and generates a CSP based on the gathered information_
 
-<Figure src="/images/https_csp_fiddler_rule_collector.png" caption="### Using Report URI" />
+<ImageCard src="/content/images/https_csp_fiddler_rule_collector.png" alt="Fiddler CSP Rule Collector" />
+
+### Using Report URI
 
 [ReportURI](https://report-uri.com/) is a real-time security reporting tool which can be used to collect various metrics about your website. One of the features it provides is giving a nice little wizard interface for creating your CSP headers. [Pricing](https://report-uri.com/#prices) is usage based and provides the first 10000 reports of the month free (which is what I am using for this blog).
 
 ReportURI gives a dashboard summarizing the various stats of your site and also provides features to explore these in detail.
 
-![Report Uri Dashboard](/images/csp_report_uri_dashboard.png)
+<ImageCard src="/content/images/csp_report_uri_dashboard.png" alt="Report Uri Dashboard" />
 
 One of the cool features is the [CSP Wizard](https://scotthelme.co.uk/report-uri-csp-wizard/) which as the name suggests, provides a wizard-like UI to build out CSP's for the site. The websites need to be configured to report CSP errors to a specific endpoint on your ReportURI endpoint (as shown below). The header value can be set either on CSP header or the Report Only header.
 
@@ -116,7 +115,6 @@ One of the cool features is the [CSP Wizard](https://scotthelme.co.uk/report-uri
 ###Wizard
 
 ```text
-
 Content-Security-Policy-Report-Only: default-src 'none';report-uri https://<subdomain>.report-uri.com/r/d/csp/wizard
 
 ```

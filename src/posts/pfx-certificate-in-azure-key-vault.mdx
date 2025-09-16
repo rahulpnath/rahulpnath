@@ -1,21 +1,14 @@
 ---
-title: "PFX Certificate in Azure Key Vault"
+title: PFX Certificate in Azure Key Vault
 slug: pfx-certificate-in-azure-key-vault
-date: 2016-03-18T00:00:00.000Z
-feature_image: /images/pfx_security.jpg
-excerpt: >-
-  Note: Azure Key Vault now support Certificates as a first class citizen. Check
-  out the post, Manage Certificates in Azure Key
-  Vault(GHOSTURL/blog/manage-certificates-in-azure-key-vault/) for more
-  details. 
-  !Security(/images/pfxsecurity.jpg)(https://www.flickr.com/photos/111692634@N04/15855489588) 
-  You can...
+date: '2016-03-18'
+feature_image: /content/images/pfx_security.jpg
 tags:
   - Azure
 ---
 **Note:** Azure Key Vault now support Certificates as a first class citizen. Check out the post, [Manage Certificates in Azure Key Vault](/blog/manage-certificates-in-azure-key-vault/) for more details.
 
-[![Security](/images/pfx_security.jpg)](https://www.flickr.com/photos/111692634@N04/15855489588)"
+<ImageCard src="/content/images/pfx_security.jpg" alt="Security" />
 
 You can use PFX certificate's along with Azure Key Vault in multiple ways, depending on your use case. You can import the PFX as a Key into Key Vault and use it just like you would use any other key or save it as a Secret and retrieve it as required. In this post I will explain how this is done.
 
@@ -65,13 +58,12 @@ using (var cryptoProvider = privateCertificate.PrivateKey as RSACryptoServicePro
 
 ## Creating a Key in Key Vault from PFX file
 
-Now that I am able to use the PFX file (which essentially is a software-protected key) to encrypt/decrypt data, I will upload this to the Azure Key Vault so that it stays secure there. If you are new to Azure Key Vault and want to get started check my [other posts](/blog/tag/azure-key-vault/).
+Now that I am able to use the PFX file (which essentially is a software-protected key) to encrypt/decrypt data, I will upload this to the Azure Key Vault so that it stays secure there. If you are new to Azure Key Vault and want to get started check my [other posts](/tag/azure-key-vault/).
 
 To upload the PFX to Key Vault, you can use the _[Add-AzureKeyVaultKey](https://msdn.microsoft.com/en-us/library/dn868048.aspx)_ PowerShell cmdlet and specify the PFX file path and password.
 
 ```powershell
 $securepfxpwd = ConvertTo-SecureString –String 'test' –AsPlainText –Force
-
 Add-AzureKeyVaultKey -VaultName 'rahulkeyvault' -Name 'KeyFromCert' -KeyFilePath 'c:\CertificateKey.pfx' -KeyFilePassword $securepfxpwd
 
 ```
@@ -107,7 +99,6 @@ $clearBytes = $collection.Export($pkcs12ContentType)
 $fileContentEncoded = [System.Convert]::ToBase64String($clearBytes)
 $secret = ConvertTo-SecureString -String $fileContentEncoded -AsPlainText –Force
 $secretContentType = 'application/x-pkcs12'
-
 Set-AzureKeyVaultSecret -VaultName 'rahulkeyvault' -Name 'PfxFile' -SecretValue $Secret -ContentType $secretContentType
 
 ```
@@ -122,11 +113,9 @@ $pfxBytes = [System.Convert]::FromBase64String($secretRetrieved.SecretValueText)
 [io.file]::WriteAllBytes("c:\CertFromSecret.pfx", $pfxBytes)
 
 ```
-
 ```csharp
 var secretRetrieved = await keyClient.GetSecretAsync(secretIdentifier);
 var pfxBytes = Convert.FromBase64String(secretRetrieved.Value);
-
 File.WriteAllBytes(@"C:\cert\ADTestVaultApplicationNew.pfx", pfxBytes);
 
 // or recreate the certificate directly

@@ -1,17 +1,17 @@
 ---
-title: "Amazon S3 and AWS Lambda Triggers in .NET"
+title: Amazon S3 and AWS Lambda Triggers in .NET
 slug: amazon-s3-lambda-triggers-dotnet
-date: 2022-09-12T00:00:00.000Z
-feature_image: /images/amazon-s3-lambda-triggers-dotnet.jpg
+date: '2022-09-12'
+feature_image: /content/images/amazon-s3-lambda-triggers-dotnet.jpg
+tags:
+  - AWS
+  - Lambda
 excerpt: >-
   Amazon S3 raises event notifications when Objects are created and modified.
   Learn how to use this to trigger Lambda Functions in .NET and the different
   configuration associated with processing the notification messages.
-tags:
-  - AWS
-  - Lambda
 ---
-_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
 Amazon Simple Storage Service (S3) is an object storage service that allows you to store any data.
 
@@ -19,7 +19,7 @@ Any time an object is created or modified in S3, it raises event notifications. 
 
 For example - When a user uploads a profile picture image, we can store the file in S3 storage and use event notifications when the file is written to process them as thumbnails and other formats. We can also use event notifications to process large data files uploaded for bulk processing.
 
-<iframe src="https://www.youtube.com/embed/U96230YlSJA" />
+<EmbedCard src="https://www.youtube.com/embed/U96230YlSJA" />
 
 You will learn:
 
@@ -27,15 +27,7 @@ You will learn:
 -   Different Lambda trigger configurations.
 -   Exception handling when processing S3 Event Notifications.
 
-<BlogLink
-  href="/blog/amazon-s3-dotnet"
-  title="Amazon S3 For the .NET Developer: How to Easily Get Started"
-  description="Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3."
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/storage-box.jpg"
-/>
+<BookmarkCard href="/blog/amazon-s3-dotnet" title="Amazon S3 For the .NET Developer: How to Easily Get Started" description="Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3." icon="/favicon.ico" />
 
 ## S3 Event Notification Types and Destinations
 
@@ -59,15 +51,7 @@ Amazon S3 can send event notifications to different destinations. Amazon SNS, Am
 
 Make sure to install the AWS Toolkit ([Visual Studio](https://aws.amazon.com/visualstudio/), [Rider](https://aws.amazon.com/rider/), [VS Code](https://aws.amazon.com/visualstudiocode/)) and [set up Credentials for the local development environment](/blog/amazon-credentials-dotnet/).  This helps you quickly develop a .NET application on the AWS infrastructure and deploy them quickly to your AWS Accounts.
 
-<BlogLink
-  href="/blog/aws-lambda-net-core"
-  title="AWS Lambda For The .NET Developer: How To Easily Get Started"
-  description="Learn how to get started with AWS Lambda with .NET Core by building out a simple function and deploying to AWS. We will also see how to set up local development environment using the AWS Toolkit."
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/aws_lambda.jpg"
-/>
+<BookmarkCard href="/blog/aws-lambda-net-core" title="AWS Lambda For The .NET Developer: How To Easily Get Started" description="Learn how to get started with AWS Lambda with .NET Core by building out a simple function and deploying to AWS. We will also see how to set up local development environment using the AWS Toolkit." icon="/favicon.ico" />
 
 With the AWS Toolkit installed, select the AWS Lambda Lambda Project template from the new project template and choose the S3 blueprint. This creates an AWS Lambda function template project with a `Function.cs` class with everything required to handle S3 events, as shown below.
 
@@ -108,7 +92,7 @@ To publish the Lambda function to the AWS account, you can use the Publish to AW
 
 I prefer to set up an automated build/deploy pipeline to publish to your AWS Account for real-world applications. Check out the below for an example of how to set up a Lambda Function deployment pipeline from GitHub Actions.
 
-<iframe src="https://www.youtube.com/embed/U96230YlSJA" />
+<EmbedCard src="https://www.youtube.com/embed/U96230YlSJA" />
 
 ## Setting Up S3 Notification and Lambda Trigger
 
@@ -118,7 +102,7 @@ You can do this under the Lambda Function or the S3 Bucket for which you want to
 
 Under the Lambda Function, navigate to Configuration → Triggers and choose the ‘Add Tigger’ button (as shown below).
 
-![Add Trigger from the Lambda Function under Configuration → Triggers. This allows to choose different sources for the Lambda Trigger, and one of them is S3.](/images/s3-add-lambda-trigger.jpg)
+<ImageCard src="/content/images/s3-add-lambda-trigger.jpg" alt="Add Trigger from the Lambda Function under Configuration → Triggers. This allows to choose different sources for the Lambda Trigger, and one of them is S3." />
 
 Add Trigger from the Lambda Function under Configuration → Triggers. This allows you to choose different sources for the Lambda Trigger, and one of them is S3.
 
@@ -128,19 +112,23 @@ Select the event types that you want to trigger Lambda Function.
 
 Below I’ve selected ‘All object create events, which will trigger on create, update, copy, and multipart uploads of objects to the S3.
 
-![Select S3 and Lambda Trigger source and select the S3 Bucket that serves as the event source. Specify the event types for which to trigger the .NET Lambda Function](/images/s3-add-lambda-trigger-create.jpg)
+<ImageCard src="/content/images/s3-add-lambda-trigger-create.jpg" alt="Select S3 and Lambda Trigger source and select the S3 Bucket that serves as the event source. Specify the event types for which to trigger the .NET Lambda Function" />
 
 When adding the Trigger, the S3 is permitted to invoke the Lambda Function. This is required so that any time an S3 notification occurs, it can invoke the Lambda Function with the Object details.
 
 The permission added can be seen under the ‘Resource-based policy’ section under the Lambda Function Configuration → Permissions, as shown below.
 
-<Figure src="/images/s3-trigger-lambda-invoke-permission.jpg" caption="### IAM Policies" />
+<ImageCard src="/content/images/s3-trigger-lambda-invoke-permission.jpg" alt="The resource-based policy allows S3 to invoke the .NET Lambda Function on a notification." />
+
+### IAM Policies
 
 Since the Lambda Function uses the `AmazonS3Client` to read the Object metadata on processing the event notification, we need to ensure the Lambda function has the appropriate permissions to talk to S3.
 
 For this, we can edit Lambda’s IAM Role and add an inline policy with the `GetObject` read permission on the S3 storage.
 
-<Figure src="/images/s3-lambda-iam-permissions.jpg" caption="### Testing Integration" />
+<ImageCard src="/content/images/s3-lambda-iam-permissions.jpg" alt="Update the Lambda IAM Permissions to talk to the S3 Bucket. To read the file data and the metadata, assign the GetObject Read access." />
+
+### Testing Integration
 
 Upload a new file to the S3 Bucket to test the end-to-end integration. This triggers an S3 notification, which is sent to the Lambda Function.
 
@@ -166,7 +154,7 @@ The Lambda Configuration supports two additional configuration properties - Pref
 -   Prefix → Limits the notifications to objects with names starting with the specified characters.
 -   Suffix → Limits the notifications to objects with names ending with the specified characters.
 
-![S3 Lambda Trigger configuration to specify the Prefix or Suffix, to filter the files sent to Lambda Function.](/images/s3-add-lambda-trigger-configuration.jpg)
+<ImageCard src="/content/images/s3-add-lambda-trigger-configuration.jpg" alt="S3 Lambda Trigger configuration to specify the Prefix or Suffix, to filter the files sent to Lambda Function." />
 
 In the above screenshot, I have Prefix as ‘_unprocessed/_’, which means only S3 Objects uploaded to the folder _unprocessed,_ will trigger a notification of the Lambda Function.
 
@@ -213,7 +201,7 @@ This is configured under Configuration → Asynchronous invocation section.
 
 It also specified the maximum age of the event as 6 hours, which means the message will be discarded after that time if not processed.
 
-![Lambda Asynchronous configuration sets the message retry limit and the maximum age event.](/images/s3-lambda-asynchronous-invocation-configuration.jpg)
+<ImageCard src="/content/images/s3-lambda-asynchronous-invocation-configuration.jpg" alt="Lambda Asynchronous configuration sets the message retry limit and the maximum age event." />
 
 So for an Object uploaded with ‘Exception’ in the name, we will see the message processed by the Lambda Function 3 times - 1 on the notification + 2 retries. The first retry is after 1 minute of the original notification and then 2 minutes after the first retry.
 
@@ -227,7 +215,7 @@ Any unprocessed messages after the specified number of Retry attempts (0, 1, or 
 
 The DLQ can be Amazon SQS or Amazon SNS. Below I have configured it to be an SQS.
 
-![Update the Lambda Asynchronous Configuration to set up the Dead Letter Queue. Any messages that cannot be processed after the specified number of retries is moved to the DLQ](/images/s3-lambda-asynchronous-invocation-configuration-edit.jpg)
+<ImageCard src="/content/images/s3-lambda-asynchronous-invocation-configuration-edit.jpg" alt="Update the Lambda Asynchronous Configuration to set up the Dead Letter Queue. Any messages that cannot be processed after the specified number of retries is moved to the DLQ" />
 
 Any notifications that have already been discarded before updating this configuration are permanently lost. New notifications that cannot be processed after two retries will be moved to the SQS.
 

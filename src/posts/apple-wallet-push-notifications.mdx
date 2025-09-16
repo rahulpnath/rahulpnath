@@ -1,13 +1,18 @@
 ---
-title: "Enhancing User Experience: Push Notifications in .NET for Apple Wallet Pass Updates"
+title: >-
+  Enhancing User Experience: Push Notifications in .NET for Apple Wallet Pass
+  Updates
 slug: apple-wallet-push-notifications
-date: 2023-10-23
-feature_image: /images/Apple-Wallet-Push-Notifications.png
-excerpt: >-
-  Apple Wallet Passes Passes are dynamic and they reflect real-world state. Information in Apple Wallet passes can be dynamically updated. Learn how to use Apple Push Notification Service and Web Service endpoint to keep Wallet Pass updated.
+date: '2023-10-23'
+feature_image: /content/images/2023/10/Apple-Wallet-Push-Notifications.png
 tags:
-  - Dotnet
   - AWS
+  - Dotnet
+excerpt: >-
+  Apple Wallet Passes Passes are dynamic and they reflect real-world state.
+  Information in Apple Wallet passes can be dynamically updated. Learn how to
+  use Apple Push Notification Service and Web Service endpoint to keep Wallet
+  Pass updated.
 ---
 Apple Wallet Passes Passes are dynamic and they reflect real-world state. Information in Apple Wallet passes can be dynamically updated.
 
@@ -34,15 +39,13 @@ Below are the key communication steps between the device and the server to keep 
 3.  On receiving the Push Notification, the user device reaches out to the `webServiceURL` to get a list of passes that has changed
 4.  For each Pass that has been updated, it asks the server for the latest version of the Pass.
 
-[![Request/Response flow involved in updating a Apple Wallet Pass using a Web Service Url (source - apple developer documentation page)](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/PassKit_PG/Art/client_server_interaction_2x.png)](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/PassKit_PG/Updating.html#/apple_ref/doc/uid/TP40012195-CH5-SW1)
-
-Request/Response flow involved in updating a Apple Wallet Pass using a Web Service Url (source - apple developer documentation page)
+<ImageCard src="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/PassKit_PG/Art/client_server_interaction_2x.png" alt="Request/Response flow involved in updating a Apple Wallet Pass using a Web Service Url (source - apple developer documentation page)" caption="Request/Response flow involved in updating a Apple Wallet Pass using a Web Service Url (source - apple developer documentation page)" />
 
 The above diagram summarizes the high-level request/response flow between the user device and the web server delivering the Apple Wallet Pass updates.
 
 ## Implementing the Web Service Endpoint
 
-[The Apple PassKit Web Service Reference](https://developer.apple.com/library/archive/documentation/PassKit/Reference/PassKit_WebService/WebService.html#/apple_ref/doc/uid/TP40011988) provides the API Endpoint specifications required to support Wallet Pass updates.
+[The Apple PassKit Web Service Reference](https://developer.apple.com/library/archive/documentation/PassKit/Reference/PassKit_WebService/WebService.html#//apple_ref/doc/uid/TP40011988) provides the API Endpoint specifications required to support Wallet Pass updates.
 
 When creating a Pass file, we can set the `WebServiceUrl` property to set the callback service endpoint.
 
@@ -54,22 +57,13 @@ When creating a Pass file, we can set the `WebServiceUrl` property to set the ca
      AuthenticationToken = "authentication-token-used-to-authenticate-calls-to-service"
      ...
   }
-
 ```
 
 You can set an `AuthenticationToken` on the pass request, that will be passed back to the Web Service Url when the device calls it to get the pass updates. You can use this to authenticate requests coming to your endpoint.
 
 Check out the post below on details on how to create an Apple Wallet Pass from a .NET application.
 
-<BlogLink
-  href="/blog/add-to-apple-wallet-dotnet/"
-  title="Add to Apple Wallet from Your .NET Application: A Step-by-Step Guide"
-  description="The iOS Wallet app allows users to manage payment cards, boarding passes, tickets, gift cards, and other passes. Let’s learn how to set up, build, and distribute Apple Wallet passes from a .NET application."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/Add-To-Apple-Wallet.png"
-/>
+<BookmarkCard href="/blog/add-to-apple-wallet-dotnet/" title="Add to Apple Wallet from Your .NET Application: A Step-by-Step Guide" description="The iOS Wallet app allows users to manage payment cards, boarding passes, tickets, gift cards, and other passes. Let’s learn how to set up, build, and distribute Apple Wallet passes from a .NET application." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 Below are the 5 different endpoint capabilities that the Apple PassKit Web Service Reference expects from the server implementing the web service.
 
@@ -86,9 +80,8 @@ public async Task RegisterDeviceForPushNotificationForAPass(
     string deviceLibraryIdentifier, string passTypeIdentifier, string serialNumber,
     [FromBody] RegisterRequest pushToken)
 {
-   / Save Device Registration Info to data store
+   // Save Device Registration Info to data store
 }
-
 ```
 
 ### Get Passes For Device
@@ -120,7 +113,6 @@ public class GetPassesForDeviceResponse
     public string LastUpdated { get; set; }
     public string[] SerialNumbers { get; set; }
 }
-
 ```
 
 We can use any value for the `LastUpdated` property when returning the result. In the example here I am using the UnixTimeMilliseconds as the value returned.
@@ -161,7 +153,6 @@ public async Task<APIGatewayHttpApiV2ProxyResponse> GetPass(
             StatusCode = (int)HttpStatusCode.NotModified
         };
 }
-
 ```
 
 If the pass content is updated it returns the new pass information along with the `Last-Modified` header value, which the Apple Device will send in as the 'If-Modified-Since' header value in the subsequent request.
@@ -181,7 +172,7 @@ public async Task UnRegisterDeviceForPushNotificationForAPass(
     string deviceLibraryIdentifier, string passTypeIdentifier, string serialNumber,
     [FromBody] RegisterRequest pushToken)
 {
-    / Remove Device from the registered list of devices for the Serial Number
+    // Remove Device from the registered list of devices for the Serial Number
 }
 
 ```
@@ -201,9 +192,8 @@ The Log endpoint is intended to help you debug your web service implementation. 
 [HttpApi(LambdaHttpMethod.Post, "/v1/log")]
 public async Task Log([FromBody] LogRequest logRequest)
 {
-    / Log to standard logging
+    // Log to standard logging
 }
-
 ```
 
 You can log this to your standard logging console or endpoint and track it from there for errors in the API Endpoint.
@@ -239,7 +229,6 @@ public async Task PushUpdatesForPass(string serialNumber)
                         _appleWalletConfiguration.PassbookCertificate()))
         .WhenAll();
 }
-
 ```
 
 We use the Certificate-based authentication with APNS in this case.

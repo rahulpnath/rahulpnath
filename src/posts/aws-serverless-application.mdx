@@ -1,12 +1,14 @@
 ---
-title: "Going Serverless on AWS For The .NET Developer: How To Easily Get Started"
+title: 'Going Serverless on AWS For The .NET Developer: How To Easily Get Started'
 slug: aws-serverless-application
-date: 2021-04-16
-feature_image: /images/aws_serverless.jpg
-excerpt: >-
-  Learn how to get started with AWS Serverless Application using the Serverless Application Model (SAM). The Serverless Application Template available as part of the AWS Toolkit makes it easy to start building Serverless Application.
+date: '2021-04-16'
+feature_image: /content/images/aws_serverless.jpg
 tags:
   - AWS
+excerpt: >-
+  Learn how to get started with AWS Serverless Application using the Serverless
+  Application Model (SAM). The Serverless Application Template available as part
+  of the AWS Toolkit makes it easy to start building Serverless Application.
 ---
 [AWS Lambda's](/blog/aws-lambda-net-core/) are the stepping stones to building a Serverless application in AWS.
 
@@ -16,7 +18,7 @@ A Serverless Application in AWS is a combination of Lambda functions, event sour
 
 Now that's a lot of jargon in one line. Let's understand each of them better.
 
-<iframe src="https://www.youtube.com/embed/iLo8svHzD_g" />
+<EmbedCard src="https://www.youtube.com/embed/iLo8svHzD_g" />
 
 In this post, let's learn how to build an AWS Serverless application using the Serverless Application Template as part of the AWS Toolkit. We will see how we can deploy one or more Lambda functions using the AWS SAM and also use it to deploy a Lambda-driven API Gateway application backed by a DynamoDB database.
 
@@ -26,13 +28,15 @@ The [AWS Toolkit for Visual Studio](https://aws.amazon.com/visualstudio/) comes 
 
 To create a new application, choose the '_AWS Serverless Application (.NET Core - C#)_' option from the template list when creating a new project.
 
-![AWS Serverless templates in Visual Studio create project](/images/aws_serverless_templates.jpg)
+<ImageCard src="/content/images/aws_serverless_templates.jpg" alt="AWS Serverless templates in Visual Studio create project" />
 
 Select the '_Empty Serverless Application_' blueprint to create a Serverless application with just one function.
 
 As shown below, it contains the same set of files as we saw in the [previous post on getting started with AWS Lambda](/blog/aws-lambda-net-core/) with the addition of one new file `serverless.template` ;which is the AWS SAM template file.
 
-<Figure src="/images/aws_serverless_template_default_items.jpg" caption="### AWS Serverless Application Model (SAM)" />
+<ImageCard src="/content/images/aws_serverless_template_default_items.jpg" alt="AWS Serverless Application Empty blueprint application default items" />
+
+### AWS Serverless Application Model (SAM)
 
 The [AWS Serverless Application Model](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html) (AWS SAM) is an open-source framework that you can use to build serverless applications on AWS. It allows us to define the AWS resources as code - in other words, it's [Infrastructure as Code (IaC)](https://en.wikipedia.org/wiki/Infrastructure_as_code).
 
@@ -106,7 +110,7 @@ The [AWS::Serverless::Function](https://docs.aws.amazon.com/serverless-applicati
 
 The above scenario defines the Lambda with _AWSLambdaBasicExecutionRole_ role and triggered by an API Gateway using the **HTTP GET** method.
 
-<iframe src="https://www.youtube.com/embed/IHIJFVUQyFY" />
+<EmbedCard src="https://www.youtube.com/embed/IHIJFVUQyFY" />
 
 The Lambda maps to the `Get` method within the `Functions` class.
 
@@ -149,17 +153,17 @@ _In real-life projects, I set up a build deploy pipeline to automate this, which
 
 It also requires the Stack Name as a parameter, to which all the resources are deployed.
 
-![Publish AWS Serverless Application in Visual Studio](/images/aws_serverless_publish.jpg)
+<ImageCard src="/content/images/aws_serverless_publish.jpg" alt="Publish AWS Serverless Application in Visual Studio" />
 
 Once complete, it automatically opens the CloudFormation Stack view within Visual Studio. If not, you can manually do this from the _AWS Explorer_ (that is part of the AWS Toolkit), available from View → AWS Explorer. Navigate to AWS CloudFormation and select the stack name you just deployed.
 
 The _AWS Serverless URL_ is the API Gateway URL where the Lambda function is exposed. The _ApiURL_ in the _Outputs_ section of the template file populates this URL.
 
-![Published stack details of AWS Serverless application in Visual Studio](/images/aws_serverless_stack_visual_studio.jpg)
+<ImageCard src="/content/images/aws_serverless_stack_visual_studio.jpg" alt="Published stack details of AWS Serverless application in Visual Studio" />
 
 You can also see the Stack's details, the associated resources, and various other information under the [Stacks in AWS Console](https://ap-southeast-2.console.aws.amazon.com/cloudformation/home) under the appropriate region. It lists all the resources part of the Stack and allows navigating to each of them.
 
-![AWS Console Resources under Stack](/images/aws_serverless_stack.jpg)
+<ImageCard src="/content/images/aws_serverless_stack.jpg" alt="AWS Console Resources under Stack" />
 
 Navigating the API URL, it returns the hardcoded message from the AWS lambda → "_Hello AWS Serverless_".
 
@@ -167,29 +171,23 @@ Navigating the API URL, it returns the hardcoded message from the AWS lambda →
 
 Each time the application is published, the template and the associated published application package are uploaded to the selected S3 bucket.  You can navigate to the S3 bucket to view the files.
 
-<Figure src="/images/aws_serverless_cloudformation_s3.jpg" caption="## Web API using Azure Lambda, API Gateway, and DynamoDB" />
+<ImageCard src="/content/images/aws_serverless_cloudformation_s3.jpg" alt="CloudFormation associated S3 bucket" />
+
+## Web API using Azure Lambda, API Gateway, and DynamoDB
 
 To create a more complex AWS Serverless applications that use a DynamoDB table to store and retrieve data using AWS Lambda's and API Gateway, you can select the 'Blog API using DynamoDB' as the blueprint.
 
-![AWS Serverless Application Template Blueprint, Blog API using DynamoDB](/images/aws_serverless_template_blueprint.jpg)
+<ImageCard src="/content/images/aws_serverless_template_blueprint.jpg" alt="AWS Serverless Application Template Blueprint, Blog API using DynamoDB" />
 
 It scaffolds a template with 4 API endpoints to `GetBlogs`, `GetBlog`, `AddBlog`, and `RemoveBlog` items from a DynamoDB table.
 
-<BlogLink
-  href="/blog/aws-dynamodb-net-core"
-  title="AWS DynamoDB For The .NET Developer: How To Easily Get Started"
-  description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API."
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/aws_dynamodb.jpg"
-/>
+<BookmarkCard href="/blog/aws-dynamodb-net-core" title="AWS DynamoDB For The .NET Developer: How To Easily Get Started" description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API." icon="/favicon.ico" />
 
 As with the Empty template we created earlier, this one has a `serverless.template` file which defines all the resources (AWS Lambda, DynamoDB, etc.) required for this application.
 
 It also has additional `Parameters` and `Condition` defined in the template to decide on whether to create the DynamoDB table or not. Because of this, it prompts an additional dialog to enter the parameters on publishing.
 
-![AWS Serverless Publish Template Parameters dialog](/images/aws_serverless_publish_template_parameters.jpg)
+<ImageCard src="/content/images/aws_serverless_publish_template_parameters.jpg" alt="AWS Serverless Publish Template Parameters dialog" />
 
 Once published, we can use the API URL to interact with the Blog Items in the DynamoDB table. You can use curl or [Postman](https://www.postman.com/) etc. to make the `PUT` request to add items to it.
 
@@ -206,7 +204,7 @@ We have a fully functional API endpoint to manage Blog items backed by the Dynam
 
 I hope this helps you get started with building AWS Serverless application for AWS and understand more about its various building blocks.
 
-[AWS Lambda For The .NET Developer](https://www.udemy.com/course/aws-lambda-dotnet/?referralCode=981481B991C2890BD448)
+<BookmarkCard href="https://www.udemy.com/course/aws-lambda-dotnet/?referralCode=981481B991C2890BD448" title="AWS Lambda For The .NET Developer" description="Learn to build Serverless Applications on AWS" icon="https://www.udemy.com/staticx/udemy/images/v7/apple-touch-icon.png" />
 
 Feel free to drop in the comments or [send a tweet](https://twitter.com/rahulpnath) if you have any comments or questions.
 

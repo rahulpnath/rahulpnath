@@ -1,13 +1,13 @@
 ---
-title: "Setting Up AWS CDK with .NET for Seamless LocalStack and AWS Deployments"
+title: Setting Up AWS CDK with .NET for Seamless LocalStack and AWS Deployments
 slug: cdk-localstack-aws-dotnet
-date: 2024-11-22T00:00:00.000Z
-feature_image: /images/CDK-LocalStack.png
+date: '2024-11-22'
+feature_image: /content/images/2024/11/CDK-LocalStack.png
+tags:
+  - AWS
 excerpt: >-
   Let's learn how to use CDK to deploy and manage resources in both LocalStack
   and AWS accounts. We will use the same CDK code base to deploy to both.
-tags:
-  - AWS
 ---
 Developing and testing AWS applications locally can be challenging without the right tools.
 
@@ -15,7 +15,7 @@ AWS CDK makes deploying and managing resources effortless.
 
 And when combined with LocalStack, it allows for a smooth local development experience.
 
-<iframe src="https://www.youtube.com/embed/ADf3kQqKuqY?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/ADf3kQqKuqY?feature=oembed" title="CDK: Deploy to LocalStack and AWS with single CDK code | AWS CDK Series" />
 
 In this post, we'll explore
 
@@ -33,15 +33,7 @@ I also have a Lambda Function that listens for messages on the SQS and is trigge
 
 If you are new to CDK, check out my blog post below to learn some of its core concepts.
 
-<BlogLink
-  href="/blog/aws-cdk-dotnet/"
-  title="AWS CDK For The .NET Developer"
-  description="AWS CDK simplifies Cloud Infrastructure management. CDK lets you define AWS resources using first-class programming concepts. It translates your code into AWS CloudFormation templates, which can be used to provision AWS resources for your application. Let’s get started using .NET and C#."
-  authorImage="/images/logo-512x512-8.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/AWS-CDK.png"
-/>
+<BookmarkCard href="/blog/aws-cdk-dotnet/" title="AWS CDK For The .NET Developer" description="AWS CDK simplifies Cloud Infrastructure management. CDK lets you define AWS resources using first-class programming concepts. It translates your code into AWS CloudFormation templates, which can be used to provision AWS resources for your application. Let’s get started using .NET and C#." icon="/content/images/icon/logo-512x512-8.png" />
 
 The CDK code below sets up the Web API on a Lambda Function, sets up the DynamoDB table and SQS queue, and gives appropriate permissions for the API lambda function.
 
@@ -82,7 +74,6 @@ new CfnOutput(this, "API FunctionUrl", new CfnOutputProps
 
 weatherForecastTable.GrantReadWriteData(apiLambdaFunction);
 weatherDataQueue.GrantSendMessages(apiLambdaFunction);
-
 ```
 
 Above is the high-level code (only placeholders) to set up our application. The full source code for the CDK Stack can be found [here.](https://github.com/rahulpnath/aws-cdk-github-actions/blob/main/src/WeatherForecast.Cdk/WeatherForecastStack.cs)
@@ -93,15 +84,7 @@ LocalStack is a fully functional local AWS cloud stack that lets you emulate AWS
 
 If you are new to LocalStack check out the article below to get up and running.
 
-<BlogLink
-  href="/blog/aws-localstack-dotnet/"
-  title="How to Use LocalStack for Seamless AWS Development in .NET"
-  description="LocalStack is a fully functional local AWS cloud stack that lets you emulate AWS services directly on your machine. Let’s learn how to set up and run your .NET application locally on LocalStack."
-  authorImage="/images/logo-512x512-9.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/LocalStack.png"
-/>
+<BookmarkCard href="/blog/aws-localstack-dotnet/" title="How to Use LocalStack for Seamless AWS Development in .NET" description="LocalStack is a fully functional local AWS cloud stack that lets you emulate AWS services directly on your machine. Let’s learn how to set up and run your .NET application locally on LocalStack." icon="/content/images/icon/logo-512x512-9.png" />
 
 The [aws-cdk-local](https://github.com/localstack/aws-cdk-local) provides a wrapper script `cdklocal` that you can use to deploy CDK resources to localstack.
 
@@ -111,21 +94,18 @@ This can be installed as a npm package.
 $ npm install -g aws-cdk-local aws-cdk
 ...
 $ cdklocal --version
-
 ```
 
 To deploy CDK onto LocalStack, we first need to bootstrap the account using the same method we use to bootstrap AWS accounts.
 
 ```bash
 cdklocal bootstrap
-
 ```
 
 Once bootstrapped, you can deploy a CDK stack using the deploy command
 
 ```bash
 cdklocal deploy
-
 ```
 
 ### Overriding .NET Configuration to run in LocalStack
@@ -142,7 +122,6 @@ Now to make this to work we can add a new appsettings file - `appsettings.LocalS
     "ServiceURL": "http://host.docker.internal:4566",
     "AuthenticationRegion": "ap-southeast-2"
   }
-
 ```
 
 appsettings.LocalStack.json file
@@ -151,13 +130,13 @@ Now, we need to ensure that when our application runs within the LocalStack envi
 
 For this, we can set the `ASPNETCORE_ENVIRONMENT` (or `DOTNET_ENVIRONMENT`) to specify the application environment.
 
-<iframe src="https://www.youtube.com/embed/UPgHRiLw4is?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/UPgHRiLw4is?feature=oembed" title="ENVIRONMENTS in ASP NET Core |  Getting Started With ASP.NET Core Series" />
 
 We can use CDK Context to pass in additional parameter when running on local development machine to set the appropriate environment value.
 
 💡
 
-[__Context__](https://docs.aws.amazon.com/cdk/v2/guide/context.html) __values are key-value pairs that can be associated with an app, stack, or construct. They may be supplied to your app from a file (usually either__ _`_cdk.json_`_ __or__ _`_cdk.context.json_`_ __in your project directory) or on the command line.__
+[__Context__](https://docs.aws.amazon.com/cdk/v2/guide/context.html) __values are key-value pairs that can be associated with an app, stack, or construct. They may be supplied to your app from a file (usually either__ _`cdk.json`_ __or__ _`cdk.context.json`_ __in your project directory) or on the command line.__
 
 The below CDK code looks for the `ASPNETCORE_ENVIRONMENT` in the context, and if one exists, it adds that value to the Environment Variable for the lambda function.
 
@@ -175,7 +154,6 @@ The below CDK code looks for the `ASPNETCORE_ENVIRONMENT` in the context, and if
     ...
     Environment = environmentVariables
 });
-
 ```
 
 This ensures that when the application runs within the Lambda Function in LocalStack, it will use the `appsettins.LocalStack.json` file.
@@ -184,7 +162,6 @@ You can pass the parameter in `cdklocal` command as below.
 
 ```bash
 cdklocal deploy -c ASPNETCORE_ENVIRONMENT=LocalStack
-
 ```
 
 ## Deploy CDK to AWS Cloud

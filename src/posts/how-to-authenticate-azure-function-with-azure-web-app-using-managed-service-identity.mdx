@@ -1,19 +1,17 @@
 ---
-title: ">-   How to Authenticate and Authorize Azure Function with Azure Web App Using   Managed Service Identity (MSI)"
+title: >-
+  How to Authenticate and Authorize Azure Function with Azure Web App Using
+  Managed Service Identity (MSI)
 slug: >-
   how-to-authenticate-azure-function-with-azure-web-app-using-managed-service-identity
-date: 2019-05-20T00:00:00.000Z
-feature_image: /images/azure_function_msi.jpg
-excerpt: >-
-  Azure Functions are getting popular, and I start seeing them more at clients.
-  One typical scenario I come across is to authenticate an Azure Function with
-  an Azure Web API....
+date: '2019-05-20'
+feature_image: /content/images/azure_function_msi.jpg
 tags:
   - Azure
 ---
-Azure Functions are getting popular, and I start seeing them more at clients. One typical scenario I come across is to authenticate an Azure Function with an Azure Web API. Every time something like this comes up, it means more Azure AD applications, which in turn means more secrets/certificates that need to be managed. But with [Managed Service Identity](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview) (MSI) feature on Azure, a lot of these secrets and authentication bits can be taken off from our shoulders and left to the platform to manage for us."
+Azure Functions are getting popular, and I start seeing them more at clients. One typical scenario I come across is to authenticate an Azure Function with an Azure Web API. Every time something like this comes up, it means more Azure AD applications, which in turn means more secrets/certificates that need to be managed. But with [Managed Service Identity](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview) (MSI) feature on Azure, a lot of these secrets and authentication bits can be taken off from our shoulders and left to the platform to manage for us.
 
-<iframe src="https://www.youtube.com/embed/r4QFBsT2YE8" />
+<EmbedCard src="https://www.youtube.com/embed/r4QFBsT2YE8" />
 
   
 
@@ -59,7 +57,7 @@ Managed Serviced Identity (MSI) can be turned on through the Azure Portal. Under
 
 > **[A system-assigned managed identity](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview#how-does-the-managed-identities-for-azure-resources-work)** is enabled directly on an Azure service instance. When the identity is enabled, Azure creates an identity for the instance in the Azure AD tenant that's trusted by the subscription of the instance. After the identity is created, the credentials are provisioned onto the instance. The lifecycle of a system-assigned identity is directly tied to the Azure service instance that it's enabled on. If the instance is deleted, Azure automatically cleans up the credentials and the identity in Azure AD.
 
-<Figure src="/images/azure_function_msi.jpg" caption="![](/images/azure_function_msi_on.jpg)" />
+<ImageCard src="/content/images/azure_function_msi.jpg" alt="" /><ImageCard src="/content/images/azure_function_msi_on.jpg" alt="" />
 
 Once enabled, you can find the added identity for the Azure function under _Enterprise Applications_ list in the AD directory. Azure internally manages this identity.
 
@@ -68,15 +66,8 @@ Once enabled, you can find the added identity for the Azure function under _Ente
 To authenticate with the Web API, we need to present a token from the AD application. Any service principal on the AD can authenticate and retrieve token this and so can out Azure Function with the Identity turned on. Usually authenticating with the Azure AD requires a [Client ID/Secret or ClientId?Certificate combination](/blog/authenticating-a-client-application-with-azure-key-vault/). However, with MSI turned on, Azure manages these credentials for us in the background, and we don't have to manage it ourselves. By using the [AzureServiceTokenProvider](https://docs.microsoft.com/en-us/azure/key-vault/service-to-service-authentication) class from the [Microsoft.Azure.Services.AppAuthentication,](https://www.nuget.org/packages/Microsoft.Azure.Services.AppAuthentication) NuGet package helps authenticate an MSI enabled resource with the AD.
 
 > With [AzureServiceTokenProvider](https://github.com/Azure/azure-sdk-for-net/blob/ddda7cb74b979f03bb03e240c06c924914ee8bdd/src/SdkCommon/AppAuthentication/Azure.Services.AppAuthentication/AzureServiceTokenProvider.cs) class, If no connection string is specified, Managed Service Identity, Visual Studio, Azure CLI, and Integrated Windows Authentication are tried to get a token. Even if no connection string is specified in code, one can be specified in the AzureServicesAuthConnectionString environment variable.
-<BlogLink
-  href="/blog/defaultazurecredential-from-azure-sdk"
-  title="DefaultAzureCredential: Unifying How We Get Azure AD Token"
-  description="Azure Identity library provides Azure Active Directory token authentication support across the Azure SDK"
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/pfx_security.jpg"
-/>
+
+<BookmarkCard href="/blog/defaultazurecredential-from-azure-sdk" title="DefaultAzureCredential: Unifying How We Get Azure AD Token" description="Azure Identity library provides Azure Active Directory token authentication support across the Azure SDK" icon="/favicon.ico" />
 
 To access the API, we need to pass the token from AD application as a Bearer token, as shown below.
 
@@ -97,7 +88,7 @@ Now that we have the authentication set up between the Azure Function and Web AP
 
 ### Using AD Role
 
-<iframe src="https://www.youtube.com/embed/HVruBWuKnYw" />
+<EmbedCard src="https://www.youtube.com/embed/HVruBWuKnYw" />
 
   
 
@@ -125,14 +116,11 @@ With the role defined, we can add the MSI Service Principal to the application r
 
 ```powershell
 # TenantId required only if multiple tenant exists for login
-
 Connect-AzureAd -TenantId 'TENANT ID'
 # Azure Function Name (Service Principal created will have same name)
-
 # Check under Enterprise Applications
 $msiServicePrincipal = Get-AzureADServicePrincipal -SearchString "<Azure Function Name>"
 # AD App Name
-
 $adApp = Get-AzureADServicePrincipal -SearchString "<AD App Web API>"
 
 New-AzureADServiceAppRoleAssignment -Id $adApp.AppRoles[0].Id `
@@ -144,14 +132,13 @@ New-AzureADServiceAppRoleAssignment -Id $adApp.AppRoles[0].Id `
 
 ### Using AD Group
 
-<iframe src="https://www.youtube.com/embed/FTpAgSHfu8o" />
+<EmbedCard src="https://www.youtube.com/embed/FTpAgSHfu8o" />
 
   
 
 In a [previous post](/blog/custom-authorization-policy-providers/), we saw how to use Azure AD Groups to provide role-based access. You can add a Service Principal to the AD group either through the portal or code.
 
-![](/images/azure_function_msi_add_to_ad_group.jpg)
-
+<ImageCard src="/content/images/azure_function_msi_add_to_ad_group.jpg" alt="" />
 ```bash
 az ad group member add
     --subscription b3c70d42-a0b9-4730-84a4-b0004a31f7b4
@@ -162,7 +149,7 @@ az ad group member add
 
 To verify that the token retrieved using the AzureServiceTokenProvider has the associated claims, decode the token using [jwt.io](https://jwt.io/). In this case, I have added both roles and groups for the MSI service principal, and you can see that below (highlighted).
 
-![](/images/azure_function_role_based_access.jpg)
+<ImageCard src="/content/images/azure_function_role_based_access.jpg" alt="" />
 
 The Web API can now use these claims from the token to determine what functionality needs to be available for the associated roles. Here is a [detailed post on how to do that using claims based on Groups](/blog/dot-net-core-api-and-azure-ad-groups-based-access/).
 

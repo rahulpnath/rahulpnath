@@ -1,15 +1,15 @@
 ---
-title: "Defensive Coding"
+title: Defensive Coding
 slug: defensive-coding
-date: 2017-02-07T00:00:00.000Z
-feature_image: /images/defensive_coding.jpg
-excerpt: Is defensive coding good or bad?
+date: '2017-02-07'
+feature_image: /content/images/defensive_coding.jpg
 tags:
   - Programming
+excerpt: Is defensive coding good or bad?
 ---
 Often when writing code or in code review discussions it comes up - '_Should I be doing a null check here?_.' and we start off long discussions. Like in most cases, there is no definite answer to this. In this post let us examine some of the pros and cons of having defensive checks and how and when we can avoid it to make the code more readable.
 
-![Defensive Coding](/images/defensive_coding.jpg)
+<ImageCard src="/content/images/defensive_coding.jpg" alt="Defensive Coding" />
 
 Let's see an example to explore more. The below code aggregated details from different repository classes and returns a combined model. I have kept this simple with just three dependencies.
 
@@ -28,7 +28,6 @@ public PersonDetails GetPersonDetails(Guid personId)
 As you see, there are no null checks on any of the values returned from external dependencies. The code expects all calls to be successful with no exceptions - '[happy path](https://en.wikipedia.org/wiki/Happy_path)' scenario. The problem is when an error happens; the exception stack trace will look like something below.
 
 ```text
-
 Object reference not set to an instance of an object.
 at UserQuery.GetPersonDetails(Guid personId)
   at UserQuery.Main()

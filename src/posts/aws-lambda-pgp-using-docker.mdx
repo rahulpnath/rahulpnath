@@ -1,15 +1,15 @@
 ---
-title: "How To PGP Encrypt An S3 File Using AWS Lambda Running Docker Images"
+title: How To PGP Encrypt An S3 File Using AWS Lambda Running Docker Images
 slug: aws-lambda-pgp-using-docker
-date: 2021-08-12T00:00:00.000Z
-feature_image: /images/docker_ship.jpg
+date: '2021-08-12'
+feature_image: /content/images/docker_ship.jpg
+tags:
+  - AWS
+  - Lambda
 excerpt: >-
   Learn how to set up and run Docker Container Images from AWS Lambda. We will
   PGP sign and encrypt a file from AWS S3 in a lambda running a Docker image
   hosted in AWS ECR.
-tags:
-  - AWS
-  - Lambda
 ---
 I recently worked on an integration with a Third-Party provider, and it required sending them data files PGP signed and encrypted.
 
@@ -17,7 +17,7 @@ Let's not go into the why PGP question since I don't have an answer.
 
 What I do have is, How I did it.
 
-<iframe src="https://www.youtube.com/embed/WuKbZATHzVE" />
+<EmbedCard src="https://www.youtube.com/embed/WuKbZATHzVE" />
 
 My team is primarily on AWS Serverless, running everything on Lambda, and wanted to run this PGP Encrypt/Sign job there.
 
@@ -43,7 +43,9 @@ For encrypting the data, the Sender uses the Recipients Public Key, which can th
 
 To see this in action, first install the [GnuPG tool from here](https://gnupg.org/download/). If you are on Linux or use the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10), you would most likely have this already installed.
 
-<Figure src="/images/gpg_help.jpg" caption="Type in gpg -h to get details and help on how to use the tool." />
+<ImageCard src="/content/images/gpg_help.jpg" alt="PGP command line help information" />
+
+Type in gpg -h to get details and help on how to use the tool.
 
 To get started using the tool, we need two certificates - for Sender and Recipient.
 
@@ -65,28 +67,17 @@ Here's an example of a file with all the arguments. This is for the `Sender`; yo
 
 ```bash
 # Sender file
-
 %echo Generating a basic OpenPGP key
-
 Key-Type: RSA
-
 Key-Length: 2048
-
 Subkey-Type: RSA
-
 Subkey-Length: 2048
-
 Name-Real: Sender
-
 Name-Comment: Sender
-
 Name-Email: sender@email.com
-
 Expire-Date: 1y
-
 Passphrase: sender_password
 # Do a commit here, so that we can later print "done" :-)
-
 %commit
 %echo done
 
@@ -97,7 +88,6 @@ The certificates can be exported into private and public key files using the `ex
 The below commands exports the Sender certificate. Do the same for the Recipient certificates.
 
 ```bash
-
 Export Key
 gpg --output sender_public.pgp --armor --export sender@email.com
 // Will prompt for paraphrase
@@ -109,7 +99,6 @@ To encrypt and sign a plain text file, use the below command, which specifies th
 
 ```bash
 # Encrypt and Sign
-
 gpg --recipient recipient --encrypt --sign --local-user sender --armor PlainFile.txt
 
 ```
@@ -124,8 +113,9 @@ You can also see the signature public key details in the output below, which ver
 gpg --output TestFile.decrypt.txt --decrypt TestFile.txt.asc
 
 ```
+<ImageCard src="/content/images/gpg_decrypt.jpg" alt="gpg decrypt output with signature verification" />
 
-<Figure src="/images/gpg_decrypt.jpg" caption="## PGP From .NET Core" />
+## PGP From .NET Core
 
 The [Process](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process?view=net-5.0) class in .NET Core provides access to local and remote processes. It enables you to start and stop local system processes.
 
@@ -175,7 +165,7 @@ For demo purposes, I have added the below configuration settings to `appsettings
 
 To import the certificates into the gpg keyring, we first need to make it available on the local disk.
 
-The `SaveCertsToDisk` function decodes the base64 encoded string and writes it into the `*/tmp*' folder. The` ImportCertificatesIntoPgp\` uses the PGP CLI via the External process command and imports the file into the keyring. To import the private key, we specify the Passphrase as well.
+The `SaveCertsToDisk` function decodes the base64 encoded string and writes it into the `*/tmp*' folder. The ` ImportCertificatesIntoPgp\` uses the PGP CLI via the External process command and imports the file into the keyring. To import the private key, we specify the Passphrase as well.
 
 Note in this case, I am only importing the Sender's private key (for signing) and the Recipients Public Key (for encrypting). This is very similar to how it will be in a real-world Sender application.
 
@@ -242,15 +232,7 @@ private async Task<byte[]> PgpEncryptAndSign(byte[] fileContent)
 
 I used the Visual Studio Toolkit to create the AWS Lambda project and selected the Simple S3 Function Blueprint template. It sets up a basic template to react to S3 events.
 
-<BlogLink
-  href="/blog/aws-lambda-net-core"
-  title="AWS Lambda For The .NET Developer: How To Easily Get Started"
-  description="Learn how to get started with AWS Lambda with .NET Core by building out a simple function and deploying to AWS. We will also see how to set up local development environment using the AWS Toolkit."
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/aws_lambda.jpg"
-/>
+<BookmarkCard href="/blog/aws-lambda-net-core" title="AWS Lambda For The .NET Developer: How To Easily Get Started" description="Learn how to get started with AWS Lambda with .NET Core by building out a simple function and deploying to AWS. We will also see how to set up local development environment using the AWS Toolkit." icon="/favicon.ico" />
 
 The `FunctionHandler` method handles `S3Event`, raised based on the events that we listen to on the Lambda (will be set up later when we deploy to Lambda). We first read the file's contents, encrypt it using PGP and upload it back into an S3 bucket (conventionally named with an _'-encrypted_' at the end).
 
@@ -287,41 +269,27 @@ The below _Dockerfile_ uses the base image from the public ECR repository, build
 The `CMD` instructs the details to the `FunctionHandler` and is the entry point for our Lambda Function.
 
 ```docker
-
 FROM public.ecr.aws/lambda/dotnet:core3.1 AS base  
   
-
 FROM mcr.microsoft.com/dotnet/sdk:3.1 as build  
-
 WORKDIR /src  
-
 COPY ["AWSLambdaS3.csproj", "base/"]  
-
 RUN dotnet restore "base/AWSLambdaS3.csproj"  
   
-
 WORKDIR "/src"  
-
 COPY . .  
-
 RUN dotnet build "AWSLambdaS3.csproj" --configuration Release --output /app/build  
   
-
 FROM build AS publish  
-
 RUN dotnet publish "AWSLambdaS3.csproj" \  
             --configuration Release \
             --framework netcoreapp3.1 \
             --self-contained false \   
             --output /app/publish
   
-
 FROM base AS final  
-
 WORKDIR /var/task  
-
 COPY --from=publish /app/publish .  
-
 CMD ["AWSLambdaS3::AWSLambdaS3.Function::FunctionHandler"]
 
 ```
@@ -338,7 +306,9 @@ Head over to your AWS console (or use the AWS CLI) to create a new repository. T
 
 Below I have created '_rahulpnath-test_' repository, with all the default options selected on create.
 
-<Figure src="/images/aws_lambda_docker_ecr.jpg" caption="To upload images to this repository, click the '_View push commands_' button to see the commands." />
+<ImageCard src="/content/images/aws_lambda_docker_ecr.jpg" alt="Publish Docker images to AWS ECR" />
+
+To upload images to this repository, click the '_View push commands_' button to see the commands.
 
 It logs into our private ECR repository using the AWS CLI, and then builds, tags, and pushes the image to the repository.
 
@@ -361,7 +331,9 @@ aws ecr-public get-login-password --region us-east-1 | docker login --username A
 
 Once all the above steps are done, you can see there is a new image in the repository that we just created.
 
-<Figure src="/images/aws_lambda_docker_ecr_image.jpg" caption="## Publish To Lambda" />
+<ImageCard src="/content/images/aws_lambda_docker_ecr_image.jpg" alt="Latest Docker image published to AWS ECR" />
+
+## Publish To Lambda
 
 Finally, let's publish the Lambda.
 
@@ -369,11 +341,13 @@ Under the AWS Lambda section in the web console, click the Create Function and c
 
 Give the function a name and select the Container image using the 'Browse Images' button. For now, let's leave all the other options as default and click 'Create function'.
 
-![Create new AWS Lambda function using Container Image](/images/aws_lambda_container_image.jpg)
+<ImageCard src="/content/images/aws_lambda_container_image.jpg" alt="Create new AWS Lambda function using Container Image" />
 
 We need two S3 buckets, that we can create the S3 section under the same account/region. The bucket name follows the convention (one ends with '-encrypted') and has all the default options set.
 
-<Figure src="/images/aws_lambda_docker_s3.jpg" caption="### Setup IAM Permissions and Lambda Trigger" />
+<ImageCard src="/content/images/aws_lambda_docker_s3.jpg" alt="AWS S3 containers to upload files" />
+
+### Setup IAM Permissions and Lambda Trigger
 
 We need to give the AWS Lambda access to read from the S3 buckets and set a trigger to run the lambda function any time a new file is uploaded to the _PGP-docker_ S3 bucket.
 
@@ -381,13 +355,13 @@ Under '_Configuration → Permissions_', we can update the IAM Execution role to
 
 Clicking the role name (_lambda-PGP-docker-role-lmz5g2g0_ link in the below example), takes you to the IAM Management Console, where these can be modified.
 
-![AWS Lambda Permissions configuration](/images/aws_lambda_permissions.jpg)
+<ImageCard src="/content/images/aws_lambda_permissions.jpg" alt="AWS Lambda Permissions configuration" />
 
 We will '_Add Inline Policy_', using the button under the permissions tab in IAM Console for this example. It brings up the below page, where we can select the S3 service and specify the permissions required.
 
 In our example, we need to Get and Put a file from S3, so I have added GetObject and PutObject permissions. I have also explicitly restricted the access to the specific 2 S3 resources and all objects inside it (_arn:aws:s3:::pgp-docker/_\* and \*arn:aws:s3:::pgp-docker-encrypted/\*\*)
 
-![Add permissions to Lambda to access specific S3 buckets to read/write](/images/aws_lambda_s3_iam_permissions.jpg)
+<ImageCard src="/content/images/aws_lambda_s3_iam_permissions.jpg" alt="Add permissions to Lambda to access specific S3 buckets to read/write" />
 
 To trigger the lambda function any time a file is uploaded in the _PGP-docker_ S3 _, 'Add Trigger'_ from the lambda page Configuration → Triggers option.
 
@@ -395,7 +369,9 @@ It gives the below options to again select a trigger source (in this case, S3) a
 
 Since we want to encrypt the file any time a new one is added to the bucket, I have registered for the PUT event type.
 
-<Figure src="/images/aws_lambda_s3_trigger.jpg" caption="### Lambda Timeout" />
+<ImageCard src="/content/images/aws_lambda_s3_trigger.jpg" alt="Set up lambda trigger when a new file is added to S3 bucket" />
+
+### Lambda Timeout
 
 While putting this post together, I wasted over 2 hours because of this one tiny setting.
 
@@ -405,7 +381,9 @@ So make sure to update this to a larger value so that we have enough time to rea
 
 We can update the timeout under _Configuration → General Configuration_
 
-<Figure src="/images/aws_labda_timeout.jpg" caption="## Packaging & Publishing - Visual Studio" />
+<ImageCard src="/content/images/aws_labda_timeout.jpg" alt="AWS Lambda default timeout of 3 sec. Make sure to update to the required value." />
+
+## Packaging & Publishing - Visual Studio
 
 With AWS Toolkit installed, you can skip most of the above steps and directly publish from Visual Studio. Right-click on the Lambda function project and choose the 'Publish to AWS Lambda...' option.
 
@@ -413,11 +391,11 @@ Choose Package Type to 'Image' to indicate Lambda function is to be deployed a D
 
 Provide the details from the ECR Repository and image tag.
 
-![Publish AWS Lambda Docker container image from Visual Studio AWS Toolkit](/images/aws_lambda_docker_publish_visual_studio.jpg)
+<ImageCard src="/content/images/aws_lambda_docker_publish_visual_studio.jpg" alt="Publish AWS Lambda Docker container image from Visual Studio AWS Toolkit" />
 
 In the following dialog, select the appropriate IAM Role (below I have selected AWSLambdaExecute, which gives access to read/write from S3 buckets). Note the timeout, in this case, is automatically set to 120 seconds.
 
-![Publish AWS Lambda Docker container image advanced settings from Visual Studio AWS Toolkit](/images/aws_lambda_docker_publish_visual_studio_advanced_settings.jpg)
+<ImageCard src="/content/images/aws_lambda_docker_publish_visual_studio_advanced_settings.jpg" alt="Publish AWS Lambda Docker container image advanced settings from Visual Studio AWS Toolkit" />
 
 Hitting Upload will trigger a docker build (using the Dockerfile in the repository), push it up to ECR, and use the new image to set up the lambda function. All of this is done by Visual Studio for us.
 

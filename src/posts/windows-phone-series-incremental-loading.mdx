@@ -1,10 +1,8 @@
 ---
-title: "Windows Phone Series – Incremental Loading"
+title: Windows Phone Series – Incremental Loading
 slug: windows-phone-series-incremental-loading
-date: 2013-03-03
-feature_image: /images/wp_incremental_loading_longlistselector.jpg
-excerpt: >-
-  Some time back we had a look on doing Incremental Loading with a Windows 8 store app(http://rahulpnath.wordpress.com/2012/10/28/windows-8-series-incremental-loading/). This same scenario is something that one would come across quite frequently while...
+date: '2013-03-03'
+feature_image: /content/images/wp_incremental_loading_longlistselector.jpg
 tags:
   - Dotnet
 ---
@@ -12,7 +10,7 @@ Some time back we had a look on doing [Incremental Loading with a Windows 8 stor
 
 While using a LongListSelector, we can use the Link event(if you are using [Windows Phone 7.1 toolkit](http://phone.codeplex.com/)) Or the [ItemRealized](http://msdn.microsoft.com/en-US/library/windowsphone/develop/microsoft.phone.controls.longlistselector.itemrealized\(v=vs.105\).aspx) event(if you are on Windows phone 8.0). Basically we would be doing the same thing in either of these cases, checking the current item that is getting realized and see what is the index of the item in the whole list of data that you have currently and check if its time for you to fetch the next set of data from your data source(possibly a web service). As usual for the sample we will be using the [500px](http://500px.com/popular) api.
 
-Below is the piece of code that will fetch us the photo from the [500px api](http://developers.500px.com/) to populate the listbox data."
+Below is the piece of code that will fetch us the photo from the [500px api](http://developers.500px.com/) to populate the listbox data.
 
 ```csharp
 private static int requestPerPage = 20;
@@ -126,9 +124,7 @@ private void vgroup_CurrentStateChanging(object sender, VisualStateChangedEventA
 
 You can use either of these two ways to incrementally load data on a windows phone app. The entire code that is used in this blog is avaialble [here](https://github.com/rahulpnath/IncrementalLoadingPhone). The sample app shows both these methods. The pivot header specifies the method that is used, LongListSelector and Scrollstates
 
-![windows phone incremental loading using longlistselector](/images/wp_incremental_loading_longlistselector.jpg)
-
-![windows phone incremental loading using scrollstates](/images/wp_incremental_loading_scrollstates.jpg)
+<ImageCard src="/content/images/wp_incremental_loading_longlistselector.jpg" alt="windows phone incremental loading using longlistselector" /><ImageCard src="/content/images/wp_incremental_loading_scrollstates.jpg" alt="windows phone incremental loading using scrollstates" />
 
 Hope this helps you to incrementally load data on your windows phone application
 

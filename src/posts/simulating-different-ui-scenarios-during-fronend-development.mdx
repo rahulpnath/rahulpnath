@@ -1,13 +1,13 @@
 ---
-title: "Simulate UI Scenarios For Front-End Development"
+title: Simulate UI Scenarios For Front-End Development
 slug: simulating-different-ui-scenarios-during-fronend-development
-date: 2020-05-05T00:00:00.000Z
-feature_image: /images/scenario_selector_ui_form.jpg
+date: '2020-05-05'
+feature_image: /content/images/scenario_selector_ui_form.jpg
+tags:
+  - Testing
 excerpt: >-
   Set up front-end application to switch between different UI states. Simulate
   all possible scenarios using a fake API server.
-tags:
-  - Testing
 ---
 In a previous post, [Simulating Different Scenarios Using Fake JSON Server API](/blog/simulating-different-api-scenarios-using-json-server/), I showed how to set up a fake API to return data based on different UI state. E.g., Given a UI list view, the application can be in different states. It can show an empty list, a list of data, a list of data that does not fit in one page, a server error, etc.
 
@@ -59,11 +59,11 @@ The _getSelectedScenario_ helper function retrieves header from the storage of y
 
 The _selectedScenarioGroup_ in local storage determines the current list of scenario headers to send to the [fake API server](#TDK). We can change the list of scenarios by modifying the values for this key in the local storage.
 
-![](/images/scenario_selector_local_storage.jpg)
+<ImageCard src="/content/images/scenario_selector_local_storage.jpg" alt="" />
 
 To make changing and defining scenarios interactive, I created a small form that plugs into the UI. The '+' icon shown below, shows during development and expands out to a [Sceanrio Form Builder](https://github.com/rahulpnath/quotes/tree/master/ui/src/views/components/ScenarioSelector). The form allows to add new scenario groups by adding in a name and selecting the associated scenarios. It saves the scenario groups to local storage as 'scenarioGroups'. With the scenario form builder, I can easily define new scenarios from the UI and start developing against those cases.
 
-![](/images/scenario_selector_ui_form.jpg)
+<ImageCard src="/content/images/scenario_selector_ui_form.jpg" alt="" />
 
 As you develop new features, the new scenarios can be added along with the source code to make it is available across the team. Every time the app starts, it will merge the scenarios in source code with the ones existing in the local storage. By being able to simulate different scenarios, front-end development becomes more seamless when used along with JSON Server fake API. The scenarios make it possible to simulate all edge case scenarios and develop for them. These scenarios also helps in [setting up data when writing tests](/blog/getting-started-with-cypress/)
 

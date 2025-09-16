@@ -1,24 +1,20 @@
 ---
-title: "How To Build and Host ASP NET Core Applications on AWS Lambda Functions"
+title: How To Build and Host ASP NET Core Applications on AWS Lambda Functions
 slug: asp-net-core-on-aws-lambda
-date: 2022-12-15T00:00:00.000Z
-feature_image: /images/AWS-Lambda-Function-URLs-Auth.png
-excerpt: >-
-  This article is sponsored by AWS and is part of my AWS
-  Series(GHOSTURL/tag/aws/).  AWS Lambda is a compute service that lets you run
-  code without provisioning or managing servers....
+date: '2022-12-15'
+feature_image: /content/images/2022/12/AWS-Lambda-Function-URLs-Auth.png
 tags:
-  - Dotnet
   - AWS
+  - Dotnet
   - Lambda
 ---
-_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
 AWS Lambda is a compute service that lets you run code without provisioning or managing servers.
 
 You can build application APIs on Lambda Function with API Gateways ([REST](/blog/aws-dotnet-lambda-authorizer-api-gateway/) or [HTTP API](/blog/amazon-api-gateway-http-apis/)) or [Function URL’s](/blog/function-urls-in-aws-lambda-dotnet/).
 
-<iframe src="https://www.youtube.com/embed/PTnWbKWm3uo?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/PTnWbKWm3uo?feature=oembed" title="ASP NET Core on AWS Lambda  | .NET ON AWS | AWS Serverless | Amazon" />
 
 But what if you have existing APIs built using ASP NET Web API and want to use AWS Lambda Function?
 
@@ -36,7 +32,6 @@ Once added, enable Lambda Hosting using the extension method `AddAWSLambdaHostin
 
 ```csharp
 builder.Services.AddAWSLambdaHosting(LambdaEventSource.RestApi);
-
 ```
 
 Depending on how you plan to expose the ASP NET API, you can choose different options for the `LambdaEventSource`. The supported values are `RestApi`, `HttpApi` and `ApplicationLoadBalancer` as shown below.
@@ -68,7 +63,6 @@ Navigate to the root of the project folder for the ASP NET application and run t
 
 ```bash
 dotnet lambda deploy-function
-
 ```
 
 The CLI tool prompts for more inputs to configure the Lambda Function like the runtime (_dotnet6_), Function name, IAM Role, default timeout, etc.
@@ -77,7 +71,7 @@ Enter the relevant values required for your application, and it will successfull
 
 I prefer to set up a build-deploy pipeline to deploy code in a real-world application. Check out the video below on how you can use CloudFormation templates from GitHub Actions to automatically deploy code changes to a Lambda Function.
 
-<iframe src="https://www.youtube.com/embed/U96230YlSJA?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/U96230YlSJA?feature=oembed" title="AWS CLOUDFORMATION - Build Deploy Pipeline Using GITHUB ACTIONS | .NET ON AWS" />
 
 ### Right Click Deploy From Visual Studio
 
@@ -87,26 +81,19 @@ However, this option is not available for an ASP NET Application by default. To 
 
 ```xml
 <AWSProjectType>Lambda</AWSProjectType>
-
 ```
 
 Once added, right-click on the project in Visual Studio Solution Explorer, and you will see the option `Publish to AWS Lambda...` .
 
-<Figure src="/images/image.png" caption="Use this and follow the GUI dialog to deploy the Lambda Function." />
+<ImageCard src="/content/images/2022/12/image.png" alt="Publish to AWS Lambda option for ASP NET Application from Visual Studio" />
 
-![Upload Lambda Function dialog box from Visual Studio to deploy an ASP NET Application](/images/image-1.png)
+Use this and follow the GUI dialog to deploy the Lambda Function.
+
+<ImageCard src="/content/images/2022/12/image-1.png" alt="Upload Lambda Function dialog box from Visual Studio to deploy an ASP NET Application" />
 
 If you are new to AWS Lambda, I recommend checking out my Getting Started with AWS Lambda article below.
 
-<BlogLink
-  href="/blog/aws-lambda-net-core/"
-  title="AWS Lambda For The .NET Developer: How To Easily Get Started"
-  description="Learn how to get started with AWS Lambda with .NET Core by building out a simple function and deploying to AWS. We will also see how to set up local development environment using the AWS Toolkit."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/aws_lambda.jpg"
-/>
+<BookmarkCard href="/blog/aws-lambda-net-core/" title="AWS Lambda For The .NET Developer: How To Easily Get Started" description="Learn how to get started with AWS Lambda with .NET Core by building out a simple function and deploying to AWS. We will also see how to set up local development environment using the AWS Toolkit." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 ## Exposing ASP NET API Over a URL
 
@@ -120,19 +107,11 @@ A Function URL is a dedicated HTTP(S) endpoint for your Lambda function.
 
 When enabling Function URLs, Lambda automatically generates a unique URL endpoint. Once you create a function URL, its URL endpoint never changes.
 
-<BlogLink
-  href="/blog/function-urls-in-aws-lambda-dotnet/"
-  title="Function URLs - Quick and Easy way to Invoke AWS Lambda Functions over HTTP"
-  description="A Function URL is a dedicated endpoint for your Lambda function. Learn how to enable Function URLs and build an API using .NET Lambda Function."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/AWS-Lambda-Function-URLs.png"
-/>
+<BookmarkCard href="/blog/function-urls-in-aws-lambda-dotnet/" title="Function URLs - Quick and Easy way to Invoke AWS Lambda Functions over HTTP" description="A Function URL is a dedicated endpoint for your Lambda function. Learn how to enable Function URLs and build an API using .NET Lambda Function." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 When using Function URLs to expose ASP NET Api on Lambda Function, use the  `LambdaEventSource` with the value `HttpApi`.
 
-![Function URL enabled for Lambda Function. Navigate to the URL to access the ASP NET API Application](/images/image-2.png)
+<ImageCard src="/content/images/2022/12/image-2.png" alt="Function URL enabled for Lambda Function. Navigate to the URL to access the ASP NET API Application" />
 
 Navigate to the Function URL to access the ASP NET API Application. You can also add [Function URL Auth](/blog/how-to-secure-and-authenticate-lambda-function-urls/) to protect the API endpoint for specific applications or users with access.
 
@@ -148,15 +127,7 @@ API Gateway supports two modes of creating APIs
 
 HTTP APIs are the latest services designed for low-latency, cost-effective integrations with different AWS services. Compared to the previous generation REST APIs it has a lot of advantages. However, there are also certain missing features. So before diving in, ensure [HTTP APIs are the right choice for you](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html) (which most of the time will be ).
 
-<BlogLink
-  href="/blog/amazon-api-gateway-http-apis/"
-  title="Amazon API Gateway for the .NET Developer - How To Build HTTP APIs"
-  description="Learn how to get started with API Gateway by building an HTTP API backed by AWS Lambda running on .NET Core. We will see how to create different HTTP endpoints, connect them to lambda functions, send and receive data, set up stages, and more."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/learning_code.jpg"
-/>
+<BookmarkCard href="/blog/amazon-api-gateway-http-apis/" title="Amazon API Gateway for the .NET Developer - How To Build HTTP APIs" description="Learn how to get started with API Gateway by building an HTTP API backed by AWS Lambda running on .NET Core. We will see how to create different HTTP endpoints, connect them to lambda functions, send and receive data, set up stages, and more." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 To expose as HTTP APIs, use the `LambdaEventSource` with the value `HttpApi` , same as with the Function URL.
 
@@ -164,15 +135,7 @@ To expose as HTTP APIs, use the `LambdaEventSource` with the value `HttpApi` , s
 
 While HTTP APIs are designed with minimal and cost-effective features, REST APIs provide more advanced features such as API keys, per-client throttling, request validation, private API endpoints, etc.
 
-<BlogLink
-  href="/blog/amazon-api-gateway-rest-api-introduction/"
-  title="Amazon API Gateway - Introduction To Building REST APIs"
-  description="Learn how to build REST API using API Gateway. We will learn the different building blocks of REST APIs, how they connect with each other, and how you can build and configure an API in the AWS Console."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/learning_code.jpg"
-/>
+<BookmarkCard href="/blog/amazon-api-gateway-rest-api-introduction/" title="Amazon API Gateway - Introduction To Building REST APIs" description="Learn how to build REST API using API Gateway. We will learn the different building blocks of REST APIs, how they connect with each other, and how you can build and configure an API in the AWS Console." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 When exposing Lambda Functions over API Gateway REST APIs, set the `LambdaEventSource` as `RestApi`.
 

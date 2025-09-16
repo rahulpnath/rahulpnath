@@ -1,15 +1,15 @@
 ---
-title: "Exploring Manual and Automatic Acknowledgment in RabbitMQ with .NET"
+title: Exploring Manual and Automatic Acknowledgment in RabbitMQ with .NET
 slug: rabbitmq-consumer-ack-dotnet
-date: 2024-02-12T00:00:00.000Z
-feature_image: /images/_RabbitMQ---ACK.png
+date: '2024-02-12'
+feature_image: /content/images/2024/02/_RabbitMQ---ACK.png
+tags:
+  - RabbitMQ
+  - AWS
 excerpt: >-
   Delivery processing acknowledgements from consumers are referred to as
   acknowledgements in messaging protocols. Let's learn automatic and manual ack
   modes in RabbitMQ.
-tags:
-  - AWS
-  - RabbitMQ
 ---
 Messages picked up for processing by the consumers are not guaranteed to be successfully processed.
 
@@ -17,7 +17,7 @@ Hence, consumers need a mechanism for processing confirmation.
 
 Delivery processing acknowledgements from consumers are referred to as acknowledgements in messaging protocols.
 
-<iframe src="https://www.youtube.com/embed/jrLbUz_5Aiw?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/jrLbUz_5Aiw?feature=oembed" title="CONSUMER ACKNOWLEDGEMENTS RabbitMQ from DOTNET | Amazon MQ" />
 
 In this post, let’s learn about different acknowledgement modes and how to use them when working with RabbitMQ from a .NET application.
 
@@ -40,7 +40,6 @@ It can also cause the consumer to overload if many messages are in the queue.
 
 ```csharp
 channel.BasicConsume("hello", autoAck: true, consumer);
-
 ```
 
 When registering the consumer with the RabbitMQ channel, you can specify `autoAck` property `true` to enable automatic acknowledgement, as shown above.
@@ -65,7 +64,6 @@ consumer.Received += (model, ea) =>
     // Additional processing for this message
     Console.WriteLine($"Processed message {message}");
 };
-
 ```
 
 ## Manual Acknowledgement From .NET Application
@@ -81,17 +79,14 @@ To use manual acknowledgement, specify `autoAck` as false when registering a con
 
 ```csharp
 channel.BasicConsume("hello", autoAck: false, consumer);
-
 ```
 
 ### Delivery Tags
 
 [Delivery Tags](https://www.rabbitmq.com/confirms.html#consumer-acks-delivery-tags) are used to acknowledge deliveries. Every message delivered on a channel has an associated delivery tag.  
   
-
 Delivery tags are scoped to a channel, so the same channel must acknowledge a message using the received tag. Acknowledging messages with a delivery tag from a different channel will cause an exception and close that channel.  
   
-
 Below is the sample code in the RabbitMQ consumer to acknowledge (`BasicAck`) and reject (`BasicReject`) a message based on the consumer logic.
 
 ```csharp
@@ -112,7 +107,6 @@ consumer.Received += (model, ea) =>
     Console.WriteLine($"Processed message {message}");
     channel.BasicAck(deliveryTag: ea.DeliveryTag, false);
 };
-
 ```
 
 ### Delivery Acknowledgement Timeout
@@ -123,9 +117,7 @@ You can configure the `consumer_timeout` value for your RabbitMQ instance.
 
 In RabbitMQ hosted on Amazon MQ, you can do that under Amazon MQ → Configurations as shown below and assign that configuration to your RabbitMQ instance.
 
-![RabbitMQ configuration in Amazon MQ to override the consumer_timeout value to be 30 seconds instead of the default 30 minutes.](/images/image.png)
-
-RabbitMQ configuration in Amazon MQ to override the consumer\_timeout value to be 30 seconds instead of the default 30 minutes.
+<ImageCard src="/content/images/2024/02/image.png" alt="RabbitMQ configuration in Amazon MQ to override the consumer_timeout value to be 30 seconds instead of the default 30 minutes." caption="RabbitMQ configuration in Amazon MQ to override the consumer_timeout value to be 30 seconds instead of the default 30 minutes." />
 
 How you configure it will differ based on how you host your RabbitMQ instance.
 

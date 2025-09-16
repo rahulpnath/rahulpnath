@@ -1,10 +1,8 @@
 ---
-title: "Windows Phone Series – MVVM and ApplicationBar"
+title: Windows Phone Series – MVVM and ApplicationBar
 slug: windows-phone-series-mvvm-and-applicationbar
-date: 2013-04-17
-feature_image: /images/wp_applicationbar_icon_mvvm.png
-excerpt: >-
-  ApplicationBar on a windows phone, is to provide users of your app with quick access to the most commonly used tasks. For a mail app this would be refresh/new mail,...
+date: '2013-04-17'
+feature_image: /content/images/wp_applicationbar_icon_mvvm.png
 tags:
   - Dotnet
 ---
@@ -13,7 +11,6 @@ ApplicationBar on a windows phone, is to provide users of your app with quick ac
 In a normal app which uses code-behind, this can be easily done by accessing the ‘ApplicationBar’ in the code-behind class like below
 
 ```csharp
-
 ApplicationBar.Buttons.Add(<your button>);
 
 ```
@@ -27,7 +24,7 @@ Whenever we need to communicate between VM’s or between your view model and Vi
 Below is how the Code-behind would look like . We register for a NotificationMessage(you could also use your own notification class for this), and see what kind of button needs to be added and adds that to the ApplicationBar. On click of the appbar button, we wire up the click event to a command of the ViewModel. Though there is some code behind in here, we are not going away from MVVM here, as we still have clear separation of concerns and also testability is not affected.
 
 ```csharp
-    public partial class MainPage : PhoneApplicationPage"
+    public partial class MainPage : PhoneApplicationPage
     {
         public MainViewModel viewModel
         {
@@ -151,4 +148,6 @@ In cases where you don’t want to add buttons dynamically, but just have static
 
 Hope this helps you to decouple your application bar icons from the ViewModel.You can find a [sample](https://github.com/rahulpnath/Blog/tree/master/PhoneAppBarMvvm) implementation for this. In the sample both these approaches are shown for adding icons. You could figure out the Remove pretty easily.
 
-<Figure src="/images/wp_applicationbar_icon_mvvm.png" caption="Hope it helps!!" />
+<ImageCard src="/content/images/wp_applicationbar_icon_mvvm.png" alt="windows phone applicationbar mvvm" />
+
+Hope it helps!!

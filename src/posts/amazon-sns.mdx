@@ -1,12 +1,15 @@
 ---
-title: "Amazon SNS For the .NET Developer: Getting Started Quick and Easy"
+title: 'Amazon SNS For the .NET Developer: Getting Started Quick and Easy'
 slug: amazon-sns
-date: 2022-06-02
-feature_image: /images/amazon-sns.jpg
-excerpt: >-
-  Learn how to get started with Amazon SNS and use it from a .NET application. We will learn about Topics, sending messages to topics, and using Subscriptions to receive messages. We will also learn about Filters, how to use them, and error handling with SNS.
+date: '2022-06-02'
+feature_image: /content/images/amazon-sns.jpg
 tags:
   - AWS
+excerpt: >-
+  Learn how to get started with Amazon SNS and use it from a .NET application.
+  We will learn about Topics, sending messages to topics, and using
+  Subscriptions to receive messages. We will also learn about Filters, how to
+  use them, and error handling with SNS.
 ---
 _This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
@@ -16,7 +19,7 @@ It enables asynchronous communication between the publishers and subscribers usi
 
 SNS supports application-to-application and application-to-person communication. Amazon SNS is useful when building distributed systems, microservices, event-driven serverless applications, etc.
 
-<iframe src="https://www.youtube.com/embed/XVQwgeUWXVY" />
+<EmbedCard src="https://www.youtube.com/embed/XVQwgeUWXVY" />
 
 In this article, we will learn how to get started with Amazon SNS and use it from a .NET application. We will learn about Topics, sending messages to topics, and using Subscriptions to receive messages. We will also learn about Filters, how to use them, and error handling with SNS.
 
@@ -31,7 +34,9 @@ Amazon SNS supports two types of Topics
 
 For this article, we will create a Standard SNS Topic, by specifying the name and leaving all other options to default.
 
-<Figure src="/images/amazon-sns-create-topic.jpg" caption="### SNS & .NET" />
+<ImageCard src="/content/images/amazon-sns-create-topic.jpg" alt="Amazon SNS create new Standard topic from the AWS Console" />
+
+### SNS & .NET
 
 We will use the ASP NET Core default Web API template as our sample application. The application has a `GET` method to return `WeatherForecast` data by default.
 
@@ -41,7 +46,7 @@ The [AWSSDK.SimpleNotificationService](https://www.nuget.org/packages/AWSSDK.Sim
 
 You can connect by passing the credentials explicitly or setting up the credentials for your environment.
 
-<iframe src="https://www.youtube.com/embed/ukam37umkQc" />
+<EmbedCard src="https://www.youtube.com/embed/ukam37umkQc" />
 
 ## Publisher - Send Message
 
@@ -88,7 +93,7 @@ We can add a new subscription under the Topic in the AWS console.
 
 To email, any time we receive a message in the Topic, create a new Subscriber with the Email Protocol. Enter the email address of the recipient in the Endpoint column.
 
-![Use Email Protocol for the subscriber and specify the email to which the messages must be sent. Everytime a message comes in the SNS Topic the subscriber will receive an email.](/images/amazon-sns-email-subscription.jpg)
+<ImageCard src="/content/images/amazon-sns-email-subscription.jpg" alt="Use Email Protocol for the subscriber and specify the email to which the messages must be sent. Everytime a message comes in the SNS Topic the subscriber will receive an email." />
 
 Once created, a confirmation email is sent with a link. Only after confirming the subscription using the link will messages appear in the email inbox.
 
@@ -100,7 +105,7 @@ To send rich formatted business emails, you can use SNS along with [Amazon Simpl
 
 You can also trigger AWS Lambda Functions any time you receive a message in the Topic.
 
-[AWS Lambda For The .NET Developer](https://www.udemy.com/course/aws-lambda-dotnet/?referralCode=981481B991C2890BD448)
+<BookmarkCard href="https://www.udemy.com/course/aws-lambda-dotnet/?referralCode=981481B991C2890BD448" title="AWS Lambda For The .NET Developer" description="Learn to build Serverless Applications on AWS" icon="https://www.udemy.com/staticx/udemy/images/v7/apple-touch-icon.png" />
 
 Below is the default AWS Lambda template function using the Simple SNS Function Blueprint.
 
@@ -119,7 +124,7 @@ private async Task ProcessRecordAsync(
 {
     context.Logger.LogInformation($"Processed record {record.Sns.Message}");
 
-    / TODO: Do interesting work based on the new message
+    // TODO: Do interesting work based on the new message
     await Task.CompletedTask;
 }
 
@@ -129,9 +134,11 @@ Once you publish the Lambda function to AWS, you can set up a new SNS Subscripti
 
 Grant, the IAM Role of Lambda Function has access to the SNS before adding in the subscription. This is required so that the Lambda function can access the SNS Topic.
 
-<Figure src="/images/amazon-sns-lambda-permissions.jpg" caption="Under the Lambda → Triggers, you can add a new Trigger and set up the integration with Amazon SNS." />
+<ImageCard src="/content/images/amazon-sns-lambda-permissions.jpg" alt="AWS Lambda permissions to access Amazon SNS - In this case it has full access to the specific SNS Topic." />
 
-![Setting up a SNS Trigger for Amazon Lambda. Every time a message is dropped to the Amazon SNS Topic the .NET lambda function will be triggered](/images/amazon-sns-lambda-trigger.jpg)
+Under the Lambda → Triggers, you can add a new Trigger and set up the integration with Amazon SNS.
+
+<ImageCard src="/content/images/amazon-sns-lambda-trigger.jpg" alt="Setting up a SNS Trigger for Amazon Lambda. Every time a message is dropped to the Amazon SNS Topic the .NET lambda function will be triggered" />
 
 Once the Trigger is created, any time a new message is sent to the Amazon SNS, it will trigger the Lambda function as well.
 
@@ -173,7 +180,9 @@ For the Subscriber, where we want to apply the filter policy, we can edit it in 
 
 Specifying the below policy filters out only the messages which have the Month property set to February. It will filter anything else out.
 
-<Figure src="/images/amazon-sns-subscription-filter-policy.jpg" caption="Filter Policies JSON structure supports different filtering capabilities" />
+<ImageCard src="/content/images/amazon-sns-subscription-filter-policy.jpg" alt="Subscription Filter policy to filter out messages from Amazon SNS Topic only for the month of Februrary." />
+
+Filter Policies JSON structure supports different filtering capabilities
 
 -   **Exact Matching** → Attribute matches one or more values _”Month” : \[”February”\]_
 -   **Prefix Matching →** Attribute includes the keyword _prefix_ and it matches the specified prefix. Below matches _March_ and _May”Month” : \[{”prefix”: “Ma”}\]_
@@ -185,11 +194,13 @@ When Amazon SNS cannot deliver a message to the Subscriber, it will retry to del
 
 You can see the Delivery protocols and the associated policies [here](https://docs.aws.amazon.com/sns/latest/dg/sns-message-delivery-retries.html). You can override the policy at the Topic Level by editing the Topic.
 
-![Delivery Retry Policy for the Amazon SNS Topic](/images/amazon-sns-topic-delivery-retry-policy.jpg)
+<ImageCard src="/content/images/amazon-sns-topic-delivery-retry-policy.jpg" alt="Delivery Retry Policy for the Amazon SNS Topic" />
 
 Once the number of retries is exhausted for a delivery protocol, the message is discarded or sent to a dead-letter-queue (DLQ) attached to the subscription.
 
-<Figure src="/images/amazon-sns-subscription-dlq.jpg" caption="Dead Letter Queue's (DLQ) are attached to a SNS Subscription." />
+<ImageCard src="/content/images/amazon-sns-subscription-dlq.jpg" alt="Dead letter Queue (DLQ) attached to a Amazon SNS Subscription." />
+
+Dead Letter Queue's (DLQ) are attached to a SNS Subscription.
 
 Messages can be tracked and reprocessed from the DLQ as required, based on your application needs and if the Subscriber is back online to process messages.
 

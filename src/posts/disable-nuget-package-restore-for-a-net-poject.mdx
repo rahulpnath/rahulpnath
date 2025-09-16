@@ -1,12 +1,7 @@
 ---
-title: "Disable NuGet Package Restore for a .Net Poject"
+title: Disable NuGet Package Restore for a .Net Poject
 slug: disable-nuget-package-restore-for-a-net-poject
-date: 2016-05-02T00:00:00.000Z
-excerpt: >-
-  If you have decided on Checking in Package Dependencies into Source
-  Control(GHOSTURL/blog/checking-in-package-dependencies-into-source-control/)
-  for an existing project that uses Nuget Packages then this post is for you 
-  When using NuGet...
+date: '2016-05-02'
 tags:
   - Programming
 ---
@@ -37,7 +32,7 @@ _The script leaves blank lines in the _csproj_ files in place of the removed nod
 //  Remove NuGet Restore https://gist.github.com/rahulpnath/13d3b4f54cec51e22344876b1566b911#file-remove-nuget-restore-ps1
 param([Parameter(Mandatory=$true)][string]$solutionDirectory)
 
- $importNugetTargetsTag= [regex]::escape(@'"
+ $importNugetTargetsTag= [regex]::escape(@'
 <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 '@)
 

@@ -3,17 +3,19 @@ title: >-
   How To Solve "Rate exceeded for operation 'AWS::CloudFront::Distribution'."
   Error?
 slug: rate-limit
-date: 2023-04-20T00:00:00.000Z
-feature_image: /images/Rate-Exceeded.png
+date: '2023-04-20'
+feature_image: /content/images/2023/04/Rate-Exceeded.png
+tags:
+  - AWS
 excerpt: >-
   Recently at work, I had to deploy ~80 CloudFront instances, each with its own
   Certificate, pointing to one S3 bucket as its source, all in one
   CloudFormation file.
-    I kept running into "Rate exceeded for operation AWS::CloudFront::Distribution'.". Let's learn how to fix it.
-tags:
-  - AWS
+
+  I kept running into "Rate exceeded for operation
+  AWS::CloudFront::Distribution'.". Let's learn how to fix it.
 ---
-_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
 ## The Problem
 
@@ -23,7 +25,7 @@ However, when running the CloudFormation template, it kept erroring with the bel
 
 _**"Rate exceeded for operation 'AWS::CloudFront::Distribution'."**_
 
-![](/images/image-2.png)
+<ImageCard src="/content/images/2023/04/image-2.png" alt="" />
 
 The CloudFormation file did succeed when the number of CloudFront instances was around 20.
 
@@ -53,11 +55,11 @@ The first 10 Websites are created first,  followed by Websites 11-20, which `De
 
 Once this is done, it moves on to the next batch, which depends on all the Websites in the previous batch.
 
-![](/images/image-8.png)
+<ImageCard src="/content/images/2023/04/image-8.png" alt="" />
 
 You can see further batch dependency in the image below, where Website65 depends on all the Websites in the batch before (Website 51-60), and Website 71 is dependent on the batch before it (Website 61-70).
 
-![](/images/image-6.png)
+<ImageCard src="/content/images/2023/04/image-6.png" alt="" />
 
 The `DependsOn` attribute helps restrict and keep in check the number of CloudFront instances that are created at a time.
 

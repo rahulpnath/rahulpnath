@@ -1,11 +1,11 @@
 ---
-title: "Azure Key Vault From Azure Functions - Certificate Based Authentication"
+title: Azure Key Vault From Azure Functions - Certificate Based Authentication
 slug: azure-key-vault-from-azure-functions-certificate-based-authentication
-date: 2017-05-25T00:00:00.000Z
-feature_image: /images/azureFunction_newFunctionApp.png
-excerpt: Authenticate with Azure Key Vault from Azure Function using Certificates
+date: '2017-05-25'
+feature_image: /content/images/azureFunction_newFunctionApp.png
 tags:
   - Azure
+excerpt: Authenticate with Azure Key Vault from Azure Function using Certificates
 ---
 In the previous post we saw how to connect to [Azure Key Vault from Azure Functions](/blog/azure-key-vault-from-azure-functions/). We used the [Application Id and Secret to authenticate with the Azure AD Application](/blog/authenticating-a-client-application-with-azure-key-vault/). Since the general recommendation is to use certificate-based authentication, in this post, we will see how we can use certificates to authenticate from within an Azure Function.
 
@@ -29,17 +29,19 @@ Set-AzureRmKeyVaultAccessPolicy -VaultName 'RahulKeyVault' -ServicePrincipalName
 
 Create an Azure Function App under your subscription as shown below. You can also use the same application created in the previous post (if you did create one).
 
-![Azure Function New App](/images/azureFunction_newFunctionApp.png)
+<ImageCard src="/content/images/azureFunction_newFunctionApp.png" alt="Azure Function New App" />
 
 In the Function Apps page, select the app just created. Add a new function like in the last post. Selecting the Function App shows the available set of actions. Under the _Platform Features_ tab we can upload the SSL certificates first and then update the Application Certificates to make the certificate available for the function.
 
-<Figure src="/images/azureFunction_PlatformFeatures.png" caption="Upload the certificate by selecting it from your folder system." />
+<ImageCard src="/content/images/azureFunction_PlatformFeatures.png" alt="Azure Function Platform Features" />
 
-![Azure Function Upload Certificate](/images/azureFunction_addCertificate.png)
+Upload the certificate by selecting it from your folder system.
+
+<ImageCard src="/content/images/azureFunction_addCertificate.png" alt="Azure Function Upload Certificate" />
 
 For the certificate to be available for use in the Azure Functions an entry should be present in Application Settings. Under _Application Settings_ in the _Platform Features_ tab add App settings key and value - _WEBSITE\_LOAD\_CERTIFICATES_ and the certificate thumbprint This makes the certificate available for consumption within the function. Multiple thumbprints can be specified comma separated if required.
 
-![Azure Function Certificates App Settings](/images/azureFunction_AppSetting.png)
+<ImageCard src="/content/images/azureFunction_AppSetting.png" alt="Azure Function Certificates App Settings" />
 
 Using a certificate to authenticate with the Key Vault is the same as we have [seen before](/blog/authenticating-a-client-application-with-azure-key-vault/).
 

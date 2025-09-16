@@ -47,22 +47,85 @@ class GhostToMDX {
         return node.classList && (
           node.classList.contains('kg-card') ||
           node.classList.contains('kg-embed-card') ||
-          node.classList.contains('kg-bookmark-card')
+          node.classList.contains('kg-bookmark-card') ||
+          node.classList.contains('kg-image-card')
         );
       },
       replacement: (content, node) => {
+        // Handle Ghost bookmark cards
+        if (node.classList.contains('kg-bookmark-card')) {
+          const titleEl = node.querySelector('.kg-bookmark-title');
+          const descEl = node.querySelector('.kg-bookmark-description');
+          const iconEl = node.querySelector('.kg-bookmark-icon');
+          const linkEl = node.querySelector('a[href]');
+          
+          const title = titleEl?.textContent?.trim() || '';
+          const description = descEl?.textContent?.trim() || '';
+          const icon = iconEl?.getAttribute('src') || '';
+          const href = linkEl?.getAttribute('href') || '';
+          
+          if (href && title) {
+            const props = [
+              `href="${href}"`,
+              `title="${title.replace(/"/g, '&quot;')}"`,
+              description ? `description="${description.replace(/"/g, '&quot;')}"` : '',
+              icon ? `icon="${icon}"` : ''
+            ].filter(Boolean).join(' ');
+            
+            return `<BookmarkCard ${props} />`;
+          }
+        }
+        
+        // Handle Ghost embed cards
         if (node.classList.contains('kg-embed-card')) {
           const iframe = node.querySelector('iframe');
           if (iframe) {
             const src = iframe.getAttribute('src');
-            if (src && src.includes('youtube.com/embed')) {
-              return `<iframe src="${src}" />`;
-            }
-            if (src && src.includes('twitter.com')) {
-              return `<Tweet url="${src}" />`;
+            const title = iframe.getAttribute('title') || '';
+            
+            if (src) {
+              const props = [
+                `src="${src}"`,
+                title ? `title="${title.replace(/"/g, '&quot;')}"` : ''
+              ].filter(Boolean).join(' ');
+              
+              return `<EmbedCard ${props} />`;
             }
           }
         }
+        
+        // Handle Ghost image cards
+        if (node.classList.contains('kg-image-card')) {
+          const img = node.querySelector('img');
+          const figcaption = node.querySelector('figcaption');
+          
+          if (img) {
+            const src = img.getAttribute('src') || '';
+            let alt = img.getAttribute('alt') || '';
+            const caption = figcaption?.textContent?.trim() || '';
+            
+            // If alt is empty, use caption as alt text (accessibility)
+            if (!alt && caption) {
+              alt = caption;
+            }
+            
+            // Process image path for local images
+            let imageSrc = src;
+            if (this.options.downloadImages && (src.startsWith('http') || src.includes('__GHOST_URL__'))) {
+              const filename = this.getImageFilename(src, this.currentPostSlug);
+              imageSrc = `/images/${filename}`;
+            }
+            
+            const props = [
+              `src="${imageSrc}"`,
+              `alt="${alt.replace(/"/g, '&quot;')}"`,
+              caption ? `caption="${caption.replace(/"/g, '&quot;')}"` : ''
+            ].filter(Boolean).join(' ');
+            
+            return `<ImageCard ${props} />`;
+          }
+        }
+        
         return content;
       }
     });
@@ -75,8 +138,8 @@ class GhostToMDX {
         const src = node.getAttribute('src') || '';
         const title = node.getAttribute('title') || '';
         
-        if (this.options.downloadImages && src.startsWith('http')) {
-          const filename = this.getImageFilename(src);
+        if (this.options.downloadImages && (src.startsWith('http') || src.includes('__GHOST_URL__'))) {
+          const filename = this.getImageFilename(src, this.currentPostSlug);
           return title ? `![${alt}](/images/${filename} "${title}")` : `![${alt}](/images/${filename})`;
         }
         
@@ -107,6 +170,95 @@ class GhostToMDX {
         return `\`${node.textContent || node.innerText || ''}\``;
       }
     });
+
+    // Handle figure elements - only process if not a Ghost card
+    this.turndownService.addRule('figures', {
+      filter: (node) => {
+        return node.nodeName === 'FIGURE' && 
+               !(node.classList && (
+                 node.classList.contains('kg-card') ||
+                 node.classList.contains('kg-embed-card') ||
+                 node.classList.contains('kg-bookmark-card') ||
+                 node.classList.contains('kg-image-card')
+               ));
+      },
+      replacement: (content, node) => {
+        let figureContent = [];
+        let hasContent = false;
+        
+        // Convert all children while preserving structure
+        for (const child of node.childNodes) {
+          if (child.nodeType === 1) { // Element node
+            if (child.nodeName === 'IMG') {
+              let alt = child.getAttribute('alt') || '';
+              const src = child.getAttribute('src') || '';
+              
+              // Process image path for local images
+              let imageSrc = src;
+              if (this.options.downloadImages && (src.startsWith('http') || src.includes('__GHOST_URL__'))) {
+                const filename = this.getImageFilename(src, this.currentPostSlug);
+                imageSrc = `/images/${filename}`;
+              }
+              
+              // For regular figures with images, use ImageCard component
+              const caption = node.querySelector('figcaption')?.textContent?.trim() || '';
+              
+              // If alt is empty, use caption as alt text (accessibility)
+              if (!alt && caption) {
+                alt = caption;
+              }
+              
+              const props = [
+                `src="${imageSrc}"`,
+                `alt="${alt.replace(/"/g, '&quot;')}"`,
+                caption ? `caption="${caption.replace(/"/g, '&quot;')}"` : ''
+              ].filter(Boolean).join(' ');
+              
+              return `<ImageCard ${props} />`;
+            } else if (child.nodeName === 'FIGCAPTION') {
+              const captionText = child.textContent || child.innerText || '';
+              if (captionText.trim()) {
+                figureContent.push(`<figcaption>${captionText}</figcaption>`);
+                hasContent = true;
+              }
+            } else if (child.nodeName === 'IFRAME') {
+              // Handle iframe embeds in figures
+              const src = child.getAttribute('src') || '';
+              const title = child.getAttribute('title') || '';
+              
+              if (src) {
+                const props = [
+                  `src="${src}"`,
+                  title ? `title="${title.replace(/"/g, '&quot;')}"` : ''
+                ].filter(Boolean).join(' ');
+                
+                return `<EmbedCard ${props} />`;
+              }
+            }
+          }
+        }
+        
+        // Only create figure if it has actual content and no specific handling was done
+        if (hasContent && figureContent.length > 0) {
+          return `<figure>\n${figureContent.join('\n')}\n</figure>`;
+        }
+        
+        // If no processable content, return empty string to avoid empty figures
+        return '';
+      }
+    });
+
+    // Handle standalone figcaption (preserve if not inside figure)
+    this.turndownService.addRule('figcaption', {
+      filter: 'figcaption',
+      replacement: (content, node) => {
+        // Only handle if not already processed by figure rule
+        if (node.parentNode && node.parentNode.nodeName !== 'FIGURE') {
+          return `<figcaption>${content}</figcaption>`;
+        }
+        return content;
+      }
+    });
   }
 
   extractLanguageFromClassName(className) {
@@ -115,12 +267,23 @@ class GhostToMDX {
     return match ? match[1] : '';
   }
 
-  getImageFilename(url) {
+  getImageFilename(url, postSlug) {
     const urlObj = new URL(url);
-    return path.basename(urlObj.pathname) || 'image.jpg';
+    const originalFilename = path.basename(urlObj.pathname) || 'image.jpg';
+    const extension = path.extname(originalFilename) || '.jpg';
+    const nameWithoutExt = path.basename(originalFilename, extension);
+    
+    // Create unique filename by prefixing with post slug
+    return `${postSlug}-${nameWithoutExt}${extension}`;
   }
 
   async downloadImage(url, filename) {
+    // Skip download for Ghost URLs since they're placeholder URLs
+    if (url.includes('__GHOST_URL__')) {
+      console.log(`Skipping Ghost URL: ${url}`);
+      return;
+    }
+    
     try {
       const response = await axios({
         method: 'GET',
@@ -161,7 +324,7 @@ class GhostToMDX {
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
   }
 
-  async processImages(content) {
+  async processImages(content, postSlug) {
     if (!this.options.downloadImages) return content;
 
     const root = parse(content);
@@ -169,8 +332,8 @@ class GhostToMDX {
     
     for (const img of images) {
       const src = img.getAttribute('src');
-      if (src && src.startsWith('http')) {
-        const filename = this.getImageFilename(src);
+      if (src && (src.startsWith('http') || src.includes('__GHOST_URL__'))) {
+        const filename = this.getImageFilename(src, postSlug);
         await this.downloadImage(src, filename);
         console.log(`Downloaded image: ${filename}`);
       }
@@ -188,7 +351,10 @@ class GhostToMDX {
     }
 
     // Process images if downloading is enabled
-    const processedHtml = await this.processImages(html);
+    const processedHtml = await this.processImages(html, slug);
+
+    // Set current post slug for turndown service
+    this.currentPostSlug = slug;
 
     // Convert HTML to Markdown
     const markdownContent = this.turndownService.turndown(processedHtml);
@@ -199,8 +365,8 @@ class GhostToMDX {
       slug: slug || this.createSlug(title),
       date: this.formatDate(published_at),
       ...(feature_image && {
-        feature_image: this.options.downloadImages && feature_image.startsWith('http') 
-          ? `/images/${this.getImageFilename(feature_image)}`
+        feature_image: this.options.downloadImages && (feature_image.startsWith('http') || feature_image.includes('__GHOST_URL__'))
+          ? `/images/${this.getImageFilename(feature_image, slug)}`
           : feature_image
       }),
       ...(tags && tags.length > 0 && {
@@ -210,8 +376,8 @@ class GhostToMDX {
     };
 
     // Download feature image if needed
-    if (this.options.downloadImages && feature_image && feature_image.startsWith('http')) {
-      const filename = this.getImageFilename(feature_image);
+    if (this.options.downloadImages && feature_image && (feature_image.startsWith('http') || feature_image.includes('__GHOST_URL__'))) {
+      const filename = this.getImageFilename(feature_image, slug);
       await this.downloadImage(feature_image, filename);
       console.log(`Downloaded feature image: ${filename}`);
     }
@@ -555,10 +721,11 @@ class GhostToMDX {
     
     try {
       await this.fixGhostUrls();
-      await this.fixImagePaths();
-      await this.fixDateImagePaths();
-      await this.fixMalformedUrls();
-      await this.fixImageSubdirectories();
+      // Disabled image path fixing to preserve unique filenames
+      // await this.fixImagePaths();
+      // await this.fixDateImagePaths();
+      // await this.fixMalformedUrls();
+      // await this.fixImageSubdirectories();
       
       console.log('\n✅ Post-processing complete!');
     } catch (error) {
@@ -608,7 +775,7 @@ class GhostToMDX {
       console.log(`Skipped: ${skippedCount} posts`);
       console.log(`Output directory: ${this.options.outputDir}`);
       if (this.options.downloadImages) {
-        console.log(`Images directory: ${this.options.imagesDir}`);
+        console.log(`Images directory: ${this.options.imagesDir}`);ws
       }
 
       // Run post-processing

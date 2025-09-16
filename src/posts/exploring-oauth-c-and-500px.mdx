@@ -1,10 +1,8 @@
 ---
-title: "Windows 8 Series - Exploring OAuth: c# and 500px"
+title: 'Windows 8 Series - Exploring OAuth: c# and 500px'
 slug: exploring-oauth-c-and-500px
-date: 2012-10-05
-feature_image: /images/oauth_500px_application_details.png
-excerpt: >-
-  The days when we ourselves developed sites and application for our own services are long gone. Now it’s about building api’s, sharing data and going social that's the buzz. No...
+date: '2012-10-05'
+feature_image: /content/images/oauth_500px_application_details.png
 tags:
   - Dotnet
 ---
@@ -16,7 +14,9 @@ Now that you have seen how it works lets dig deeper to see how to get this featu
 
 I chose the web-api provided by [500px](http://developers.500px.com/), which does secure its data using OAuth. You can see the complete documentation of the api [here](https://github.com/500px/api-documentation). It is the Authentication part in that, that we would be concentrating here on, using OAuth 1.0
 
-<Figure src="/images/oauth_500px_authentication.png" caption="On a high level as seen above,OAuth has 3 steps." />
+<ImageCard src="/content/images/oauth_500px_authentication.png" alt="oauth_500px_authentication" />
+
+On a high level as seen above,OAuth has 3 steps.
 
 1.  Getting a request token
 2.  Authorizing the user
@@ -40,7 +40,7 @@ _OAuth Protocol Parameters:_ Parameters with names beginning with oauth\_.
 
 Before getting on to the steps we would need to register the application that is going to consume the web api, to get the Consumer Key and Consumer Secret required in OAuth.You can do that here for [500px](http://500px.com/settings/applications). All web-api’s supporting OAuth would have such a page, as registering provides us with the keys. If the application does not have a callback url, like in case you are developing for a phone or desktop application you can specify any url you want.
 
-![oauth_500px_application_details](/images/oauth_500px_application_details.png)
+<ImageCard src="/content/images/oauth_500px_application_details.png" alt="oauth_500px_application_details" />
 
 The base URL for 500px web-api is ‘[https://api.500px.com/v1/](https://api.500px.com/v1/)’. All further references to url’s would be relative to this
 
@@ -184,7 +184,6 @@ public async Task<T> ExecuteRequest<T>(string Url, Dictionary<string, string> Pa
 A sample way to use this would be as below
 
 ```csharp
-
 Oauth500Px.MakeRequest(Oauth500px.RequestType.GET).ExecuteRequest&lt;PhotoDetails&gt;(
                     photoDetails, null);
 

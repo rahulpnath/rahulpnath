@@ -1,18 +1,18 @@
 ---
-title: "DynamoDB Streams and AWS Lambda Trigger in .NET"
+title: DynamoDB Streams and AWS Lambda Trigger in .NET
 slug: aws-dynamodb-streams-lambda-triggers-dotnet
-date: 2022-08-17T00:00:00.000Z
-feature_image: /images/aws-lambda-dynamodb-streams-trigger-dotnet.jpg
-excerpt: >-
-  DynamoDB Streams capture a time-ordered sequence of events in any DynamoDB
-  table. Let's learn how to enable DynamoDB Streams, different stream types and
-  how to consumer stream changes from a .NET AWS Lambda Function.
+date: '2022-08-17'
+feature_image: /content/images/aws-lambda-dynamodb-streams-trigger-dotnet.jpg
 tags:
   - AWS
   - DynamoDB
   - Lambda
+excerpt: >-
+  DynamoDB Streams capture a time-ordered sequence of events in any DynamoDB
+  table. Let's learn how to enable DynamoDB Streams, different stream types and
+  how to consumer stream changes from a .NET AWS Lambda Function.
 ---
-_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
 DynamoDB Streams capture a time-ordered sequence of events in any DynamoDB table.
 
@@ -20,7 +20,7 @@ Whenever an application creates, updates, or deletes items in the table, DynamoD
 
 A _stream record_ contains information about a data modification to a single item in a DynamoDB table.
 
-<iframe src="https://www.youtube.com/embed/4YzuN4MAFiQ" />
+<EmbedCard src="https://www.youtube.com/embed/4YzuN4MAFiQ" />
 
 DynamoDB Streams is also referred to as Change Data Capture.
 
@@ -40,7 +40,9 @@ The AWS Management Console only supports the stream's creation on existing table
 
 Under the Exports and streams section of an existing DynamoDB table, you can Enable/Disable a DynamoDB Stream, as shown below.
 
-<Figure src="/images/dynamodb-stream-enable-existing-table.jpg" caption="### Stream View Types" />
+<ImageCard src="/content/images/dynamodb-stream-enable-existing-table.jpg" alt="Enable DynamoDB Stream on a Table under the Exports and streams section in the AWS Console." />
+
+### Stream View Types
 
 When enabling a stream, you need to specify the Stream View Type.
 
@@ -51,7 +53,7 @@ Based on the kind of data you need available in the Stream Record, you can choos
 -   `OLD_IMAGE` — The entire item, as it appeared before modification.
 -   `NEW_AND_OLD_IMAGES` — Both the item's new and old images.
 
-![Select View Type when enabling DynamoDB Stream. This decides the data that is available as part of the stream events raised on changed to items in DynamoDB Table. ](/images/dynamodb-stream-enable-options.jpg)
+<ImageCard src="/content/images/dynamodb-stream-enable-options.jpg" alt="Select View Type when enabling DynamoDB Stream. This decides the data that is available as part of the stream events raised on changed to items in DynamoDB Table. " />
 
 For this blog post, I am enabling the DynamoDB Stream with _New and old images_ option. This ensures that the Key information and Old and New image data are available as part of the stream record data. The old image contains the data before the modification, and the new image has the data after the modification.
 
@@ -59,7 +61,9 @@ AWS maintains DynamoDB and DynamoDB Streams as two separate endpoints.
 
 Once enabled, you can see the ARN details, the View Type, and any Triggers attached to the Stream, as shown below.
 
-<Figure src="/images/dynamodb-stream-details.jpg" caption="## Handling DynamoDB Stream Events" />
+<ImageCard src="/content/images/dynamodb-stream-details.jpg" alt="Once enabled, you can see the Stream details, view type, and attached Triggers under the DynamoDB table details. " />
+
+## Handling DynamoDB Stream Events
 
 Applications can read and process stream records from the DynamoDB Streams.
 
@@ -73,15 +77,7 @@ To see this in action, let’s first create an AWS Lambda Function using .NET an
 
 Make sure to install the AWS Toolkit ([Visual Studio](https://aws.amazon.com/visualstudio/), [Rider](https://aws.amazon.com/rider/), [VS Code](https://aws.amazon.com/visualstudiocode/)) and [set up Credentials for the local development environment](/blog/amazon-credentials-dotnet/).  This helps you quickly develop a .NET application on the AWS infrastructure and deploy them quickly to your AWS Accounts.
 
-<BlogLink
-  href="/blog/aws-lambda-net-core"
-  title="AWS Lambda For The .NET Developer: How To Easily Get Started"
-  description="Learn how to get started with AWS Lambda with .NET Core by building out a simple function and deploying to AWS. We will also see how to set up local development environment using the AWS Toolkit."
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/aws_lambda.jpg"
-/>
+<BookmarkCard href="/blog/aws-lambda-net-core" title="AWS Lambda For The .NET Developer: How To Easily Get Started" description="Learn how to get started with AWS Lambda with .NET Core by building out a simple function and deploying to AWS. We will also see how to set up local development environment using the AWS Toolkit." icon="/favicon.ico" />
 
 With the AWS Toolkit installed, select the AWS Lambda Lambda Project template from the new project template and choose the DynamoDB blueprint. This creates a .NET AWS Lambda function template project with a `Function.cs` class with everything required to handle DynamoDB Stream events, as shown below.
 
@@ -127,7 +123,7 @@ To publish the Lambda function to the AWS account, you can use the Publish to AW
 
 I prefer to set up an automated build/deploy pipeline to publish to your AWS Account for real-world applications. Check out the below for an example of how to set up a Lambda Function deployment pipeline from GitHub Actions.
 
-<iframe src="https://www.youtube.com/embed/U96230YlSJA" />
+<EmbedCard src="https://www.youtube.com/embed/U96230YlSJA" />
 
 ### Setting up AWS Lambda DynamoDB Stream Trigger
 
@@ -139,29 +135,19 @@ DynamoDB Streams supports adding a Trigger to invoke Lambda Functions automatica
 
 This prompts you to select the Lambda Function details and the Batch size for the Lambda Trigger. (more on these configurations later in this post).
 
-![Enable Lambda Trigger for a .NET Function on DynamoDB Stream.](/images/dynamodb-stream-add-lambda-trigger.jpg)
+<ImageCard src="/content/images/dynamodb-stream-add-lambda-trigger.jpg" alt="Enable Lambda Trigger for a .NET Function on DynamoDB Stream." />
 
 Select the Lambda Function we deployed earlier and create a new trigger. You can also see the details of this new Trigger under the actual Lambda Function.
 
 In the AWS Console, navigate to Lambda Functions and the function deployed earlier. Under Configurations → Trigger, we can see the new DynamoDB Trigger as shown below.
 
-![DynamoDB Trigger created under the .NET Lambda function can be seen from the Lambda function in the AWS Console.](/images/dynamodb-stream-lambda-triggers.jpg)
+<ImageCard src="/content/images/dynamodb-stream-lambda-triggers.jpg" alt="DynamoDB Trigger created under the .NET Lambda function can be seen from the Lambda function in the AWS Console." />
 
 To test the integration, update an item in the DynamoDB User table. It creates a new record into the DynamoDB Stream, which triggers our Lambda Function.
 
 Since all our Lambda Function is logging the details, we can check the CloudWatch logs to see the details.
 
-![Logs in Amazon CloudWatch after updating an item in the DynamoDB table. It triggers the .NET Lambda function, which writes the details to the log.](/images/dynamodb-stream-lambda-trigger-log.jpg)
-
-<BlogLink
-  href="/blog/amazon-cloudwatch-logs-dotnet"
-  title="How To Log Correctly To AWS CloudWatch From a .NET Application"
-  description="Learn how to use Amazon CloudWatch when building .NET applications. We will learn how to write logs into CloudWatch, filter the logs, some good practices when logging, learn about Log Analytics, and see how we can filter and view logs across multiple applications."
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/logs.jpg"
-/>
+<ImageCard src="/content/images/dynamodb-stream-lambda-trigger-log.jpg" alt="Logs in Amazon CloudWatch after updating an item in the DynamoDB table. It triggers the .NET Lambda function, which writes the details to the log." /><BookmarkCard href="/blog/amazon-cloudwatch-logs-dotnet" title="How To Log Correctly To AWS CloudWatch From a .NET Application" description="Learn how to use Amazon CloudWatch when building .NET applications. We will learn how to write logs into CloudWatch, filter the logs, some good practices when logging, learn about Log Analytics, and see how we can filter and view logs across multiple applications." icon="/favicon.ico" />
 
 ## Converting DynamoDB Stream Record to .NET Objects
 
@@ -205,7 +191,9 @@ We can also use the User object instance to perform business logic and related f
 
 The DynamoDB Stream Lambda trigger has additional configuration options. Navigate to the Trigger option under the Lambda Function and Edit the trigger.
 
-<Figure src="/images/dynamodb-stream-lambda-trigger-edit-configuration.jpg" caption="**Batch Size and Batch Window**" />
+<ImageCard src="/content/images/dynamodb-stream-lambda-trigger-edit-configuration.jpg" alt="Setting up Lambda Trigger configuration for the DynamoDB Trigger, batch size and batch window, on the .NET Function." />
+
+**Batch Size and Batch Window**
 
 **Batch size**  is the number of records sent to the Lambda function in each batch. The **Batch window** specifies the maximum amount of time (in seconds) to gather records before invoking the Function.
 
@@ -242,7 +230,7 @@ The [Lambda event filtering rule](https://docs.aws.amazon.com/lambda/latest/dg/i
 
 To apply the Filter rule to the Lambda Function, edit the DynamoDB trigger under the Lambda function and specify the JSON string under Filter criteria.
 
-![JSON Filtering Rule on the DynamoDB Lambda Trigger helps control what records are passed on to the .NET function.](/images/dynamodb-stream-lambda-trigger-filter.jpg)
+<ImageCard src="/content/images/dynamodb-stream-lambda-trigger-filter.jpg" alt="JSON Filtering Rule on the DynamoDB Lambda Trigger helps control what records are passed on to the .NET function." />
 
 With the filter specified, only records with the name 'Rahul Nath' will be passed on to the Lambda Function.
 
@@ -256,14 +244,6 @@ By default, the DynamoDB stream retries these messages until they are processed 
 
 The Lambda Trigger configuration provides options to process and handles these error records so that it does not block the processing of new records. In [another blog post](/blog/aws-dynamodb-streams-lambda-triggers-exception-handling-dotnet/), I will cover the different configurations specific to Error Handling and how to use this. I also cover different integration patterns you can use to process Stream Record events successfully.
 
-<BlogLink
-  href="/blog/aws-dynamodb-streams-lambda-triggers-exception-handling-dotnet"
-  title="How to Handle Exceptions When Processing DynamoDB Stream Events in .NET Lambda Function"
-  description="This article is sponsored by AWS and is part of my AWS Series. DynamoDB Streams capture a time-ordered sequence of events in any DynamoDB table. In a previous blog post, DynamoDB Streams and AWS Lambda Trigger in .NET, we learned how to set up DynamoDB Stream on a DynamoDB table"
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/aws-lambda-dynamodb-streams-trigger-exception-handling-dotnet.jpg"
-/>
+<BookmarkCard href="/blog/aws-dynamodb-streams-lambda-triggers-exception-handling-dotnet" title="How to Handle Exceptions When Processing DynamoDB Stream Events in .NET Lambda Function" description="This article is sponsored by AWS and is part of my AWS Series. DynamoDB Streams capture a time-ordered sequence of events in any DynamoDB table. In a previous blog post, DynamoDB Streams and AWS Lambda Trigger in .NET, we learned how to set up DynamoDB Stream on a DynamoDB table" icon="/favicon.ico" />
 
 I hope this helped you get started with DynamoDB Streams from a .NET application.

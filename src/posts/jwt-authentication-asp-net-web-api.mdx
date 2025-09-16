@@ -1,21 +1,21 @@
 ---
-title: "How To Protect Your ASP NET Web API Using JWT Authentication"
+title: How To Protect Your ASP NET Web API Using JWT Authentication
 slug: jwt-authentication-asp-net-web-api
-date: 2021-03-24T00:00:00.000Z
-feature_image: /images/security.jpg
+date: '2021-03-24'
+feature_image: /content/images/security.jpg
+tags:
+  - Azure
+  - Dotnet
 excerpt: >-
   Learn how to protect an ASP NET Core Web API using JWT Bearer Token. We will
   be using Azure Active Directory (AD) as the Identity Provider and see how to
   integrate with it from our application and how everything works together.
-tags:
-  - Dotnet
-  - Azure
 ---
 When building applications, we often want to control access to it. The process of securing your application is referred to as Authentication and Authorization.
 
 In this post, let's learn how to protect your ASP NET Core Web API using JWT Bearer Token. We will be using Azure Active Directory (AD) as the Identity Provider and see how to integrate with it from our application and how everything works together.
 
-<iframe src="https://www.youtube.com/embed/YGUgmWd9xaw" />
+<EmbedCard src="https://www.youtube.com/embed/YGUgmWd9xaw" />
 
 To get started, let's create an ASP NET Web API application from the default template. If you are using the [dotnet CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/), you can use `dotnet new webapi` command to create a new Web API application.
 
@@ -30,19 +30,12 @@ We need to protect this API endpoint so that only specific users can use this AP
 To achieve this, we need to make sure only authenticated users can access the API. Any time we talk about Authentication, we most likely speak about Authorization as well. So what is the difference between these two?
 
 > _Authentication is the process of proving that you are who you say you are._
+
 > _Authorization is the act of granting an authenticated party permission to do something._
 
 For this post to keep things simple, I will only focus on Authentication.
 
-<BlogLink
-  href="/blog/dot-net-core-api-and-azure-ad-groups-based-access"
-  title=".Net Core Web App and Azure AD Security Groups Role Based Access"
-  description="Use Azure AD groups to enable/disable functionality for your users based on their Roles."
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/azure_ad_Groups.png"
-/>
+<BookmarkCard href="/blog/dot-net-core-api-and-azure-ad-groups-based-access" title=".Net Core Web App and Azure AD Security Groups Role Based Access" description="Use Azure AD groups to enable/disable functionality for your users based on their Roles." icon="/favicon.ico" />
 
 ### Real-World Analogy
 
@@ -54,7 +47,9 @@ In all these cases, office spaces or public buildings can either create and mana
 
 Similarly, when building an application, depending on your application scenario, you can either manage the username and passwords yourself or use existing public services like Google, Facebook, etc. or outsource it to a third-party provider often referred to as Identity Provider.
 
-[<Figure src="/images/asp_net_core_banner.png)](https://www.youtube.com/playlist?list=PL59L9XrzUa-nqfCHIKazYMFRKapPNI4sP" caption="## Setting Up Identity Provider - Azure Active Directory (AD)" />
+<ImageCard src="/content/images/asp_net_core_banner.png" alt="" />
+
+## Setting Up Identity Provider - Azure Active Directory (AD)
 
 In Microsoft Azure world, [Azure Active Directory](https://azure.microsoft.com/en-au/services/active-directory/)(AD) is a centralized Identity Provider in the Cloud. It supports and enables various scenarios like Multi-Factor Authentication (sometimes also called 2FA), Single-Sign on, Conditional access (making sure the user is in a specific location, etc.)
 
@@ -67,7 +62,7 @@ In nearly all Authentication and Authorization flows, there are **four parties i
 -   **OAuth Client** → Your Application, which the user interacts with.
 -   **Resource Server** → The place, application, or API where the data resides.
 
-![](/images/authentication_id_provider_flow.jpg)
+<ImageCard src="/content/images/authentication_id_provider_flow.jpg" alt="" />
 
 There might be multiple applications (referred to as OAuth Client above) that need to interact with the same or different Resource Server. Each of these applications might have different settings specific to its needs.
 
@@ -83,19 +78,19 @@ The Application Object describes three aspects of an application.
 
 To create an Application Object, head over to the App Registrations section under your Azure Active Directory in the Azure Portal and use the '_**New Registration**_.'
 
-![Azure AD App Registrations in the Portal](/images/azure_ad_app_registration.jpg)
+<ImageCard src="/content/images/azure_ad_app_registration.jpg" alt="Azure AD App Registrations in the Portal" />
 
 In the following screen, enter the name for your application and select the '_Supported account type_.' If you are unsure which account type to choose, use the 'Help me choose' link to learn more.
 
 Depending on the type of account, you select the [version of the token](https://docs.microsoft.com/en-us/azure/active-directory/develop/scenario-protected-web-api-app-registration?view=aspnetcore-5.0#accepted-token-version) that Azure AD creates will be different. (between v1 and v2). Let's not worry about it too much at the moment and select 'Accounts in this organizational directory only' as the option. (It will create a v1 token). You can read more about the [token versions here](https://docs.microsoft.com/en-us/azure/active-directory/develop/access-tokens#v10-and-v20).
 
-![Azure AD Create a new App Registration](/images/azure_ad_app_new_registration.jpg)
+<ImageCard src="/content/images/azure_ad_app_new_registration.jpg" alt="Azure AD Create a new App Registration" />
 
 For the Redirect URI, you can leave it blank or give in the URL of your API endpoint (Since an end-user does not log in directly against the API, this can be blank).
 
 Clicking Register will register the AD Application and show the relevant details of the application created.
 
-![Azure AD App Registration Details](/images/azure_ad_app_registration_details.jpg)
+<ImageCard src="/content/images/azure_ad_app_registration_details.jpg" alt="Azure AD App Registration Details" />
 
 The AD application is all set up .let's configure the web app to start using this AD Application for authentication.
 
@@ -182,7 +177,7 @@ In Azure AD for the registered application, under Authentication tab we need to 
 
 Below I add a Web platform, specify a Redirect URI and enable the Access token for implicit flow.
 
-![Enable Access token for Implicit flow in Azure App Registration](/images/azure_ad_app_enable_access_token.jpg)
+<ImageCard src="/content/images/azure_ad_app_enable_access_token.jpg" alt="Enable Access token for Implicit flow in Azure App Registration" />
 
 To use the Implicit flow to get the token from Azure AD, we need to request the OAuth2 authorize endpoint. The base URL is available from the Endpoints section (_OAuth 2.0 authorization endpoint (v1)_) under the AD application that we created above.
 
@@ -219,7 +214,7 @@ Since we cannot use the browser to add in the Bearer token as part of the Author
 
 We can pass the Bearer token under the Auth section of the request as shown below, and it now successfully returns the data from our API since it is a valid token.
 
-![Pass Bearer Token as part of the Authorization header from Postman to make a successful API request](/images/authentication_postman_request.jpg)
+<ImageCard src="/content/images/authentication_postman_request.jpg" alt="Pass Bearer Token as part of the Authorization header from Postman to make a successful API request" />
 
 If we modify the token value (by removing or adding a few characters), the API again returns a 401 Unauthorized status code as expected.
 
@@ -234,7 +229,6 @@ To do this, let's use a tool called [Fiddler](https://www.telerik.com/download/f
 To configure ASP NET API calls to be routed through Fiddler, let's  add a default proxy to all HTTPClient instances using the below code.
 
 ```csharp
-
 HttpClient.DefaultProxy = new WebProxy(new Uri("http://localhost:8866"));
 
 ```
@@ -245,13 +239,13 @@ With this configured, if we rerun the application and call the API, we can see t
 
 The first call is a discovery call, and the second one does an Open Id configuration call for our AD tenant. It gives the `jwks_uri` attribute, which retrieves all public keys (an array of keys) used by our Azure AD instance now.
 
-![Fiddler capture of the requests made by the API Server to Azure AD, with the call to jwks_uri highlighted and showing the kid property.](/images/jwt_authentication_signature_verification_fiddler.jpg)
+<ImageCard src="/content/images/jwt_authentication_signature_verification_fiddler.jpg" alt="Fiddler capture of the requests made by the API Server to Azure AD, with the call to jwks_uri highlighted and showing the kid property." />
 
 The JWT token that we receive has information on the public key used to sign the token. It is available as `kid` property in the header of the token.
 
 If we inspect the token using a tool like [jwt.io](http://jwt.io) or [jwt.ms](http://jwt.ms) we can view this information (as shown in the screenshot below).
 
-![Bearer Token inspected in jwt.io with the kid property highlighted, that is used to match up with the key from jwks_uri.](/images/bearer_token_jwt_io.jpg)
+<ImageCard src="/content/images/bearer_token_jwt_io.jpg" alt="Bearer Token inspected in jwt.io with the kid property highlighted, that is used to match up with the key from jwks_uri." />
 
 The `keyid` TDK attribute is matched to the correct public key from the call to the `jwks_uri` and used to verify the JWT token signature.
 

@@ -1,12 +1,14 @@
 ---
-title: "Amazon S3 For the .NET Developer: How to Easily Get Started"
+title: 'Amazon S3 For the .NET Developer: How to Easily Get Started'
 slug: amazon-s3-dotnet
-date: 2022-04-20
-feature_image: /images/storage-box.jpg
-excerpt: >-
-  Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3.
+date: '2022-04-20'
+feature_image: /content/images/storage-box.jpg
 tags:
   - AWS
+excerpt: >-
+  Learn how to get started with Amazon S3 from a .NET Core application. We will
+  learn how to store and retrieve data from the storage, important concepts to
+  be aware of while using S3.
 ---
 _This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
@@ -16,7 +18,7 @@ While Amazon S3 allows interactions through the UI console, it’s more useful w
 
 In this blog post, let’s look at how to start using Amazon S3 from a .NET application. We will learn how to store and retrieve data from the storage, essential concepts to be aware of while using S3.
 
-<iframe src="https://www.youtube.com/embed/3sdTztvaxhg" />
+<EmbedCard src="https://www.youtube.com/embed/3sdTztvaxhg" />
 
 ## Basic Concepts
 
@@ -52,7 +54,7 @@ In this case, let’s see how we can create a bucket using .NET code.
 
 Using the `AmazonS3Client` from the NuGet package, we can connect to Amazon S3 and perform various functions.
 
-<iframe src="https://www.youtube.com/embed/ukam37umkQc" />
+<EmbedCard src="https://www.youtube.com/embed/ukam37umkQc" />
 
 I use the Shared AWS Credentials stored on my local machine to authenticate with my AWS account. When deployed to AWS, it will use the IAM permissions configured for the application (if running on AWS itself).
 
@@ -87,7 +89,7 @@ The `AmazonS3Util` class as part of the same NuGet package provides the `DoesS3B
 var bucketExists = await AmazonS3Util.DoesS3BucketExistV2Async(s3Client, BucketName);
 if (!bucketExists)
 {
-   / Create Bucket
+   // Create Bucket
 }
 
 ```
@@ -123,7 +125,7 @@ Depending on your application and use cases, you can either overwrite the same f
 
 Amazon S3 has a flat data structure. You have a Bucket, and within that, you have Objects with a key. However, you can introduce logical hierarchies by using the ‘/’ delimiter.
 
-![Folders and files in Amazon S3 is a logical hierarchy using / as a delimiter in Object key names. When creating files from .NET prefix with the appropriate logical grouping.](/images/amazon-s3-hierarchy-folder-structure.jpg)
+<ImageCard src="/content/images/amazon-s3-hierarchy-folder-structure.jpg" alt="Folders and files in Amazon S3 is a logical hierarchy using / as a delimiter in Object key names. When creating files from .NET prefix with the appropriate logical grouping." />
 
 The AWS Console uses the delimiter in Object key names to group them as folders, as shown above. When creating files, make sure to prefix the name with the appropriate logical grouping followed by ‘/’. You can also do multi-level grouping, allowing folders inside folders (e.g., _Projects/Amazon S3/VideoScript.txt_).
 
@@ -217,7 +219,7 @@ To protect against accidental deletes or to keep backups, you can [enable Versio
 
 ## Dependency Injection
 
-<iframe src="https://www.youtube.com/embed/YR6HkvNBpX4" />
+<EmbedCard src="https://www.youtube.com/embed/YR6HkvNBpX4" />
 
 To inject the `AmazonS3Client` into our class constructor, we must first register it in our _Program.cs_ class. The [AWSSDK.Extensions.NETCore.Setup](https://www.nuget.org/packages/AWSSDK.Extensions.NETCore.Setup/) NuGet package provides extensions methods to register AWS Service classes.
 

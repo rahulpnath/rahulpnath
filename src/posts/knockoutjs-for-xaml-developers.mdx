@@ -1,18 +1,14 @@
 ---
-title: "KnockoutJS For XAML Developers"
+title: KnockoutJS For XAML Developers
 slug: knockoutjs-for-xaml-developers
-date: 2014-07-07T00:00:00.000Z
-feature_image: /images/MVVM_Knockoutjs.jpg
-excerpt: >-
-  After a very long time since I have actually wanted to move out to web
-  development, recently I have started developing a website as part of my
-  personal project, along...
+date: '2014-07-07'
+feature_image: /content/images/MVVM_Knockoutjs.jpg
 tags:
   - Programming
 ---
-After a very long time since I have actually wanted to move out to web development, recently I have started developing a website as part of my personal project, along with a friend of mine. I have been into desktop/mobile development on Microsoft technologies, using XAML for a very long time. [Model-View-View Model (MVVM)](/blog/tag/mvvm/) is a pattern that got popular because of the powerful binding engine in XAML. It is always comforting to see familiar patterns while moving into unexplored technology areas. Same is the reason I chose to explore [KnockoutJS](http://knockoutjs.com/index.html)(KO), which simplifies dynamic JavaScript UIs with the MVVM pattern.
+After a very long time since I have actually wanted to move out to web development, recently I have started developing a website as part of my personal project, along with a friend of mine. I have been into desktop/mobile development on Microsoft technologies, using XAML for a very long time. [Model-View-View Model (MVVM)](/tag/mvvm/) is a pattern that got popular because of the powerful binding engine in XAML. It is always comforting to see familiar patterns while moving into unexplored technology areas. Same is the reason I chose to explore [KnockoutJS](http://knockoutjs.com/index.html)(KO), which simplifies dynamic JavaScript UIs with the MVVM pattern.
 
-![MVVM Knockout](/images/MVVM_Knockoutjs.jpg)
+<ImageCard src="/content/images/MVVM_Knockoutjs.jpg" alt="MVVM Knockout" />
 
 KnockoutJS acts as the binding engine in XAML and binds your ViewModel(VM) with your View as shown in the figure. As you expect, like in XAML it provides a way to specify declarative-bindings on html using the [data-bind](http://knockoutjs.com/documentation/binding-syntax.html) attribute and is also widely [supported across different browsers](http://knockoutjs.com/documentation/browser-support.html). The Model is the data that is populated from the server after your business logics applied,  mostly populated out of Ajax JSON calls from a web service/api. This Model data might mostly need some transformation to map to your View needs which is what exactly the ViewModel does. It transforms the Model data and wraps over it to provide features like 2-way-binding, client side validation, transformation of properties, UI specific state and a lot more
 
@@ -26,7 +22,7 @@ Notifying data bounded clients on updates to the underlying bound data is a typi
 
 ```javascript
 var personVM = {
-  Name: ko.observable('Rahul'),"
+  Name: ko.observable('Rahul'),
   Age: ko.observable(50),
 };
 

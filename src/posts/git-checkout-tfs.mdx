@@ -1,12 +1,8 @@
 ---
-title: "git checkout TFS"
+title: git checkout TFS
 slug: git-checkout-tfs
-date: 2016-04-15T00:00:00.000Z
-feature_image: /images/git_featurebranch_workflow.png
-excerpt: >-
-  It's been a year since using Git(https://git-scm.com/) as my mainstream
-  version control system and I am loving it! Before Git, I had used Team
-  Foundation Version Control (TFVC) for a...
+date: '2016-04-15'
+feature_image: /content/images/git_featurebranch_workflow.png
 tags:
   - Productivity
   - Programming
@@ -18,6 +14,7 @@ It's been a year since using [Git](https://git-scm.com/) as my mainstream versio
 By design, Git is a Distributed VCS, whereas TFS is centralized one. It takes quite a while to get your head around this and what it actually means. By definition
 
 > **\*TFVC**: Uses a single, centralized server repository to track and version files. Local changes are always checked in to the central server where other developers can get the latest changes.\*
+
 > **\*Git**: Git is a distributed version control system. Each developer has a copy of the source repository on their dev machine. Developers can commit each set of changes on their dev machine and perform version control operations such as history and compare without a network connection.\*
 
 You. may not see the real Distributed benefits if you are working off a central repository (hosted on a server like GitHub or Bitbucket) and using [TFS way of development](https://www.atlassian.com/git/tutorials/comparing-workflows/centralized-workflow) :
@@ -51,7 +48,9 @@ gcc=git commit
 
 Git can be used in many ways and which makes it hard to get started. There are a few popular [workflows](https://www.atlassian.com/git/tutorials/comparing-workflows/) that one can use. Currently, I am using - [Feature Branch workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow) - which means that all work happen on independent feature branches and once completed gets merged into the main trunk (master branch). Code Reviews happens on the way it gets pulled into the main branch, which ensures code quality and familiarity.
 
-[<Figure src="/images/git_featurebranch_workflow.png)](https://www.atlassian.com/git/images/tutorials/collaborating/comparing-workflows/feature-branch-workflow/01.svg" caption="### Not Just for Code" />
+<ImageCard src="/content/images/git_featurebranch_workflow.png" alt="Git Feature Branch Workflow" />
+
+### Not Just for Code
 
 Git is a version control system and does not limit itself to storing code. You can use it for [version controlling any of your work](http://readwrite.com/2013/11/08/seven-ways-to-use-github-that-arent-coding/). For example, this blog is [hosted on Github](https://github.com/rahulpnath/rahulpnath.com) and all the [changes are version controlled](https://github.com/rahulpnath/rahulpnath.com/commits/master), which gives me the flexibility to work and commit locally. Since the blog is [static generated](/blog/static-generator-is-all-a-blog-needs-moving-to-octopress/) I can also preview all the changes locally. I use git whenever I work on any documents or [presentations](https://github.com/rahulpnath/Speaking) so that I can avoid manual copy of files and renaming with suffixes like '_Draft_, '_Draft1_,_Final_,"_FinalRevision_' etc. (if that sounds any similar)
 

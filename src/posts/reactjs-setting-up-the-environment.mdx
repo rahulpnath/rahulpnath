@@ -1,16 +1,14 @@
 ---
-title: "ReactJS: Setting up the Environment"
+title: 'ReactJS: Setting up the Environment'
 slug: reactjs-setting-up-the-environment
-date: 2016-05-12
-feature_image: /images/react_vscode_intellisense.png
-excerpt: >-
-  This post helps setting up the development environment for React on VS Code using Browserify and Gulp  I have been playing around with React(https://facebook.github.io/react/) for the past few days...
+date: '2016-05-12'
+feature_image: /content/images/react_vscode_intellisense.png
 tags:
   - Programming
 ---
 _This post helps setting up the development environment for React on VS Code using Browserify and Gulp_
 
-I have been playing around with [React](https://facebook.github.io/react/) for the past few days and liking the one way binding and immutability concept that it puts forward. The component-based approach and having all related code in a single place is really interesting. Need to explore more and see how it really turns out building UI's with React."
+I have been playing around with [React](https://facebook.github.io/react/) for the past few days and liking the one way binding and immutability concept that it puts forward. The component-based approach and having all related code in a single place is really interesting. Need to explore more and see how it really turns out building UI's with React.
 
 The openness of the Web makes it really difficult to get started with any development platform on it and is the same with React. There are a lot of options for getting things done and can get [overwhelming when newly starting out](https://en.wikipedia.org/wiki/Decision_fatigue). This post explains 'one way' to set up the development environment when developing an application using the React JavaScript framework. I am using VS Code for some time now and wanted to use the same for React development. Except for setting up VS Code, everything else would still make sense to you if you are using a different editor.
 
@@ -31,7 +29,7 @@ npm i --save react-dom
 
 JavaScript development experience is better when you have _[jsconfig.json](https://code.visualstudio.com/Docs/languages/javascript)_ file in your project root. VSCode recommends adding this file through a small light bulb notification on the right side of the status bar (as shown below). With this configuration file, VSCode treats all the _js_ files under the same project context.
 
-![Visual Studio code jsconfig balloon notification](/images/vscode_jsconfig_balloon.png)
+<ImageCard src="/content/images/vscode_jsconfig_balloon.png" alt="Visual Studio code jsconfig balloon notification" />
 
 Intellisense for libraries is available through type definition files, usually available in the [DefinitelyTyped](http://definitelytyped.org/) [repository](https://github.com/DefinitelyTyped/DefinitelyTyped). With npm, you can manage these definition files using the [TypeScript Definition Manager (typings)](https://github.com/typings/typings) package. To get started install the typings package and support for node packages. Now you can use [typings](https://github.com/typings/typings/blob/master/docs/commands.md) to manage all the typescript definitions and use it for getting IntelliSense support. Once you have the correct type definitions installed for the packages you use, VSCode will show IntelliSense as shown below.
 
@@ -41,8 +39,9 @@ typings install --ambient node
 typings install --save-dev gulp
 
 ```
+<ImageCard src="/content/images/react_vscode_intellisense.png" alt="Visual Studio code Intellisense" />
 
-<Figure src="/images/react_vscode_intellisense.png" caption="## Hello World from React" />
+## Hello World from React
 
 Now that we have enough to get us started let's write our first react component, which displays a message passed into it.
 
@@ -165,7 +164,7 @@ gulp.task('default', ['build', 'connect', 'lint', 'open', 'watch']);
 
 With the default gulp task running, either using [VSCode Task Runner](https://code.visualstudio.com/Docs/editor/tasks) or the [command line](https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md#4-run-gulp), any edits that I make to the code gets build and pushed to the output directory and the browser refreshes to show the latest changes.
 
-![React real-time browser refresh](/images/react_realtime_edits.gif)
+<ImageCard src="/content/images/react_realtime_edits.gif" alt="React real-time browser refresh" />
 
 _If you find any package details missing see the [package.json](https://github.com/rahulpnath/Blog/blob/master/React_Template/package.json) file._
 

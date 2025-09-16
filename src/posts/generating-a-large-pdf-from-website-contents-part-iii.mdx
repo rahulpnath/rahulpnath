@@ -1,11 +1,11 @@
 ---
-title: "Generating a Large PDF from Website Contents - Merging PDF Files"
+title: Generating a Large PDF from Website Contents - Merging PDF Files
 slug: generating-a-large-pdf-from-website-contents-part-iii
-date: 2017-09-19T00:00:00.000Z
-feature_image: /images/pdf_generation_flow.png
-excerpt: Dynamically generate a PDF file for a CMS Website.
+date: '2017-09-19'
+feature_image: /content/images/pdf_generation_flow.png
 tags:
   - Programming
+excerpt: Dynamically generate a PDF file for a CMS Website.
 ---
 **Posts in this series**
 
@@ -29,11 +29,10 @@ public class DocumentSection
 
 ```
 
-The above structure allows us to maintain a tree-like structure of the document. The structure is the same as that is provided to the user to select the PDF options. I used the [iTextSharp](https://www.nuget.org/packages/iTextSharp-LGPL/) library to merge PDF documents. To interact with the PDF, we first need to create a PdfReader object from the stream. Using the SimpleBookmark class, we can get the existing bookmarks for the PDF."
+The above structure allows us to maintain a tree-like structure of the document. The structure is the same as that is provided to the user to select the PDF options. I used the [iTextSharp](https://www.nuget.org/packages/iTextSharp-LGPL/) library to merge PDF documents. To interact with the PDF, we first need to create a PdfReader object from the stream. Using the SimpleBookmark class, we can get the existing bookmarks for the PDF.
 
 ```csharp
 var pdfReader = new PdfReader(stream);
-
 ArrayList bookmarks = SimpleBookmark.GetBookmark(pdfReader);
 
 ```

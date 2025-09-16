@@ -1,15 +1,11 @@
 ---
-title: "Using Fiddler to help in Manual Testing"
+title: Using Fiddler to help in Manual Testing
 slug: using-fiddler-to-help-in-manual-testing
-date: 2016-03-07T00:00:00.000Z
-feature_image: /images/fiddler_composer.png
-excerpt: >-
-  Fiddler is an HTTP debugging proxy server application, that captures HTTP and
-  HTTPS traffic and displays to the user. It also enables modifying HTTP traffic
-  when sent or received. Fiddler...
+date: '2016-03-07'
+feature_image: /content/images/fiddler_composer.png
 tags:
-  - Tools
   - Testing
+  - Tools
 ---
 Fiddler is an HTTP debugging proxy server application, that captures HTTP and HTTPS traffic and displays to the user. It also enables modifying HTTP traffic when sent or received. Fiddler is [one of the tools that I use daily](/blog/tools-that-I-use/) and is an indispensable one for any web developer.
 
@@ -26,7 +22,9 @@ Using the Fiddler composer window (shown in the image below), we can create new 
 
 Fiddler also allows saving raw requests in the Scratchpad tab to execute as and when required. On clicking Execute Fiddler creates an HTTP request from the entered data and sends to the server. To modify requests you can either drag and drop the request from the displayed URL's list into the composer tab or right-click on an entry and _Unlock for Editing_ (keyboard shortcut - F2). After making the changes to the request in the Inspector window, right-click on the request again to Replay -> Reissue ( R).
 
-<Figure src="/images/fiddler_composer.png" caption="### Testing Error Cases" />
+<ImageCard src="/content/images/fiddler_composer.png" alt="Fiddler Composer tab" />
+
+### Testing Error Cases
 
 Testing error cases is tricky, especially from a UI level. Things usually don't go wrong in the development/testing environment and [almost never on a developers machine](http://blog.codinghorror.com/the-works-on-my-machine-certification-program/) which makes it very hard to test for cases where something does not work. Fiddler makes it easy to test error scenarios with [AutoResponder](http://docs.telerik.com/fiddler/KnowledgeBase/AutoResponder), which allows returning handcrafted responses for requests, without actually hitting the server.
 
@@ -34,7 +32,7 @@ To create an auto response for a URL, select the URL from the URL's list and dra
 
 > _Make sure that the 'Unmatched requests passthrough' option is true in the AutoResponder tab to make sure that all other requests pass through to the server._
 
-![Fiddler AutoResponder tab](/images/fiddler_autoresponder.png)
+<ImageCard src="/content/images/fiddler_autoresponder.png" alt="Fiddler AutoResponder tab" />
 
 To create a custom response, choose 'Create a New Response' or 'Find a file' (if you already have the response saved in a text file). You can save custom responses in the _ResponseTemplates_ folder in the root folder of Fiddler installation, to have them populated in the AutoResponder tab. When editing existing response data, make sure properties like Content-Length reflects the correct values. You can also set a [Latency](http://docs.telerik.com/fiddler/KnowledgeBase/AutoResponder#latency) for the response, to simulate response coming from a server. RIght click on the rules for the Set Latency option and enter the value in milliseconds.
 

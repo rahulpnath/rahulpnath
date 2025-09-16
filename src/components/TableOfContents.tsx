@@ -16,7 +16,6 @@ interface TableOfContentsProps {
 export default function TableOfContents({ content, className = '' }: TableOfContentsProps) {
   const [tocItems, setTocItems] = useState<TOCItem[]>([]);
   const [activeId, setActiveId] = useState<string>('');
-  const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Extract headings from content or from the page
   useEffect(() => {
@@ -161,57 +160,47 @@ export default function TableOfContents({ content, className = '' }: TableOfCont
   }
 
   return (
-    <div className={`bg-white border border-gray-200 rounded-lg shadow-sm ${className}`}>
+    <div className={className}>
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-100">
-        <h3 className="font-semibold text-gray-900 text-sm">Table of Contents</h3>
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1 rounded hover:bg-gray-100 transition-colors"
-          aria-label={isCollapsed ? 'Expand table of contents' : 'Collapse table of contents'}
-        >
-          <svg 
-            className={`w-4 h-4 text-gray-500 transition-transform ${isCollapsed ? 'rotate-180' : ''}`}
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-      </div>
+      <h3 className="font-medium text-gray-900 text-sm mb-4">In this article</h3>
 
       {/* TOC Items */}
-      {!isCollapsed && (
-        <nav className="p-4">
-          <ul className="space-y-1">
-            {tocItems.map((item) => (
-              <li key={item.id}>
-                <button
-                  onClick={() => scrollToHeading(item.id)}
-                  className={`
-                    block w-full text-left text-sm py-1.5 px-2 rounded transition-all duration-200
-                    hover:bg-gray-50 hover:text-blue-600
-                    ${activeId === item.id 
-                      ? 'text-blue-600 bg-blue-50 font-medium border-l-2 border-blue-600 -ml-2 pl-4' 
-                      : 'text-gray-600'
-                    }
-                  `}
-                  style={{ 
-                    paddingLeft: `${(item.level - 1) * 0.75 + 0.5}rem`,
-                    marginLeft: activeId === item.id ? '-0.5rem' : '0'
-                  }}
-                >
-                  {item.text}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )}
+      <nav className="border-l-2 border-gray-200 pl-4">
+        <ul className="space-y-2">
+          {tocItems.map((item) => (
+            <li key={item.id} className="flex items-start">
+              <span className={`mr-2 text-base mt-0.5 transition-colors duration-200 font-bold ${
+                activeId === item.id 
+                  ? 'text-[#823EB7]' 
+                  : 'text-gray-400'
+              }`}>›</span>
+              <a
+                href={`#${item.id}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToHeading(item.id);
+                }}
+                className={`
+                  block text-sm py-1 transition-colors duration-200
+                  hover:text-gray-800 hover:underline
+                  ${activeId === item.id 
+                    ? 'text-gray-800 font-medium' 
+                    : 'text-gray-600'
+                  }
+                `}
+                style={{ 
+                  paddingLeft: `${(item.level - 2) * 1}rem`
+                }}
+              >
+                {item.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
       {/* Reading Progress Bar */}
-      <div className="px-4 pb-4">
+      <div className="mt-6">
         <ReadingProgressBar />
       </div>
     </div>
@@ -226,7 +215,7 @@ function ReadingProgressBar() {
     <>
       <div className="w-full bg-gray-200 rounded-full h-1">
         <div 
-          className="bg-blue-600 h-1 rounded-full transition-all duration-300"
+          className="bg-[#823EB7] h-1 rounded-full transition-all duration-300"
           style={{ width: `${progress}%` }}
         />
       </div>

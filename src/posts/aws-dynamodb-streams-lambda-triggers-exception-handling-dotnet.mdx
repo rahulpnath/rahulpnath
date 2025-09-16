@@ -1,18 +1,17 @@
 ---
-title: ">-   How to Handle Exceptions When Processing DynamoDB Stream Events in .NET Lambda   Function"
+title: >-
+  How to Handle Exceptions When Processing DynamoDB Stream Events in .NET Lambda
+  Function
 slug: aws-dynamodb-streams-lambda-triggers-exception-handling-dotnet
-date: 2022-08-31T00:00:00.000Z
-feature_image: /images/aws-lambda-dynamodb-streams-trigger-exception-handling-dotnet.jpg
-excerpt: >-
-  This article is sponsored by AWS and is part of my AWS
-  Series(GHOSTURL/tag/aws/).  DynamoDB Streams capture a time-ordered sequence
-  of events in any DynamoDB table.  In a previous...
+date: '2022-08-31'
+feature_image: >-
+  /content/images/aws-lambda-dynamodb-streams-trigger-exception-handling-dotnet.jpg
 tags:
   - AWS
   - DynamoDB
   - Lambda
 ---
-_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
 DynamoDB Streams capture a time-ordered sequence of events in any DynamoDB table.
 
@@ -20,11 +19,11 @@ In a previous blog post, [DynamoDB Streams and AWS Lambda Trigger in .NET](/blog
 
 A _stream record_ contains information about a data modification to a single item in a DynamoDB table. _Shards_ in DynamoDB streams is a collection of stream records.
 
-<iframe src="https://www.youtube.com/embed/4YzuN4MAFiQ" />
+<EmbedCard src="https://www.youtube.com/embed/4YzuN4MAFiQ" />
 
 When enabling Streams, DynamoDB creates at least one Shard per partition in the DynamoDB table. When a Lambda function is used to process the events in the DynamoDB Stream, one instance of the Lambda Function is invoked per Shard in the Stream.
 
-[![DynamoDB creates one Shard per partition key in the DynamoDB table.](/images/dynamodb-stream-per-partition.jpg)](https://aws.amazon.com/blogs/database/how-to-perform-ordered-data-replication-between-applications-by-using-amazon-dynamodb-streams/)
+<ImageCard src="/content/images/dynamodb-stream-per-partition.jpg" alt="DynamoDB creates one Shard per partition key in the DynamoDB table." />
 
 As long as the .NET Lambda Function processes the records as expected, there will be a continuous stream of events records coming to the function as we make changes to the data in the DynamoDB Table.
 
@@ -66,7 +65,7 @@ The AWS Lambda DynamoDB Trigger provides a few Additional Settings that can be u
 
 By setting the ‘_On-failure destination_’  to an Amazon SQS Queue or SNS Topic, we can move error records from the stream to the queue for later processing. This acts like a [Dead Letter Queue (DLQ).](https://en.wikipedia.org/wiki/Dead_letter_queue)
 
-![Additional setting on Lambda DynamoDB Trigger to control what happens to records that fail to process. It allows to set an SQS or SNS to move the error messages to and also set the max retry count and age of the record to keep.](/images/dynamodb-streams-dotnet-lambda-trigger-exception-configuration.jpg)
+<ImageCard src="/content/images/dynamodb-streams-dotnet-lambda-trigger-exception-configuration.jpg" alt="Additional setting on Lambda DynamoDB Trigger to control what happens to records that fail to process. It allows to set an SQS or SNS to move the error messages to and also set the max retry count and age of the record to keep." />
 
 The two settings that go in hand when setting the on-failure destination are:
 
@@ -83,7 +82,7 @@ With the updating settings on the Lambda Trigger configuration, update a record 
 
 You will notice that the Lambda Function was invoked twice with the record with the word Error. Since the message will not be processed (regardless of the number of retries), it will be moved to the configured SQS queue. You can fix the code or do the needful to fix the error record and move them out of the queue.
 
-<iframe src="https://www.youtube.com/embed/U7PvdYlvA-8" />
+<EmbedCard src="https://www.youtube.com/embed/U7PvdYlvA-8" />
 
 For real-world scenarios, if the error in processing the Stream record is transient, it might succeed in the retry and will unblock the stream. However, if the errors are not transient, they will be moved to the SNS/SQS without blocking the Stream from further processing.
 
@@ -91,15 +90,7 @@ Your action for the messages in the queue depends on your application, the error
 
 Messages in the SNS/SQS can be monitored and processed separately without having to block the other updates in the DynamoDB stream. Once the error record is moved to the DLQ, the Stream records' processing continues as usual.
 
-<BlogLink
-  href="/blog/amazon-sns"
-  title="Amazon SNS For the .NET Developer: Getting Started Quick and Easy"
-  description="Learn how to get started with Amazon SNS and use it from a .NET application. We will learn about Topics, sending messages to topics, and using Subscriptions to receive messages. We will also learn about Filters, how to use them, and error handling with SNS."
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/amazon-sns.jpg"
-/>
+<BookmarkCard href="/blog/amazon-sns" title="Amazon SNS For the .NET Developer: Getting Started Quick and Easy" description="Learn how to get started with Amazon SNS and use it from a .NET application. We will learn about Topics, sending messages to topics, and using Subscriptions to receive messages. We will also learn about Filters, how to use them, and error handling with SNS." icon="/favicon.ico" />
 
 ## Stream Event Integration Patterns
 
@@ -109,7 +100,7 @@ If the actions to perform on Stream Record changes are minimal, you can handle i
 
 If there are multiple independent operations that you need to perform on Stream Record events, it’s better to introduce an SNS Topic in the middle and offload the independent operations.
 
-![DynamoDB Streams handling stream events using SNS fanout pattern to handle multiple independent subscribers for the same event.](/images/dynamodb-stream-sns-fanout.jpg)
+<ImageCard src="/content/images/dynamodb-stream-sns-fanout.jpg" alt="DynamoDB Streams handling stream events using SNS fanout pattern to handle multiple independent subscribers for the same event." />
 
 Keeping the original Lambda function to have minimal responsibility of publishing the event to SNS also reduces the chances of exceptions. All independent operations can be different subscribers on the SNS or handled off to separate SQS queues.
 

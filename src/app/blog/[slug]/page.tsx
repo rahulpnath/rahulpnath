@@ -4,6 +4,7 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import Image from 'next/image';
 import { mdxComponents } from '@/mdx-components';
 import TableOfContents from '@/components/TableOfContents';
+import AuthorCard from '@/components/AuthorCard';
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -34,57 +35,65 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           {/* Main Content */}
           <main className="flex-1 lg:max-w-4xl">
             <article className="
-              prose prose-lg prose-slate max-w-none
+              prose prose-lg prose-slate max-w-none font-sans
               leading-relaxed
 
-              /* Headings */
-              prose-headings:font-bold 
-              prose-headings:tracking-tight
-              prose-h1:text-4xl prose-h1:mt-0 prose-h1:mb-6
-              prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4
-              prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
+              /* Headings - Use Serif like Ali's style */
+              prose-headings:font-serif prose-headings:font-medium 
+              prose-headings:tracking-tight prose-headings:text-gray-900
+              prose-h1:text-4xl prose-h1:mt-0 prose-h1:mb-6 prose-h1:leading-tight prose-h1:font-semibold
+              prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:leading-tight prose-h2:font-medium
+              prose-h3:text-2xl prose-h3:mt-10 prose-h3:mb-4 prose-h3:leading-tight prose-h3:font-medium
+              prose-h4:text-xl prose-h4:mt-8 prose-h4:mb-3 prose-h4:leading-tight prose-h4:font-medium
 
-              /* Paragraphs */
-              prose-p:text-lg prose-p:leading-relaxed prose-p:text-gray-800
-              [&_p]:text-lg [&_p]:my-[1em]
+              /* Paragraphs - Use Inter with medium weight like Ali */
+              prose-p:text-lg prose-p:leading-relaxed prose-p:text-gray-800 prose-p:font-medium
+              [&_p]:text-lg [&_p]:my-6 [&_p]:font-sans
 
               /* Links */
-              prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-a:transition-all
+              prose-a:text-[#823EB7] prose-a:no-underline hover:prose-a:underline prose-a:transition-all
+              prose-a:font-medium
 
               /* Lists */
-              prose-ul:list-disc prose-ol:list-decimal
-              prose-li:mb-2
+              prose-ul:list-disc prose-ol:list-decimal prose-ul:my-6 prose-ol:my-6
+              prose-li:mb-2 prose-li:text-lg prose-li:leading-relaxed
 
               /* Blockquotes */
-              prose-blockquote:border-l-4 prose-blockquote:pl-4
-              prose-blockquote:italic prose-blockquote:text-gray-600
+              prose-blockquote:border-l-4 prose-blockquote:border-[#823EB7] prose-blockquote:pl-6
+              prose-blockquote:italic prose-blockquote:text-gray-700 prose-blockquote:my-8
+              prose-blockquote:text-xl prose-blockquote:leading-relaxed
 
               /* Inline code */
-              prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5
+              prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1
               prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
+              prose-code:font-mono prose-code:text-gray-800
 
               /* Code blocks */
               prose-pre:bg-gray-900 prose-pre:text-gray-100
-              prose-pre:rounded-xl prose-pre:p-4
+              prose-pre:rounded-xl prose-pre:p-6 prose-pre:my-8
+              prose-pre:font-mono prose-pre:text-sm prose-pre:leading-relaxed
 
               /* Images */
-              prose-img:rounded-xl prose-img:my-8
+              prose-img:rounded-xl prose-img:my-10 prose-img:shadow-lg
 
               /* Tables */
-              prose-table:border-collapse prose-table:border prose-table:border-gray-200 prose-table:rounded-lg
-              prose-th:border prose-th:border-gray-200 prose-th:bg-gray-50 prose-th:px-6 prose-th:py-4 prose-th:text-left prose-th:font-semibold
+              prose-table:border-collapse prose-table:border prose-table:border-gray-200 prose-table:rounded-lg prose-table:my-8
+              prose-th:border prose-th:border-gray-200 prose-th:bg-gray-50 prose-th:px-6 prose-th:py-4 prose-th:text-left prose-th:font-semibold prose-th:font-clash
               prose-td:border prose-td:border-gray-200 prose-td:px-6 prose-td:py-4
 
               /* HR */
               prose-hr:my-12 prose-hr:border-gray-200
+
+              /* Strong/Bold */
+              prose-strong:font-semibold prose-strong:text-gray-900
             ">
           {/* Article Header */}
           <header className="mb-12 not-prose">
-            <h1 className="text-4xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="font-serif text-5xl font-semibold text-gray-900 mb-6 leading-tight tracking-tight">
               {post.title}
             </h1>
             
-            <div className="flex items-center gap-6 text-sm text-gray-500 mb-8">
+            <div className="flex items-center gap-6 text-sm text-gray-500 mb-8 font-medium">
               <time dateTime={post.publishedAt}>
                 {new Date(post.publishedAt).toLocaleDateString('en-US', {
                   year: 'numeric',
@@ -102,7 +111,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </div>
 
             {post.description && (
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+              <p className="font-sans text-xl text-gray-600 mb-8 leading-relaxed max-w-3xl font-medium">
                 {post.description}
               </p>
             )}
@@ -162,6 +171,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <TableOfContents content={post.content} />
             </div>
           </aside>
+        </div>
+
+        {/* Author Card - Spans full width including TOC area */}
+        <div className="mt-12">
+          <AuthorCard author={post.author} />
         </div>
       </div>
     </div>

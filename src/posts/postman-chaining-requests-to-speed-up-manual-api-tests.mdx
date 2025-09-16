@@ -1,20 +1,19 @@
 ---
-title: "Tip of the Week: Postman - Chaining Requests to Speed Up Manual API Tests"
+title: 'Tip of the Week: Postman - Chaining Requests to Speed Up Manual API Tests'
 slug: postman-chaining-requests-to-speed-up-manual-api-tests
-date: 2017-12-11
-feature_image: /images/postman_chaining_requests.png
-excerpt: >-
-  Pass data from response of one API to another API request.
+date: '2017-12-11'
+feature_image: /content/images/postman_chaining_requests.png
 tags:
   - Programming
+excerpt: Pass data from response of one API to another API request.
 ---
 I was recently playing around with [MessageMedia API](https://www.messagemedia.com.au/) trying to [send SMS and get the status of the SMS sent](https://developers.messagemedia.com/code/messages-api-documentation/). Sending the SMS and getting the status of the last sent SMS always happened in succession when testing it manually. Once I send the message, I waited for the API response, grabbed the message id from the response and used that to form the get status request.
 
 [Postman](https://www.getpostman.com/) is a useful tool if you are building or testing APIs. It allows to create, send and manage API requests.
 
-![Postman Chaining Requests](/images/postman_chaining_requests.png)
+<ImageCard src="/content/images/postman_chaining_requests.png" alt="Postman Chaining Requests" />
 
-I added two requests and saved it to a collection in Postman - one to Send Message and other to Get Message status. I have created an environment variable for holding the message id. For the request that sends a message, the below Test snippet is added. It parses the response body of the request and extracts the message id of the last send message. This is then saved to the environment variable. The [Test](https://www.getpostman.com/docs/postman/scripts/test_scripts) snippet is always run after performing the request."
+I added two requests and saved it to a collection in Postman - one to Send Message and other to Get Message status. I have created an environment variable for holding the message id. For the request that sends a message, the below Test snippet is added. It parses the response body of the request and extracts the message id of the last send message. This is then saved to the environment variable. The [Test](https://www.getpostman.com/docs/postman/scripts/test_scripts) snippet is always run after performing the request.
 
 ```javascript
 var jsonData = JSON.parse(responseBody);

@@ -1,19 +1,19 @@
 ---
-title: "Refactoring to Composite Pattern"
+title: Refactoring to Composite Pattern
 slug: refactoring-to-composite-pattern
-date: 2017-04-13T00:00:00.000Z
-feature_image: /images/composite_pattern.png
+date: '2017-04-13'
+feature_image: /content/images/composite_pattern.png
+tags:
+  - Programming
 excerpt: >-
   Composite Pattern is a useful technique to keep code maintainable and
   readable.
-tags:
-  - Programming
 ---
 I often come across functions that do multiple things. Many times such functions have a common pattern where multiple sections within the function use the same parameters for calculations. The results from these different code sections within the function are either separated by conditionals (if, switch, etc.) or combined using various arithmetic operators. The most obvious refactoring in such scenarios is to move the code sections into different functions within the same class. Having it in separate functions keeps the code readable. But on closer observation, such functions can be moved into different classes, keeping each of these code sections as the only responsibility.
 
 ## Identifying the Refactoring
 
-Within a function when a similar pattern of code repeats, it could be refactored into multiple classes and composed to give the same functionality. Let us take a simple example of a function where we are validating an Account object based on different criteria. The various criteria end up as conditionals within the function. This function can soon get big and difficult to manage. It also makes it harder to test. If you are adding more validations to this class over a period you are violating the Open-Closed Principle (OCP), the O in [SOLID](http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod). Depending on the level of abstraction that we are looking at, the class also violates the Single Responsibility Principle(SRP), the S in SOLID. The function handles validations based on different criteria."
+Within a function when a similar pattern of code repeats, it could be refactored into multiple classes and composed to give the same functionality. Let us take a simple example of a function where we are validating an Account object based on different criteria. The various criteria end up as conditionals within the function. This function can soon get big and difficult to manage. It also makes it harder to test. If you are adding more validations to this class over a period you are violating the Open-Closed Principle (OCP), the O in [SOLID](http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod). Depending on the level of abstraction that we are looking at, the class also violates the Single Responsibility Principle(SRP), the S in SOLID. The function handles validations based on different criteria.
 
 ```csharp
 public List<string> Validate(Account account)
@@ -41,11 +41,13 @@ public List<string> Validate(Account account)
 
 > _Compose objects into tree structures to represent part-whole hierarchies. Composite lets clients treat individual objects and compositions of objects uniformly_
 
-<Figure src="/images/composite_pattern.png" caption="## Refactoring" />
+<ImageCard src="/content/images/composite_pattern.png" alt="Composite Pattern" />
+
+## Refactoring
 
 In the Account validation above, the function checks for an email and validates the format, checks for valid billing details, etc. The validations could also extend on to users attached to the account and check if there is at least one user, the user has email, phone number, etc. Each of these validations can be moved into separate classes and composed together in one class so that they are all executed when an account needs to be validated. You can see a tree like hierarchy forming here, and the actual validation is composed of all these validations
 
-![Account Validation hierarchy](/images/composite_pattern_validation.png)
+<ImageCard src="/content/images/composite_pattern_validation.png" alt="Account Validation hierarchy" />
 
 The actual C# code looks like this after the refactoring.
 
@@ -99,6 +101,7 @@ After the refactoring, we have separate classes for each of the validation rules
 One other worry that I have seen common when moving to such a pattern is that - _We now have a lot more classes. Does that not affect the performance?_. If you are following SOLID principles to the core and want to maintain loose coupling in your code then creating more classes is something you cannot avoid. We do not want any [God Classes](http://wiki.c2.com/?GodClass) in our code and the first step towards it is to split them into different classes.
 
 > _If an Object Oriented language cannot handle the creation of many classes and objects then why should we be using it in the first place?_
+
 > \-_[Big Object Graphs Up Front, Mark Seemann](https://vimeo.com/68378923)_
 
 The composition can be complex conditions as in the case below. For, e.g., let's say we need to execute a different kind of algorithm to calculate based on a property.

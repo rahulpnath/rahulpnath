@@ -1,17 +1,16 @@
 ---
-title: "Back To Basics: Constructors and Enforcing Invariants"
+title: 'Back To Basics: Constructors and Enforcing Invariants'
 slug: constructor-and-constraints
-date: 2020-03-16
-feature_image: /images/strong_code_contracts.jpg
-excerpt: >-
-  In C or any class-based object-oriented language, a Constructor is used to create an object. The constructor is responsible for initializing the object's data members and establishing the class invariants....
+date: '2020-03-16'
+feature_image: /content/images/strong_code_contracts.jpg
 tags:
   - Programming
 ---
 In C# or any class-based object-oriented language, a Constructor is used to create an object. The constructor is responsible for initializing the object's data members and establishing the class invariants. A constructor fails and throws an exception when the class invariants are not met. An invariant is an assertion that is always held true.
 
 > The invariant must hold to be true after the constructor is finished and at the entry and exit of all public member functions.
-<iframe src="https://www.youtube.com/embed/-9zzIS3R56w" />
+
+<EmbedCard src="https://www.youtube.com/embed/-9zzIS3R56w" />
 
 ## Simple Invariants
 
@@ -84,8 +83,8 @@ The NotNull constraint is something we see often and are used to writing. Howeve
 ```csharp
 var leapYear = new DateTime(2020, 02, 29);
 
-/ Throws exception
-/ Year, Month, and Day parameters describe an un-representable DateTime
+// Throws exception
+// Year, Month, and Day parameters describe an un-representable DateTime
 var invalid_NotLeapYear = new DateTime(2019, 02, 29);
 var invalid =  new DateTime(2020, 02, 30);
 
@@ -101,7 +100,7 @@ public class DateRange
 
     public DateRange(DateTime startDate, DateTime endDate)
     {
-        / Ignoring null checks
+        // Ignoring null checks
         if (endDate < startDate)
             throw new ArgumentException("End Date cannot be less than Start Date");
 

@@ -1,21 +1,23 @@
 ---
-title: "Signing a PDF File Using Azure Key Vault"
+title: Signing a PDF File Using Azure Key Vault
 slug: signing-a-pdf-file-using-azure-key-vault
-date: 2017-07-18T00:00:00.000Z
-feature_image: /images/pdf_signed.png
-excerpt: Digital sign a PDF using a certificate in Azure Key Vault using iText.
+date: '2017-07-18'
+feature_image: /content/images/pdf_signed.png
 tags:
   - Azure
+excerpt: Digital sign a PDF using a certificate in Azure Key Vault using iText.
 ---
 _How to sign a PDF using Azure Key Vault?_ - This is one of the questions that I often get regarding Azure Key Vault. In this post, we will explore how to sign a PDF using a certificate in Azure Key Vault. Signing a PDF has various aspects to it which are covered in depth in the white paper - [Digital Signatures for PDF Documents](http://developers.itextpdf.com/books#digsig). We will be using the [iText library](http://itextpdf.com/) to sign the PDF. iText is available as a [Nuget package library](https://www.nuget.org/packages/itext7/). The below image shows the elements that composes a digital signature on the left and actual contents on the right.
 
-<Figure src="/images/adobe_signature.png" caption="## Signing with a Local Certificate" />
+<ImageCard src="/content/images/adobe_signature.png" alt="Digitally Signed PDF Contents" />
+
+## Signing with a Local Certificate
 
 When the certificate (along with the private key) is available locally, signing the PDF is straightforward. You can load the certificate as an X509Certificate from the local certificate store using the [thumbprint](https://stackoverflow.com/questions/11115511/how-to-find-certificate-by-its-thumbprint-in-c-sharp). Make sure that the certificate is installed with the Exportable option as shown below.
 
-![Exportable certificate](/images/certificate_exportable.png)
+<ImageCard src="/content/images/certificate_exportable.png" alt="Exportable certificate" />
 
-The [PrivateKeySignature](http://itextsupport.com/apidocs/itext5/latest/com/itextpdf/text/pdf/security/PrivateKeySignature.html) is an implementation of IExteralSignature that can be used to sign the PDF when the private key is available. The below code signs the _Hello World.pdf_ using the certificate from the local store and saves that as _Local Key.pdf_."
+The [PrivateKeySignature](http://itextsupport.com/apidocs/itext5/latest/com/itextpdf/text/pdf/security/PrivateKeySignature.html) is an implementation of IExteralSignature that can be used to sign the PDF when the private key is available. The below code signs the _Hello World.pdf_ using the certificate from the local store and saves that as _Local Key.pdf_.
 
 ```csharp
 private static void SignPdfWithLocalCertificate()
@@ -53,12 +55,10 @@ To create a self-signed certificate in the vault use the below PowerShell script
 
 ```powershell
 $certificatepolicy = New-AzureKeyVaultCertificatePolicy   -SubjectName "CN=www.rahulpnath.com"   -IssuerName Self   -ValidityInMonths 12
-
 Add-AzureKeyVaultCertificate -VaultName "VaultFromCode" -Name "TestCertificate" -CertificatePolicy $certificatepolicy
 
 ```
-
-![Key Vault Certificate](/images/keyvault_getazurekeyvaultcertificate.png)
+<ImageCard src="/content/images/keyvault_getazurekeyvaultcertificate.png" alt="Key Vault Certificate" />
 
 Creating a certificate, in turn, creates three objects in the vault - Certificate, Key, and Secret. The certificate represents the certificate just created, the Key represents the private part of the certificate, and the Secret has the certificate in PFX format (just as if you had uploaded a [PFX as a Secret](/blog/pfx-certificate-in-azure-key-vault/)). Since the certificate created above is exportable, the Secret contains the Private portion of the key as well. To recreate the certificate locally in memory, we use the below code
 
@@ -86,7 +86,6 @@ To create a non-exportable certificate when creating the certificate use [_KeyNo
 
 ```powershell
 $certificatepolicy = New-AzureKeyVaultCertificatePolicy   -SubjectName "CN=www.rahulpnath.com"   -IssuerName Self   -ValidityInMonths 12 -KeyNotExportable
-
 Add-AzureKeyVaultCertificate -VaultName "VaultFromCode" -Name "TestCertificateNE" -CertificatePolicy $certificatepolicy
 
 ```
@@ -149,6 +148,6 @@ private static async Task SignPdfWithNonExportableCertificateInKeyVault()
 
 Once you install and trust the public portion of the certificates, you can see the green tick, indicating that the PDF is verified and signed.
 
-![Signed PDF](/images/pdf_signed.png)
+<ImageCard src="/content/images/pdf_signed.png" alt="Signed PDF" />
 
 The sample code for all three scenarios is available [here](https://github.com/rahulpnath/Blog/tree/master/PDFSign). I have used ClientId/Secret to authenticate with Key Vault for the sample code. If you are using this in a production environment, I will recommend using [certificate to authenticate with Key Vault](/blog/authenticating-a-client-application-with-azure-key-vault/). iText supports creating PDF stamps and more features in the signing process, which is well documented. Hope this helps you to secure your PDF files.

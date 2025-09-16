@@ -1,21 +1,20 @@
 ---
-title: "Generating PDF: .Net Core and Azure Web Application"
+title: 'Generating PDF: .Net Core and Azure Web Application'
 slug: net-core-pdf
-date: 2020-03-02
-feature_image: /images/net_pdf.jpg
-excerpt: >-
-  Using NReco library to generate PDF files on Azure Web App running .Net Core.
+date: '2020-03-02'
+feature_image: /content/images/net_pdf.jpg
 tags:
   - Dotnet
   - Azure
+excerpt: Using NReco library to generate PDF files on Azure Web App running .Net Core.
 ---
 Generating a PDF is one of those features that come along in a while and gets me thinking.
 
 _How do I do this now?_
 
-Previously I had written about [dynamically generating a large PDF from website contents](/blog/generating-a-large-pdf-from-website-contents/). The PDF library I used that then, did have the limitation of not being able to run on Azure Web App. It was because of [Azure sandbox restrictions](https://github.com/projectkudu/kudu/wiki/Azure-Web-App-sandbox#pdf-generation-from-html)."
+Previously I had written about [dynamically generating a large PDF from website contents](/blog/generating-a-large-pdf-from-website-contents/). The PDF library I used that then, did have the limitation of not being able to run on Azure Web App. It was because of [Azure sandbox restrictions](https://github.com/projectkudu/kudu/wiki/Azure-Web-App-sandbox#pdf-generation-from-html).
 
-<iframe src="https://www.youtube.com/embed/fp-Rc3qNDdA" />
+<EmbedCard src="https://www.youtube.com/embed/fp-Rc3qNDdA" />
 
 In this post we will look at how we can generate PDF in an Azure Web App and running .Net Core, what the limitations are and some tips and tricks to help with the development. I am using the [NReco HTML-to-PDF Generator for .Net](https://www.nrecosite.com/pdf_generator_net.aspx), which is a C# wrapper over [WkHtmlToPdf](https://wkhtmltopdf.org/).
 
@@ -121,7 +120,9 @@ Before using any PDF generation library, make sure you read the associated [docs
 
 **Not all Browser features available** : wkhtmltopdf uses Qt WebKit rendering engine to render the HTML into PDF. You will need to play around and see what works and what doesn't. I have seen this mostly affecting with CSS (as Flexbox and CSS Grid support was unavailalbe in the version I was using).
 
-[<Figure src="/images/asp_net_core_banner.png)](https://www.youtube.com/playlist?list=PL59L9XrzUa-nqfCHIKazYMFRKapPNI4sP" caption="## Development Tips & Tricks" />
+<ImageCard src="/content/images/asp_net_core_banner.png" alt="" />
+
+## Development Tips & Tricks
 
 Here are a few things that helped speed up the development of the Razor file.
 

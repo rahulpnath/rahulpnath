@@ -1,16 +1,14 @@
 ---
-title: "Windows Phone Series – Using UCWA to connect to Lync Server"
+title: Windows Phone Series – Using UCWA to connect to Lync Server
 slug: windows-phone-series-using-ucwa-to-connect-to-lync-server
-date: 2014-01-12
-feature_image: /images/ucwa_createapp.png
-excerpt: >-
-  One of the main things that makes enterprise or intranet applications more lively and connected with your business contacts, is to integrate with Lync(http://office.microsoft.com/en-in/lync/) (formerly Microsoft Office Communicator) and provide...
+date: '2014-01-12'
+feature_image: /content/images/ucwa_createapp.png
 tags:
   - Dotnet
 ---
 One of the main things that makes enterprise or intranet applications more lively and connected with your business contacts, is to integrate with [Lync](http://office.microsoft.com/en-in/lync/) (formerly Microsoft Office Communicator) and provide options to interact with them. UCWA(Unified Communications Web Api) is a REST API that exposes Lync Server and its presence capabilities, which can be used to enhance your application capabilities. This can also be used to integrate with Windows phone applications as well and will see how to get started with it here.
 
-To connect to a lync server the only details that we would want is the full email address and the password – thanks to [AutoDiscover](http://msdn.microsoft.com/en-us/library/office/jj900169\(v=exchg.150\).aspx) for exchange, which makes this possible. AutoDiscover is the way to find the users home server so that we can connect to it. The url for auto discover, otherwise called the [Root Url](https://ucwa.lync.com/documentation/GettingStarted-RootURL) can take different forms. In this sample I have assumed that it would take the below form, primarily because it works with the test domain that I was using (microsoft.com)."
+To connect to a lync server the only details that we would want is the full email address and the password – thanks to [AutoDiscover](http://msdn.microsoft.com/en-us/library/office/jj900169\(v=exchg.150\).aspx) for exchange, which makes this possible. AutoDiscover is the way to find the users home server so that we can connect to it. The url for auto discover, otherwise called the [Root Url](https://ucwa.lync.com/documentation/GettingStarted-RootURL) can take different forms. In this sample I have assumed that it would take the below form, primarily because it works with the test domain that I was using (microsoft.com).
 
 ```csharp
 private const string autoDiscoverUrl = "https://lyncdiscover.{0}";
@@ -19,7 +17,7 @@ private const string autoDiscoverUrl = "https://lyncdiscover.{0}";
 
 Creating a UCWA application is the starting point for every app that needs to work with UCWA.  The following steps indicated in the below diagram are to be followed to create an application.
 
-[![HTTP call flow prior to creating an application in UCWA](/images/ucwa_createapp.png)](https://ucwa.lync.com/documentation/KeyTasks-CreateApplication)
+<ImageCard src="/content/images/ucwa_createapp.png" alt="HTTP call flow prior to creating an application in UCWA" />
 
 Issuing a get request to ‘[https://lyncdiscover.microsoft.com/](https://lyncdiscover.microsoft.com/)’, will give the details of the home server that we need to connect to.
 
@@ -34,27 +32,16 @@ Issuing a get request to ‘[https://lyncdiscover.microsoft.com/](https://lyncdi
 We now need to authenticate the user with the home server.for which we need the oauth url. This can be obtained by issuing a dummy get request to the \_user \_url obtained above. This request will fail with an unauthorized access but also returns the url ([https://lync32.lyncweb.microsoft.com/WebTicket/oauthtoken](https://lync32.lyncweb.microsoft.com/WebTicket/oauthtoken)) from which the token needs to be obtained
 
 ```
-
 HTTP/1.1 401 Unauthorized
-
 Cache-Control: no-cache
-
 Content-Type: text/html
-
 Server: Microsoft-IIS/7.5
-
 WWW-Authenticate: Bearer trusted_issuers="00000002-0000-0ff1-ce00-000000000000@3bdbdd27-2373-4baf-9469-4b10e76564c6,00000001-0001-0000-c000-000000000000@f686d426-8d16-42db-81b7-ab578e110ccd,00000001-0000-0000-c000-000000000000@72f988bf-86f1-41af-91ab-2d7cd011db47", client_id="00000004-0000-0ff1-ce00-000000000000"
-
 WWW-Authenticate: MsRtcOAuth href="https://lync32.lyncweb.microsoft.com/WebTicket/oauthtoken",grant_type="urn:microsoft.rtc:windows,urn:microsoft.rtc:passive,urn:microsoft.rtc:anonmeeting,password"
-
 X-MS-Server-Fqdn: 000DCO2L50FE1G.redmond.corp.microsoft.com
-
 X-Powered-By: ASP.NET
-
 X-Content-Type-Options: nosniff
-
 Date: Sun, 12 Jan 2014 10:47:50 GMT
-
 Content-Length: 1293
 
 ```
@@ -107,7 +94,7 @@ A successful request for the above returns the applications url. The application
 
 Once this is done we have successfully created an application, that can be used to do a lot more things. As for the sample I have just retrieved the user’s full name, department and title that comes as part of successfully creating an application. You can do a lot more like getting the users presence, image, contacts, join meetings and a [lot more](https://ucwa.lync.com/documentation/core-features).
 
-<Figure src="/images/ucwa_wp_login.png" caption="![image](/images/ucwa_wp_loggedIn_details.png)" />
+<ImageCard src="/content/images/ucwa_wp_login.png" alt="image" /><ImageCard src="/content/images/ucwa_wp_loggedIn_details.png" alt="image" />
 
 You can find the sample [here](https://github.com/rahulpnath/Blog/tree/master/UCWA.WindowsPhone).Hope this helps you to build connected enterprise applications.
 

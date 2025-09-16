@@ -1,15 +1,13 @@
 ---
-title: "Refactoring to Improve Testability: Removing Unnecessary Dependencies"
+title: 'Refactoring to Improve Testability: Removing Unnecessary Dependencies'
 slug: refactoring-to-improve-testability-removing-unnecessary-dependencies
-date: 2016-03-28
-feature_image: /images/refactoring.jpg
-excerpt: >-
-  !Refactoring(/images/refactoring.jpg)(https://unsplash.com/photos/5Ntkpxqt54Y)  Nowadays I am trying to stick to TDD(http://butunclebob.com/ArticleS.UncleBob.TheThreeRulesOfTdd) (with the test first approach) and have found it to be of great help. One of the biggest reward doing...
+date: '2016-03-28'
+feature_image: /content/images/refactoring.jpg
 tags:
-  - Programming
   - Testing
+  - Programming
 ---
-[![Refactoring](/images/refactoring.jpg)](https://unsplash.com/photos/5Ntkpxqt54Y)
+<ImageCard src="/content/images/refactoring.jpg" alt="Refactoring" />
 
 Nowadays I am trying to stick to [TDD](http://butunclebob.com/ArticleS.UncleBob.TheThreeRulesOfTdd) (with the test first approach) and have found it to be of great help. One of the biggest reward doing TDD is that it helps me to [stay in the flow](https://vimeo.com/97419151) and regain speed faster after a distraction. This post explains how to refactor code to remove unnecessary dependencies, which is easily found when writing tests.
 
@@ -17,7 +15,7 @@ Unnecessary dependencies are those components which a [SUT](http://xunitpatterns
 
 > _Cut-and-Paste code reuse for fixture setup happens often when there is an unnecessary dependency._
 
-While looking for an example to write on, I came across a post from my friend [Bappi](https://twitter.com/zpbappi), where he explains [Testing Codes with ConfigurationManager](http://zpbappi.com/testing-codes-with-configurationmanager-appsettings/). It's a good read on how to remove the dependency with various Configuration Providers by creating an abstraction over it."
+While looking for an example to write on, I came across a post from my friend [Bappi](https://twitter.com/zpbappi), where he explains [Testing Codes with ConfigurationManager](http://zpbappi.com/testing-codes-with-configurationmanager-appsettings/). It's a good read on how to remove the dependency with various Configuration Providers by creating an abstraction over it.
 
 ## Testability Issues with Current Design
 

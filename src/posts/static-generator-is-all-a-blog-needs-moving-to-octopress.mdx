@@ -1,12 +1,7 @@
 ---
-title: "Static Generator is All a Blog Needs - Moving to Octopress"
+title: Static Generator is All a Blog Needs - Moving to Octopress
 slug: static-generator-is-all-a-blog-needs-moving-to-octopress
-date: 2014-08-27T00:00:00.000Z
-excerpt: >-
-  Wordpress is what that has been powering my blog for sometime and it
-  definitely is a blogging engine to get started
-  with(GHOSTURL/blog/get-started-with-your-blog/) ease. But with time, I have
-  been noticing...
+date: '2014-08-27'
 tags:
   - Blogging
 ---
@@ -20,10 +15,9 @@ There are a lot of [static site generators](https://www.staticgen.com/) out ther
 
 The [exitwp](https://github.com/thomasf/exitwp) tool is what I used to get all my posts from Wordpress into Markdown format, so that it can be imported into Octopress. The steps are direct and is detailed out in the readme. Code formatting was an issue after the migration. I had been mainly using [SyntaxHighlighter](http://alexgorbatchev.com/SyntaxHighlighter/) for code formatting in Wordpress. Formatting this took a bit of time, as I had to go through each post and do the necessary modifications to use the [Backtick Code Blocks](http://octopress.org/docs/plugins/backtick-codeblock/).
 
-**Mapping the images** from the wp\_content folder to a new folder was one another task. I added a [new variable in the config](http://jekyllrb.com/docs/variables/), to track the images folder so that I can change this to something else too later(like a CDN) and used that to refer images. In cases where the images needs to be aligned to a specific side, I used the [image tag directly](http://stackoverflow.com/questions/255170/markdown-and-image-alignment)."
+**Mapping the images** from the wp\_content folder to a new folder was one another task. I added a [new variable in the config](http://jekyllrb.com/docs/variables/), to track the images folder so that I can change this to something else too later(like a CDN) and used that to refer images. In cases where the images needs to be aligned to a specific side, I used the [image tag directly](http://stackoverflow.com/questions/255170/markdown-and-image-alignment).
 
 ```
-
 ![Microsoft Community Contributor Award Certificate for Rahul P Nath](../images/mcca_rahulpnath.png)
 
 <img class="left" src="../images/Outlook_folders_productivity.png" alt="Outlook_folders_productivity" />
@@ -49,7 +43,6 @@ Running one of these, would really set you back for sometime and provide you wit
 -   Caching: - To enable caching, I added the required configuration entries in the [web.config](https://github.com/rahulpnath/rahulpnath.com/blob/blog/web.config)(as I am hosting in azure). Since the site is all static content you can safely set caching to all the items.
 
 ```
-
 <staticContent>
 	<mimeMap fileExtension="woff" mimeType="application/font-woff" />
     <clientCache httpExpires="Sun, 29 Mar 2020 00:00:00 GMT" cacheControlMode="UseExpires" />

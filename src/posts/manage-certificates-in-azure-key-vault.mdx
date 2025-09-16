@@ -1,19 +1,14 @@
 ---
-title: "Manage Certificates in Azure Key Vault"
+title: Manage Certificates in Azure Key Vault
 slug: manage-certificates-in-azure-key-vault
-date: 2017-03-01T00:00:00.000Z
-feature_image: /images/pfx_security.jpg
-excerpt: >-
-  !Security(/images/pfxsecurity.jpg)(https://www.flickr.com/photos/111692634@N04/15855489588) 
-  In one of my earlier posts, PFX Certificate in Azure Key
-  Vault(GHOSTURL/blog/pfx-certificate-in-azure-key-vault/), we saw how to save
-  PFX Certificate files in Key Vault as Secrets. Azure Key Vault...
+date: '2017-03-01'
+feature_image: /content/images/pfx_security.jpg
 tags:
   - Azure
 ---
-[![Security](/images/pfx_security.jpg)](https://www.flickr.com/photos/111692634@N04/15855489588)
+<ImageCard src="/content/images/pfx_security.jpg" alt="Security" />
 
-In one of my earlier posts, [PFX Certificate in Azure Key Vault](/blog/pfx-certificate-in-azure-key-vault/), we saw how to save PFX Certificate files in Key Vault as Secrets. Azure Key Vault now [supports certificates as a first class citizen](https://blogs.technet.microsoft.com/kv/2016/09/26/get-started-with-azure-key-vault-certificates/). This means one can manage certificates as a separate entity in KeyVault. At the time of writing, Key Vault supports managing certificates using Powershell. The [portal UI](/blog/managing-key-vault-through-azure-portal/) is still to catch up on this feature. Using the Key Vault's certificate feature, we can create a new certificate: self-signed or signed by a supported certificate authority, import an existing certificate, retrieve the certificate with or without a private key part."
+In one of my earlier posts, [PFX Certificate in Azure Key Vault](/blog/pfx-certificate-in-azure-key-vault/), we saw how to save PFX Certificate files in Key Vault as Secrets. Azure Key Vault now [supports certificates as a first class citizen](https://blogs.technet.microsoft.com/kv/2016/09/26/get-started-with-azure-key-vault-certificates/). This means one can manage certificates as a separate entity in KeyVault. At the time of writing, Key Vault supports managing certificates using Powershell. The [portal UI](/blog/managing-key-vault-through-azure-portal/) is still to catch up on this feature. Using the Key Vault's certificate feature, we can create a new certificate: self-signed or signed by a supported certificate authority, import an existing certificate, retrieve the certificate with or without a private key part.
 
 ## Setting up the Vault
 
@@ -25,7 +20,6 @@ To create a new certificate in the vault use the [Add-AzureKeyVaultCertificate](
 
 ```powershell
 $certificatepolicy = New-AzureKeyVaultCertificatePolicy   -SubjectName "CN=www.rahulpnath.com"   -IssuerName Self   -ValidityInMonths 12
-
 Add-AzureKeyVaultCertificate -VaultName "VaultFromCode" -Name "TestCertificate" -CertificatePolicy $certificatepolicy
 
 ```
@@ -39,7 +33,7 @@ https://vaultfromcode.vault.azure.net:443/certificates/TestCertificate
 
 To retrieve all the certificates in a vault use the [Get-AzureKeyVaultCertificate](https://docs.microsoft.com/en-us/powershell/resourcemanager/azurerm.keyvault/v2.2.0/get-azurekeyvaultcertificate) cmdlet passing in the VaultName. To get details of a certificate pass in the Certificate Name as well.
 
-![Azure Key Vault, GetAzureKeyVaultCertificate](/images/keyvault_getazurekeyvaultcertificate.png)
+<ImageCard src="/content/images/keyvault_getazurekeyvaultcertificate.png" alt="Azure Key Vault, GetAzureKeyVaultCertificate" />
 
 When creating a new certificate make sure that a Key or Secret does not exist with the same name in the vault. Azure adds in a key and secret with the same name as that of the certificate when creating a new certificate as shown in the above image. The key is required when for certificates created with non-exportable key (-[KeyNotExportable](https://docs.microsoft.com/en-us/powershell/resourcemanager/azurerm.keyvault/v2.1.0/new-azurekeyvaultcertificatepolicy#KeyNotExportable)). Non-exportable certificates do not have the private portion contained in secret. Any certificate operation requiring the private part should use the key. For consistency, the key exists for exportable certificates as well.
 
@@ -75,7 +69,6 @@ $certBytes = $cert.Certificate.Export([System.Security.Cryptography.X509Certific
 To delete a certificate use the Remove-AzureKeyVaultCertificate cmdlet and pass in the vault name and certificate name.
 
 ```powershell
-
 Remove-AzureKeyVaultCertificate -VaultName 'VaultFromCode' -Name 'TestCertificate'
 
 ```

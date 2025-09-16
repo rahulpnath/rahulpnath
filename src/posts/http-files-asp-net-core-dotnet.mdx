@@ -1,13 +1,16 @@
 ---
-title: ".http Files Explained: Boost Your ASP NET Core API Development Workflow"
+title: '.http Files Explained: Boost Your ASP NET Core API Development Workflow'
 slug: http-files-asp-net-core-dotnet
-date: 2024-07-01
-feature_image: /images/http-files.png
-excerpt: >-
-  .http files provide an easy way to invoke API endpoints without leaving your IDE.
-    Learn how to create and update .http files, send HTTP requests, and manage different configuration support for your API development.
+date: '2024-07-01'
+feature_image: /content/images/2024/06/http-files.png
 tags:
   - Dotnet
+excerpt: >-
+  .http files provide an easy way to invoke API endpoints without leaving your
+  IDE.
+
+  Learn how to create and update .http files, send HTTP requests, and manage
+  different configuration support for your API development.
 ---
 .http files provide an easy way to invoke API endpoints without leaving your IDE.
 
@@ -21,7 +24,7 @@ In this post, let’s
 -   support different environment config
 -   Manage sensitive information in config
 
-<iframe src="https://www.youtube.com/embed/Q5WGYq9L3FQ?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/Q5WGYq9L3FQ?feature=oembed" title="Use .HTTP files in Visual Studio | Exploring C# and DOTNET | Rahul Nath" />
 
 I will use an API built over [AWS DynamoDB](/blog/amazon-dynamodb-dotnet-developer/), and [AWS Lambda to host the API](/blog/asp-net-core-on-aws-lambda/).
 
@@ -45,7 +48,7 @@ Alternatively, you can create a new file with the .http extension anywhere withi
 
 Visual Studio also recognizes `.rest` as an alternative file extension for the .http file format.
 
-<Figure src="/images/image.png" caption=".http file in Solution Explorer along with its file contents." />
+<ImageCard src="/content/images/2024/06/image.png" alt=".http file in Solution Explorer along with its file contents." caption=".http file in Solution Explorer along with its file contents." />
 
 You can name .http files with any name that suits your project needs. In the above screenshot, the file is named `app.http`.
 
@@ -60,19 +63,13 @@ Multiple requests are separated by '###'.
 Below is a sample .http file with two `GET` requests to an API endpoint with some headers.
 
 ```json
-
 GET https://localhost:7128/weatherforecast/Brisbane
-
 Accept: application/json
-
 Custom: MyTestHeader
 
 ###
-
 GET https://localhost:7128/weatherforecast/Brisbane/19-Jun-2024
-
 Accept: application/json
-
 ```
 
 Header attributes must be defined immediately after the request line without any blank lines. Each header attribute is specified on its line.
@@ -81,11 +78,8 @@ For `POST` request, the body is specified after a blank line, as shown below.
 
 ```json
 ###
-
 POST https://localhost:7128/weatherforecast/
-
 Accept: application/json
-
 Content-Type: application/json
 
 {
@@ -94,7 +88,6 @@ Content-Type: application/json
     "temperatureC": 8,
     "summary": "windy"
 }
-
 ```
 
 ### Variables in .http Files
@@ -107,11 +100,8 @@ Variables can be referenced in requests by wrapping the variable name in double 
 @baseUrl =  https://localhost:7128
 
 GET {{baseUrl}}/weatherforecast/Brisbane
-
 Accept: application/json
-
 Custom: MyTestHeader
-
 ```
 
 The code above defines a variable `baseUrl` along with its value, which is then used to build the URL for the HTTP requests.
@@ -122,9 +112,7 @@ One of the main advantages of using .http files in your development process is t
 
 From within the IDE, you can use the 'Send request' option to send an HTTP request to the defined URL.
 
-![Send request option in Visual Studio to invoke an HTTP request within the .http file. The response appears in a separate pan right of the editor window.](/images/image-2.png)
-
-Send request option in Visual Studio to invoke an HTTP request within the .http file. The response appears in a separate pan right of the editor window.
+<ImageCard src="/content/images/2024/06/image-2.png" alt="Send request option in Visual Studio to invoke an HTTP request within the .http file. The response appears in a separate pan right of the editor window." caption="Send request option in Visual Studio to invoke an HTTP request within the .http file. The response appears in a separate pan right of the editor window." />
 
 The response appears in a separate pane to the right of the editor window.
 
@@ -145,7 +133,6 @@ Create a file named `http-client.env.json` and move all the relevant configurati
     "baseUrl": "https://bla73eawvh6fnqho6g5s6haoha0lihgl.lambda-url.ap-southeast-2.on.aws"
   }
 }
-
 ```
 
 Above, I have `dev` and `test` environments defined in my `http-client.env.json` file.
@@ -154,9 +141,7 @@ For each environment, I need to switch between the `baseUrl` property. If you ne
 
 You can switch between environments from within the .http file opened in your IDE as shown below.
 
-![Switch between environments defined in http-client.env.json file from within the .http file in Visual Studio.](/images/image-3.png)
-
-Switch between environments defined in http-client.env.json file from within the .http file in Visual Studio.
+<ImageCard src="/content/images/2024/06/image-3.png" alt="Switch between environments defined in http-client.env.json file from within the .http file in Visual Studio." caption="Switch between environments defined in http-client.env.json file from within the .http file in Visual Studio." />
 
 Based on the environment choice, it will switch the variable values loaded from the specified environment configuration.
 
@@ -170,7 +155,7 @@ This means you shouldn't include any sensitive values, such as passwords, API ke
 
 .http files support [ASP NET Core User Secrets](https://learn.microsoft.com/en-us/aspnet/core/test/http-files?view=aspnetcore-8.0#aspnet-core-user-secrets), [Azure Key Vault](https://learn.microsoft.com/en-us/aspnet/core/test/http-files?view=aspnetcore-8.0#azure-key-vault) and [DPAPI encryption](https://learn.microsoft.com/en-us/aspnet/core/test/http-files?view=aspnetcore-8.0#dpapi-encryption) for these scenarios.
 
-<iframe src="https://www.youtube.com/embed/PkLLP2tcd28?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/PkLLP2tcd28?feature=oembed" title="SECRET MANAGER In ASP NET Core | Getting Started With ASP.NET Core Series" />
 
 To get values defined in ASP NET Core User Secrets, you can define a variable that has a `provider` and `secretName` properties.
 
@@ -191,7 +176,6 @@ The below configuration in the `http-client.env.json` file defines an ApiToken v
     }
   }
 }
-
 ```
 
 When a request is sent, the value is automatically bound from User Secrets and used.
@@ -206,28 +190,11 @@ The CRUD API uses DynamoDB as its storage and performs updates to an existing Dy
 
 If you are new to DynamoDB check out my blog post below to get started.
 
-<BlogLink
-  href="/blog/amazon-dynamodb-dotnet-developer/"
-  title="Amazon DynamoDB For The .NET Developer"
-  description="This blog post is a collection of other posts that covers various aspects of Amazon DynamoDB and other services you can integrate with when building serverless applications."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/Amazon-DynamoDB.png"
-/>
+<BookmarkCard href="/blog/amazon-dynamodb-dotnet-developer/" title="Amazon DynamoDB For The .NET Developer" description="This blog post is a collection of other posts that covers various aspects of Amazon DynamoDB and other services you can integrate with when building serverless applications." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 For the API endpoint's test environment, I am hosting the API on AWS Lambda, as explained in this blog post and accompanying video.
 
-<BlogLink
-  href="/blog/asp-net-core-on-aws-lambda/"
-  title="How To Build and Host ASP NET Core Applications on AWS Lambda Functions"
-  description="This article is sponsored by AWS and is part of my AWS Series. AWS Lambda is a compute service that lets you run code without provisioning or managing servers. You can build application APIs on Lambda Function with API Gateways (REST or HTTP API) or Function URL’s. But what"
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/AWS-Lambda-Function-URLs-Auth.png"
-/>
-
+<BookmarkCard href="/blog/asp-net-core-on-aws-lambda/" title="How To Build and Host ASP NET Core Applications on AWS Lambda Functions" description="This article is sponsored by AWS and is part of my AWS Series. AWS Lambda is a compute service that lets you run code without provisioning or managing servers. You can build application APIs on Lambda Function with API Gateways (REST or HTTP API) or Function URL’s. But what" icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
 
@@ -267,5 +234,4 @@ app.MapDelete(
     });
 
 app.Run();
-
 ```

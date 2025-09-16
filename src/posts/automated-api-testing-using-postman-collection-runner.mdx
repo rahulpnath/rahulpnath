@@ -1,11 +1,11 @@
 ---
-title: "Automated API Testing Using Postman Collection Runner"
+title: Automated API Testing Using Postman Collection Runner
 slug: automated-api-testing-using-postman-collection-runner
-date: 2018-06-26T00:00:00.000Z
-feature_image: /images/postman_collection_runner.png
-excerpt: Quick and easy way to test your API.
+date: '2018-06-26'
+feature_image: /content/images/postman_collection_runner.png
 tags:
   - Testing
+excerpt: Quick and easy way to test your API.
 ---
 A while back we looked at how we can use [Postman to chain multiple requests to speed up out Manual API Testing](/blog/postman-chaining-requests-to-speed-up-manual-api-tests/). For those who are not familiar with [Postman](https://www.getpostman.com/), it is an application that assists in API testing and development, which I see as sitting a level top of a tool like [Fiddler](/blog/fiddler-free-web-debugging-proxy/).
 
@@ -16,7 +16,7 @@ In this post, we will see how we can use Postman to test some basic CRUD operati
 To start with I create a simple API endpoint using the out of the box Web API project from Visual Studio 2017. It is a Values Controller which stores key-value pairs to which you can send GET, POST, DELETE requests. Below is the API implementation. It is a simple in-memory implementation and does not use any persistent store. However, the tests would not change much even if the store was to be persistent. The importance here is not in the implementation of the API, but how you can use Postman to add some quick tests.
 
 ```csharp
-public class ValuesController : ApiController"
+public class ValuesController : ApiController
 {
     static Dictionary<int, string> values = new Dictionary<int, string>();
 
@@ -55,13 +55,13 @@ public class ValuesController : ApiController"
 
 To start with we will create a new Collection in Postman to hold our tests for the Values Controller - I have named it '_Values CRUD - Test_'. The collection is a container for all the API requests that we are going to write. First, we will add all the request definitions into postman which we can later reorder for the tests.
 
-![Postman Request](/images/postman_request.png)
+<ImageCard src="/content/images/postman_request.png" alt="Postman Request" />
 
 > The _**{{ValuesUrl}}/{{ValueId}}**_ in the URL are parameters defined as part of the selected Environment. Environments in Postman allow you to switch between different application environments like Development, Test, Production. You can configure different values for each environment and Postman will send the requests as per the configuration.
 
 Below are the environment variables for my local environment. You can define as many environments as you want and switch between them.
 
-![Postman Environment](/images/postman_environment.png)
+<ImageCard src="/content/images/postman_environment.png" alt="Postman Environment" />
 
 Now that I have all the request definitions for the API added let's add some tests to verify our API functionality.
 
@@ -77,8 +77,7 @@ pm.test('Status code is 200', function () {
 });
 
 ```
-
-![Postman Tests](/images/postman_tests.png)
+<ImageCard src="/content/images/postman_tests.png" alt="Postman Tests" />
 
 Similarly, you can also write _Pre-request Script_ to set variables or perform any other operation. Below I am setting the _Value_ environment variable to "Test". You could generate a random value here or set a random id, or set an identifier that does not already exists. It's test/application specific, so leave it you to decide what works best for you.
 
@@ -91,7 +90,7 @@ pm.environment.set('Value', 'Test');
 
 The collection runner allows you to manage multiple API requests and run them as a set. Once completed it shows a summary of all the tests included within each request and details of tests that passed/failed in the run. You can target the Runner to run against your environment of choice.
 
-![Postman Collection Runner](/images/postman_collection_runner.png)
+<ImageCard src="/content/images/postman_collection_runner.png" alt="Postman Collection Runner" />
 
 Running these tests still involves some manual effort of selecting environments and running them. However using [Newman](https://www.npmjs.com/package/newman), you can run Postman Collections from the command line, which means even in your build pipeline.
 

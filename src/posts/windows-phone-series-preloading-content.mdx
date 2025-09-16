@@ -1,10 +1,8 @@
 ---
-title: "Windows Phone Series – Preloading Content"
+title: Windows Phone Series – Preloading Content
 slug: windows-phone-series-preloading-content
-date: 2013-04-12
-feature_image: /images/preloaded_content_vs_refresh.png
-excerpt: >-
-  Mostly phone apps, connect to a service for the data and wrap them up to a cool UI for user consumption. But at times we would have apps that comes...
+date: '2013-04-12'
+feature_image: /content/images/preloaded_content_vs_refresh.png
 tags:
   - Dotnet
 ---
@@ -16,23 +14,22 @@ This [article](http://blogs.windows.com/windows_phone/b/wpdev/archive/2013/03/12
 
 Assuming that we have a folder “MyPreloadedContent” as indicated in the image below, which would be where all our preloaded content is going to be . Most of the time with preloaded content, we would not know what exact data would be in there. It might contain files, images, folders etc. We would want an easy way to set Build Action to Content for all the files/folders that gets placed under the folder( even if it is done outside of Visual Studio).
 
-![preloaded content Visual studio](/images/preloaded_content_Visual_studio.png)
+<ImageCard src="/content/images/preloaded_content_Visual_studio.png" alt="preloaded content Visual studio" />
 
-For this we would need to tweek the project file, to tell it that whatever is under MyPreloadedContent should be treated as ‘Content’. Edit the csproj file from notepad or any other text editor that you use([Notepad++](http://notepad-plus-plus.org/) is my personal favorite). Scroll down to wherever the other Content files are specified, like `<Content Include="ApplicationIcon.png">` for example. Add in the below line to make all the content put into that folder to be treated as Content, and save the csproj file."
+For this we would need to tweek the project file, to tell it that whatever is under MyPreloadedContent should be treated as ‘Content’. Edit the csproj file from notepad or any other text editor that you use([Notepad++](http://notepad-plus-plus.org/) is my personal favorite). Scroll down to wherever the other Content files are specified, like `<Content Include="ApplicationIcon.png">` for example. Add in the below line to make all the content put into that folder to be treated as Content, and save the csproj file.
 
 ```
-
 <strong><span style="font-size:large;"><Content Include="MyPreloadedContent**" /></span></strong>
 
 ```
 
 Now you could open that folder and put in some content into that. For now I put in some image files and also a sub folder  as below
 
-![preloaded content explorer](/images/preloaded_content_explorer.png)
+<ImageCard src="/content/images/preloaded_content_explorer.png" alt="preloaded content explorer" />
 
 You would need to reload the projects/solution in visual studio to see that those files are automatically included into the solution. If not in a Visual studio,  msbuild would automatically include all the files as Content.
 
-![preloaded content visual studio refresh](/images/preloaded_content_vs_refresh.png)
+<ImageCard src="/content/images/preloaded_content_vs_refresh.png" alt="preloaded content visual studio refresh" />
 
 Now that we have all the files copied into that folder to be automatically included into the solution you need to now need to copy out all these files onto the IsolatedStorage when the app starts for the first time. You would want to do this, so that if there are any updates onto the files that you copied(which would be delivered to you via a web service in a real scenario), you can overwrite the files in the IsolatedStorage so that the new content would be taken then on.
 
@@ -42,7 +39,7 @@ We can use [T4 ( Text Templating Transformation Toolkit) templates](http://msdn.
 
 To create a T4 template, add a new item to the project \*\*MyFiles.tt. \*\*Select Ok if you get any warning message
 
-![preloaded content t4 template](/images/preloaded_content_t4_template.jpg)
+<ImageCard src="/content/images/preloaded_content_t4_template.jpg" alt="preloaded content t4 template" />
 
 In a T4 template it would be a mix of text and code, that would be used to generate a new file that would be a class in our case which would expose a function to get all the file names under the folder . Below is the entire text/code that would go into the new file that we just created(**MyFiles.tt**)
 

@@ -1,17 +1,17 @@
 ---
-title: "How to Handle Exceptions When Processing SQS Messages in .NET Lambda Function"
+title: How to Handle Exceptions When Processing SQS Messages in .NET Lambda Function
 slug: amazon-sqs-lambda-trigger-exception-handling-dotnet
-date: 2022-09-22T00:00:00.000Z
-feature_image: /images/amazon-sqs-lambda-trigger-exception-handling-dotnet.jpg
+date: '2022-09-22'
+feature_image: /content/images/amazon-sqs-lambda-trigger-exception-handling-dotnet.jpg
+tags:
+  - AWS
+  - Lambda
 excerpt: >-
   Learn how to handle exceptions, configure Dead Letter Queue, re-drive messages
   from Amazon SQS and how to enable batch error processing from a .NET Lambda
   Function.
-tags:
-  - AWS
-  - Lambda
 ---
-_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
 In a previous post, we learned how to [process messages coming to Amazon SQS using Lambda Functions](/blog/amazon-sqs-lambda-trigger-dotnet/) written in .NET.
 
@@ -19,7 +19,7 @@ We have messages coming into the queue, the Lambda function gets triggered, proc
 
 But what happens on an exception processing the message in the Lambda Function?
 
-<iframe src="https://www.youtube.com/embed/0V4aeT7oONo" />
+<EmbedCard src="https://www.youtube.com/embed/0V4aeT7oONo" />
 
 Maybe it’s an unhandled code path, a null reference exception, or an external third-party integration service that is down.
 
@@ -30,15 +30,7 @@ In this post, you’ll learn,
 -   ReDrive Messages from Dead-letter Queue
 -   Enabling Batch Error Processing
 
-<BlogLink
-  href="/blog/amazon-sqs-lambda-trigger-dotnet"
-  title="Amazon SQS and AWS Lambda Triggers in .NET"
-  description="Learn how to process SQS messages from AWS Lambda Function. We will learn how to set up and trigger a .NET Lambda Function using SQS and the various configurations associated."
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/amazon-sqs-lambda-triggers-dotnet.jpg"
-/>
+<BookmarkCard href="/blog/amazon-sqs-lambda-trigger-dotnet" title="Amazon SQS and AWS Lambda Triggers in .NET" description="Learn how to process SQS messages from AWS Lambda Function. We will learn how to set up and trigger a .NET Lambda Function using SQS and the various configurations associated." icon="/favicon.ico" />
 
 ## What happens on Exception in Processing Messages?
 
@@ -68,7 +60,7 @@ The above code throws an exception anytime the message body contains the word �
 
 This makes it easy to simulate the exceptions we need when sending messages and see what happens. To see the exception handling in action, send a message to the queue with the word ‘Exception’.
 
-![Send a message to SQS with the body 'Test Exception' to simulate an exception in processing in the .NET Lambda Function.](/images/aws-lambda-trigger-sqs-exception-simulation.jpg)
+<ImageCard src="/content/images/aws-lambda-trigger-sqs-exception-simulation.jpg" alt="Send a message to SQS with the body 'Test Exception' to simulate an exception in processing in the .NET Lambda Function." />
 
 The Lambda Function will throw an error as soon as it picks up for processing.
 
@@ -82,15 +74,7 @@ In real-world scenarios, if the exceptions in the processing are because of tran
 
 However, if the exception is due to a null reference exception or unhandled code paths, it will continue to throw an error and be retried.
 
-<BlogLink
-  href="/blog/amazon-sqs"
-  title="Amazon SQS For the .NET Developer: How to Easily Get Started"
-  description="Learn how to get started with Amazon SQS and use it from a .NET Application. We will learn how to send and receive messages, important properties,and concepts that you need to know when using SQS."
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/queue.jpg"
-/>
+<BookmarkCard href="/blog/amazon-sqs" title="Amazon SQS For the .NET Developer: How to Easily Get Started" description="Learn how to get started with Amazon SQS and use it from a .NET Application. We will learn how to send and receive messages, important properties,and concepts that you need to know when using SQS." icon="/favicon.ico" />
 
 ## Handle Retries and Configure Dead-letter Queue (DLQ)
 
@@ -102,13 +86,15 @@ Dead-letter Queue (DLQ) lets you isolate and handle problematic messages manuall
 
 Under the Queue configuration, navigate to the Deal-letter queue configuration to set it up.
 
-![](/images/aws-lambda-trigger-sqs-dead-letter-queue.jpg)
+<ImageCard src="/content/images/aws-lambda-trigger-sqs-dead-letter-queue.jpg" alt="" />
 
 You must first create a queue to designate as DLQ. I have one created from the SQS Console - `user-data-dlq`. Click the Edit button to update the configuration.
 
 Specify the Queue ARN and the Maximum received count.
 
-<Figure src="/images/aws-lambda-trigger-sqs-dead-letter-queue-setup.jpg" caption="### Maximum Receives Count" />
+<ImageCard src="/content/images/aws-lambda-trigger-sqs-dead-letter-queue-setup.jpg" alt="" />
+
+### Maximum Receives Count
 
 The Maximum receives value determines the number of times a message will be retried. If the ReceiveCount for a message exceeds the maximum receive count, SQS moves the message to the associated DLQ.
 
@@ -116,17 +102,19 @@ The above configuration will remove the message when the ReceiveCount is more th
 
 Any existing messages in the Queue with a ReceiveCount more than the maximum is automatically moved to the DLQ.
 
-![View messages in the Dead-letter Queue as they arrive. You can Poll for messages from the console and view the message details.](/images/aws-lambda-trigger-sqs-dead-letter-queue-messages.jpg)
+<ImageCard src="/content/images/aws-lambda-trigger-sqs-dead-letter-queue-messages.jpg" alt="View messages in the Dead-letter Queue as they arrive. You can Poll for messages from the console and view the message details." />
 
 You can inspect this message from the DLQ and decide what action to take next. Based on the message content, the application, and the business processes associated with the messages, you can choose to ignore them (delete from DLQ), reprocess the message later, or fix the Lambda Function and then retry the message again.
 
-<Figure src="/images/aws-lambda-trigger-sqs-dead-letter-queue-messages-detail.jpg" caption="## ReDrive Messages from Dead-letter Queue" />
+<ImageCard src="/content/images/aws-lambda-trigger-sqs-dead-letter-queue-messages-detail.jpg" alt="View message details in SQS Console" />
+
+## ReDrive Messages from Dead-letter Queue
 
 _Re-processing messages from Queue is referred to as Redrive._
 
 SQS allows easily moving unprocessed/error messages back to the source or other custom destination queues. This helps you to stay on top of the messages that are not getting processed and retry them.
 
-![The Redrive option allows you to pick and choose the messages to reprocess. You can send the messages back to the source queue or a custom destination.](/images/aws-lambda-trigger-sqs-dead-letter-queue-redrive.jpg)
+<ImageCard src="/content/images/aws-lambda-trigger-sqs-dead-letter-queue-redrive.jpg" alt="The Redrive option allows you to pick and choose the messages to reprocess. You can send the messages back to the source queue or a custom destination." />
 
 Select the Message destination to redrive the messages. You can redrive the messages to the source queue or choose a custom destination.
 
@@ -195,7 +183,7 @@ Once all messages in the batch are processed, the Lambda Function returns the ba
 
 Reporting batch item failures must be enabled on the Lambda Trigger Configuration for this code to work. You can enable this from the Lambda Trigger Configuration, as shown below.
 
-![](/images/aws-lambda-trigger-sqs-batch-item-failures.jpg)
+<ImageCard src="/content/images/aws-lambda-trigger-sqs-batch-item-failures.jpg" alt="" />
 
 Once enabled and the new function code deployed, we can successfully process messages in batches. Only messages that fail to process from the batch will be moved to the DLQ.
 

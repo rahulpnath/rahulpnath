@@ -1,0 +1,179 @@
+---
+title: Batch Delete Item Operations In DynamoDB Using .NET
+slug: dynamodb-batchdelete
+date: '2023-08-15'
+feature_image: /images/DynamoDB-BatchDelete.png
+excerpt: >-
+  DynamoDB's batch delete functionality allows deleting multiple items from one
+  or more DynamoDB tables with a single API call. This feature is useful when
+  you're dealing with data cleanup, archiving, or any scenario requiring mass
+  deletion.
+---
+DynamoDB's batch delete functionality allows deleting multiple items from one or more DynamoDB tables with a single API call.
+
+Whether you're dealing with data cleanup, archiving, or any scenario requiring mass deletion, this feature streamlines the process by allowing you to specify item keys for removal in batches.
+
+Batch Delete minimizes the number of API requests and enhances performance while benefiting from DynamoDB's scalability and managed infrastructure.
+
+<iframe src="https://www.youtube.com/embed/XZ6bLM2IxNE?feature=oembed" />
+
+We use the same APIs used in the [BatchWriteItem](/blog/dynamodb-batchwrite/) to perform the batch delete operations as well.
+
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
+
+In this article, we will learn, how to
+
+-   Batch Delete Using High-Level API (DynamoDBContext)
+-   Batch Delete Using Low-Level API (AmazonDynamoDBClient)
+
+## DynamoDB Batch Delete
+
+The `BatchWriteItem` operation can insert/remove multiple items in one or more DynamoDB tables.
+
+A `BatchWriteItem` call can send up to 16MB of data over the network, consisting of up to 25 items put or delete operations.
+
+💡
+
+_You can perform both Write and Delete operations in the same batch._
+
+DynamoDB `BatchWriteItem` can be performed using the High-Level API (using the `DynamoDBContext` instance) and also the Low-Level API (using the `AmazonDynamoDBClient` instance).
+
+Let's explore these methods and how to perform the operations on single and multiple tables.
+
+## Batch Delete Using High-Level .NET API (DynamoDBContext)
+
+The `DynamoDBContext` is the High-Level API provided in the .NET SDK and abstracts over the Low-Level API. It makes it easier to work with DynamoDB by giving rich .NET classes to interact with.
+
+### Batch Delete on Single Table Using High-Level API
+
+The `DynamoDBContext` provides the `CreateBatchWrite` generic function, that takes in the .NET type representing the DynamoDB Table item. It returns a generic type of `BatchWrite`.
+
+In the below example, it takes a list of  `KeyValuePair` with the `CityName` and `Date` to be deleted from the DynamoDB as a single batch operation.
+
+```csharp
+[HttpPost("batch-delete-one-table")]
+public async Task DeleteBatch(List<KeyValuePair<string,DateTime>> keys)
+{
+    var batchDelete = _dynamoDbContext.CreateBatchWrite<WeatherForecast>();
+    foreach (var key in keys)
+        batchDelete.AddDeleteKey(key.Key, key.Value);
+    await batchDelete.ExecuteAsync();
+}
+```
+
+The `BatchWrite` instance has the `AddDeleteKey` which takes in the hash/range key of the item to delete. Alternatively you can also pass the full `WeatherForecast` data objects to delete as well.
+
+Calling the `ExecuteAsync` method deletes the items from DynamoDB in a single batch operation.
+
+### Batch Delete on Multiple Tables Using Low-Level API
+
+Each `BatchWrite` instance represents a batch operation on a single DynamoDB table. This is specified using the generic type parameter passed to the `CreateBatchWrite` operation.
+
+The DynamoDBContext uses the table name conventions to determine the table name to perform the queries on.
+
+<PostCard 
+  title=".NET DynamoDB SDK: Understanding Table Name Conventions and DynamoDBTable Attribute"
+  description="The DynamoDB .NET SDK by default uses conventions to determine the Table name. However, it supports different options to configure and customize the name. Learn how to achieve this in this post."
+  slug="dynamodb-net-table/"
+  image="/images/DynamoDB-Table-Name-Conventions.png"
+/>
+
+To delete data from multiple tables, we need to create multiple instances of the `BatchWrite` type passing in the appropriate .NET types.
+
+The below code invokes the `CreateBatchWrite` on two different types, representing two different tables in DynamoDB.
+
+```csharp
+[HttpPost("batch-delete-multiple-table")]
+public async Task DeleteBatchMultipleTable(List<KeyValuePair<string,DateTime>> keys)
+{
+    var batchDelete1 = _dynamoDbContext.CreateBatchWrite<WeatherForecast>();
+    var batchDelete2 = _dynamoDbContext.CreateBatchWrite<WeatherForecastTable>();
+    foreach (var key in keys)
+    {
+        batchDelete1.AddDeleteKey(key.Key, key.Value);
+        batchDelete2.AddDeleteKey(key.Key, key.Value);
+    }
+    var batches = batchDelete1.Combine(batchDelete2);
+    await batches.ExecuteAsync();
+}
+```
+
+The multiple instances of `BatchWrite` can then be combined into a single `MultiBatchWrite` instance using the `Conbine` method as shown above.
+
+Invoking the `ExecuteAsync` on the `MultiBatchWrite` performs both the batch1 and batch2 in a single operation
+
+You can combine any number of `BatchWrite` instances together as long as it is within the size/count limits.
+
+#### CreateMultiTableBatchGet Function
+
+The `DynamoDBContext` also has the function `CreateMultiTableBatchWrite` that can be used to combine multiple `BatchWrite` instances.
+
+As shown below, you can pass in the batch instances as a params object into the function to create  the same `MultipBatchWrite` instance and perform the execute action on it.
+
+```csharp
+var batches = _dynamoDbContext
+       .CreateMultiTableBatchWrite(batchWrite1, batchWrite2);
+await batches.ExecuteAsync();
+```
+
+## Batch Delete Using Low-Level .NET API (AmazonDynamoDBClient)
+
+When using the High-Level API it abstracts away a lot of the complexities of the underlying Low-Level API.
+
+However, it also hides some of the functionality that might be useful in certain scenarios.
+
+When the `BatchWriteItem` requires exceeds the allowed item count/size, it returns a list of `UnprocessedKeys` collection. This property is available only through the Low-Level API.
+
+Let's see how we can perform the same calls using the Low-Level API
+
+### Batch Delete on Single Table Using .NET Low-Level API
+
+The `AmazonDynamoDBClient` provides the `BatchWriteAsync` function to delete items in a batch.
+
+It has multiple overloads and one of them uses the `BatchWriteItemRequest` as shown below.
+
+```csharp
+[HttpPost("batch-delete-client")]
+public async Task DeleteBatchClient(List<KeyValuePair<string,DateTime>> keys)
+{
+    var batchWriteRequest = new BatchWriteItemRequest
+    {
+        RequestItems = new Dictionary<string, List<WriteRequest>>
+        {
+            {
+                nameof(WeatherForecast),
+                keys.Select(key => new WriteRequest(new DeleteRequest(new Dictionary<string, AttributeValue>()
+                {
+                    {nameof(WeatherForecast.CityName), new AttributeValue(key.Key)},
+                    {nameof(WeatherForecast.Date), new AttributeValue(key.Value.ToString(AWSSDKUtils.ISO8601DateFormat))}
+                }))).ToList()
+            }
+        }
+    };
+    var response = await _amazonDynamoDbClient
+                 .BatchWriteItemAsync(batchWriteRequest);
+}
+```
+
+The `RequestItems` takes the collection of items to insert as a `WriteRequest` object, which again takes a `DeleteRequest` instance as shown above.
+
+The list of items is grouped as a dictionary based on the DynamoDB table it is to be deleted. The above code deletes all the items from the `WeatherForecast` table.
+
+The `BatchWriteItemResponse` returns the result of the Batch Write operation. The `UnprocessedItems` dictionary in the response returns a map of tables and requests against those tables that were not processed.
+
+### Batch Delete on Multiple Tables Using .NET Low-Level API
+
+To perform a batch delete on multiple tables using the .NET Low-Level `AmazonDynamoDBClient` instance, all we need to do is pass another key value pair of items with the appropriate table name, and the items
+
+```csharp
+var batchWriteRequest = new BatchWriteItemRequest
+{
+    RequestItems = new Dictionary<string, List<WriteRequest>>
+    {
+        {nameof(WeatherForecast), <itemsToInsert>},
+        {nameof(WeatherForecastTable), <itemsToInsert>}
+    }
+};
+```
+
+When processing the `UnprocessedItems` from a batch write response, it's recommended to perform the subsequent request after a random back-off time. You can read more about the recommended practices [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Programming.Errors.html#Programming.Errors.BatchOperations).

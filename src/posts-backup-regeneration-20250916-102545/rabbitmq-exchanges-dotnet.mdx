@@ -1,0 +1,167 @@
+---
+title: 'Rabbit MQ Exchange and Exchange Types: What You Need to Know'
+slug: rabbitmq-exchanges-dotnet
+date: '2024-02-28'
+feature_image: /images/RabbitMQ---Exchange.png
+excerpt: >-
+  An Exchange in RabbitMQ is a routing mechanism to send messages to queues.
+  Let's learn about the Exchanges and the different types of Exchanges in
+  RabbitMQ.
+---
+An Exchange in RabbitMQ is a routing mechanism to send messages to queues.
+
+The type of exchange determines how an Exchange sends the messages to Queues.
+
+<iframe src="https://www.youtube.com/embed/H9cMqZdAApQ?feature=oembed" />
+
+In this post let's learn
+
+-   What it A RabbitMQ Exchange?
+-   Binding and Routing Keys
+-   Different Exchange Types
+
+I will use [Amazon MQ](https://aws.amazon.com/amazon-mq/?ref=rahulpnath.com), a managed message broker service that supports ActiveMQ and RabbitMQ engine types to host my RabbitMQ instance. However, you can use [one of the various options that RabbitMQ provides](https://www.rabbitmq.com/download.html?ref=rahulpnath.com) to host your instance,
+
+_This article is sponsored by AWS and is part of my_ [_RabbitMQ Series_](/blog/tag/rabbitmq/)_._
+
+## What is A RabbitMQ Exchange?
+
+Typically, when we think about Message-driven applications, we talk about the Producer (Publisher or Sender), Consumer (Receiver), and Queue.
+
+![](/images/image-1.png)
+
+Producer sending a message to Queue and consumer pulling messages from Queue.
+
+The Producer sends messages to the Queue, and the Consumer picks up and processes messages from the Queue.
+
+However, with RabbitMQ, the Producer does not send messages directly to a Queue.
+
+Producer sends messages to an Exchange.
+
+![](/images/image-2.png)
+
+Producer sends messages to an Exchange. Exchange
+
+Exchanges are responsible for distributing the message copies to different Queues.
+
+With the Exchange between the Producer and Consumer, we need to introduce two new concepts to connect them.
+
+### Binding and Routing Keys
+
+A Binding connects an Exchange with a Queue.
+
+You can think of this as a link or a rule instructing the Exchange on distributing the message copies to Queues.
+
+![](/images/image-3.png)
+
+Producer sends messages to an Exchange. Based on the Exchange type the message properties, and the routing key, the Exchange uses the Binding information to route messages to different Queues.
+
+A Routing Key is an attribute on a message that the Exchange looks at when deciding how to route the message to Queues.
+
+<PostCard 
+  title="Amazon MQ RabbitMQ: A Reliable Messaging Solution for Your .NET Projects"
+  description="RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let’s learn how to get started using RabbitMQ on Amazon MQ from .NET application."
+  slug="amazon-mq-rabbitmq-dotnet/"
+  image="/images/rabbit-mq-dotnet.png"
+/>
+
+## Exchange and Bindings From a .NET Application
+
+The .NET Channel instance has the `ExchangeDeclare` method that lets us create a new Exchange by specifying an Exchange Name and also the Type.
+
+```csharp
+channel.ExchangeDeclare(exchangeName, ExchangeType.Direct);
+```
+
+For now, I am using `ExchangeType.Direct` which represents a Direct Exchange. We will soon learn about the different Exchange Types further in this post.
+
+You can view the details of the Exchange and the associated bindings in the RabbitMQ Management Console.
+
+Below is a snapshot from my [AWS MQ-hosted](https://docs.aws.amazon.com/amazon-mq/latest/developer-guide/getting-started-rabbitmq.html) Rabbit instance
+
+![](/images/image-6.png)
+
+Exchange information in RabbitMQ Management Console (hosted in Amazon MQ)
+
+The sender/publisher knows nothing about Queues.
+
+The `BasicPublish` method sends messages to an Exchange. It also supports sending the routing key for a message.
+
+```csharp
+void SendMessage(IModel channel, string message, string routingKey)
+{
+    var body = Encoding.UTF8.GetBytes(message);
+    channel.BasicPublish(exchangeName, routingKey, null, body);
+    Console.WriteLine($"[x] Send {message}");
+}
+```
+
+On the Receiver side, we define the Bindings that connect this Exchange to appropriate Queues. The Consumers still pull work from these Queues.
+
+The `QueueBind` method takes in the Queue Name, Exchange Name, and the Binding Key to create a Binding that connects the Exchange with the Queue.
+
+```csharp
+channel.QueueBind(queueName, exchangeName, bindingKey);
+```
+
+## Exchange Types in RabbitMQ
+
+With the messages flowing into the Exchange, we must start routing them to different Queues based on the application needs.
+
+RabbitMQ supports four different Exchange Types.
+
+Based on the Exchange Type, RabbitMQ routes the messages differently to its destination Queues.
+
+Here, we will look at some high-level features of the different Exchange Types. We will cover each of them in detail in separate posts. (_I'll link them here as I publish them_)
+
+### Direct Exchange
+
+A Direct Exchange routes messages to Queues with routing keys that exactly match the binding keys.
+
+> Route the message to a queue whose binding key matches exactly with the message's routing key.
+
+![](/images/image-2.png)
+
+You can have multiple bindings to the same queue and different queues for the same binding key. Learn more about Direct Exchange in the post below.
+
+<PostCard 
+  title="Direct Exchange - RabbitMQ"
+  description="A Direct Exchange routes messages to queues whose binding key matches the message routing key. Let’s understand how to set up a Direct Exchange and how it routes messages to consumers."
+  slug="direct-exchange-rabbitmq-dotnet/"
+  image="/images/RabbitMQ---Direct-Exchange.png"
+/>
+
+### Fanout Exchange
+
+A Fanout Exchange type routes all messages it receives to all the Queues bound to it. It does not look at the routing or binding key provided, if any.
+
+> _Sends copies of messages to all the queues bound to it._
+
+Fanout Exchange is a great choice where the same message needs to be sent to one or more queues. Consumers of each queue can process the messages differently.
+
+### Topic Exchange
+
+Topic Exchanges route messages to queues based on wildcard matches on the routing key provided as part of the binding key on a binding.
+
+> Route messages to queues based on wild card matches between the routing key and the binding key.
+
+Routing keys are a list of words delimited by the ‘.’ (Dot) symbol.
+
+You can use two wild card patterns in the binding key as required.
+
+-   \* (Star) → Matches one word in a specific position
+-   \# (Hash) → Matches zero or more words
+
+This gives flexibility to the consumers to filter down to messages they are interested in by using wildcard matching on the routing key.
+
+⚠️
+
+__If none of the bindings use wildcards, a Topic Exchange behaves like a Direct Exchange, and you are better off using Direct Exchange.__
+
+### Headers Exchange
+
+A Header exchange is a type of exchange that routes messages based on message header attributes.
+
+> Routes messages to queues based on header attributes instead of routing keys.
+
+Unlike direct or topic exchanges that use routing keys or patterns, a header exchange relies on the values in the message's header for routing.

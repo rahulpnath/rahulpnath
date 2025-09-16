@@ -1,17 +1,22 @@
 ---
-title: ">-   How to Ensure Data Consistency with DynamoDB Condition Expressions From .NET   Applications"
+title: >-
+  How to Ensure Data Consistency with DynamoDB Condition Expressions From .NET
+  Applications
 slug: dynamodb-condition-expressions-dotnet
-date: 2023-04-26T00:00:00.000Z
-feature_image: /images/DynamoDB-Condition-Expressions.png
-excerpt: >-
-  DynamoDB Condition Expressions allow specifying constraints when writing data
-  to an Amazon DynamoDB table.
-    It allows you to specify a Boolean expression that must be true for the operation to proceed. Let's learn from Condition Expressions and how to use it from .NET
+date: '2023-04-26'
+feature_image: /content/images/2023/04/DynamoDB-Condition-Expressions.png
 tags:
   - AWS
   - DynamoDB
+excerpt: >-
+  DynamoDB Condition Expressions allow specifying constraints when writing data
+  to an Amazon DynamoDB table.
+
+  It allows you to specify a Boolean expression that must be true for the
+  operation to proceed. Let's learn from Condition Expressions and how to use it
+  from .NET
 ---
-_This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/tag/aws/)_._
 
 Condition Expressions allow specifying constraints when writing data to an Amazon DynamoDB table.
 
@@ -19,7 +24,7 @@ It allows you to specify a Boolean expression that must be true for the operatio
 
 ConditionExpressions are used with an update, delete, or put operations in DynamoDB.
 
-<iframe src="https://www.youtube.com/embed/-H5ATRh5n0E?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/-H5ATRh5n0E?feature=oembed" title="DynamoDB CONDITION EXPRESSIONS | .NET ON AWS | AWS Serverless | Amazon" />
 
 In this blog post, let’s learn
 
@@ -41,16 +46,13 @@ When making a Put, Update, or Delete operation on a DynamoDB table, you can pass
 Below is an example ConditionExpression, which evaluates to true if the Category property is 'Gadgets' and the Price property is between 20 and 100.
 
 ```csharp
-
 ConditionExpression = "Category = :cat and (Price between :low and :high)",
-
 ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
 {
     {":cat", new AttributeValue("Gadgets") },
     {":low", new AttributeValue(){ N = "20" } },
     {":high", new AttributeValue(){ N = "100" } },
 }
-
 ```
 
 If the condition expression evaluates to true when performing the write operation in the DynamoDB server, the process completes successfully. If not, it throws an Exception.
@@ -93,15 +95,7 @@ To pass parameters as part of the `CondtionExpression` we can use the `Expressio
 
 We saw this earlier when exploring the [different ways to query data from Amazon DynamoDB using .NET](/blog/dynamodb-querying-dotnet/).
 
-<BlogLink
-  href="/blog/dynamodb-querying-dotnet/"
-  title="5 Ways To Query Data From Amazon DynamoDB using .NET"
-  description="Querying is an essential operation in DynamoDB. It allows you to filter and select items in your database based on your application and user needs. When moving over to DynamoDB from more traditional relational databases like SQL Server, you must understand the different ways you can retrieve data…"
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/DynamoDB-Querying-new.png"
-/>
+<BookmarkCard href="/blog/dynamodb-querying-dotnet/" title="5 Ways To Query Data From Amazon DynamoDB using .NET" description="Querying is an essential operation in DynamoDB. It allows you to filter and select items in your database based on your application and user needs. When moving over to DynamoDB from more traditional relational databases like SQL Server, you must understand the different ways you can retrieve data…" icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 Let's see a few examples using`ConditionExpression` from .NET applications.
 
@@ -131,7 +125,6 @@ public async Task PostIfLatest(WeatherForecast data)
             } }
     });
 }
-
 ```
 
 If we try to update the object with old data, with the date time less than what's in the database item, it will throw an error.
@@ -157,7 +150,6 @@ public async Task PostIfNotExists(WeatherForecast data)
         }
     });
 }
-
 ```
 
 It uses the `attribute_not_exists` function on both `CityName` and `Date` to make sure an item does not exist already.
@@ -190,7 +182,6 @@ public async Task DeleteIfGreaterThan20(string cityName, string dateTime)
         }
     });
 }
-
 ```
 
 The item with the specified `CityName` and `Date` is deleted only if the `TemperatureC` is greater than 20.

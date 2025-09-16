@@ -1,13 +1,14 @@
 ---
-title: "Exploring Global Secondary Index: Advanced Querying in DynamoDB From .NET"
+title: 'Exploring Global Secondary Index: Advanced Querying in DynamoDB From .NET'
 slug: dynamodb-global-secondary-index-gsi
-date: 2023-06-21
-feature_image: /images/DynamoDB-GSI.png
-excerpt: >-
-  Learn how to create, set up and use a Global Secondary Index (GSI) in DynamoDB for more efficient data access and optimizing cost.
+date: '2023-06-21'
+feature_image: /content/images/2023/06/DynamoDB-GSI.png
 tags:
   - AWS
   - DynamoDB
+excerpt: >-
+  Learn how to create, set up and use a Global Secondary Index (GSI) in DynamoDB
+  for more efficient data access and optimizing cost.
 ---
 _This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
@@ -17,7 +18,7 @@ However, applications often require accessing data using alternate keys as well.
 
 DynamoDB supports two types of secondary indexes - Global Secondary Index (GSI) and Local Secondary index (LSI).
 
-<iframe src="https://www.youtube.com/embed/KkbalFKf20A?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/KkbalFKf20A?feature=oembed" title="DynamoDB Global Secondary Index GSI | .NET ON AWS | AWS Serverless | Amazon" />
 
 In this post, I’ll show you
 
@@ -30,15 +31,7 @@ _The sample code below is on the `WeatherForecast` table, which has `CityName` a
 
 If you are new to DynamoDB, I highly recommend checking out my Getting Started with AWS DynamoDB For the .NET Developer blog post below, where I also show you how to set up the table used in this blog post.
 
-<BlogLink
-  href="/blog/aws-dynamodb-net-core/"
-  title="AWS DynamoDB For The .NET Developer: How To Easily Get Started"
-  description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/aws_dynamodb.jpg"
-/>
+<BookmarkCard href="/blog/aws-dynamodb-net-core/" title="AWS DynamoDB For The .NET Developer: How To Easily Get Started" description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 ## Create a DynamoDB GSI
 
@@ -50,13 +43,13 @@ GSI can be created from the AWS Console and also programmatically. Below I'll sh
 
 When creating a new DynamoDB table in the AWS Console, choose the `Customize settings` options. This allows configuring advanced features on the DynamoDB table, including creating GSI.
 
-![Create Table UI in Amazon AWS Console. Select Customize settings options to create GSI along with creating your DynamoDB Table.](/images/image-3.png)
+<ImageCard src="/content/images/2023/06/image-3.png" alt="Create Table UI in Amazon AWS Console. Select Customize settings options to create GSI along with creating your DynamoDB Table." />
 
 Selecting the `Customize settings` option, enable the Secondary Indexes dialog as you scroll down in the advanced setting options.
 
 You can create both Global and Local indexes on the table.
 
-![Create Secondary Index option in AWS Console. You can create Global and Local Index when creating the table.](/images/image-4.png)
+<ImageCard src="/content/images/2023/06/image-4.png" alt="Create Secondary Index option in AWS Console. You can create Global and Local Index when creating the table." />
 
 The `Create global index` button opens a popup with the details for the GSI.
 
@@ -64,7 +57,7 @@ The important properties required when creating a GSI on a DynamoDB Table, are t
 
 This is very similar to when creating a DynamoDB table.
 
-![Create GSI dialog which prompty for Partition key, Sort key, Index name and also the Attribure projections.](/images/image-5.png)
+<ImageCard src="/content/images/2023/06/image-5.png" alt="Create GSI dialog which prompty for Partition key, Sort key, Index name and also the Attribure projections." />
 
 You can specify a name for the Index and also the [Attributes to be projected into the Index](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html#GSI.Projections). It provides three options.
 
@@ -82,9 +75,13 @@ Navigate to the DynamoDB table in the AWS Console and under the `Index` tab, you
 
 You can only create a Global Secondary Index on an existing table. You cannot create a Local Secondary Index once the table is created.
 
-<Figure src="/images/image-8.png" caption="Choose the `Create index` button for the same dialog to create the GSI on an existing table." />
+<ImageCard src="/content/images/2023/06/image-8.png" alt="Creating a GSI on existing table from the 'Indexes' tab under the table details in AWS Console." />
 
-<Figure src="/images/image-6.png" caption="❌" />
+Choose the `Create index` button for the same dialog to create the GSI on an existing table.
+
+<ImageCard src="/content/images/2023/06/image-6.png" alt="Create GSI popup with the same required details as when creating on a new table." />
+
+❌
 
 _Once a Secondary Index is created, you cannot modify it. You need to delete and recreate it._
 
@@ -105,15 +102,7 @@ Once the Index is created and active, you can use it to query the data using the
 
 We learned more about that in How to Optimize Your DynamoDB Queries With Projection Expressions in .NET.
 
-<BlogLink
-  href="/blog/dynamodb-projection-expressions/"
-  title="How to Optimize Your DynamoDB Queries With Projection Expressions in .NET"
-  description="When reading data from a DynamoDB table, by default, it returns all of the attributes of the items. However, in some application scenarios, you might only require a subset of the attributes of the items. In these scenarios, you can use a ProjectionExpression to limit the item attributes returned a…"
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/DynamoDB-Projection-Expressions.png"
-/>
+<BookmarkCard href="/blog/dynamodb-projection-expressions/" title="How to Optimize Your DynamoDB Queries With Projection Expressions in .NET" description="When reading data from a DynamoDB table, by default, it returns all of the attributes of the items. However, in some application scenarios, you might only require a subset of the attributes of the items. In these scenarios, you can use a ProjectionExpression to limit the item attributes returned a…" icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 💡
 
@@ -123,7 +112,7 @@ _You can query or scan the GSI just like you would query or scan a table._
 
 You can use the GSI from the AWS Console itself to query data from the Index. As shown below in the screenshot, choose the Index that you want to query/scan on and specify the appropriate partition key on the Index.
 
-![](/images/image-9.png)
+<ImageCard src="/content/images/2023/06/image-9.png" alt="" />
 
 You can only get the attributes that are projected into the Index, as specified when creating the Index.
 
@@ -135,15 +124,7 @@ You can use the Index when querying data from .NET applications.
 
 To use Index based querying, you need to use the Low-Level API provided in the .NET SDK. We learned more about this in the 5 Ways To Query Data From Amazon DynamoDB using .NET blog post.
 
-<BlogLink
-  href="/blog/dynamodb-querying-dotnet/"
-  title="5 Ways To Query Data From Amazon DynamoDB using .NET"
-  description="Querying is an essential operation in DynamoDB. It allows you to filter and select items in your database based on your application and user needs. When moving over to DynamoDB from more traditional relational databases like SQL Server, you must understand the different ways you can retrieve data…"
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/DynamoDB-Querying-new.png"
-/>
+<BookmarkCard href="/blog/dynamodb-querying-dotnet/" title="5 Ways To Query Data From Amazon DynamoDB using .NET" description="Querying is an essential operation in DynamoDB. It allows you to filter and select items in your database based on your application and user needs. When moving over to DynamoDB from more traditional relational databases like SQL Server, you must understand the different ways you can retrieve data…" icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 Using the `IAmazonDynamoDB` and the `QueryAsync` method you can specify the `IndexName` on the `QueryRequest` class.
 
@@ -174,22 +155,13 @@ public async Task<IEnumerable<WeatherForecastListItem>> GetUsingGSIQuery(DateTim
         .Select(Document.FromAttributeMap)
         .Select(_dynamoDbContext.FromDocument<WeatherForecastListItem>);
 }
-
 ```
 
 Keep in mind that the query will only return the attributes that are projected into the Index or as specified in the `ProjectionExpression` property.
 
 You can also perform pagination on the Index to load only specific pages of information as required by the application.
 
-<BlogLink
-  href="/blog/dynamodb-pagination/"
-  title="3 Different Ways To Do Data Pagination from Amazon DynamoDB Using .NET"
-  description="DynamoDB charges for reading, writing, and storing data in your DynamoDB tables. As a rule of thumb, when querying data, you can consider that each record that you retrieve from the database has a direct cost attached to it. Limiting the items you retrieve has a direct impact on saving"
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/DynamoDB-Pagination.png"
-/>
+<BookmarkCard href="/blog/dynamodb-pagination/" title="3 Different Ways To Do Data Pagination from Amazon DynamoDB Using .NET" description="DynamoDB charges for reading, writing, and storing data in your DynamoDB tables. As a rule of thumb, when querying data, you can consider that each record that you retrieve from the database has a direct cost attached to it. Limiting the items you retrieve has a direct impact on saving" icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 ## Designing DynamoDB GSI
 

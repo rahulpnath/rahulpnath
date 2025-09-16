@@ -1,13 +1,15 @@
 ---
-title: "AWS DynamoDB For The .NET Developer: How To Easily Get Started"
+title: 'AWS DynamoDB For The .NET Developer: How To Easily Get Started'
 slug: aws-dynamodb-net-core
-date: 2021-04-06
-feature_image: /images/aws_dynamodb.jpg
-excerpt: >-
-  Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it's data store. We will learn to do basic Creat, Read, Update and Delete operations from the API.
+date: '2021-04-06'
+feature_image: /content/images/aws_dynamodb.jpg
 tags:
   - AWS
   - DynamoDB
+excerpt: >-
+  Learn how to get started with AWS DynamoDB with .NET Core by updating the
+  default ASP NET Web API template to use DynamoDB as it's data store. We will
+  learn to do basic Creat, Read, Update and Delete operations from the API.
 ---
 DynamoDB is a cloud-hosted NoSQL database provided by Amazon Web Services (AWS). DynamoDB provides _reliable performance,_ a _managed experience,_ and a convenient _API access_ to interact with it.
 
@@ -17,7 +19,7 @@ With DynamoDB, you can create database tables that can store and retrieve any am
 
 It also supports automatic expiry of items to reduce storage and associated cost.
 
-<iframe src="https://www.youtube.com/embed/BbUmLRaxZG8" />
+<EmbedCard src="https://www.youtube.com/embed/BbUmLRaxZG8" />
 
 DynamoDB is a fully managed database, which means you don't need to spin up server instances, software installations, or other maintenance tasks.
 
@@ -50,11 +52,15 @@ To store the `WeatherFOrecast` let's create a new table with the same name (you 
 
 In this case, we can only have one Item for a city with a particular date time. If we decide to store only the date part, excluding the time, then only one record for a day.
 
-<Figure src="/images/aws_dynamodb_create_table_portal.jpg" caption="To add items to the Table from the portal, use the _Create Item_ button." />
+<ImageCard src="/content/images/aws_dynamodb_create_table_portal.jpg" alt="Create table in AWS DynamoDB from the Console" />
+
+To add items to the Table from the portal, use the _Create Item_ button.
 
 Since we specified City and the Date as the composite primary key, any item added to this table must have those two properties.
 
-<Figure src="/images/aws_dynamodb_create_item_portal.jpg" caption="There can be any other property on the Item and necessarily need not be the same for each item." />
+<ImageCard src="/content/images/aws_dynamodb_create_item_portal.jpg" alt="Create Item in DynamoDB table" />
+
+There can be any other property on the Item and necessarily need not be the same for each item.
 
 We can add JSON data to the table as below → On top of City and Date properties, it contains Summary and Temperature in Celsius as our `WeatherForecast` class.
 
@@ -70,7 +76,9 @@ We can add JSON data to the table as below → On top of City and Date propertie
 
 Below is a snapshot of the Table with a few items added to it.
 
-<Figure src="/images/aws_dynamodb_table_items_portal.jpg" caption="## Set up App to Use DynamoDB" />
+<ImageCard src="/content/images/aws_dynamodb_table_items_portal.jpg" alt="DynamoDB Table with Items" />
+
+## Set up App to Use DynamoDB
 
 With the data set up in DynamoDB, let's update the Web API application to retrieve the data from DynamoDB.
 
@@ -127,7 +135,7 @@ Based on the operator, the number of parameters passed as the third parameter di
 
 With the Controller now using the `IDynamoDBContext` let's wire up the application to be able to dependency inject an implementation for it.
 
-<iframe src="https://www.youtube.com/embed/YR6HkvNBpX4" />
+<EmbedCard src="https://www.youtube.com/embed/YR6HkvNBpX4" />
 
 **NOTE:** _To keep things simple, I've hard-coded the Access Key and the Secret Key in the code. You should move this into [Configuration file](https://youtu.be/5GlgHV_12-k) and use [Secret Manager](https://youtu.be/PkLLP2tcd28) for local development._
 
@@ -149,7 +157,9 @@ To set up _ACCESS\_KEY_ and _SECRET\_KEY_ navigate to the [Identity And Access M
 
 In the below case, I have given `arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess` which grants full access to DynamoDB resources.
 
-<Figure src="/images/aws_dynamodb_iam_user.jpg" caption="Run the application, and voila! We have the API now retrieving the data from DynamoDB." />
+<ImageCard src="/content/images/aws_dynamodb_iam_user.jpg" alt="Add User in IAM to access DynamoDB" />
+
+Run the application, and voila! We have the API now retrieving the data from DynamoDB.
 
 ### CRUD Operations
 
@@ -216,7 +226,7 @@ The Amazon DynamoDB support provided in the AWS SDK for .NET is divided into thr
 
 Not all functionality is available via the High-Level interface, e.g., to create a new table. In these cases, we will need to fall back to the lower-level APIs.
 
-[![AWS Dynamodb .NET SDK Overview](/images/aws_dynamodb_sdk_overview.jpg)](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Programming.SDKOverview.html)
+<ImageCard src="/content/images/aws_dynamodb_sdk_overview.jpg" alt="AWS Dynamodb .NET SDK Overview" />
 
 I hope this helps you to get a basic understanding of DynamoDB and how to get started with it from .NET.
 

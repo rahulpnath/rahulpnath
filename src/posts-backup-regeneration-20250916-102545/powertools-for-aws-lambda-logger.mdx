@@ -1,0 +1,218 @@
+---
+title: How To Easily Get Started with AWS Lambda Logging in .NET using Powertools
+slug: powertools-for-aws-lambda-logger
+date: '2023-11-16'
+feature_image: /images/Powertools---Logging.png
+excerpt: >-
+  Powertools for AWS Lambda (.NET) Logging utility provides a Lambda-optimized
+  logger to output JSON logs. In this blog post, let's learn how to get started
+  with the Powertools for Lambda logging utility when building Lambda Functions
+  in .NET.
+---
+Powertools for AWS Lambda (.NET) Logging utility provides a Lambda-optimized logger to output JSON logs.
+
+Some of the key features of the Logger utility include capturing key fields from Lambda Context, writing JSON logs, log sampling based on a percentage of requests, appending additional keys to the logs, indicating cold starts etc.
+
+<iframe src="https://www.youtube.com/embed/uQxAIYkdNFM?feature=oembed" />
+
+In this blog post, let's learn how to get started with the Powertools for Lambda Logging utility when building Lambda Functions in .NET.
+
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/tag/aws/)_._
+
+## Setting Up AWS Powertools Lambda Logging Utility
+
+[Powertools for AWS Lambda (.NET)](https://docs.powertools.aws.dev/lambda/dotnet/) is a suite of utilities for AWS Lambda functions to ease adopting best practices such as tracing, structured logging, custom metrics, and more.
+
+To get started using the Powertools logging utility, you can install it as a NuGet package - `AWS.Lambda.Powertools.Logging`.
+
+### Configuring Lambda Logging Properties
+
+The Logging utility allows setting up a Friendly Service Name across all the logs written under one Lambda Function Handler.
+
+This makes it easy to filter out logs based on your Lambda Handler if you have multiple functions running in the same account and logging into CloudWatch.
+
+This is set either using an Environment Variable (`POWERTOOLS_SERVICE_NAME`) or using an `Logging` attribute on the Lambda Function Handler, as shown below.
+
+```csharp
+[Logging(LogEvent = true, Service = "GetWeather")]
+public async Task<List<WeatherForecast>> GetWeather(
+    APIGatewayHttpApiV2ProxyRequest request, ILambdaContext context)
+{
+ ...
+}
+```
+
+Some other properties on the `Logging` attribute that affects all the logs written under the specified Function handler are as below.
+
+-   **LogEvent** → Log incoming event (the first parameter input to the Function Handler is logged)
+-   **CorrelationIdPath** → [JSON Pointer Expression](https://datatracker.ietf.org/doc/html/draft-ietf-appsawg-json-pointer-03) to property to use for correlating requests. This is particularly useful if you want to chain logs across multiple Function handlers/services for a single business use case. You can pass along a CorrelationId and use it to log across all services and use it to chain together the logs.
+-   **LogLevel** → Minimum Log Level
+-   **LoggerOutputCase** → SnakeCase (by default), CamelCase, PascalCase
+-   **SamplingRate** → Dynamically set a percentage of requests to log at `DEBUG` level
+
+You can also set some of these properties via environment variables [as listed here](https://docs.powertools.aws.dev/lambda/dotnet/core/logging/#full-list-of-environment-variables).
+
+## Logging Using AWS Powetools Logger
+
+To write a log statement you need an instance of `Microsoft.Extensions.Logging.ILogger`.
+
+You can either use the various static methods on the `AWS.Lambda.Powertools.Logging.Logger` class or use the `Create` function on the same `Logger` class to create a new instance.
+
+### Writing a Simple Log Statement
+
+The below code shows examples of using both ways to log information statements.
+
+```csharp
+public Function() => _logger = Logger.Create<Function>();
+
+[Logging(LogEvent = true, Service = "GetWeather", CorrelationIdPath = "/Headers/correlation-id")]
+public async Task<List<WeatherForecast>> GetWeather(
+    APIGatewayHttpApiV2ProxyRequest request, ILambdaC
+{
+    Logger.LogInformation("Getting Weather data");
+    ...
+    _logger.LogInformation("Retrieved weather data and processing");
+    ...
+}
+```
+
+Here's the sample log output from CloudWatch for the first log statement. This output uses the default log formatter. You can [write a custom Log Formatter](https://docs.powertools.aws.dev/lambda/dotnet/core/logging/#custom-log-formatter-bring-your-own-formatter) to change this default output format.
+
+```json
+{
+    "cold_start": true,
+    "xray_trace_id": "1-6553ccea-1bff54847c5e05d125ff4485",
+    "correlation_id": "d09b4754-7f00-41cd-90ad-dd7e691d38b2",
+    "city_name": "London",
+    "function_name": "weathertest-LambdaEmptyFunction1FunctionGetWeather-zQceOL6olYxd",
+    "function_version": "$LATEST",
+    "function_memory_size": 256,
+    "function_arn": "arn:aws:lambda:ap-southeast-2:189107071895:function:weathertest-LambdaEmptyFunction1FunctionGetWeather-zQceOL6olYxd",
+    "function_request_id": "500290d6-dd74-40bd-b1fb-1307b16a919a",
+    "timestamp": "2023-11-14T19:39:23.9003503Z",
+    "level": "Information",
+    "service": "GetWeather",
+    "name": "LambdaEmptyFunction1.Function",
+    "message": "Getting Weather data"
+}
+```
+
+### Writing Parameterized log statements
+
+All `LogXXX` statements support passing in parameterized log message templates.
+
+```csharp
+_logger.LogInformation(
+    "Getting Weather Data for city {City}", new[] { cityName });
+```
+
+The above code specifies the `City` as a parametrized input and passes the `cityName` to replace it as an object array.
+
+If you have more parameters in the log message template, you can pass in more parameters in the object array (in the same order).
+
+However, note that when passing parameterized log message templates, these parameters are not listed as additional variables in the log output. At the time of writing, it only gets string replaced in the actual template and written to the output as shown below.
+
+```json
+{
+    "cold_start": true,
+    "xray_trace_id": "1-6553ccea-1bff54847c5e05d125ff4485",
+    "correlation_id": "d09b4754-7f00-41cd-90ad-dd7e691d38b2",
+    "function_name": "weathertest-LambdaEmptyFunction1FunctionGetWeather-zQceOL6olYxd",
+    "function_version": "$LATEST",
+    "function_memory_size": 256,
+    "function_arn": "arn:aws:lambda:ap-southeast-2:189107071895:function:weathertest-LambdaEmptyFunction1FunctionGetWeather-zQceOL6olYxd",
+    "function_request_id": "500290d6-dd74-40bd-b1fb-1307b16a919a",
+    "timestamp": "2023-11-14T19:39:23.9006757Z",
+    "level": "Information",
+    "service": "GetWeather",
+    "name": "LambdaEmptyFunction1.Function",
+    "message": "Getting Weather Data for city London"
+}
+```
+
+### Logging Additional Keys in Log Output
+
+To log additional keys to the JSON log output you can either pass in an extra parameter to the `LogXXX` statement, which gets logged for that specific statement or use the `AppendKey(s)` function to append key/values to all subsequent log statements.
+
+#### Passing Additional Properties For Each Log Statement
+
+The below log statements pass in an `extraKeys` which is a Dictionary of key-value pairs, that will show up as additional properties on the log output.
+
+```csharp
+var extraKeys = new Dictionary<string, string>() {
+    { "Count", results.Count.ToString() }, { "cityName", cityName } };
+Logger.LogInformation(
+    extraKeys,
+    "Retrieved data for city {cityName} with count {Count}",
+    new[] { cityName, results.Count.ToString() });
+```
+
+The log output for the above statement includes the properties Count and cityName passed in as extra key-values to be logged.
+
+```json
+{
+    "cold_start": true,
+    "xray_trace_id": "1-6553ccea-1bff54847c5e05d125ff4485",
+    "correlation_id": "d09b4754-7f00-41cd-90ad-dd7e691d38b2",
+    "city_name": "London",
+    "function_name": "weathertest-LambdaEmptyFunction1FunctionGetWeather-zQceOL6olYxd",
+    "function_version": "$LATEST",
+    "function_memory_size": 256,
+    "function_arn": "arn:aws:lambda:ap-southeast-2:189107071895:function:weathertest-LambdaEmptyFunction1FunctionGetWeather-zQceOL6olYxd",
+    "function_request_id": "500290d6-dd74-40bd-b1fb-1307b16a919a",
+    "count": 3,
+    "timestamp": "2023-11-14T19:39:25.8604302Z",
+    "level": "Information",
+    "service": "GetWeather",
+    "name": "AWS.Lambda.Powertools.Logging.Logger",
+    "message": "Retrieved data for city London with count 3"
+}
+```
+
+The ExtraKeys applies only to the current log statement and subsequent log entires will not have these additional keys if they are not passed to those explicitly.
+
+#### Append Key(s) to all Log Statements
+
+In certain cases we want a set of keys to be available for all log statements happening within a function or class. For example if the request is to get weather data for a specific City (name or id), we might want to know the City Name in all log statements.
+
+In these cases, we can use the `AppendKey` functionality.
+
+```csharp
+_logger.AppendKey(nameof(cityName), cityName);
+```
+
+The above statement causes all log statements appearing after this statement to have the property `city_name` in that as a JSON attribute value.
+
+#### Clearing Logger State
+
+Depending on where the `ILogger` instance is created it might hold on to some of the additional state-level information getting added to it.
+
+For example in the above scenario, since we `AppendKey` to the logger instance created in the function constructor, it will be available in the subsequent calls to the Lambda Function instance as well.
+
+For values that are always appended, it will overwrite the value with the latest value and won't show up as any problems.
+
+However, if you have keys that are conditionally appended to the logger state, we need to explicitly clear them, so that it does not linger on during the next lambda invocation.
+
+In these cases, we can use the `ClearState` property set to true on the `Logging` attribute.
+
+```chsarp
+[Logging(LogEvent = true, Service = "GetWeather", CorrelationIdPath = "/Headers/correlation-id", ClearState = true)]
+```
+
+The `ClearState` attribute ensures to delete and reset the logger instance state for subsequent calls. This is required because of the way the Lambda Execution context works.
+
+To learn more about Lambda Execution Context reuse, I highly recommend checking out my blog post on Why You Should Care About Lambda Lifecycle As A .NET Developer.
+
+<PostCard 
+  title="Why You Should Care About Lambda Lifecycle As A .NET Developer?"
+  description="The Lambda Lifecycle affects the way we write out Function code. Learn some of the dos and don’ts when building Lambda Functions in .NET because of how Lambda initializes the Function classes."
+  slug="lambda-lifecycle-and-net/"
+  image="/images/Lambda-Lifecycle-2.png"
+/>
+
+## Things to be aware of
+
+At the time of writing this blog post, I noticed a couple of things that I think you need to be aware of
+
+-   Any exceptions within the Logger class are currently bubbled up and cause the application to crash. I have raised an issue for this and you can [follow it up here.](https://github.com/aws-powertools/powertools-lambda-dotnet/issues/514#issuecomment-1811082716)
+-   As called out earlier parameterized log message templates do not log out the parameters to the output. This however is the default behaviour in other popular logging frameworks. You can follow up on this [issue here](https://github.com/aws-powertools/powertools-lambda-dotnet/issues/496#issuecomment-1805945931).

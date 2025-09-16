@@ -1,0 +1,152 @@
+---
+title: How to Prevent Amazon S3 Object Overwrites with Conditional Writes in .NET
+slug: amazon-s3-etag-conditional-writes
+date: '2024-11-29'
+feature_image: /images/S3-Etags.png
+excerpt: >-
+  Amazon S3 now supports ETags for conditional writes, allowing you to check if
+  an object has been modified before updating it. This feature helps prevent
+  accidental overwrites when multiple users simultaneously write to the same
+  object. Let's learn how to use this from a .NET application.
+---
+Amazon S3 now supports **ETags** for conditional writes, allowing you to check if an object has been modified before updating it.
+
+This feature helps prevent accidental overwrites when multiple users simultaneously write to the same object.
+
+<iframe src="https://www.youtube.com/embed/UrGuKGxu9sY?feature=oembed" />
+
+In this post, we’ll explore how to use ETags with S3’s `PutObject` API requests and ways you can enforce this on your existing S3 buckets.
+
+AWS sponsors this article, which is part of my [.NET on AWS Series](/blog/tag/aws/).
+
+<PostCard 
+  title="Amazon S3 For the .NET Developer: How to Easily Get Started"
+  description="Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3."
+  slug="amazon-s3-dotnet/"
+  image="/images/storage-box-1.jpg"
+/>
+
+## Prevent S3 Object Overwrites With Conditional Writes
+
+You can write conditionally to Amazon S3 objects by adding additional HTTP headers to your `WRITE` requests.
+
+The two headers that are supported are
+
+-   `If-None-Match` : Checks no existing object with the same key
+-   `If-Match` : Checks ETag specified matches before writing an object
+
+To learn more on how to use `If-None-Match` header, check out the article below, where I cover it in detail.
+
+<PostCard 
+  title="Exploring Amazon S3 Conditional Operations From .NET Application"
+  description="Amazon S3 now supports conditional requests. You can use conditional requests to add preconditions to your S3 operations. If the precondition is not met it will result in the S3 operation failing. Let’s learn about Conditional Reads and Writes in Amazon S3 and how to use it from .NET"
+  slug="amazon-s3-conditional-requests-dotnet/"
+  image="/images/Copy-of-Amazon-S3-Versioning.png"
+/>
+
+## What is an ETag of An S3 Object
+
+The Entity tag (ETag) for an object represents the specific version of that object.
+
+💡
+
+__Etag is calculated based on the contents of an object and is not affected by its metadata__
+
+The ETag is updated only if an object's contents change. If only the object's metadata changes, the ETag remains the same.
+
+![](/images/image-18.png)
+
+ETag property on an Amazon S3 Object in the AWS Console.
+
+The ETag may or may not be an MD5 digest of the object data. Whether or not it is depends on [how the object was created and how it is encrypted](https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html?__readwiseLocation=#checking-object-integrity-etag-and-md5).
+
+## Using S3 Etags From .NET Applications to Prevent Overwrites
+
+Make sure you have the latest [AWS S3 Nuget package](https://www.nuget.org/packages/AWSSDK.S3) to use the `IfMatch` property on `PutObjectRequest`.
+
+The below API request creates a `PutObjectRequest` and passes an ETag value as part of the `IfMatch` property.
+
+```csharp
+app.MapPost("/upload-file-with-etag", async (
+    [FromForm] FileUploadRequest request,
+    string ? etag,
+    IAmazonS3 s3Client,
+    CancellationToken cancellationToken) => {
+    await s3Client.PutObjectAsync(new PutObjectRequest() {
+      BucketName = "user-service-large-messages",
+        Key = request.File.FileName,
+        InputStream = request.File.OpenReadStream(),
+        IfMatch = etag
+    }, cancellationToken);
+
+    return Results.Ok();
+  })
+  .WithName("UploadFileWithEtag")
+  .DisableAntiforgery()
+  .WithOpenApi();
+```
+
+When performing the request, if the ETag value passed on the request matches the current ETag property on the S3 object, the request succeeds and updates the object content appropriately.
+
+If the ETag value passed on the request does not match the ETag value on the Object in S3, it fails with an exception `412 Precondition Failed`
+
+Any time you read an object from S3, you must pass around the Etag value and ensure it's available when you upload the object.
+
+```csharp
+app.MapGet("/get-file-and-etag", async (
+    string fileName,
+    IAmazonS3 s3Client) => {
+    var file = await s3Client.GetObjectAsync(new GetObjectRequest() {
+      BucketName = "user-service-large-messages",
+        Key = fileName,
+    });
+
+    using
+    var reader = new StreamReader(file.ResponseStream);
+    var contents = await reader.ReadToEndAsync();
+    return new {
+      file.Key, contents, file.ETag
+    };
+  })
+  .WithName("GetFileAndETag")
+  .WithOpenApi();
+```
+
+The above code shows how you can get the `Etag` value when reading an object from S3.
+
+## Enforcing Conditional Writes on Amazon S3 Buckets
+
+Amazon S3 bucket policies help [enforce conditional writes](https://docs.aws.amazon.com/AmazonS3/latest/userguide/conditional-writes-enforce.html) on object uploads.
+
+You can define a [bucket policy](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-policies.html) at the S3 bucket level to grant access permissions to your Bucket and its objects.
+
+You can define this under the Permissions tab for an S3 bucket in the AWS Console.
+
+![](/images/image-17.png)
+
+Amazon S3 bucket policy to enforce the s3:if-match header is always passed on PutObject requests.
+
+Here is the [list of condition keys](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html#amazons3-policy-keys) for Amazon S3 and `s3:if-match` is one of them.
+
+We can use the `s3:if-match` condition key to enforce that it is always present on a `PutObject` request.
+
+```json
+{
+  "Sid": "EnforceETagIsPresentAlways",
+  "Effect": "Deny",
+  "Principal": "*",
+  "Action": "s3:PutObject",
+  "Resource": "arn:aws:s3:::user-service-large-messages/*",
+  "Condition": {
+    "Null": {
+      "s3:if-match": "true"
+    }
+  }
+}
+```
+
+The above policy applies the `Deny` effect on any `s3:PutObject` Action on the specific bucket resource if the `s3:if-match` condition key is `Null`.
+
+If you make a `PutObject` request without passing in the `If-Match` header, request without passing it in the header, it will throw an exception, mentioning you don't have access.
+
+[Check out](https://docs.aws.amazon.com/AmazonS3/latest/userguide/conditional-writes-enforce.html) more scenarios on how to enforce conditional writes on Amazon S3 buckets.

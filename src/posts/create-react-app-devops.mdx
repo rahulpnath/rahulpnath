@@ -1,22 +1,18 @@
 ---
-title: "Azure DevOps Build Release Pipeline For Create React App"
+title: Azure DevOps Build Release Pipeline For Create React App
 slug: create-react-app-devops
-date: 2020-02-10T00:00:00.000Z
-feature_image: /images/devops_create_react_app_thumbnail.png
-excerpt: >-
-  Create-react-app(https://github.com/facebook/create-react-app) is the defacto
-  for most of the websites that I work on these days. In this post, we will see
-  how to set up a build/deploy pipeline for create...
+date: '2020-02-10'
+feature_image: /content/images/devops_create_react_app_thumbnail.png
 tags:
   - DevOps
 ---
-[Create-react-app](https://github.com/facebook/create-react-app) is the defacto for most of the websites that I work on these days. In this post, we will see how to set up a build/deploy pipeline for [create react app](https://create-react-app.dev/) in Azure DevOps. We will be using the YML format for the pipeline here, which makes it possible to have the build definitions as part of the source code."
+[Create-react-app](https://github.com/facebook/create-react-app) is the defacto for most of the websites that I work on these days. In this post, we will see how to set up a build/deploy pipeline for [create react app](https://create-react-app.dev/) in Azure DevOps. We will be using the YML format for the pipeline here, which makes it possible to have the build definitions as part of the source code.
 
-<iframe src="https://www.youtube.com/embed/QbmLxfRCt38" />
+<EmbedCard src="https://www.youtube.com/embed/QbmLxfRCt38" />
 
 ## Build Pipeline
 
-![](/images/devops_create_react_app.jpg)
+<ImageCard src="/content/images/devops_create_react_app.jpg" alt="" />
 
 In the DevOps portal, start by creating a new Build pipeline and choose the '**Node.js with React**' template. By default, it comes with the _'Install Node.js'_ step that installs the required node version and the _'npm script step'_ to execute any custom scripts. The output of the build step must be an artifact to deploy in the Release step. To support this we need to add two steps to the YML file.
 
@@ -27,10 +23,8 @@ In the DevOps portal, start by creating a new Build pipeline and choose the '**N
 
 ```yml
 # Node.js with React
-
 # Build a Node.js project that uses React.
 # Add steps that analyze code, save build artifacts, deploy, and more:
-
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
@@ -78,7 +72,7 @@ The above pipeline generates a zip artifact of the contents of the 'build' folde
 
 ## Release Pipeline
 
-![](/images/devops_cra_release.jpg)
+<ImageCard src="/content/images/devops_cra_release.jpg" alt="" />
 
 To release to Azure Web App, create a new release pipeline and add the Azure Web App Task. Link with the appropriate Azure subscription and select the web application to deploy.
 
@@ -117,8 +111,7 @@ If APIs are part of the same host, then it needs to be excluded from the URL Rew
 
 When deploying to multiple environments like (Test, Staging, Production), I like to have the configs as part of the [Azure DevOps Variable Groups](/blog/azure-devops-variable-groups-history/). It allows having all the configuration for the application in one place and easier to manage. These variables are to be replaced in the build artifact at the time of release based on the environment it is getting released. One way to handle this is to have a script tag in '_Index.html_' file as below.
 
-<iframe src="https://www.youtube.com/embed/eGcosoC43vI" />
-
+<EmbedCard src="https://www.youtube.com/embed/eGcosoC43vI" />
 ```html
 <head>
   <script>

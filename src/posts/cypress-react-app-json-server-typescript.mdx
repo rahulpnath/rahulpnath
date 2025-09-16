@@ -1,19 +1,14 @@
 ---
-title: "Setting Up Cypress + React App + JSON Server + TypeScript"
+title: Setting Up Cypress + React App + JSON Server + TypeScript
 slug: cypress-react-app-json-server-typescript
-date: 2020-04-09T00:00:00.000Z
-feature_image: /images/cypress_react_json_server_typescript.jpg
-excerpt: >-
-  For the past couple of weeks, I have been playing around with Cypress and been
-  enjoying the experience.
-  Cypress(https://docs.cypress.io/guides/overview/why-cypress.htmlIn-a-nutshell)
-  is a next-generation front end testing tool built for the modern...
+date: '2020-04-09'
+feature_image: /content/images/cypress_react_json_server_typescript.jpg
 tags:
   - Testing
 ---
-For the past couple of weeks, I have been playing around with Cypress and been enjoying the experience. [Cypress](https://docs.cypress.io/guides/overview/why-cypress.html#In-a-nutshell) is a next-generation front end testing tool built for the modern web. It is the next generation Selenium and enables to write tests faster, easier, and reliable."
+For the past couple of weeks, I have been playing around with Cypress and been enjoying the experience. [Cypress](https://docs.cypress.io/guides/overview/why-cypress.html#In-a-nutshell) is a next-generation front end testing tool built for the modern web. It is the next generation Selenium and enables to write tests faster, easier, and reliable.
 
-![](/images/cypress_react_json_server_typescript.jpg)
+<ImageCard src="/content/images/cypress_react_json_server_typescript.jpg" alt="" />
 
 In this post, let's look at how we can set up Cypress for a React application that runs over a FAKE JSON Server all using TypeScript. By using a Fake Server for the tests, we can guarantee the application state and the data to expect.
 
@@ -51,7 +46,6 @@ Add a tsconfig.json for the TypeScript compiler and update the server.js file to
 }
 
 ```
-
 ```js
 // server.ts
 import jsonServer from 'json-server';
@@ -112,4 +106,6 @@ Cypress comes with default test examples. If the example tests are not showing u
 
 Below is the folder structure that I have - mockApi (JSON Server), cypress, and ui (create-react-app).
 
-<Figure src="/images/cypress_cra_jsonServer_folder_structure.jpg" caption="Start writing Cypress tests now!" />
+<ImageCard src="/content/images/cypress_cra_jsonServer_folder_structure.jpg" alt="" />
+
+Start writing Cypress tests now!

@@ -1,12 +1,14 @@
 ---
-title: "Are You Using HttpClient in The Right Way?"
+title: Are You Using HttpClient in The Right Way?
 slug: are-you-using-httpclient-in-the-right-way
-date: 2020-10-30
-feature_image: /images/http_client_web.jpg
-excerpt: >-
-  If not used correctly it's easy to run into socket exhaustion and DNS related issues with HttpClient in .NET Core. Learn how to identify these issues and how to use HttpClient class in the right way.
+date: '2020-10-30'
+feature_image: /content/images/http_client_web.jpg
 tags:
   - Dotnet
+excerpt: >-
+  If not used correctly it's easy to run into socket exhaustion and DNS related
+  issues with HttpClient in .NET Core. Learn how to identify these issues and
+  how to use HttpClient class in the right way.
 ---
 When an ASP NET application needs to talk to an external service or API, it needs to make an HTTP Request.
 
@@ -14,7 +16,7 @@ When using [ASP.NET](http://asp.NET) to build an application, HTTP requests is m
 
 Using the .NET C# HttpClient might seem straightforward. However, some underlying issues go unnoticed until when the application is under a large load. It is also not the best time for you to figure out these issues.
 
-<iframe src="https://www.youtube.com/embed/bAXZx0zOeCU" />
+<EmbedCard src="https://www.youtube.com/embed/bAXZx0zOeCU" />
 
 So let's spend some time now and understand the proper way to use HttpClient class and avoid running into issues with it for your application.
 
@@ -46,7 +48,7 @@ Running `ping api.weather.com` returns the IP address we want - `185.190.83.2`
 
 Let’s use that to filter the records returned using the netstat command - `netstat -ano | findstr 185.190.83.2`
 
-![Each request to the API opens a new socket and a connection to the external API. It leads to socket exhaustion problem.](/images/httpclient_socket_exhausition.jpg)
+<ImageCard src="/content/images/httpclient_socket_exhausition.jpg" alt="Each request to the API opens a new socket and a connection to the external API. It leads to socket exhaustion problem." />
 
 Every request to the API endpoint opens a new connection to the external API. As shown in the image above, you can see more network connections when running the `netstat` command after making requests to our API endpoint. Even after the HttpClient connection is disposed, it leaves the network connections in a TIME\_WAIT state.
 
@@ -74,7 +76,9 @@ We can create a new instance of HttpClient and not dispose of for the applicatio
 
 You can [read more about these issues](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#issues-with-the-original-httpclient-class-available-in-net-core) using the HttpClient class directly in the official Microsoft documentation.
 
-[<Figure src="/images/asp_net_core_banner.png)](https://www.youtube.com/playlist?list=PL59L9XrzUa-nqfCHIKazYMFRKapPNI4sP" caption="## Use IHttpClientFactory To Create HttpClient" />
+<ImageCard src="/content/images/asp_net_core_banner.png" alt="" />
+
+## Use IHttpClientFactory To Create HttpClient
 
 Now that we know the issues let’s see how to fix this. The simplest way is to inject the `IHttpClient Factory` and create a new HttpClient instance from it.
 
@@ -97,7 +101,7 @@ public async Task<string> Get(string cityName)
 
 To enable Dependency Injection of the `IHttpClientFactory` instance we need to make sure to call `services.AddHttpClient()` method in `ConfigureServices` method of `Startup.cs`.
 
-![Using IHttpClientFactory, even after making multiple calls, we see only one connection in the Established state when running netstat.](/images/httpclient_using_ihttpclientfactory.jpg)
+<ImageCard src="/content/images/httpclient_using_ihttpclientfactory.jpg" alt="Using IHttpClientFactory, even after making multiple calls, we see only one connection in the Established state when running netstat." />
 
 Using the IHttpClientFactory [has several benefits](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#benefits-of-using-ihttpclientfactory?WT.mc_id=AZ-MVP-5003875), including managing the lifetime of the network connections. Using the factory to create the client reuses connection from a connection pool, thereby not creating too many sockets. The connections are reused and automatically disposed to avoid DNS level issues.
 

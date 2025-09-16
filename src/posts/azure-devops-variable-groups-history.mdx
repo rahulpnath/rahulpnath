@@ -1,12 +1,8 @@
 ---
-title: "Enable History for Azure DevOps Variable Groups Using Azure Key Vault"
+title: Enable History for Azure DevOps Variable Groups Using Azure Key Vault
 slug: azure-devops-variable-groups-history
-date: 2019-06-12T00:00:00.000Z
-feature_image: /images/devops_variable_groups_key_vault.jpg
-excerpt: >-
-  Using Key Vault via Variable Group does not snapshot configuration values from
-  the vault. When a deployment is triggered the latest value from the Key Vault
-  is used.  A...
+date: '2019-06-12'
+feature_image: /content/images/devops_variable_groups_key_vault.jpg
 tags:
   - DevOps
   - Azure
@@ -17,10 +13,11 @@ A couple of weeks back, I accidentally deleted an Azure DevOps Variable Group at
 
 {{< tweet 1130369563135160320>}}
 
-In this post, let us see how we can link secrets from Key Vault to DevOps Variable Groups and how it helps us from accidental deletes and similar mistakes. Check out my video on [Getting started with Key Vault](https://www.youtube.com/watch?v=51Qmk3TQJ44) and other [related articles](/blog/tag/azure-key-vault/) if you are new to Key Vault.
+In this post, let us see how we can link secrets from Key Vault to DevOps Variable Groups and how it helps us from accidental deletes and similar mistakes. Check out my video on [Getting started with Key Vault](https://www.youtube.com/watch?v=51Qmk3TQJ44) and other [related articles](/tag/azure-key-vault/) if you are new to Key Vault.
 
-> [Azure Key Vault](https://azure.microsoft.com/en-au/services/key-vault/) enables safeguard cryptographic keys and secrets used by the application. It increases security and control over keys and passwords."
-<iframe src="https://www.youtube.com/embed/1OAy3XOE3OY" />
+> [Azure Key Vault](https://azure.microsoft.com/en-au/services/key-vault/) enables safeguard cryptographic keys and secrets used by the application. It increases security and control over keys and passwords.
+
+<EmbedCard src="https://www.youtube.com/embed/1OAy3XOE3OY" />
 
   
 
@@ -28,11 +25,11 @@ In this post, let us see how we can link secrets from Key Vault to DevOps Variab
 
 Azure DevOps supports [linking Secrets from an Azure Key Vault to a Variable Group](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups?view=azure-devops&tabs=yaml#link-secrets-from-an-azure-key-vault). When creating a new variable group toggle on the '_Link secrets from an Azure Key Vault as variables_' option. You can now link the Azure subscription and the associated Key Vault to retrieve the secrets. Clicking the Authorize button next to the Key Vault sets the required permissions on the Key Vault for the Azure Service Connection (that what connects your DevOps account with the Azure subscription).
 
-![Azure DevOps Variable Groups and Azure Key Vault](/images/devops_variable_groups_key_vault.jpg)
+<ImageCard src="/content/images/devops_variable_groups_key_vault.jpg" alt="Azure DevOps Variable Groups and Azure Key Vault" />
 
 The Add button pops up a dialog as shown below. It allows you to select the Secrets that needs to be available as part of the Variable Group.
 
-![Azure DevOps Variable Groups link secrets from Vault](/images/devops_variable_groups_key_vault_secrets.jpg)
+<ImageCard src="/content/images/devops_variable_groups_key_vault_secrets.jpg" alt="Azure DevOps Variable Groups link secrets from Vault" />
 
 Create an Azure Key Vault for each environment to manage Secrets for that environment. As per the current [pricing](https://azure.microsoft.com/en-au/pricing/details/key-vault/), creating a Key Vault does not have any cost associated. Cost is based on operations to Key Vault - around _USD $0.03/10,000 transactions_ (at the time of writing.)
 

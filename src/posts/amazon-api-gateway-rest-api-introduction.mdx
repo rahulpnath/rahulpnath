@@ -1,16 +1,16 @@
 ---
-title: "Amazon API Gateway - Introduction To Building REST APIs"
+title: Amazon API Gateway - Introduction To Building REST APIs
 slug: amazon-api-gateway-rest-api-introduction
-date: 2022-07-22T00:00:00.000Z
-feature_image: /images/learning_code.jpg
+date: '2022-07-22'
+feature_image: /content/images/learning_code.jpg
+tags:
+  - AWS
 excerpt: >-
   Learn how to build REST API using API Gateway. We will learn the different
   building blocks of REST APIs, how they connect with each other, and how you
   can build and configure an API in the AWS Console.
-tags:
-  - AWS
 ---
-_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
 Amazon API Gateway is an AWS service for managing APIs at any scale.
 
@@ -18,7 +18,7 @@ REST APIs and HTTP APIs are both RESTful API products offered by API Gateway. Wh
 
 In this blog post, let’s learn the core concepts and terminologies you’ll come across when building REST API.
 
-<iframe src="https://www.youtube.com/embed/mOaV5LwfzUE" />
+<EmbedCard src="https://www.youtube.com/embed/mOaV5LwfzUE" />
 
 We will learn
 
@@ -34,7 +34,7 @@ I will be using Mock integration to show the different concepts. Understanding t
 
 From the AWS Console, under API Gateway, select ‘REST API’ to start building one.
 
-![Create an Amazon API Gateway REST API by providing a name, description, and endpoint type. ](/images/api-gateway-rest-api-create.jpg)
+<ImageCard src="/content/images/api-gateway-rest-api-create.jpg" alt="Create an Amazon API Gateway REST API by providing a name, description, and endpoint type. " />
 
 It prompts you to provide an API Name, description, and Endpoint Type. [Endpoint type](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-endpoint-types.html) can be _regional_, _edge-optimized or private._ Choose an appropriate option based on where most of your API traffic originates.
 
@@ -54,7 +54,7 @@ Building REST APIs in API Gateway also starts with creating a resource. To creat
 
 Based on the selected Resource in the list below, the actions you choose affect that Resource.
 
-![Add a Resource to the API. Resources have a name and are uniquely identified by a path.](/images/api-gateway-rest-api-create-resource.jpg)
+<ImageCard src="/content/images/api-gateway-rest-api-create-resource.jpg" alt="Add a Resource to the API. Resources have a name and are uniquely identified by a path." />
 
 Resources have a name and are uniquely identified by a path. Above, I have added a _Users_ Resource, identified by the path ‘/users'. This Resource is at the root of the API Gateway.
 
@@ -68,7 +68,9 @@ Methods help us perform actions in the Resource via their URL. The allowed metho
 
 To add an Action, use the ‘_Create Action_’ option from the Action’s drop-down button menu. This prompts us to select a method (HTTP Verb) for which you need to create an associated action.
 
-<Figure src="/images/api-gateway-rest-api-create-method.jpg" caption="To complete the creation of a Method, you must choose and set up an Integration point." />
+<ImageCard src="/content/images/api-gateway-rest-api-create-method.jpg" alt="Create a method under the resource by selecting the appropriate HTTP Verb to invoke the method." />
+
+To complete the creation of a Method, you must choose and set up an Integration point.
 
 ### Integrations
 
@@ -81,7 +83,7 @@ Integrations can be of two types:
 -   **Proxy Integration** → With Proxy integration, the request is passed on to the integration as is, which means the backend service will need to interact with the HTTP requests and response objects.
 -   **Non-Proxy Integration →** With Non-proxy integrations, we can specify mapping templates to transform the HTTP request into the backend-specific format. For example, if we have a lambda function to add a user, we can specify a mapping template to pass only the user details and not any of the HTTP Request details.
 
-![](/images/api-gateway-rest-api-create-integration.jpg)
+<ImageCard src="/content/images/api-gateway-rest-api-create-integration.jpg" alt="" />
 
 For this post, I will use a Mock integration and explore how to set up different Method and Integration options.
 
@@ -93,7 +95,7 @@ An API **Method Request** represents the HTTP request that the client makes to t
 
 Below I have set up the Method Request to expect an optional query string parameter _count_ on the incoming GET request on _Users_ resource.
 
-![Configure the headers, query string parameters, authorization, validators etc. on the incoming HTTP method request.](/images/api-gateway-rest-api-configure-method-request.jpg)
+<ImageCard src="/content/images/api-gateway-rest-api-configure-method-request.jpg" alt="Configure the headers, query string parameters, authorization, validators etc. on the incoming HTTP method request." />
 
 The **Method Response** is an HTTP response with a given status code.
 
@@ -103,7 +105,9 @@ Below I have added a 500 status code to indicate error scenarios. You can choose
 
 For Proxy integration mode, you would mostly be relaying back the status code as returned from the integration endpoint.
 
-<Figure src="/images/api-gateway-rest-api-configure-method-response.jpg" caption="### Setting up Integration Request/Response" />
+<ImageCard src="/content/images/api-gateway-rest-api-configure-method-response.jpg" alt="Configure Method Response for REST API in Amazon API Gateway" />
+
+### Setting up Integration Request/Response
 
 Similar to Method, Integration also has an Integration Request and Integration Response.
 
@@ -111,7 +115,7 @@ An Integration Request is a request that API Gateway submits to the backend, pas
 
 A mapping template is a script written in [Velocity Template Language (VTL)](https://velocity.apache.org/engine/devel/vtl-reference.html), and is applied inside of API Gateway.
 
-![Integration Request using VTL mapping template for a mock integration in Amazon API Gateway REST API.](/images/api-gateway-rest-api-configure-integration-request.jpg)
+<ImageCard src="/content/images/api-gateway-rest-api-configure-integration-request.jpg" alt="Integration Request using VTL mapping template for a mock integration in Amazon API Gateway REST API." />
 
 The Mapping template below uses the count property from the query string to set the `statusCode` property on the Integration Request.
 
@@ -137,7 +141,7 @@ For a Non-Proxy integration, you must set up at least one Integration Response a
 
 The Integration Response is where we map the response from the backend  (i.e., the integration) to the Method Response. When creating a new Integration Response, it prompts selecting the Method Response status it maps to. E.g., if you want the API to return a 400 status code, you need first to add a Method Response status code of 400 and then add an Integration Response and set up a mapping.
 
-![Configure Integration Response for REST API in Amazon API Gateway](/images/api-gateway-rest-api-configure-integration-response.jpg)
+<ImageCard src="/content/images/api-gateway-rest-api-configure-integration-response.jpg" alt="Configure Integration Response for REST API in Amazon API Gateway" />
 
 Above, I have set the response to send back a mocked list of Users in JSON format for the 200 status code response.
 
@@ -157,13 +161,13 @@ To deploy an API, under the Resources from the Actions drop-down button, choose 
 
 It prompts you to select an existing stage or create a new Stage to deploy the API.
 
-![Create a new stage to deploy an Amazon API Gateway REST API.](/images/api-gateway-rest-api-create-stage.jpg)
+<ImageCard src="/content/images/api-gateway-rest-api-create-stage.jpg" alt="Create a new stage to deploy an Amazon API Gateway REST API." />
 
 Once deployed, the API is accessible via the unique URL for that API + Stage combination. The Stage URL has the stage name appended to the end.
 
 The Invoke URL shown under the Stage is the base URL for your API. You can use this to invoke the different Methods on the Resources for that API.
 
-![Deploy REST API to multiple stages and manage configurations.](/images/api-gateway-rest-api-deploy-stages.jpg)
+<ImageCard src="/content/images/api-gateway-rest-api-deploy-stages.jpg" alt="Deploy REST API to multiple stages and manage configurations." />
 
 Since we have a _User_ resource in this API, we can invoke it using the `/users` path on the Base URL. This will return the response from the API.
 

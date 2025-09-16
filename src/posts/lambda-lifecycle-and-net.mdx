@@ -1,17 +1,17 @@
 ---
-title: "Why Should You Care About Lambda Lifecycle As A .NET Developer?"
+title: Why Should You Care About Lambda Lifecycle As A .NET Developer?
 slug: lambda-lifecycle-and-net
-date: 2023-02-16T00:00:00.000Z
-feature_image: /images/Lambda-Lifecycle-2.png
+date: '2023-02-16'
+feature_image: /content/images/2023/02/Lambda-Lifecycle-2.png
+tags:
+  - AWS
+  - Lambda
 excerpt: >-
   The Lambda Lifecycle affects the way we write out Function code. Learn some of
   the dos and don'ts when building Lambda Functions in .NET because of how
   Lambda initializes the Function classes.
-tags:
-  - AWS
-  - Lambda
 ---
-_This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/tag/aws/)_._
 
 I made a terrible mistake when I first started using AWS Lambda Functions.
 
@@ -19,7 +19,7 @@ I used an instance variable in my .NET class to store the Function state and res
 
 But, the Function state was not getting reset on each invocation.
 
-<iframe src="https://www.youtube.com/embed/DT-j7OlEAFY?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/DT-j7OlEAFY?feature=oembed" title="AWS LAMBDA LIFECYCLE | .NET ON AWS | AWS Serverless | Amazon" />
 
 Understanding the AWS Lambda Lifecycle is essential when building Lambda Functions.
 
@@ -35,7 +35,7 @@ The Lambda Lifecycle mainly consists of three phases:
 -   **Invoke Phase →** Invokes the Function handler configured when setting up Lambda Function and waits for the duration of the Functions timeout.
 -   **Shutdown Phase →** Limited to 2 seconds.
 
-[![Diagram showing the different lifecycle phases of a Lambda Function. (From the AWS Docs)](/images/image.png)](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/6f6c4842-1be6-4042-9faa-5619c0c5a11c/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230216%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230216T050826Z&X-Amz-Expires=86400&X-Amz-Signature=0a62fb23998dcda5f08efb79157545826111f94759d4d6012ab47f5bcd9f81e3&X-Amz-SignedHeaders=host&response-content-disposition=filename%3D%22Untitled.png%22&x-id=GetObject)
+<ImageCard src="/content/images/2023/02/image.png" alt="Diagram showing the different lifecycle phases of a Lambda Function. (From the AWS Docs)" />
 
 You can read more about each phase and the related activities in the [official documentation here](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtime-environment.html#runtimes-lifecycle).
 

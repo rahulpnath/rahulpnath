@@ -1,20 +1,18 @@
 ---
-title: ">-   Windows Phone Series – Incremental Loading multiple data sources inside a   Pivot"
+title: >-
+  Windows Phone Series – Incremental Loading multiple data sources inside a
+  Pivot
 slug: windows-phone-series-incremental-loading-multiple-data-sources-inside-a-pivot
-date: 2014-01-21T00:00:00.000Z
-feature_image: /images/WP_IncrementalLoading.png
-excerpt: >-
-  We had seen on how incremental loading can be done in a Windows
-  phone(GHOSTURL/blog/windows-phone-series-incremental-loading/), so that data
-  can be fetched as user scrolls down the available data. This is important...
+date: '2014-01-21'
+feature_image: /content/images/WP_IncrementalLoading.png
 tags:
   - Dotnet
 ---
 We had seen on how [incremental loading can be done in a Windows phone](/blog/windows-phone-series-incremental-loading/), so that data can be fetched as user scrolls down the available data. This is important for data sources that have a large amount of data and when all of these cannot be loaded at once. I have been getting queries on how to implement this for a Pivot control ,in which each pivot item would bind with multiple data sources or endpoints.
 
-An ideal example for this would be the [500px api](http://developers.500px.com/), where we have photos categorized into different streams and each one of them can be in a pivot item. Since we have been talking about [mvvm](/blog/tag/mvvm/), all along will implement this using MVVM."
+An ideal example for this would be the [500px api](http://developers.500px.com/), where we have photos categorized into different streams and each one of them can be in a pivot item. Since we have been talking about [mvvm](/tag/mvvm/), all along will implement this using MVVM.
 
-![image](/images/WP_IncrementalLoading.png)
+<ImageCard src="/content/images/WP_IncrementalLoading.png" alt="image" />
 
 In the sample application here, I have created 2 projects – PCL and Windows Phone project, just for showing the code separation that can be achieved using MVVM. The PCL can be reused with Windows 8 too to develop a similar application, with a few minor tweaks. We would see how we can incrementally load each of these pivot items as and when the user scrolls down on the list of photos.
 

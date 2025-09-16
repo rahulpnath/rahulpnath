@@ -1,12 +1,14 @@
 ---
-title: "Azure Functions ⚡ For The .NET Developer: How To Easily Get Started"
+title: 'Azure Functions ⚡ For The .NET Developer: How To Easily Get Started'
 slug: getting-started-with-azure-functions
-date: 2021-10-21
-feature_image: /images/laptop_developer.jpg
-excerpt: >-
-  Write your first Azure Function to process messages from an Azure Queue Storage. See how to use Managed Identities to setup authentication for Azure Function with other resources.
+date: '2021-10-21'
+feature_image: /content/images/laptop_developer.jpg
 tags:
   - Azure
+excerpt: >-
+  Write your first Azure Function to process messages from an Azure Queue
+  Storage. See how to use Managed Identities to setup authentication for Azure
+  Function with other resources.
 ---
 What is the most essential part of programming?
 
@@ -20,7 +22,7 @@ Azure Functions can be used to build web APIs, respond to database changes, proc
 
 If you prefer to watch along while you read, check out my video here 👇
 
-<iframe src="https://www.youtube.com/embed/27OUTVdK2_0" />
+<EmbedCard src="https://www.youtube.com/embed/27OUTVdK2_0" />
 
 ## Writing Our First Function
 
@@ -30,7 +32,7 @@ Azure Functions Core Tools help develop and test functions on the local computer
 
 Creating a Functions involves choosing a template for the Function Trigger.
 
-![Visual Studio Azure Function Template](/images/azure_function_create_new.jpg)
+<ImageCard src="/content/images/azure_function_create_new.jpg" alt="Visual Studio Azure Function Template" />
 
 When creating an Azure Function, we need to specify a Storage Account (_`AzureWebJobsStorage`_). In the above example, it is set to the Storage Emulator. When we deploy the Function to the Azure infrastructure, this needs to be a real Azure Storage Account that supports Blob, Queue, and Table storage.
 
@@ -84,21 +86,15 @@ Run the application after setting the correct connection string. If you drop mes
 
 In this case, it simply logs the message.
 
-<Figure src="/images/azure_function_processing.jpg" caption="## Azure Function & Managed Identity" />
+<ImageCard src="/content/images/azure_function_processing.jpg" alt="Azure Function Local Application Console" />
+
+## Azure Function & Managed Identity
 
 Azure Functions supports Managed Identities.
 
 This means we can avoid having to put in connection strings to connect to other resources (that support Managed Identities) and instead let Azure manage the credentials for us.
 
-<BlogLink
-  href="/blog/defaultazurecredential-from-azure-sdk"
-  title="DefaultAzureCredential: Unifying How We Get Azure AD Token"
-  description="Azure Identity library provides Azure Active Directory token authentication support across the Azure SDK"
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/pfx_security.jpg"
-/>
+<BookmarkCard href="/blog/defaultazurecredential-from-azure-sdk" title="DefaultAzureCredential: Unifying How We Get Azure AD Token" description="Azure Identity library provides Azure Active Directory token authentication support across the Azure SDK" icon="/favicon.ico" />
 
 In our example, we added in the `WeatherDataQueue` connection string to connect to the Azure Queue Storage. We can replace this to use Managed Identites.
 
@@ -124,7 +120,7 @@ Make sure to grant the Identity the application is running under appropriate per
 
 When running on the local machine, it can automatically pick up the user logged in to Visual Studio. If the Function is running in Azure infrastructure, enable Identity on the resource and grant it permissions.
 
-![Azure Function Role Assignment For Managed Identity](/images/azure_function_iam_role_assignments.jpg)
+<ImageCard src="/content/images/azure_function_iam_role_assignments.jpg" alt="Azure Function Role Assignment For Managed Identity" />
 
 Since we need to access Queue Storage to read, write, and delete messages, I have assigned the ‘_Storage Queue Data Contributor_’ role for the appropriate identities as shown above.
 
@@ -134,11 +130,11 @@ The application does not use any secrets or sensitive information to connect the
 
 The easiest way to deploy (for testing purposes) is to Publish from the IDE. In Visual Studio, this is built-in, for other IDE’s you will have to install the Azure Tools Extension.
 
-![Deploy Azure Function From Visual Studio](/images/azure_function_publish_visual_studio.jpg)
+<ImageCard src="/content/images/azure_function_publish_visual_studio.jpg" alt="Deploy Azure Function From Visual Studio" />
 
 For real-world applications, I suggest setting up a build-deploy pipeline. If you are using Azure DevOps, check out the below video 👇
 
-<iframe src="https://www.youtube.com/embed/_cOckpopDkY" />
+<EmbedCard src="https://www.youtube.com/embed/_cOckpopDkY" />
 
 We have successfully created an Azure Function, set it up to process messages from a Queue Storage, and have an end-to-end build and deploy pipeline to push our code into the Azure Infrastructure.
 

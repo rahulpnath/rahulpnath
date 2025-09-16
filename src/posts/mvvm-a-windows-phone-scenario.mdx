@@ -1,11 +1,7 @@
 ---
-title: "MVVM – A Windows phone scenario"
+title: MVVM – A Windows phone scenario
 slug: mvvm-a-windows-phone-scenario
-date: 2013-07-26T00:00:00.000Z
-excerpt: >-
-  With multiple platforms/devices, embracing the same technology, common
-  architectural patterns become more popular as they provide us with what we
-  want the most – \\Reusability. \\MVVM has turned out to...
+date: '2013-07-26'
 tags:
   - Dotnet
 ---
@@ -32,9 +28,7 @@ We will discuss each on in details and the sample that we would be using is that
 MVVM Light comes default with a ViewModelLocator(**VML**) class that will help you with the binding of the ViewModels(**VM’s**) with the corresponding View. The VML will have public properties for the different view models that you have. You can either have different public properties for each of your view model here, or have a property for MainViewModel and then that would in turn have other ViewModel properties. The VML uses a SimpleIOC container to resolve type instances. In simple terms, with an IoC container all we are trying to solve is to minimize the dependency between different types/classes, so that we would never have to instantiate one class(complex type) in another. So whenever a instance of a class is required, the IoC container would generate it for us , and all we would be concerned would be of the interface that we require. For IoC to resolve types for us we need to register the interface and the original class that implements the interface. Below you see how we are registering for the interface IDataService and setting its implementation class to DataService. Similarly we can also register classes, which would be how we would be registering our VM’s.
 
 ```csharp
-
 SimpleIoc.Default.Register<IDataService, DataService>();
-
 SimpleIoc.Default.Register<MainViewModel>();
 
 ```
@@ -45,7 +39,7 @@ When installing the nuget package itself an instance of the VML is added into th
 <Application.Resources>
        <ResourceDictionary>
            <!--Global View Model Locator-->
-           <vm:ViewModelLocator x:Key="Locator""
+           <vm:ViewModelLocator x:Key="Locator"
                d:IsDataSource="True" />
  .....
 <Application.Resources>
@@ -55,7 +49,6 @@ When installing the nuget package itself an instance of the VML is added into th
 This instance is used in all the view classes as below  in the xaml.
 
 ```xml
-
 DataContext="{Binding Main, Source={StaticResource Locator}}"
 
 ```
@@ -78,7 +71,6 @@ public MainViewModel Main
 Mostly the main VM would be the one that would be like a hub page, from which the user be able to navigate onto other pages and detailed views., say from a list of friends to a friend, a list of photos to a specific photo. One common thing that we do wrong is to think of View – ViewModel as a one-to-one relationship, meaning one view will have only one ViewModel bound to it.  In our sample app we have a list of photos that needs to be displayed on the main page and on selecting one of the photo, we should be taken to the photo’s detail page. So the mistake to do here would be to have an observable list of Photos in the MainViewModel. We should rather have a list of PhotoViewModel , that would be bound to the list control in the main page. So the MainViewModel would have a property SelectedPhoto, which would be of PhotoViewModel type, that would become the data context of the PhotoDetail page.
 
 ```xml
-
 DataContext="{Binding Main.SelectedPhoto, Source={StaticResource Locator}}"
 
 ```
@@ -86,11 +78,9 @@ DataContext="{Binding Main.SelectedPhoto, Source={StaticResource Locator}}"
 For views that are not at all related to each other, we can have separate properties in the VML, like say for Settings, About page.
 
 ```xml
-
 DataContext="{Binding About, Source={StaticResource Locator}}"
 
 ```
-
 ```csharp
 public AboutViewModel About
  {
@@ -117,7 +107,6 @@ It’s not just the data that gets displayed needs to be separated out cleanly. 
     VerticalAlignment="Center" HorizontalAlignment="Center" />
 
 ```
-
 ```csharp
 public MainViewModel()
 {
@@ -196,7 +185,6 @@ xmlns:command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLi
 </ListBox>
 
 ```
-
 ```csharp
 public MainViewModel()
 {

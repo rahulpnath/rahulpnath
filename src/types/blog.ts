@@ -8,6 +8,15 @@ export interface BlogPost {
   author: {
     name: string;
     avatar?: string;
+    bio?: string;
+    email?: string;
+    social?: {
+      twitter?: string;
+      linkedin?: string;
+      youtube?: string;
+      github?: string;
+      website?: string;
+    };
   };
   publishedAt: string;
   coverImage?: string;
@@ -22,6 +31,15 @@ export interface BlogMetadata {
   author: {
     name: string;
     avatar?: string;
+    bio?: string;
+    email?: string;
+    social?: {
+      twitter?: string;
+      linkedin?: string;
+      youtube?: string;
+      github?: string;
+      website?: string;
+    };
   };
   coverImage?: string;
   tags?: string[];

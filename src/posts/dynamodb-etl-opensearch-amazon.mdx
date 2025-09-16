@@ -1,13 +1,14 @@
 ---
-title: "DynamoDB Zero-ETL Integration With Amazon OpenSearch Service"
+title: DynamoDB Zero-ETL Integration With Amazon OpenSearch Service
 slug: dynamodb-etl-opensearch-amazon
-date: 2024-11-29
-feature_image: /images/DynamoDB-Zero-ETL.png
-excerpt: >-
-  Let's learn how to set up the DynamoDB Zero ETL plugin for OpenSearch, a fully managed, no-code setup for ingesting data into Amazon OpenSearch Service.
+date: '2024-11-29'
+feature_image: /content/images/2024/11/DynamoDB-Zero-ETL.png
 tags:
   - AWS
   - DynamoDB
+excerpt: >-
+  Let's learn how to set up the DynamoDB Zero ETL plugin for OpenSearch, a fully
+  managed, no-code setup for ingesting data into Amazon OpenSearch Service.
 ---
 How do you do a full-text search on the data in your DynamoDB database?
 
@@ -15,7 +16,7 @@ The simple answer is...
 
 _... You don’t._
 
-<iframe src="https://www.youtube.com/embed/iRTllEbrrUk?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/iRTllEbrrUk?feature=oembed" title="DynamoDB Zero-ETL integration with Amazon OpenSearch Service | Amazon DynamoDB | Amazon OpenSearch" />
 
 DynamoDB excels at fast key-value and document queries but isn’t built for complex full-text search, like ranking or relevance filtering.
 
@@ -37,14 +38,14 @@ You can use one or more DynamoDB tables as a source for the data ingestion
 
 The plugin uses a combination of the data export feature and the DynamoDB Streams feature to get the data in near real-time from DynmoDB into OpenSearch.
 
-<Figure src="/images/image-16.png" caption="Point-in-time recovery turned on for DynamoDB table under Backups in AWS Console." />
+<ImageCard src="/content/images/2024/11/image-16.png" alt="Point-in-time recovery turned on for DynamoDB table under Backups in AWS Console." caption="Point-in-time recovery turned on for DynamoDB table under Backups in AWS Console." />
 
 Before setting up the plugin, ensure that you have
 
 -   Turned on Point-In-Time Recovery (PITR) on DynamoDB Table
 -   Turned on DynamoDB Streams with '**New and old images**' option
 
-<Figure src="/images/image-9.png" caption="DynamoDB Streams turned on For Zero ETL OpenSearch Plugin" />
+<ImageCard src="/content/images/2024/11/image-9.png" alt="DynamoDB Streams turned on For Zero ETL OpenSearch Plugin" caption="DynamoDB Streams turned on For Zero ETL OpenSearch Plugin" />
 
 The plugin loads the initial data snapshot (using PITR) into an Amazon S3 bucket, which is then imported into OpenSearch. This is to get existing data in the table to OpenSearch.
 
@@ -60,7 +61,7 @@ To create a new ingestion pipeline, navigate to DynamoDB under AWS Console.
 
 Under the Integration tab, you can create a new Integration and set up the Amazon OpenSearch data ingestion pipeline, as shown below.
 
-<Figure src="/images/image-10.png" caption="Creating a new DynamoDB Zero ETL Data ingestion pipeline for Amazon OpenSearch from AWS Console." />
+<ImageCard src="/content/images/2024/11/image-10.png" alt="Creating a new DynamoDB Zero ETL Data ingestion pipeline for Amazon OpenSearch from AWS Console." caption="Creating a new DynamoDB Zero ETL Data ingestion pipeline for Amazon OpenSearch from AWS Console." />
 
 This prompts a new page where you can set up the ingestion pipeline details.
 
@@ -68,7 +69,7 @@ You must provide the pipeline name, capacity, and configuration in YAML or JSON 
 
 It also provides a default template schema that you can use as a starting point for the configuration.
 
-![](/images/image-11.png)
+<ImageCard src="/content/images/2024/11/image-11.png" alt="" />
 
 The pipeline configuration consists of two parts - the Source and the Sink.
 
@@ -80,7 +81,6 @@ dynamodb-pipeline:
    
   sink:
    ...
-
 ```
 
 The source sets up the configuration details for the DynamoDB, S3 Export, and associated roles and regions.
@@ -110,7 +110,6 @@ source:
     aws:
       sts_role_arn: "arn:aws:iam::123456789012:role/event-pipeline-etl-role"
       region: "ap-southeast-2"
-
 ```
 
 I've also specified the Role ARN to use for the pipeline. More on the IAM Role setup below.
@@ -140,7 +139,6 @@ The sink configuration section sets up the OpenSearch details - the host URL, th
             key_path_prefix: "dynamodb-pipeline/dlq"
             region: "ap-southeast-2"
             sts_role_arn: "arn:aws:iam::123456789012:role/event-pipeline-etl-role"
-
 ```
 
 We can also set `dlq` configuration element, which points to an S3 bucket, where any items that throw an error during the sync will be moved.
@@ -153,7 +151,7 @@ The source's IAM Role requires access to the DynamoDB Table to export data, read
 
 You can find more details on the IAM Role configuration for the source [here](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/configure-client-ddb.html#ddb-pipeline-role).
 
-<Figure src="/images/image-13.png" caption="DynamoDB Zero ETL to OpenSearch IAM Role" />
+<ImageCard src="/content/images/2024/11/image-13.png" alt="DynamoDB Zero ETL to OpenSearch IAM Role" caption="DynamoDB Zero ETL to OpenSearch IAM Role" />
 
 The IAM role also requires access to connect to OpenSeach and write data. The configuration for the sink role is more detailed [here](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/pipeline-domain-access.html).
 
@@ -230,13 +228,13 @@ For the IAM role to be able to add data to Amazon OpenSeach ou also need to make
 
 For this navigate to the Amazon OpenSearch dashboard, under Security → Roles → `all_access` → Map user, specify the Role ARN as the Backend role. (as shown below).
 
-![](/images/image-12.png)
+<ImageCard src="/content/images/2024/11/image-12.png" alt="" />
 
 You can restrict to these absolute required permissions if required, which mean you would be using a different role instead of `all_access`.
 
 Once the pipeline configuration is up and running, you should be able to see your DynamoDB data in Amazon OpenSearch.
 
-<Figure src="/images/image-15.png" caption="Amazon OpenSearch Dashboard Dev Tools to run queries" />
+<ImageCard src="/content/images/2024/11/image-15.png" alt="Amazon OpenSearch Dashboard Dev Tools to run queries" caption="Amazon OpenSearch Dashboard Dev Tools to run queries" />
 
 The configuration also supports transforming the data from DynamoDB before ingesting it into OpenSearch.
 

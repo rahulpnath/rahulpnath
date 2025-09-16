@@ -1,16 +1,14 @@
 ---
-title: "Windows Phone Series: Image Caching Library - JetImageLoader"
+title: 'Windows Phone Series: Image Caching Library - JetImageLoader'
 slug: windows-phone-series-image-caching-library-jetimageloader
-date: 2014-04-17
-feature_image: /images/WP-JetImagLoader.png
-excerpt: >-
-  Recently on a client project, I had a requirement to cache images locally on the phone and then load it from there from subsequent requests. Initially I had plans for...
+date: '2014-04-17'
+feature_image: /content/images/WP-JetImagLoader.png
 tags:
   - Dotnet
 ---
 Recently on a client project, I had a requirement to cache images locally on the phone and then load it from there from subsequent requests. Initially I had plans for custom implementing this using sqlite and custom code. While googling for this, I came across an awesome custom library that solved my problem with just a few lines of code – [JetImageLoader](https://github.com/artem-zinnatullin/jet-image-loader) by [Artem](https://github.com/artem-zinnatullin). This is available via nuget, making it easy to install
 
-[![WP-JetImagLoader](/images/WP-JetImagLoader.png)](http://www.nuget.org/packages/WP-JetImagLoader/0.8.5)"
+<ImageCard src="/content/images/WP-JetImagLoader.png" alt="WP-JetImagLoader" />
 
 Integrating this library into any existing project is even easier and is just about using a converter on your Image datatemplate as shown below.
 
@@ -40,7 +38,6 @@ public class JetImageLoaderImplementation
 }
 
 ```
-
 ```csharp
 public class JetImageLoaderConverter : BaseJetImageLoaderConverter
 {

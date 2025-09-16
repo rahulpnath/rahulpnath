@@ -1,18 +1,22 @@
 ---
-title: "HOW TO: ZIP Multiple CSV Files In ASP.NET"
+title: 'HOW TO: ZIP Multiple CSV Files In ASP.NET'
 slug: how-to-zip-multiple-files-in-dotnet
-date: 2020-05-15
-feature_image: /images/how_to_create_zip_file_in_asp_net.jpg
-excerpt: >-
-  Learn how to generate a ZIP file containing many CSV files in an ASP.Net Web API application. The same approach is useful to zip files of any type in any .NET application using CSharp.
+date: '2020-05-15'
+feature_image: /content/images/how_to_create_zip_file_in_asp_net.jpg
 tags:
   - Programming
+excerpt: >-
+  Learn how to generate a ZIP file containing many CSV files in an ASP.Net Web
+  API application. The same approach is useful to zip files of any type in any
+  .NET application using CSharp.
 ---
 Recently at a client, I had to generate many CSV files from an API endpoint. The user will download the CSV files as a ZIP archive file.
 
 So here is one way to do it if you (including my future self) ever run into a similar functionality.
 
-<Figure src="/images/how_to_create_zip_file_in_asp_net.jpg" caption="## Creating CSV File In-Memory" />
+<ImageCard src="/content/images/how_to_create_zip_file_in_asp_net.jpg" alt="How to create a zip file in ASP.NET" />
+
+## Creating CSV File In-Memory
 
 CSV files are a good option if you want to share data while allowing it to be opened in Excel or Google Sheets as well. Both are popular applications among the business and used by almost everyone.
 
@@ -36,7 +40,7 @@ public class DeliveryJobRecord
 
 Using the CSVWriter class, generate a CSV file for a list of records.
 
-In this case, I do not want any physical files on the server, so I am using the MemoryStream to generate the files. The [WriteRecords](https://joshclose.github.io/CsvHelper/getting-started#writing-a-csv-file) method on the CSVWriter writes out the data in CSV format to the memory stream."
+In this case, I do not want any physical files on the server, so I am using the MemoryStream to generate the files. The [WriteRecords](https://joshclose.github.io/CsvHelper/getting-started#writing-a-csv-file) method on the CSVWriter writes out the data in CSV format to the memory stream.
 
 ```csharp
 foreach (var store in storeGroup)

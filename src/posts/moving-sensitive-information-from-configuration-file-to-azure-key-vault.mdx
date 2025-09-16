@@ -1,12 +1,12 @@
 ---
-title: "Moving Sensitive Information from Configuration File to Azure Key Vault"
+title: Moving Sensitive Information from Configuration File to Azure Key Vault
 slug: moving-sensitive-information-from-configuration-file-to-azure-key-vault
-date: 2015-03-14T00:00:00.000Z
+date: '2015-03-14'
+tags:
+  - Azure
 excerpt: >-
   This post describes on how sensitive information can be moved out of
   application's configuration's file to azure key vault.
-tags:
-  - Azure
 ---
 > Please check [here](/blog/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/) for scripts using the latest PowerShell cmdlets.
 
@@ -17,7 +17,6 @@ Most of the applications today needs to use some kind of sensitive information l
 If you are new to Azure Key Vault and yet to setup a vault, you could refer to [Getting Started with Azure Key Vault](/blog/getting-started-with-azure-key-vault/), to setup the vault and the Active Directory(AD) application that is used to authenticate our application to access the keyvault. Since in this case we are going to use Secrets from the key vault, while setting the key vault access policy for the the AD application, we need to explicitly set access for the application to use the secrets. Access Policy to secrets and keys are distinct and can be set accordingly and you can choose to have different application's to access keys and secrets separately. In the below script I have set the same application to have access to keys and secrets, by setting _PermissionsToKeys_ and _PermissionsToSecrets_
 
 ```powershell
-
 Set-AzureKeyVaultAccessPolicy -VaultName 'TestVaultRahul' -ServicePrincipalName 'd4f09821-ab30-44f3-8d57-69925489b932' -PermissionsToKeys all -PermissionsToSecrets all
 
 ```
@@ -25,21 +24,14 @@ Set-AzureKeyVaultAccessPolicy -VaultName 'TestVaultRahul' -ServicePrincipalName 
 To create a secret in the Vault, you can use the powershell script command as shown below. On successful creation of the secret the identifier to the secret is returned, which can be used by the application to obtain the Secret value.Since we have given the AD application '_all_' access, we could also create the secret using the api client.
 
 ```powershell
-
 PS C:\> $apiKey = ConvertTo-SecureString -String "ApiKey" -AsPlainText -Force
-
 Set-AzureKeyVaultSecret -VaultName TestVaultRahul -Name "ApiKey" -SecretValue $apiKey
 
 SecretValue     : System.Security.SecureString
-
 SecretValueText : ApiKey
-
 VaultName       : testvaultrahul
-
 Name            : ApiKey
-
 Version         : cfedea84815e4ca8bc19cf8eb943ee13
-
 Id              : https://testvaultrahul.vault.azure.net/secrets/ApiKey/cfedea84815e4ca8bc19cf8eb943ee13
 
 ```

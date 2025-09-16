@@ -1,12 +1,12 @@
 ---
-title: "Migrating Octopress To Hugo"
+title: Migrating Octopress To Hugo
 slug: migrating-octopress-to-hugo
-date: 2019-01-12T00:00:00.000Z
-feature_image: /images/bloggingSchedule_writedaily.jpg
-excerpt: Migrated my blog again - Here's how I went about doing it."
+date: '2019-01-12'
+feature_image: /content/images/bloggingSchedule_writedaily.jpg
 tags:
-  - Blogging
   - Programming
+  - Blogging
+excerpt: Migrated my blog again - Here's how I went about doing it.
 ---
 I have been on [Octopress blogging platform for around 5 years](/blog/static-generator-is-all-a-blog-needs-moving-to-octopress/) and was fairly happy with it. I had [optimized Octopress workflow for new posts](/blog/optimizing-octopress-workflow-for-new-posts/), [set it up for continuous delivery](/blog/continuos-delivery-of-octopress-blog-using-travisci-and-docker/) and also [enabled scheduling posts in the future](/blog/automatic-deployment-of-future-posts-with-octopress/).
 
@@ -31,7 +31,7 @@ The actual migration of the content was mostly related to moving all the files a
 
 -   **Move Files**Moving files was easy, as both platforms support Markdown. Everything from your source folder maps into the content folder in Hugo. Pages that were in folders in Octopress are now Markdown files with the appropriate name in Hugo. The actual posts in Markdown had the date appended in them. Using a PowerShell script, I stripped off the first 11 characters (_YYYY-MM-DD-_) and moved them into the blog folder (since all my blog posts are under the /blog URL path). All my images live under the static folder.
 
-![Octopress to Hugo - Files](/images/octopress_to_hugo_files.png)
+<ImageCard src="/content/images/octopress_to_hugo_files.png" alt="Octopress to Hugo - Files" />
 
 -   **Fixing Code Blocks**Octopress supported adding a [custom title](http://octopress.org/docs/blogging/code/) on the code block which is not available out of the box in Hugo. You can use a [custom shortcode](https://github.com/parsiya/Hugo-Shortcodes/blob/master/README.MD#codecaption-codecaptionhtml) to set this up. However, I chose to remove them as there were only a few code blocks that had them. Using regex search in VSCode, it's easy to get rid of them at once.
 

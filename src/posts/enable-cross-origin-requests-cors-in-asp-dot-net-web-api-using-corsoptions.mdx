@@ -1,12 +1,11 @@
 ---
-title: "Enable Cross-Origin Requests (CORS) in ASP.Net Web API Using CorsOptions"
+title: Enable Cross-Origin Requests (CORS) in ASP.Net Web API Using CorsOptions
 slug: enable-cross-origin-requests-cors-in-asp-dot-net-web-api-using-corsoptions
-date: 2018-08-14
-feature_image: /images/cors.png
-excerpt: >-
-  Don't use Cors.AllowAll - Set it up correctly!
+date: '2018-08-14'
+feature_image: /content/images/cors.png
 tags:
   - Dotnet
+excerpt: Don't use Cors.AllowAll - Set it up correctly!
 ---
 I was setting up an API at one of the client's place recently and found that currently, they allow any origin to hit their API by setting the [CorsOptions.AllowAll](https://msdn.microsoft.com/en-us/library/dn450212\(v=vs.113\).aspx) options. In this post, we will look at how to set the CORS options and restrict it to only the domains that you want your API to be accessed from.
 
@@ -14,7 +13,9 @@ I was setting up an API at one of the client's place recently and found that cur
 
 Cross-Origin Resource Sharing is a way to relax the browsers [Same-Origin Policy](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy) whereby to tell a browser to let a web application running at one origin (domain) have permission to access selected resources from a server at a different origin. By specifying the CORS header you instruct the browser to allow all allowed domains to access your resource. Most of the time for the API endpoints you want to be explicit on the hosts that can access your API. By setting CORS, you are only restricting/allowing cross-domain access originating from a browser. **Setting CORS should not be mistaken for a Security feature** whereby you are restricting access from any other sources. Any requests that are formed outside of the browser like using Postman, Fiddler, etc. can still make to your API and you need appropriate authorization/authentication to make sure you are not exposing data to unintended people.
 
-<Figure src="/images/cors.png" caption="### Enabling in Web API" />
+<ImageCard src="/content/images/cors.png" alt="Cross-Origin Request" />
+
+### Enabling in Web API
 
 In Web API there are multiple ways that you can set CORS.
 

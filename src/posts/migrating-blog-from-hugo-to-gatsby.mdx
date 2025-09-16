@@ -1,12 +1,12 @@
 ---
-title: "Migrating My Blog From Hugo To Gatsby"
+title: Migrating My Blog From Hugo To Gatsby
 slug: migrating-blog-from-hugo-to-gatsby
-date: 2020-06-05T00:00:00.000Z
-feature_image: /images/migrate_hugo_to_gatsby.jpg
-excerpt: Migrating from Hugo to Gatsby
+date: '2020-06-05'
+feature_image: /content/images/migrate_hugo_to_gatsby.jpg
 tags:
-  - Blogging
   - Programming
+  - Blogging
+excerpt: Migrating from Hugo to Gatsby
 ---
 I am migrating my blogs again. It is not the first time, so it's no surprise.
 
@@ -100,7 +100,7 @@ I use [Netlify under the free plan](https://www.netlify.com/pricing/) for hostin
 
 Netlify supports updating the build setting under the Continuos Deployment section. It means I can use the same site and no DNS changes!
 
-![Netlify changes when migrating from Hugo To Gatsby](/images/migrate_hugo_to_gatsby_netlify.jpg)
+<ImageCard src="/content/images/migrate_hugo_to_gatsby_netlify.jpg" alt="Netlify changes when migrating from Hugo To Gatsby" />
 
 I linked to the [new repository in GitHub](https://github.com/rahulpnath/rahulpnath/) and updated the build commands to use gatsby, instead of hugo.
 
@@ -110,7 +110,7 @@ That's it. I am up and running on Gatsby!
 
 Two days after migration, I noticed a sudden dip in traffic to my website.
 
-![](/images/migrate_hugo_to_gatsby_analytics_gotcha.jpg)
+<ImageCard src="/content/images/migrate_hugo_to_gatsby_analytics_gotcha.jpg" alt="" />
 
 I thought I might have to rollback since it was a significant drop in traffic from what I usually get. I quickly realized that I had forgotten to update my Google Analytics id in the blog that was causing the issue. Pushing up my id got the numbers back on track.
 

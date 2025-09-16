@@ -1,19 +1,22 @@
 ---
-title: "Querying OpenSearch from .NET: Full-Text Search on DynamoDB Data."
+title: 'Querying OpenSearch from .NET: Full-Text Search on DynamoDB Data.'
 slug: dotnet-opensearch-getting-started
-date: 2025-01-17
-feature_image: /images/OpenSearch-.NET.png
-excerpt: >-
-  Learn how to query data from Amazon OpenSearch using .NET after importing it from DynamoDB with Zero ETL. This integration allows you to perform full-text searches and advanced queries on DynamoDB data, enhancing your application's search capabilities seamlessly.
+date: '2025-01-17'
+feature_image: /content/images/2025/01/OpenSearch-.NET.png
 tags:
   - AWS
   - DynamoDB
+excerpt: >+
+  Learn how to query data from Amazon OpenSearch using .NET after importing it
+  from DynamoDB with Zero ETL. This integration allows you to perform full-text
+  searches and advanced queries on DynamoDB data, enhancing your application's
+  search capabilities seamlessly.
 ---
 In this post let's learn how to perform a full-text search on DynamoDB from a .NET application.
 
 Since DynamoDB is not best suited for advanced querying and full-text search capabilities, we first need to get the data from our DynamoDB table into AWS OpenSearch and then query the data from there.
 
-<iframe src="https://www.youtube.com/embed/HpCvLEBouI8?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/HpCvLEBouI8?feature=oembed" title="DYNAMODB FULL-TEXT SEARCH | Amazon OpenSearch to .NET | Amazon DynamoDB | Amazon OpenSearch" />
 
 This post will explore how to connect to OpenSearch and search the data from a .NET application.
 
@@ -23,21 +26,13 @@ Thanks to AWS for sponsoring this post in my [Amazon DynamoDB Series](/blog/tag/
 
 In a previous post, we covered how to set up the DynamoDB Zero ETL integration with OpenSearch to transfer data from DynamoDB to OpenSearch automatically.
 
-<BlogLink
-  href="/blog/dynamodb-etl-opensearch-amazon/"
-  title="DynamoDB Zero-ETL Integration With Amazon OpenSearch Service"
-  description="Let’s learn how to set up the DynamoDB Zero ETL plugin for OpenSearch, a fully managed, no-code setup for ingesting data into Amazon OpenSearch Service."
-  authorImage="/images/logo-512x512-15.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/DynamoDB-Zero-ETL.png"
-/>
+<BookmarkCard href="/blog/dynamodb-etl-opensearch-amazon/" title="DynamoDB Zero-ETL Integration With Amazon OpenSearch Service" description="Let’s learn how to set up the DynamoDB Zero ETL plugin for OpenSearch, a fully managed, no-code setup for ingesting data into Amazon OpenSearch Service." icon="/content/images/icon/logo-512x512-15.png" />
 
 This article expects you to have this pipeline ready and data flowing from DynamoDB to OpenSearch.
 
 I have a Movie's table in DynamoDB which I have already connected to OpenSearch using the ETL pipeline.
 
-<Figure src="/images/image-1.png" caption="DynamoDB Movie table sample record." />
+<ImageCard src="/content/images/2025/01/image-1.png" alt="DynamoDB Movie table sample record." caption="DynamoDB Movie table sample record." />
 
 The Movie tables contain the Title, Cast, Description, Genre, Year, Rating, IsAvailableForStreaming, and a few other properties.
 
@@ -66,7 +61,6 @@ var settings = new ConnectionSettings(
     
 var client = new OpenSearchClient(settings);
 builder.Services.AddSingleton<IOpenSearchClient>(client);
-
 ```
 
 By default, the client uses camelCasing for the property names. Based on how you have your data in OpenSearch you will need to adjust this using the `DefaultFieldNameInferrer`.
@@ -79,19 +73,11 @@ Since I am using Amazon OpenSearch, we can use the AWS Credentials to authentica
 
 First, ensure that the appropriate role/user your application is running under has permission to talk to OpenSearch.
 
-![](/images/image.png)
+<ImageCard src="/content/images/2025/01/image.png" alt="" />
 
 This is very similar to how we added the role ARN to OpenSearch under Security → Roles → `all_access` → Map user.
 
-<BlogLink
-  href="/blog/amazon-credentials-dotnet/"
-  title="Learn How To Manage Credentials When Building .NET Application on AWS"
-  description="Learn different ways to set up and manage credentials and sensitive information when building .NET applications on AWS. We will also touch upon some of the tools and utilities that I have set up on my local development machine to make working with AWS easier."
-  authorImage="/images/logo-512x512-16.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/secure-key-1.jpg"
-/>
+<BookmarkCard href="/blog/amazon-credentials-dotnet/" title="Learn How To Manage Credentials When Building .NET Application on AWS" description="Learn different ways to set up and manage credentials and sensitive information when building .NET applications on AWS. We will also touch upon some of the tools and utilities that I have set up on my local development machine to make working with AWS easier." icon="/content/images/icon/logo-512x512-16.png" />
 
 OpenSearch clients support the ability to sign requests using [AWS Signature V4](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_sigv.html).
 
@@ -113,13 +99,11 @@ public class Movie
     public string[] Cast { get; set; }
     public string Title { get; set; }
 }
-
 ```
 
 Below is a sample ElasticSearch query that searches the `movies` index for documents where the specified term appears in either the `Title` or `Description` fields, returning matching results.
 
 ```json
-
 GET  movies/_search
 {
   "query": {
@@ -135,7 +119,6 @@ GET  movies/_search
     }
   }
 }
-
 ```
 
 To convert this to the OpenSearch.Client .NET format we need to use the `SearchDescriptor` class combined with the `QueryContainer` class as shown below.
@@ -161,7 +144,6 @@ var searchDescriptor = new SearchDescriptor<Movie>()
      var response = await searchClient.SearchAsync<Movie>(searchDescriptor)
 
      return response.Documents;
-
 ```
 
 We can then use the `SearchAsync` method on the OpenSearchClient and pass the searchdescriptor instance of the query.
@@ -173,7 +155,6 @@ This returns a list of movies matching the searchdescriptor criteria specified.
 Below is a more advanced query on the OpenSearch Index that searches for documents where the term "avengers" appears in the `Title` or `Description` fields, and filters the results to include only those that are available for streaming and have a Rating of 8 and above.
 
 ```json
-
 GET  movies/_search
 {
   "query": {
@@ -203,7 +184,6 @@ GET  movies/_search
     }
   }
 }
-
 ```
 
 Below is the equivalent of it in the OpenSearch .NET client.
@@ -214,7 +194,7 @@ var searchDescriptor = new SearchDescriptor < Movie > ()
     var mustQueryContainer = new List < QueryContainer > ();
     var filterQueryContainer = new List < QueryContainer > ();
     
-    / Search Title and Description with the Query
+    // Search Title and Description with the Query
     if (!string.IsNullOrEmpty(request.Query)) {
       mustQueryContainer.Add(q.MultiMatch(m => m
         .Fields(f => f.Field(ff => ff.Title).Field(ff => ff.Description))
@@ -222,26 +202,25 @@ var searchDescriptor = new SearchDescriptor < Movie > ()
       ));
     }
     
-    / Filter by IsAvailableForStreaming
+    // Filter by IsAvailableForStreaming
     if (request.IsAvailableForStreaming.HasValue) {
       filterQueryContainer.Add(q.Term(
         t => t.Field(f => f.IsAvailableForStreaming)
         .Value(request.IsAvailableForStreaming.GetValueOrDefault() ? 1 L : 0 L)));
     }
     
-    / Filter by MinRating
+    // Filter by MinRating
     if (request.MinRating.HasValue) {
       filterQueryContainer.Add(
         q.Range(r => r.Field(f => f.Rating).GreaterThanOrEquals(request.MinRating)));
     }
     
     return q.Bool(b => b
-      .Must(mustQueryContainer.ToArray()) / Scoring conditions
-      .Filter(filterQueryContainer.ToArray()) / Non-scoring conditions
+      .Must(mustQueryContainer.ToArray()) // Scoring conditions
+      .Filter(filterQueryContainer.ToArray()) // Non-scoring conditions
     );
   });
   
 var response = await openSearchClient.SearchAsync < Movie > (searchDescriptor);
 return response.Documents;
-
 ```

@@ -1,15 +1,15 @@
 ---
-title: "5 Recommended Patterns When  Using Cancellation Token in .NET"
+title: 5 Recommended Patterns When  Using Cancellation Token in .NET
 slug: cancellation-token-patterns
-date: 2024-04-02T00:00:00.000Z
-feature_image: /images/Cancellation-Token-Practices-2.png
+date: '2024-04-02'
+feature_image: /content/images/2024/03/Cancellation-Token-Practices-2.png
+tags:
+  - Dotnet
+  - AWS
 excerpt: >-
   Are you blindly passing around the CancellationToken to all your functions? If
   so, you are likely using CancellationTokens in the wrong way.  Let’s learn
   five good practices when using Cancellation Tokens in your application code.
-tags:
-  - Dotnet
-  - AWS
 ---
 Are you passing around the CancellationToken to all your functions blindly?
 
@@ -21,7 +21,7 @@ Does that mean all requests are the same and can be canceled similarly?
 
 Short answer - No!
 
-<iframe src="https://www.youtube.com/embed/sWAk4YMK2go?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/sWAk4YMK2go?feature=oembed" title="Are You Using Cancellation Token The Right Way? 5 Recommended Patterns | Exploring C# and DOTNET" />
 
 In this post, let’s learn five good practices when using Cancellation Tokens in your application code.
 
@@ -29,15 +29,7 @@ In this post, let’s learn five good practices when using Cancellation Tokens i
 
 Cancellation tokens allow us to cancel out long-running processes and HTTP requests to other applications, thereby reducing the time our server spends on requests that no one cares about anymore.
 
-<BlogLink
-  href="/blog/cancellation-token-dotnet/"
-  title="A .NET Programmer’s Guide to CancellationToken"
-  description="Imagine having a long-running request triggered by a user on your server. But the user is no longer interested in the result and has navigated away from the page. However, the server is still processing that request and utilizing resources until you come along and implement Cancellation Tokens in the"
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/Cancellation-Token.png"
-/>
+<BookmarkCard href="/blog/cancellation-token-dotnet/" title="A .NET Programmer’s Guide to CancellationToken" description="Imagine having a long-running request triggered by a user on your server. But the user is no longer interested in the result and has navigated away from the page. However, the server is still processing that request and utilizing resources until you come along and implement Cancellation Tokens in the" icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 _This article is sponsored by AWS_.
 
@@ -49,15 +41,7 @@ Let's look at the same example as in the [previous post](/blog/cancellation-toke
 
 This problem is not limited to Amazon S3 but applies to any cancellable operations chained together.
 
-<BlogLink
-  href="/blog/amazon-s3-dotnet/"
-  title="Amazon S3 For the .NET Developer: How to Easily Get Started"
-  description="Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/storage-box.jpg"
-/>
+<BookmarkCard href="/blog/amazon-s3-dotnet/" title="Amazon S3 For the .NET Developer: How to Easily Get Started" description="Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 So, continue reading even if you don't understand how Amazon S3 works or how to use it from a .NET application. But if you want to learn more about Amazon S3, check out the post below.
 
@@ -159,7 +143,6 @@ public virtual Task<PutObjectResponse> PutObjectAsync(
   public virtual Task<PublishResponse> PublishAsync(
     PublishRequest request, 
     System.Threading.CancellationToken cancellationToken = default(CancellationToken))
-
 ```
 
 In both cases, the `CancellationToken` is optional and defaults `CancellationToken.None`.
@@ -195,7 +178,6 @@ app.MapPost("/upload-large-file", async ([FromForm] FileUploadRequest request, C
             return Results.StatusCode(499);
         }
     })
-
 ```
 
 In the updated code for our `POST` endpoint, once the file is uploaded to S3, it passes on the `CancellationToken.None` to the `PerformAdditionalTasks` function (and any other cancellable function after that point).
@@ -214,7 +196,6 @@ The best example of this is the `Task.Delay` method.
             millisecondsDelay == 0 ? CompletedTask :
             cancellationToken.CanBeCanceled ? new DelayPromiseWithCancellation(millisecondsDelay, timeProvider, cancellationToken) :
             new DelayPromise(millisecondsDelay, timeProvider);
-
 ```
 
 Based on the `CancellationToken.CanBeCancelled` property, it switches between two different implementations using the `DelayPromiseWithCancellation` or `DelayPromise`.

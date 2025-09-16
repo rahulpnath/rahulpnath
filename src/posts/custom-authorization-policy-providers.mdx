@@ -1,14 +1,16 @@
 ---
-title: ">-   Custom Authorization Policy Providers in .Net Core For Checking Multiple Azure   AD Security Groups"
+title: >-
+  Custom Authorization Policy Providers in .Net Core For Checking Multiple Azure
+  AD Security Groups
 slug: custom-authorization-policy-providers
-date: 2019-03-29T00:00:00.000Z
-feature_image: /images/azure_ad_Groups.png
+date: '2019-03-29'
+feature_image: /content/images/azure_ad_Groups.png
+tags:
+  - Azure
+  - Dotnet
 excerpt: >-
   Extending Azure AD Groups Role based access to support combinations of
   multiple groups to grant access.
-tags:
-  - Dotnet
-  - Azure
 ---
 In the post, [.Net Core Web App and Azure AD Security Groups Role based access](/blog/dot-net-core-api-and-azure-ad-groups-based-access/), we saw how to use Azure AD Security Groups to provide Role Based Access for your .Net Core applications. We covered only cases where our Controllers/functions were provided access based on a single Azure AD Security group. At times you might want to extend this to include multiple groups, e.g., A user can edit an order if they belong to Admin OR Manager group or both Admin ANDManager group. In this post, we will see how to achieve that.
 

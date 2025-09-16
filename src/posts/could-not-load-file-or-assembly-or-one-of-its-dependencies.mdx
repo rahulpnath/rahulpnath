@@ -1,13 +1,13 @@
 ---
-title: Web Application Occasionally Throwing 'Could not Load File or Assembly or one of its Dependencies' Exception
+title: >-
+  Web Application Occasionally Throwing 'Could not Load File or Assembly or one
+  of its Dependencies' Exception
 slug: could-not-load-file-or-assembly-or-one-of-its-dependencies
-date: 2016-07-01
-feature_image: /images/doubleWrite_dll_conflict.jpg
-excerpt: >-
-  We were facing a strange 'could not load DLL issue', when building and running multiple host projects in Visual Studio (VS 2015), side by side. We had 2 host projects...
+date: '2016-07-01'
+feature_image: /content/images/doubleWrite_dll_conflict.jpg
 tags:
-  - Dotnet
   - Tools
+  - Dotnet
 ---
 We were facing a strange 'could not load DLL issue', when building and running multiple host projects in Visual Studio (VS 2015), side by side. We had 2 host projects - an NServiceBus worker role project (a console application) and a Web application and a few other projects, a couple of which are shared between both the host projects. It often happened in our team, when running the IIS-hosted Web application, it threw the error :
 
@@ -25,7 +25,6 @@ The bin folder of the Web application did have a Newtonsoft.Json DLL, but of a d
 asmspy WebApplication1\bin\ nonsystem
 
 Detailing only conflicting assembly references.
-
 Reference: Newtonsoft.Json
    7.0.0.0 by SharedLibrary
    6.0.0.0 by WebApplication1
@@ -39,11 +38,11 @@ The assembly binding redirects for both the host projects were correct and using
 
 Using the [Msbuild Structured Log Viewer](https://github.com/KirillOsenkov/MSBuildStructuredLog) to analyze what was happening with the build, I noticed the below '_DoubleWrites_' happening with Newtonsoft DLL. The double writes list shows all the folders from where the DLL was getting written into the bin folder of the project getting building. In the MSBuild Structured log viewer, a DLL pops up only when there are more than one places from where a DLL is getting written, hence the name '_Double writes_. This is a problem as there is a possibility of one write overriding other, depending on the order of writes, causing DLL version conflicts (which is exactly what's happening here).
 
-![Double Write Dll conflict](/images/doubleWrite_msbuildLogViewer.png)
+<ImageCard src="/content/images/doubleWrite_msbuildLogViewer.png" alt="Double Write Dll conflict" />
 
 But in this specific case, the log captured above does not show the full problem but hints us of a potential problem. The build capture when building the whole solution (sln) shows that there are 2 writes happening from 2 different Newtonsoft package folders, which shows a potential conflict (_as shown above_). This does not explain the specific error we are facing with the Web application. Running the tool on just the Web application project (csproj), it does not show any DoubleWrites (_as shown below_).
 
-![Double Write Dll conflict](/images/doubleWrite_proj_msbuildLogViewer.png)
+<ImageCard src="/content/images/doubleWrite_proj_msbuildLogViewer.png" alt="Double Write Dll conflict" />
 
 This confirms that there is something happening with the Web application bin outputs when we build the worker/shared dependency project.
 
@@ -51,7 +50,7 @@ This confirms that there is something happening with the Web application bin out
 
 When building a solution with a Web application project in Visual Studio (VS), I noticed that VS copies all the files from the bin folder of referred projects into the bin of the Web application project. This happens even if you build the shared project alone, as VS notices a change in the files of a dependent project and copies it over. So in this particular case, every time we build the dependent shared project or the worker project (which in turn triggers a build on the shared project), it ended up changing the files in shared projects bin folder, triggering VS to copy it over to the Web application's bin folder. This auto copy happens only for the Web application project and not for the Console/WPF project. ([Yet to find](https://twitter.com/rahulpnath/status/745841691979022336) what causes this auto copy on VS build)
 
-<Figure src="/images/doubleWrite_dll_conflict.jpg" caption="_Bin folder of Web application and Console application after building Shared project_" />
+<ImageCard src="/content/images/doubleWrite_dll_conflict.jpg" alt="Double Write Dll conflict" caption="Bin folder of Web application and Console application after building Shared project" />
 
 Since **_\[CopyLocal\](https://msdn.microsoft.com/en-us/library/aa984582(v=vs.71).aspx)_**, by default was true for the shared project, Newtonsoft DLLs were also getting copied into the shared project bin and in turn into Web applications bin (by VS). Since the Web application did not build during the above rebuild, it now has a conflicting DLL version of Newtonsoft in its bin folder, that does not match the assembly version it depends on, hence throws the exception, the next time I load the Web application from IIS.
 
@@ -75,11 +74,8 @@ Now that we know what exactly causes the issue, it is easy to create a [sample a
 -   Create a shared library project with a newer version of Newtonsoft Nuget package. Add this shared project as a project reference to both Web application and console/WPF application.
 
 ```powershell
-
 Install-Package Newtonsoft.Json -ProjectName WebApplication1 -Version 6.0.1
-
 Install-Package Newtonsoft.Json -ProjectName SharedLibrary -Version 7.0.1
-
 Install-Package Newtonsoft.Json -ProjectName WpfApplication1 -Version 8.0.3
 
 ```

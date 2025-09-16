@@ -1,13 +1,19 @@
 ---
-title: "Escaping the Cancel Button Trap: AbortController and CancellationToken in ASP.NET API"
+title: >-
+  Escaping the Cancel Button Trap: AbortController and CancellationToken in
+  ASP.NET API
 slug: abortcontroller-cancellationtoken-dotnet
-date: 2024-08-02
-feature_image: /images/Cancel-Button-Trap.png
-excerpt: >-
-  Canceling a long-running process from a UI form doesn't mean the server has stopped processing the work.
-    Let's learn how to use AbortController and CancellationTokens to help cancel a task all the way down when building ASP NET applications.
+date: '2024-08-02'
+feature_image: /content/images/2024/08/Cancel-Button-Trap.png
 tags:
   - Dotnet
+excerpt: >-
+  Canceling a long-running process from a UI form doesn't mean the server has
+  stopped processing the work. 
+
+
+  Let's learn how to use AbortController and CancellationTokens to help cancel a
+  task all the way down when building ASP NET applications.
 ---
 _Imagine this.._
 
@@ -19,7 +25,7 @@ Problem solved, right?
 
 **Wrong!!**
 
-<iframe src="https://www.youtube.com/embed/tSEc5hXx1TM?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/tSEc5hXx1TM?feature=oembed" title="Abort Controller and Cancellation Tokens | Cancel Your Work All the Way | ASP NET" />
 
 Canceling a long-running process from a UI form doesn't mean the server has stopped processing the work. Your server could still be chugging along, consuming precious resources for something no one wants anymore.
 
@@ -35,19 +41,11 @@ This post will explore the scenario where a user uploads a file to Amazon S3 and
 
 Depending on your use case, this could be replaced with any long-running process that can be canceled based on user input from the UI.
 
-<Figure src="/images/image-27.png" caption="A simple UI form that allows a user to upload files to Amazon S3 using an API endpoint." />
+<ImageCard src="/content/images/2024/07/image-27.png" alt="A simple UI form that allows a user to upload files to Amazon S3 using an API endpoint." caption="A simple UI form that allows a user to upload files to Amazon S3 using an API endpoint." />
 
 Amazon Simple Storage Service (S3) is an object storage service that provides a scalable and secure storage infrastructure.
 
-<BlogLink
-  href="/blog/amazon-s3-dotnet/"
-  title="Amazon S3 For the .NET Developer: How to Easily Get Started"
-  description="Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/storage-box.jpg"
-/>
+<BookmarkCard href="/blog/amazon-s3-dotnet/" title="Amazon S3 For the .NET Developer: How to Easily Get Started" description="Learn how to get started with Amazon S3 from a .NET Core application. We will learn how to store and retrieve data from the storage, important concepts to be aware of while using S3." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 ## The Cancel Button Trap on the UI
 
@@ -80,7 +78,6 @@ app.MapPost("/upload-large-file", async (
     .WithName("UploadLargeFile")
     .DisableAntiforgery()
     .WithOpenApi();
-
 ```
 
 The HTTP Endpoint takes in a CancellationToken as part of its parameters.
@@ -89,15 +86,7 @@ In ASP NET APIs, when a user makes an HTTP request, the framework automatically 
 
 We explored this previously when we learned about Cancellation Tokens in .NET.
 
-<BlogLink
-  href="/blog/cancellation-token-dotnet/"
-  title="A .NET Programmer’s Guide to CancellationToken"
-  description="Imagine having a long-running request triggered by a user on your server. But the user is no longer interested in the result and has navigated away from the page. However, the server is still processing that request and utilizing resources until you come along and implement Cancellation Tokens in the"
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/Cancellation-Token.png"
-/>
+<BookmarkCard href="/blog/cancellation-token-dotnet/" title="A .NET Programmer’s Guide to CancellationToken" description="Imagine having a long-running request triggered by a user on your server. But the user is no longer interested in the result and has navigated away from the page. However, the server is still processing that request and utilizing resources until you come along and implement Cancellation Tokens in the" icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 When the file uploaded is large, it takes time to upload it to S3.
 
@@ -108,7 +97,6 @@ const response = await fetch('https://localhost:44367/upload-large
         method: 'POST',
         body: formData
     });
-
 ```
 
 The file will continue to be uploaded to S3, and additional steps will be performed.
@@ -149,7 +137,6 @@ cancelBtn.addEventListener('click', () => {
     abortController.abort();
     ...
 });
-
 ```
 
 When `abort()` is called, the fetch throws `DOMException` named `AbortError`.

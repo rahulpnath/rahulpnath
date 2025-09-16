@@ -1,12 +1,8 @@
 ---
-title: "Dynamically Create Powershell Alias"
+title: Dynamically Create Powershell Alias
 slug: dynamically-create-powershell-alias
-date: 2019-12-10T00:00:00.000Z
-feature_image: /images/windows_terminal_custom_alias.jpg
-excerpt: >-
-  While playing around with the Windows Terminal, I had set up
-  Aliasing(GHOSTURL/blog/setting-up-windows-terminal/aliasing) to enable alias
-  for commonly used commands.  For e.g. Typing in s implies git status.  I...
+date: '2019-12-10'
+feature_image: /content/images/windows_terminal_custom_alias.jpg
 tags:
   - Tools
 ---
@@ -27,7 +23,6 @@ param(
     )
 
     $functionFormat = "function $commandName { & $command $args }
-
 New-Alias -Name $commandAlias -Value $commandName -Force -Option AllScope"
 
     $newLine = [Environment]::NewLine
@@ -44,7 +39,6 @@ The above script writes a new function and maps it to the alias command using th
 
 ```powershell
 function Get-GitStatus { & git status -sb $args }
-
 New-Alias -Name s -Value Get-GitStatus -Force -Option AllScope
 
 ```
@@ -54,9 +48,7 @@ Add this to your PowerShell profile file (run notepad $PROFILE) as we did for th
 Below are a few sample usages
 
 ```powershell
-
 New-CommandAlias -CommandName "Get-GitStatus" -Command "git status -sb" -CommandAlias "s"
-
 New-CommandAlias -CommandName "Move-ToWorkFolder" -Command "cd C:\Work\" -CommandAlias "mwf"
 
 ```

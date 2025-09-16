@@ -99,8 +99,17 @@ export async function getAllPosts(): Promise<BlogPost[]> {
         description: frontmatter.excerpt, // Map excerpt to description
         publishedAt: frontmatter.date, // Your date field
         author: {
-          name: "Your Name", // You can hardcode this or add to frontmatter
-          avatar: undefined // Optional: add your avatar path when available
+          name: "Rahul Nath",
+          avatar: undefined, // Add your avatar image to public/images/ when ready
+          bio: "Software engineer passionate about AWS, .NET, and building better developer experiences. I write about cloud architecture, productivity, and the lessons learned from over a decade in software development.",
+          email: "rahulpnath@gmail.com",
+          social: {
+            twitter: "https://twitter.com/rahulpnath",
+            linkedin: "https://linkedin.com/in/rahulpnath",
+            youtube: "https://youtube.com/@RahulNath",
+            github: "https://github.com/rahulpnath",
+            website: "https://rahulpnath.com"
+          }
         },
         coverImage: frontmatter.feature_image, // Map feature_image to coverImage
         tags: frontmatter.tags || [],
@@ -150,8 +159,17 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
       description: frontmatter.excerpt,
       publishedAt: frontmatter.date,
       author: {
-        name: "Your Name", // Update this with your actual name
-        avatar: undefined // Optional: add your avatar when available
+        name: "Rahul Nath",
+        avatar: undefined, // Add your avatar image to public/images/ when ready
+        bio: "Software engineer passionate about AWS, .NET, and building better developer experiences. I write about cloud architecture, productivity, and the lessons learned from over a decade in software development.",
+        email: "rahulpnath@gmail.com",
+        social: {
+          twitter: "https://twitter.com/rahulpnath",
+          linkedin: "https://linkedin.com/in/rahulpnath",
+          youtube: "https://youtube.com/@RahulNath",
+          github: "https://github.com/rahulpnath",
+          website: "https://rahulpnath.com"
+        }
       },
       coverImage: frontmatter.feature_image,
       tags: frontmatter.tags || [],

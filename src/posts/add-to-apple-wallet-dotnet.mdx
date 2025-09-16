@@ -1,13 +1,15 @@
 ---
-title: "Add to Apple Wallet from Your .NET Application: A Step-by-Step Guide"
+title: 'Add to Apple Wallet from Your .NET Application: A Step-by-Step Guide'
 slug: add-to-apple-wallet-dotnet
-date: 2023-10-09
-feature_image: /images/Add-To-Apple-Wallet.png
-excerpt: >-
-  The iOS Wallet app allows users to manage payment cards, boarding passes, tickets, gift cards, and other passes. Let's learn how to set up, build, and distribute Apple Wallet passes from a .NET application.
+date: '2023-10-09'
+feature_image: /content/images/2023/10/Add-To-Apple-Wallet.png
 tags:
   - Dotnet
   - AWS
+excerpt: >-
+  The iOS Wallet app allows users to manage payment cards, boarding passes,
+  tickets, gift cards, and other passes. Let's learn how to set up, build, and
+  distribute Apple Wallet passes from a .NET application.
 ---
 I recently worked on the 'Add to Apple Wallet' functionality at work, allowing the addition of Event tickets to Apple Wallet.
 
@@ -15,7 +17,7 @@ The iOS Wallet app allows users to manage payment cards, boarding passes, ticket
 
 The Wallet Pass is time and location enabled, so passes can be configured to display on the user’s device at the appropriate moment. Passes can also be updated with push notifications making it easy to notify users if details change.
 
-<iframe src="https://www.youtube.com/embed/mcR08yyFpaU?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/mcR08yyFpaU?feature=oembed" title="APPLE WALLET PASS | .NET ON AWS | Serverless" />
 
 In this blog post, let's learn how you can set up, build, and distribute Apple Wallet passes using .NET application.
 
@@ -25,15 +27,13 @@ _This article is sponsored by AWS and is part of my [_AWS Series_](/tag/aws/)._
 
 ## Apple Wallet Passes
 
-[Apple Wallet Passes](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/PassKit_PG/Creating.html#/apple_ref/doc/uid/TP40012195-CH4-SW1) are created as a package/bundle, containing a `pass.json` file that defines the pass, and image assets such as the logo and the icon.
+[Apple Wallet Passes](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/PassKit_PG/Creating.html#//apple_ref/doc/uid/TP40012195-CH4-SW1) are created as a package/bundle, containing a `pass.json` file that defines the pass, and image assets such as the logo and the icon.
 
 The `pass.json` file contains the information that identifies the pass, the text information, and details shown on the pass in the Wallet app.
 
 The below image shows the files inside a sample pass file. It has the `pass.json`, logo and icon images, the manifest file, and also the signature file to avoid tampering with the pass file once it's generated.
 
-![](/images/image.png)
-
-Imaging showing the files inside a pass file. It contains the pass.json file, along with the icon and logo images, the manifest file and the signature file for the pass contents.
+<ImageCard src="/content/images/2023/09/image.png" alt="Imaging showing the files inside a pass file. It contains the pass.json file, along with the icon and logo images, the manifest file and the signature file for the pass contents." caption="Imaging showing the files inside a pass file. It contains the pass.json file, along with the icon and logo images, the manifest file and the signature file for the pass contents." />
 
 ## Generating Wallet Passes Using .NET
 
@@ -100,7 +100,6 @@ request.AddSecondaryField(new StandardField("venue", "Venue", venueName));
 request.AddAuxiliaryField(new StandardField("ticketType", "Ticket Type", ticketType));
 request.AddBackField(new StandardField("ticketHolderName-back", "Ticket holder", "Rahul Nath"));
 request.AddBackField(new StandardField("ticketType-back", "Ticket Type", ticketType));
-
 ```
 
 For information on the different fields, the pass styles available, and what each property represents check out the [Wallet Guidelines](https://developer.apple.com/design/human-interface-guidelines/wallet) and the [documentation](https://developer.apple.com/documentation/walletpasses/pass).
@@ -140,7 +139,6 @@ public class AppleWalletConfiguration
 
     public async Task<byte[]> GetIcon() => await IconUrl.GetBytesAsync();
 }
-
 ```
 
 ## Distributing Wallet Pass Files Using .NET
@@ -151,15 +149,7 @@ You can host this along with your other application code on the Cloud or your ow
 
 For this post, I'll host this AWS Lambda, as it's a quick and easy way to host such kind of API endpoints. Using the latest Lambda Annotations Framework makes it even easier to create and host API endpoints.
 
-<BlogLink
-  href="/blog/lambda-annotation-framework-crud-api/"
-  title="Serverless API Development Made Easy: Using AWS Lambda Annotations for CRUD"
-  description="Learn how to create a CRUD API Endpoint using AWS Lambda, API Gateway and the Annotations Framework. See how the Lambda Annotations framework does all the heavy lifting for us, and makes it easier to develop APIs."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/Lambda-Annotation-Framework---CRUD.png"
-/>
+<BookmarkCard href="/blog/lambda-annotation-framework-crud-api/" title="Serverless API Development Made Easy: Using AWS Lambda Annotations for CRUD" description="Learn how to create a CRUD API Endpoint using AWS Lambda, API Gateway and the Annotations Framework. See how the Lambda Annotations framework does all the heavy lifting for us, and makes it easier to develop APIs." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 All we need to do is add the [Lambda Annotation Framework](/blog/aws-lambda-annotation-framework/) NuGet package and wrap our Pass Generation function with the `LambdaFunction` attribute. Since this is going to be exposed as an API will also add the `HttpApi` attribute and specify the route and the method `Get`.
 
@@ -198,7 +188,7 @@ Once deployed, you can navigate the API Gateway URL endpoint or expose a Lambda 
 
 Below is the screenshot of the pass generated using the above code, with the appropriate information we passed to create the pass.
 
-<Figure src="/images/image-1.png" caption="Apple Wallet Passes added to phone showing the front and the back details of the pass." />
+<ImageCard src="/content/images/2023/10/image-1.png" alt="Apple Wallet Passes added to phone showing the front and the back details of the pass." caption="Apple Wallet Passes added to phone showing the front and the back details of the pass." />
 
 For debugging pass files you can use the [PKPassValidator service](https://pkpassvalidator.azurewebsites.net/), where you can upload a pass file and it will show any issues with the file generated.
 

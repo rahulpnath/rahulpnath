@@ -1,12 +1,8 @@
 ---
-title: "5 Ways To Query Data From Amazon DynamoDB using .NET"
+title: 5 Ways To Query Data From Amazon DynamoDB using .NET
 slug: dynamodb-querying-dotnet
-date: 2023-02-17T00:00:00.000Z
-feature_image: /images/DynamoDB-Querying-new.png
-excerpt: >-
-  Querying is an essential operation in DynamoDB.  It allows you to filter and
-  select items in your database based on your application and user needs.  When
-  moving over...
+date: '2023-02-17'
+feature_image: /content/images/2023/02/DynamoDB-Querying-new.png
 tags:
   - AWS
   - DynamoDB
@@ -17,9 +13,9 @@ It allows you to filter and select items in your database based on your applicat
 
 When moving over to DynamoDB from more traditional relational databases like SQL Server, you must understand the different ways you can retrieve data in DynamoDB.
 
-<iframe src="https://www.youtube.com/embed/iv6OKueqBd4?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/iv6OKueqBd4?feature=oembed" title="AWS DynamoDB QUERYING | .NET ON AWS | AWS Serverless | Amazon" />
 
-_This article is sponsored by AWS and is part of my_ [_AWS Series_](/blog/tag/aws/)_._
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/tag/aws/)_._
 
 In this article, let’s explore the different ways you can query data from Amazon DynamoDB when building applications using .NET. We will learn
 
@@ -37,15 +33,7 @@ DynamoDB is a cloud-hosted NoSQL database provided by Amazon Web Services (AWS).
 
 If you are new to DynamoDB, I highly recommend checking out my AWS DynamoDB For the .NET Developer article below to understand better.
 
-<BlogLink
-  href="/blog/aws-dynamodb-net-core/"
-  title="AWS DynamoDB For The .NET Developer: How To Easily Get Started"
-  description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/aws_dynamodb.jpg"
-/>
+<BookmarkCard href="/blog/aws-dynamodb-net-core/" title="AWS DynamoDB For The .NET Developer: How To Easily Get Started" description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 > One of the reasons why it can be a bit tricky with querying data is that you almost always need the partition key to get any data out of DynamoDB.
 
@@ -64,7 +52,6 @@ var dynamoDbClient = new AmazonDynamoDBClient(
     FallbackCredentialsFactory.GetCredentials(), RegionEndpoint.APSoutheast2);
 builder.Services.AddSingleton<IAmazonDynamoDB>(dynamoDbClient);
 builder.Services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
-
 ```
 
 If any of this is unclear, check the previous blog post on [Getting Started With DynamoDB](/blog/aws-dynamodb-net-core/).
@@ -152,7 +139,6 @@ public async Task<IEnumerable<WeatherForecast>> GetAsync(
            new object[] { dateTime, endDateTime })
         .GetRemainingAsync();
 }
-
 ```
 
 ## 4\. Using Low-level .NET SDK API For Queries  

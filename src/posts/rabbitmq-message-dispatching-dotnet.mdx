@@ -1,13 +1,17 @@
 ---
-title: "Efficient Message Distribution with RabbitMQ: Understanding Round Robin and Fair Dispatching Modes"
+title: >-
+  Efficient Message Distribution with RabbitMQ: Understanding Round Robin and
+  Fair Dispatching Modes
 slug: rabbitmq-message-dispatching-dotnet
-date: 2024-02-14
-feature_image: /images/RabbitMQ---Message-Dispatching.png
-excerpt: >-
-  Dispatching modes play a crucial role in task distribution among multiple workers. Learn how the two message dispatching modes - Round robin and Fair dispatching - work in RabbitMQ.
+date: '2024-02-14'
+feature_image: /content/images/2024/02/RabbitMQ---Message-Dispatching.png
 tags:
-  - AWS
   - RabbitMQ
+  - AWS
+excerpt: >-
+  Dispatching modes play a crucial role in task distribution among multiple
+  workers. Learn how the two message dispatching modes - Round robin and Fair
+  dispatching - work in RabbitMQ.
 ---
 A Work queue, or a Task queue, is a mechanism used in message-based systems to distribute and parallelize tasks or jobs across multiple workers.
 
@@ -15,7 +19,7 @@ When using RabbitMQ, Dispatching modes play a crucial role in task distribution 
 
 In this post, let’s learn the two message dispatch modes in RabbitMQ and how it affects the consumers pulling work from the Queues.
 
-<iframe src="https://www.youtube.com/embed/HRudM2WTXHM?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/HRudM2WTXHM?feature=oembed" title="MESSAGE DISPATCHING MODES RabbitMQ from DOTNET | Amazon MQ" />
 
 _This article is sponsored by AWS and is part of my_ [_RabbitMQ Series_](/blog/tag/rabbitmq/)_._
 
@@ -23,15 +27,7 @@ For this post, I will use [Amazon MQ](https://aws.amazon.com/amazon-mq/), a mana
 
 However, you can use [one of the various options that RabbitMQ provides](https://www.rabbitmq.com/download.html?ref=rahulpnath.com) to host your instance, including a local Docker instance.
 
-<BlogLink
-  href="/blog/amazon-mq-rabbitmq-dotnet/"
-  title="Amazon MQ RabbitMQ: A Reliable Messaging Solution for Your .NET Projects"
-  description="RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let’s learn how to get started using RabbitMQ on Amazon MQ from .NET application."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/rabbit-mq-dotnet.png"
-/>
+<BookmarkCard href="/blog/amazon-mq-rabbitmq-dotnet/" title="Amazon MQ RabbitMQ: A Reliable Messaging Solution for Your .NET Projects" description="RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let’s learn how to get started using RabbitMQ on Amazon MQ from .NET application." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 The main idea of using a work queue is to offload resource-intensive tasks to a different process in the background or to be scheduled. This removes the need to wait for the task to be completed on synchronous application interaction points.
 
@@ -56,11 +52,10 @@ consumer.Received += (model, ea) =>
     if (int.TryParse(message, out var delayTime))
         Thread.Sleep(delayTime * 1000);
     
-    / Additional processing for this message
+    // Additional processing for this message
     Console.WriteLine($"Processed message {message}");
     channel.BasicAck(deliveryTag: ea.DeliveryTag, false);
 };
-
 ```
 
 If the message is an integer value, it waits for that many seconds in the processing step. This is purely to simulate an artificial delay that we can use to understand the dispatch modes in RabbitBQ.
@@ -105,7 +100,6 @@ This is easily done using the `BasicQos` method on the channel and specifying th
 
 ```csharp
 channel.BasicQos(prefetchSize:0, prefetchCount:1, global:false);
-
 ```
 
 This tells RabbitMQ not to give more than one message to a worker at a time.
@@ -116,21 +110,13 @@ So RabbitMQ will not dispatch a new message to a worker until it has processed a
 
 One thing to note is that setting `prefetchCount` only makes sense when you have Manual Acknowledgement.
 
-<BlogLink
-  href="/blog/rabbitmq-consumer-ack-dotnet/"
-  title="Exploring Manual and Automatic Acknowledgment in RabbitMQ with .NET"
-  description="Delivery processing acknowledgements from consumers are referred to as acknowledgements in messaging protocols. Let’s learn automatic and manual ack modes in RabbitMQ."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/_RabbitMQ---ACK.png"
-/>
+<BookmarkCard href="/blog/rabbitmq-consumer-ack-dotnet/" title="Exploring Manual and Automatic Acknowledgment in RabbitMQ with .NET" description="Delivery processing acknowledgements from consumers are referred to as acknowledgements in messaging protocols. Let’s learn automatic and manual ack modes in RabbitMQ." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 We saw that with Automatic acknowledgment mode, messages are considered to be successfully delivered as soon as they are sent.
 
 So, even if we were to set a `prefetchCount`, as soon a message gets delivered to a consumer it's consider as processed by RabbitMQ, even if the consumer is still processing the message.
 
-<iframe src="https://www.youtube.com/embed/jrLbUz_5Aiw?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/jrLbUz_5Aiw?feature=oembed" title="CONSUMER ACKNOWLEDGEMENTS RabbitMQ from DOTNET | Amazon MQ" />
 
 So when setting, `prefetchCount` make sure you are manually acknowledging the messages being processed.
 

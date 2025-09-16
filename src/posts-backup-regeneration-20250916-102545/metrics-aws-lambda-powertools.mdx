@@ -1,0 +1,167 @@
+---
+title: How To Easily Log Metrics Data From AWS Lambda Using Powertools Library
+slug: metrics-aws-lambda-powertools
+date: '2023-11-27'
+feature_image: /images/Powertools---Metrics.png
+excerpt: >-
+  Metrics are data about the performance of your systems. By default, many AWS
+  services provide free metrics for the resources. The Powertools Lambda Metrics
+  library makes publishing custom metrics from your AWS Lambda Function easy.
+---
+Metrics are data about the performance of your applications. By default, many AWS services provide free metrics for the resources.
+
+You can also publish application-specific custom metrics to CloudWatch, and view the data in the AWS Management Console.
+
+The Powertools Lambda Metrics library makes publishing custom metrics from your AWS Lambda Function easy.
+
+<iframe src="https://www.youtube.com/embed/SQ3rY28Eqeo?feature=oembed" />
+
+In this blog post, let's learn how to easily integrate with Amazon CloudWatch Metrics and start publishing custom metrics from your .NET AWS Lambda Function.
+
+_This article is sponsored by AWS and is part of my_ [_AWS Series_](/tag/aws/)_._
+
+## Amazon CloudWatch Concepts
+
+If you are new to Amazon CloudWatch Metrics, there are a few concepts that you must know, to make it easier to use the service.
+
+-   **Namespace** → Highest level container to group multiple metrics from multiple services for a given application.
+-   **Dimensions** → Metrics metadata in key-value format which helps to slice and dice metrics visualization.
+-   **Metric** → Name of the metric
+-   **Unit** → A value representing the unit of measure, e.g. Count or Seconds.
+-   **Resolution** → Value representing the storage resolution for the corresponding metric. Metrics can be either Standard or High resolution.
+
+You can read more about these concepts in the [AWS documentation here.](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html)
+
+## Setting Up AWS Powertools Lambda Metrics
+
+[Powertools for AWS Lambda (.NET)](https://docs.powertools.aws.dev/lambda/dotnet/?ref=rahulpnath.com) is a suite of utilities for AWS Lambda functions to ease adopting best practices such as tracing, structured logging, custom metrics, and more.
+
+To get started using the Powertools logging utility, you can install it as a NuGet package - `AWS.Lambda.Powertools.Metrics`.
+
+You can use the `MetricsAttribute` together with the `Metrics` class to add metrics from your Lambda Function Handler. The `MetricsAttribute` ensures that the metrics data is properly flushed to CloudWatch.
+
+The `MetricsAttribute` provides a few properties that affect the metrics data the Function writes.
+
+-   **Namespace** → Logical container for all Metrics data. By default this is empty. Typically you would use your Product/application name, to group together all metrics from different services across the application/product.
+-   **Service** → Sets up a service metric dimension to further group data within the namespace.
+-   **CaptureColdStart** → Captures cold start metrics for Lambda function. False by default
+-   **RaiseOnEmptyMetrics** → Raised error when no metrics are raised. False by default.
+
+```csharp
+[Metrics(Namespace = "WeatherWiz", Service = "WeatherService")]
+public async Task<List<WeatherForecast>> GetWeather(
+    string cityName, ILambdaContext context)
+{
+    Metrics.AddMetric("GetWeather", 1, MetricUnit.Count);
+}
+```
+
+The above code uses the `Metrics` attribute to specify the Namespace and Service names and writes a metric with the unit Count.
+
+You can find the different `MetricUnits` CloudWatch supports [here](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Unit).
+
+### Adding High-Resolution Metric
+
+By default, the Metrics added have a one-minute granularity and are categorized as Standard resolution.
+
+However, you can specify High resolution, with a data granularity of one second. High-resolution metrics give more insight into your application metrics.
+
+```csharp
+Metrics.AddMetric(
+  "RetrievedWeather", 1, MetricUnit.Count, MetricResolution.High);
+```
+
+When calling the `AddMetric` function all you need to do is specify an extra attribute to indicate `MetricResolution.High`
+
+### Adding Dimensions
+
+A dimension is a name/value pair that is part of a Metric. They help to filter and aggregate metrics in CloudWatch. Learn more about Dimensions [here](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Dimension).
+
+You can use the `SetDefaultDimensions` method on the Metrics class to set default dimensions across all Lambda invocations.
+
+The metrics class also provides the `AddDimension` method that you can use to add dimensions individually and conditionally if required, as shown below.
+
+```csharp
+ private Dictionary<string, string> _defaultDimensions = new()
+  {
+    {"Environment", "Prod"},
+  };
+
+public async Task<List<WeatherForecast>> GetWeather(
+        string cityName, ILambdaContext context)
+{
+  ...
+  Metrics.SetDefaultDimensions(_defaultDimensions);
+  Metrics.AddDimension("City", cityName);
+
+...
+if (cityName == "Brisbane")
+    Metrics.AddDimension("Conditional", cityName);
+}
+```
+
+### Adding Metadata
+
+Metrics supports adding custom data to the Metrics payload. This is particularly useful when you want to search contextual information along with the metrics data logged.
+
+The metadata is not available for Metrics visualization and is mainly intended for querying and seeing data in the logs.
+
+```csharp
+Metrics.AddMetadata("CityId", "46f54812-bcaa-4aff-86ae-2feeae9640de");
+```
+
+The above code adds a custom metadata property `CityId` to the CloudWatch metric.
+
+## Sample Metric
+
+You can see the raw metric data sent to AWS CloudWatch from the logs. Below is a sample metric payload.
+
+```json
+{
+  "_aws": {
+    "Timestamp": 1700808624237,
+    "CloudWatchMetrics": [
+      {
+        "Namespace": "WeatherWiz",
+        "Metrics": [
+          {
+            "Name": "GetWeather",
+            "Unit": "Count"
+          },
+          {
+            "Name": "RetrievedWeather",
+            "Unit": "Count",
+            "StorageResolution": 1
+          },
+          {
+            "Name": "Brisbane Specific",
+            "Unit": "Count"
+          }
+        ],
+        "Dimensions": [
+          [
+            "Service"
+          ],
+          [
+            "Environment"
+          ],
+          [
+            "City"
+          ],
+          [
+            "Conditional"
+          ]
+        ]
+      }
+    ]
+  },
+  "Service": "WeatherService",
+  "Environment": "Prod",
+  "City": "Brisbane",
+  "Conditional": "Brisbane",
+  "GetWeather": 1,
+  "RetrievedWeather": 1,
+  "Brisbane Specific": 1,
+  "CityId": "46f54812-bcaa-4aff-86ae-2feeae9640de"
+}
+```

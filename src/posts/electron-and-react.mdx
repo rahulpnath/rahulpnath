@@ -1,18 +1,17 @@
 ---
-title: "Setting up an Electron Application using create-react-app Template"
+title: Setting up an Electron Application using create-react-app Template
 slug: electron-and-react
-date: 2017-10-10
-feature_image: /images/electron.png
-excerpt: >-
-  Electron application using React.
+date: '2017-10-10'
+feature_image: /content/images/electron.png
 tags:
   - Programming
+excerpt: Electron application using React.
 ---
 [Electron](https://electron.atom.io/) is a great way to build cross-platform desktop applications using HTML, CSS and JavaScript. I was surprised when I first came across Electron to see many of the applications that I use daily was developed in electron and I never knew about it. Since then I was interested in learning more about developing an application using Electron. Recently I was playing around with an idea for a side project and decided to use Electron as I wanted a desktop application. TDK react
 
 ## Setting up the React Application
 
-With the [create-react-app](https://github.com/facebookincubator/create-react-app) template generator, it is easy to setup and get up and running a react application. All you need to run are the below commands, and you have everything set up for a react application."
+With the [create-react-app](https://github.com/facebookincubator/create-react-app) template generator, it is easy to setup and get up and running a react application. All you need to run are the below commands, and you have everything set up for a react application.
 
 ```bash
 npm install -g create-react-app
@@ -69,7 +68,9 @@ After updating the package.json with the electron application main entry point, 
 
 Fire up two consoles and launch the react application in one using _npm start_ and the electron application in the other using _'set DEV\_URL=http://localhost:3000 && electron .'_
 
-<Figure src="/images/electron_react.png" caption="### Setting up for Deployment" />
+<ImageCard src="/content/images/electron_react.png" alt="Electron React" />
+
+### Setting up for Deployment
 
 Opening up two consoles and starting up the react server first will start becoming a pain soon. To avoid this, we can use two npm packages to start both the tasks one after the other.
 

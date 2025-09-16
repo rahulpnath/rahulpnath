@@ -1,0 +1,150 @@
+---
+title: >-
+  How To Set Up Dependency Injection in Lambda Functions Using Annotations
+  Framework
+slug: lambda-annotations-dependency-injection
+date: '2023-09-04'
+feature_image: /images/Lambda-Annotation-Framework---DI.png
+excerpt: >-
+  Learn how to set up Dependency Injection when building Lambda Functions using
+  the Annotatios framework.
+---
+The Lambda Annotations Framework provides a programming model for .NET developers to create AWS Lambda Functions.
+
+In previous posts, we learned [how to get started with the Annotations Framework](/blog/aws-lambda-annotation-framework/) and also [how to build a CRUD API](/blog/lambda-annotation-framework-crud-api/) using the Annotations Framework.
+
+We saw how the Annotations Framework makes the development experience with Lambda Functions very similar to building APIs using ASP NET Core Framework.
+
+<iframe src="https://www.youtube.com/embed/FPaznlIY02s?feature=oembed" />
+
+Another feature that the Annotations Framework provides is support for Dependency Injection. This takes the development experience with Lambda Functions a level up.
+
+In this post let’s learn [how to setup Dependency Injection](https://github.com/aws/aws-lambda-dotnet/blob/master/Libraries/src/Amazon.Lambda.Annotations/README.md#dependency-injection-integration) when building Lambda Functions using the Annotations Framework.
+
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
+
+## Setting Up DI In .NET Lambda Annotations
+
+Lamba Annotations provides the `LambdaStartup` attribute that can be applied on any class in the Lambda Function Project.
+
+The class must have a method `ConfigureServices` taking in the `IServiceCollection` to set up the Dependency Injection container.
+
+Below I have the `Startup` class which has the method specified and the `LambdaStartup` attribute applied.
+
+```csharp
+[LambdaStartup]
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddTransient<IDependency, MyDependency>();
+    }
+}
+```
+
+The function sets up and registers the different dependencies in the service collection.
+
+## Injecting Dependencies in .NET Lambda Function
+
+The Annotations framework supports injecting dependencies through the constructor or through the Lambda Function entry point itself.
+
+### Constructor Level DI in Lambda Function
+
+To inject the dependency through the constructor is very similar to how we do DI in .NET. All we need to do is specify the interface dependency in the constructor as shown below.
+
+```csharp
+private readonly IMyDependency _myDependencyCtor;
+
+public Function(IMyDependency myDependencyCtor)
+{
+    _myDependencyCtor = myDependencyCtor;
+}
+
+```
+
+The above code injects the `IDependency` we registered in the `Startup` class to the Function class.
+
+<iframe src="https://www.youtube.com/embed/YR6HkvNBpX4?feature=oembed" />
+
+We can store this as a class-level property and use it in our Lambda Function code.
+
+### Function Level DI in Lambda Function
+
+You can also inject a dependency through the Function parameters by adding the `FromServices` attribute.
+
+```csharp
+[LambdaFunction]
+[HttpApi(LambdaHttpMethod.Get, "/add/{a}/{b}")]
+public List<string> Add(int a, int b, ILambdaContext lambdaContext, [FromServices] IDependency scopedDependencyFunc)
+{
+    var returnValues = new List<string>
+    {
+        _scopedDependencyCtor.Test("Constructor"),
+        scopedDependencyFunc.Test("Function"),
+        (a + b).ToString()
+    };
+
+    return returnValues;
+}
+```
+
+The annotation framework uses this attribute to determine that it's a dependency to be resolved from the DI ServiceCollection container and uses it to resolve and pass the appropriate values when invoking the Function code.
+
+## DI Service Lifetimes and Lambda Lifecycle
+
+The ServiceCollection supports three lifetimes when registering dependencies.
+
+-   Transient → New instance created every request
+-   Scoped →  Instance created once per client request
+-   Singleton → Single instance of dependency created
+
+However, this is dependent on the lifecycle of the Lambda Functions.
+
+The Lambda Function class is created only once, during the Init phase of the Lambda lifecycle. Once the instance is created it is reused for the same calls handled by the Lambda instance.
+
+💡
+
+_The Lambda Function class is instantiated only once when a new Lambda instance is created. The same class instance is reused to call the function entry point on the same Lambda instance._
+
+It's up to the AWS Lambda infrastructure to decide when to create a new Lambda instance. When the function is just deployed, the Lambda runtime wipes out all existing instances and creates new instances for subsequent requests.
+
+Learn more about Lambda Lifecycle in the below blog post.
+
+<PostCard 
+  title="Why You Should Care About Lambda Lifecycle As A .NET Developer?"
+  description="The Lambda Lifecycle affects the way we write out Function code. Learn some of the dos and don’ts when building Lambda Functions in .NET because of how Lambda initializes the Function classes."
+  slug="lambda-lifecycle-and-net/"
+  image="/images/Lambda-Lifecycle-2.png"
+/>
+
+The lifetime scope of the dependencies injected via the Service collection is dependent on the Lambda instance.
+
+For example, a singleton instance is only singleton in the context of one Lambda instance. If you have multiple parallel calls coming to your API Gateway, Lambda might decide to spin up multiple Lambda instances and each of them will have its own Singleton instance.
+
+💡
+
+Avoid depending on Singleton instances to maintain state or share data across multiple invocations.
+
+All application state information must be managed outside of Lambda - like in a database or an external Cache service etc.
+
+## Under the Hoods of DI in Lambda Annotation Framework
+
+As we have seen previously, the annotations framework generates a wrapper class around our actual Function code class for each `LambdaFunction` attributed function.
+
+This wrapper class is where all of the boilerplate code is auto-generated using .NET Source Generators.
+
+Below you can see in the generated class, it creates a new instance of the .NET `ServiceCollection` which is the DI container where we are registering the dependencies in the `Startup` class.
+
+![](/images/image-2.png)
+
+The Lambda generated class by the annotation framework as seen using JetBrains dotpeek.
+
+The actually `Function` class is registered as a Singleton instance in the DI container.
+
+If needed you can override this to a different lifetime scope inside the `Startup` class. Since the last registration wins, anything in the Startup class ConfigureServices method will override the auto-generated registration set up in the wrapper.
+
+The wrapper Function code uses the ServiceCollection instance to resolve the actual function class and any Function parameter dependencies.
+
+The generated function class wraps around the actual function and invokes the function we have written passing in the appropriate dependencies.
+
+You can find the full source code [here](https://github.com/rahulpnath/youtube-samples/tree/main/LambdaAnnotationSample/LambdaAnnotationSample.FromScratch).

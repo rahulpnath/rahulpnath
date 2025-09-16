@@ -1,17 +1,17 @@
 ---
-title: "How To Log Correctly To AWS CloudWatch From a .NET Application"
+title: How To Log Correctly To AWS CloudWatch From a .NET Application
 slug: amazon-cloudwatch-logs-dotnet
-date: 2022-05-03T00:00:00.000Z
-feature_image: /images/logs.jpg
+date: '2022-05-03'
+feature_image: /content/images/logs.jpg
+tags:
+  - AWS
 excerpt: >-
   Learn how to use Amazon CloudWatch when building .NET applications. We will
   learn how to write logs into CloudWatch, filter the logs, some good practices
   when logging, learn about Log Analytics, and see how we can filter and view
   logs across multiple applications.
-tags:
-  - AWS
 ---
-_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
 Logging is an essential aspect of application development.
 
@@ -19,7 +19,7 @@ When building applications on AWS, CloudWatch provides a centralized, highly sca
 
 CloudWatch allows to view, search, filter, or archive logs easily.
 
-<iframe src="https://www.youtube.com/embed/-46yTm4DoEI" />
+<EmbedCard src="https://www.youtube.com/embed/-46yTm4DoEI" />
 
 In this article, let’s learn how to use Amazon CloudWatch when building .NET applications. We will learn how to write logs into CloudWatch, filter the logs, some good practices when logging, learn about Log Analytics, and see how we can filter and view logs across multiple applications.
 
@@ -184,7 +184,7 @@ Using the Text-Based filtering patterns, you can use different filtering capabil
 -   → -Brisbane 9 (logs without Brisbane but has 9)
 -   → ?Brisbane 9 (logs with 9, but Brisbane is optional)
 
-![Text based filtering in CloudWatch log group, Showing all logs which do not have Brisbane and have number 9](/images/aws-cloudwatch-logs-text-filter.jpg)
+<ImageCard src="/content/images/aws-cloudwatch-logs-text-filter.jpg" alt="Text based filtering in CloudWatch log group, Showing all logs which do not have Brisbane and have number 9" />
 
 Text-based filtering has its limitations. All filtering and querying are limited to text-based comparisons. As soon as you want to write more complex filters and criteria, you will need a richer data model.
 
@@ -205,7 +205,7 @@ The Serilog integration with CloudWatch uses the JSON formatter (provided out of
 
 Here’s the difference between using string interpolation which generates the log as a simple text instead of passing values, and logging as structured logs.
 
-![Text based Logs vs structured logging](/images/aws-cloudwatch-log-comparison.jpg)
+<ImageCard src="/content/images/aws-cloudwatch-log-comparison.jpg" alt="Text based Logs vs structured logging" />
 
 When using structured logging and passing the values as parameters to the log methods, these are available as first-class properties to query in CloudWatch.
 
@@ -219,7 +219,9 @@ To query JSON log events, a special syntax is to be used:
 
 _eg. {$.count > 10 && $.cityName = “Brisbane”}_ → selects all log events that have a count property greater than 10 with the cityName property as Brisbane.
 
-<Figure src="/images/aws-cloudwatch-log-structured-filter.jpg" caption="## AWS CLoudWatch Log Insights" />
+<ImageCard src="/content/images/aws-cloudwatch-log-structured-filter.jpg" alt="JSON based log filtering example with multiple properties" />
+
+## AWS CLoudWatch Log Insights
 
 CloudWatch Log Insights provides richer capabilities to interact with log events. It allows to interactively search and analyze log data and supports a [custom query language](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_QuerySyntax.html).
 
@@ -229,17 +231,23 @@ The query syntax supports custom functions and operations and is not limited to 
 
 It also supports formatting the queried log events in custom formats. You can set it to show just the properties that are important to you in the collapsed view.
 
-<Figure src="/images/aws-cloudwatch-logs-insights.jpg" caption="### Query Logs Across Applications" />
+<ImageCard src="/content/images/aws-cloudwatch-logs-insights.jpg" alt="Sample query in aws cloudwatch log insights" />
+
+### Query Logs Across Applications
 
 Log Insights also supports querying across multiple log groups. It is handy in distributed applications where multiple applications are responsible for handling a business use case.
 
 Given a correlation id or a unique id passed across applications, you can filter the data across multiple applications and see the end-to-end flow of events.
 
-<Figure src="/images/aws-cloudwatch-logs-insights-multiple-log-groups.jpg" caption="### Saved Queries" />
+<ImageCard src="/content/images/aws-cloudwatch-logs-insights-multiple-log-groups.jpg" alt="Query across multiple log groups in CloudWatch log insigths" />
+
+### Saved Queries
 
 CloudWatch Insights also enables the saving of Queries for later use. These queries can be grouped in folders based on your application needs and are visible to anyone who has access to the CloudWatch in AWS Console.
 
-<Figure src="/images/aws-cloudwatch-logs-insights-saved-queries.jpg" caption="## Summary" />
+<ImageCard src="/content/images/aws-cloudwatch-logs-insights-saved-queries.jpg" alt="Saved queries in CloudWatch Log Insights" />
+
+## Summary
 
 CloudWatch Logs provides rich features and capabilities to manage logs when building applications on AWS Infrastructure. Since it allows for a centralized location, it makes setting up and using the infrastructure from various application types easy.
 

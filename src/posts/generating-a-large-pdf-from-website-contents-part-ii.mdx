@@ -1,11 +1,13 @@
 ---
-title: ">-   Generating a Large PDF from Website Contents - HTML to PDF, Bookmarks and   Handling Empty Pages"
+title: >-
+  Generating a Large PDF from Website Contents - HTML to PDF, Bookmarks and
+  Handling Empty Pages
 slug: generating-a-large-pdf-from-website-contents-part-ii
-date: 2017-08-16T00:00:00.000Z
-feature_image: /images/pdf_generation_flow.png
-excerpt: Dynamically generate a PDF file for a CMS Website.
+date: '2017-08-16'
+feature_image: /content/images/pdf_generation_flow.png
 tags:
   - Programming
+excerpt: Dynamically generate a PDF file for a CMS Website.
 ---
 **Posts in this series**
 
@@ -21,7 +23,7 @@ There are a lot of libraries and services that support converting HTML to PDF. W
 
 We used [Essential Objects HTML to PDF Converter](https://www.essentialobjects.com/Products/EOPdf/Default.aspx) library. Our website is hosted as an Azure Web App and the [Essential Objects library does not work in the Azure sandbox environment](https://www.essentialobjects.com/doc/pdf/install/deploy.aspx). The [Azure Sandbox restriction](https://github.com/projectkudu/kudu/wiki/Azure-Web-App-sandbox#pdf-generation-from-html) affects most of the HTML to PDF libraries. The recommended approach to use those libraries is to host the PDF conversion logic on an Azure Virtual Machine, which is what we also ended up doing. Alternatively, you can choose to use one of the [HTML to PDF hosted services](https://stackoverflow.com/questions/5344176/is-there-a-web-service-for-converting-html-to-pdf).
 
-The below code snippet is what you need to convert an HTML URL endpoint to PDF. It uses the HtmlToPdf class from the [EO.Pdf Nuget package](https://www.nuget.org/packages/EO.Pdf/). The HtmlToPdfOptions specifies various conversion and formatting options. You can set margin space, common headers, footers, etc. for the generated PDF content. It also provides extensibility points in the PDF conversion pipeline."
+The below code snippet is what you need to convert an HTML URL endpoint to PDF. It uses the HtmlToPdf class from the [EO.Pdf Nuget package](https://www.nuget.org/packages/EO.Pdf/). The HtmlToPdfOptions specifies various conversion and formatting options. You can set margin space, common headers, footers, etc. for the generated PDF content. It also provides extensibility points in the PDF conversion pipeline.
 
 ```csharp
 public FileContentResult Convert(string url)
@@ -39,6 +41,7 @@ public FileContentResult Convert(string url)
 ```
 
 > **_HTML Formatting Tip_**
+
 > \_You might want to avoid content being split across multiple pages. E.g., images, charts, etc. In this cases, you can use the [page-break-\_](https://css-tricks.com/almanac/properties/p/page-break/) CSS property to adjust page breaks. [Essentials objects honors the page-break-\*](https://www.essentialobjects.com/doc/pdf/htmltopdf/paging.aspx) settings and adjusts the content when converting into PDF.\*
 
 ### Bookmarks

@@ -1,12 +1,16 @@
 ---
-title: "AWS Parameter Store For The .NET Developer: How to Easily Get Started"
+title: 'AWS Parameter Store For The .NET Developer: How to Easily Get Started'
 slug: aws-parameter-store
-date: 2022-02-15
-feature_image: /images/security_lock.jpg
-excerpt: >-
-  Learn how to get started with AWS Parameter Store and use it from a .NET application to store and retrieve configuration data. Understand how parameters are versioned and how to use labels and hierarchies to manage parameters better. Seamlessly use the built-in .NET Configuration capabilities to loa
+date: '2022-02-15'
+feature_image: /content/images/security_lock.jpg
 tags:
   - AWS
+excerpt: >-
+  Learn how to get started with AWS Parameter Store and use it from a .NET
+  application to store and retrieve configuration data. Understand how
+  parameters are versioned and how to use labels and hierarchies to manage
+  parameters better. Seamlessly use the built-in .NET Configuration capabilities
+  to loa
 ---
 _This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
@@ -16,7 +20,7 @@ Parameter Store, a part of AWS Systems Manager, provides secure storage for appl
 
 Parameter store makes it easy to decouple your code from configuration and acts as version control for your configuration data.
 
-<iframe src="https://www.youtube.com/embed/eRtBIAx7sJc" />
+<EmbedCard src="https://www.youtube.com/embed/eRtBIAx7sJc" />
 
 In this post, let's learn how to use AWS Parameter Store when building .NET applications. We will explore some of the common features that are useful when creating .NET applications.
 
@@ -30,7 +34,9 @@ To add a new parameter in Parameter Store, navigate to _AWS Systems Manager → 
 
 It prompts a new dialog to enter the parameter name, description, type, and value. You can also configure Advanced properties, which we will skip for now.
 
-<Figure src="/images/aws-parameter-store-create-parameter.jpg" caption="We can use this new parameter from our .NET application." />
+<ImageCard src="/content/images/aws-parameter-store-create-parameter.jpg" alt="Create a new parameter in Parameter Store" />
+
+We can use this new parameter from our .NET application.
 
 ### Using Parameter
 
@@ -96,7 +102,7 @@ Parameter Store supports three types of parameters.
 -   **StringList →** comma-separated list of values (e.g., Cities → _Brisbane, Trivandrum, Sydney_)
 -   **SecureString →** any sensitive data that needs to be stored. The value is automatically encrypted using an [AWS KMS Key](https://aws.amazon.com/kms/). You can select a specific KMS key or use the default auto-created one.
 
-![SecureString Parameter Store Type uses KMS to encrypt the value](/images/aws-parameter-store-parameter-types.jpg)
+<ImageCard src="/content/images/aws-parameter-store-parameter-types.jpg" alt="SecureString Parameter Store Type uses KMS to encrypt the value" />
 
 When using a parameter store variable of type SecureString, make sure to set the `WithDecryption` property on the `GetParameterRequest` instance to true to decrypt the parameter value automatically.
 
@@ -119,7 +125,7 @@ Every time a parameter value is updated, it creates a new version and saves the 
 
 Below are 3 version histories of the `weather-forecast-count` property.
 
-![A new version is created any time a parameter is updated.](/images/aws-parameter-store-parameter-version.jpg)
+<ImageCard src="/content/images/aws-parameter-store-parameter-version.jpg" alt="A new version is created any time a parameter is updated." />
 
 To get a specific version from the parameter store, we need to append “:version number” along with the parameter name. The below will return the first version of the parameter, where the value is 5 in this case.
 
@@ -136,7 +142,7 @@ var request = new GetParameterRequest()
 
 Working with version numbers can be confusing if you want to tag versions to specific environments, regions or other groups of your choice. Labels solve this problem since they give a user-defined alias for the different versions. Labels make it easier to manage different versions of the parameter.
 
-![Assign label to a version of the store varaible](/images/aws-parameter-store-parameter-labels.jpg)
+<ImageCard src="/content/images/aws-parameter-store-parameter-labels.jpg" alt="Assign label to a version of the store varaible" />
 
 Version 3 of the variable `weather-forecast-count` is assigned the label _prod._ Very similar to versions, use the label name instead of the version number as part of the request to retrieve the value.
 
@@ -177,7 +183,7 @@ To run the application in any environment (local dev, test, prod) needs a Parame
 
 .NET has built-in Configuration capabilities, which most likely you would have used already - If you have used app settings file, environment variables, etc.
 
-<iframe src="https://www.youtube.com/embed/5GlgHV_12-k" />
+<EmbedCard src="https://www.youtube.com/embed/5GlgHV_12-k" />
 
 AWS Parameter Store can be added as a [Configuration Provider](https://docs.microsoft.com/en-us/dotnet/core/extensions/configuration-providers?WT.mc_id=AZ-MVP-5003875) at application Startup. We need to add the Nuget package, [Amazon.Extensions.Configuration.SystemsManager](https://www.nuget.org/packages/Amazon.Extensions.Configuration.SystemsManager/). Using this package, add a new Configuration Provider as below.
 
@@ -201,7 +207,7 @@ The above code looks for all the parameter keys under the ‘_/test_’ hierarch
 
 The code also sets the configuration to be automatically reloaded every 30 seconds. (choose a more extensive duration based on your application needs and avoid too many calls to Parameter Store).
 
-<iframe src="https://www.youtube.com/embed/SizJCLcjbOA" />
+<EmbedCard src="https://www.youtube.com/embed/SizJCLcjbOA" />
 
 Using Options Pattern, we can inject the configuration values into our controllers. The below code registers the `WeatherForecastOptions` and injects it into the controller using `IOptionsSnapshot`.
 
@@ -210,7 +216,7 @@ builder.Services
      .Configure<WeatherForecastOptions>(
         builder.Configuration.GetSection(WeatherForecastOptions.SectionName));
 
-/ Options class to hold the configuration
+// Options class to hold the configuration
 public class WeatherForecastOptions
 {
     public static string SectionName = "weather-forecast";

@@ -1,17 +1,17 @@
 ---
-title: "How To Manage Multiple Stages in Amazon API Gateway REST API?"
+title: How To Manage Multiple Stages in Amazon API Gateway REST API?
 slug: amazon-api-gateway-rest-api-multiple-stages
-date: 2022-08-01T00:00:00.000Z
-feature_image: /images/learning_code.jpg
+date: '2022-08-01'
+feature_image: /content/images/learning_code.jpg
+tags:
+  - AWS
 excerpt: >-
   Learn how to configure different Stages to use different backend integrations
   - Lambda Function, DynamoDB etc - based on the Stage they are running. We will
   use Stage variables to set up connections with different Lambda Functions and
   DynamoDB database.
-tags:
-  - AWS
 ---
-_This article is sponsored by AWS and is part of my [AWS Series](/blog/tag/aws/)._
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
 When building applications, we want the ability to test them before we deploy them to the production environment. It applies to building API applications.
 
@@ -19,19 +19,11 @@ With Amazon API Gateway, we can use Stages to represent different environments (
 
 In this blog post, learn how to configure different Stages to use backend integrations - Lambda Function, DynamoDB, etc. - based on the Stage they are running.
 
-<iframe src="https://www.youtube.com/embed/13Urq-AqH8M" />
+<EmbedCard src="https://www.youtube.com/embed/13Urq-AqH8M" />
 
 In a previous post, we learned [how to build an API Gateway REST API Using AWS Lambda Proxy Integration](/blog/amazon-api-gateway-rest-api-lambda-proxy-integration/). We learned how to handle the API Gateway requests in a Lambda function built in .NET, connect to a DynamoDB table and perform CRUD operations.
 
-<BlogLink
-  href="/blog/amazon-api-gateway-rest-api-lambda-proxy-integration"
-  title="How To Build an API Gateway REST API Using AWS Lambda Proxy Integration?"
-  description="In this post, you will learn how to build a REST API using Amazon API Gateway with AWS Lambda Proxy integration built in .NET Core. Learn how to build and set up the Lambda integration, connect to a DynamoDB database and perform CRUD operations."
-  authorImage="/images/favicon.ico"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/aws_lambda.jpg"
-/>
+<BookmarkCard href="/blog/amazon-api-gateway-rest-api-lambda-proxy-integration" title="How To Build an API Gateway REST API Using AWS Lambda Proxy Integration?" description="In this post, you will learn how to build a REST API using Amazon API Gateway with AWS Lambda Proxy integration built in .NET Core. Learn how to build and set up the Lambda integration, connect to a DynamoDB database and perform CRUD operations." icon="/favicon.ico" />
 
 However, when deploying to multiple Stages, we had one issue -  APIs deployed to different Stages were using the same backend integrations - Lambda Function and DynamoDB table. We want each API Stage to talk to its own backed integration services. This makes each Stage isolated and runs without affecting other Stages.
 
@@ -59,7 +51,7 @@ To create a stage variable, navigate to Stages and the stage you want to add the
 
 Below I have added ‘_env_’, an environment variable to indicate the environment the Stage is running.
 
-![Add stage variable to the API Stage. ](/images/api-gateway-rest-api-lambda-proxy-stage-variables.jpg)
+<ImageCard src="/content/images/api-gateway-rest-api-lambda-proxy-stage-variables.jpg" alt="Add stage variable to the API Stage. " />
 
 The _env_ variable for the Test stage is ‘test-‘.
 
@@ -73,7 +65,7 @@ We can now configure the Method Integration Request on the API Gateway to connec
 
 Under the Integration Request, when setting the Lambda Function, we can use the Stage Variables to append to the name of the Lambda Function, as shown below.
 
-![Use stage variables to prefix the Lambda Function name when specifying the Integration endpoint in API Gateway REST API Integration Method.](/images/api-gateway-rest-api-lambda-proxy-lambda-method-integration-request-stage-variables.jpg)
+<ImageCard src="/content/images/api-gateway-rest-api-lambda-proxy-lambda-method-integration-request-stage-variables.jpg" alt="Use stage variables to prefix the Lambda Function name when specifying the Integration endpoint in API Gateway REST API Integration Method." />
 
 So now we have the Lambda Function as `${stageVariables.env}user-service`, which uses the _stageVariables_ object to retrieve the _env_ variable.
 
@@ -83,7 +75,7 @@ The last time we explicitly selected the Lambda Function for the integration, it
 
 Since API Gateway cannot determine what values the stage variables will contain, it delegates this responsibility to us to manually set up.
 
-![Add permission to Lambda Function manually for API Gateway to be able to invoke it. When you use stage variables in the lambda name, this dialog prompts up since you need to add in the permissions manually.](/images/api-gateway-rest-api-lambda-proxy-lambda-permissions.jpg)
+<ImageCard src="/content/images/api-gateway-rest-api-lambda-proxy-lambda-permissions.jpg" alt="Add permission to Lambda Function manually for API Gateway to be able to invoke it. When you use stage variables in the lambda name, this dialog prompts up since you need to add in the permissions manually." />
 
 Later in the post, we will use the above information to set up the Resource-based policy in our Lambda Functions manually.
 
@@ -91,7 +83,7 @@ Later in the post, we will use the above information to set up the Resource-base
 
 Since each Stage connects to its own Lambda Function, we need to deploy the same function code to different Lambda.
 
-[AWS Lambda For The .NET Developer](https://www.udemy.com/course/aws-lambda-dotnet/?referralCode=981481B991C2890BD448)
+<BookmarkCard href="https://www.udemy.com/course/aws-lambda-dotnet/?referralCode=981481B991C2890BD448" title="AWS Lambda For The .NET Developer" description="Learn to build Serverless Applications on AWS" icon="https://www.udemy.com/staticx/udemy/images/v7/apple-touch-icon.png" />
 
 Based on the Stage the Lambda Function is running on, it needs to also connect to different DynamoDB tables. This also applies to other services if you are using any in your applications.
 
@@ -122,7 +114,9 @@ You can configure this in AWS Console, under Configuration → Environment Varia
 
 Below I have set the variable _Environment_ to be ‘_test-’_ for the _test-user-service_ Lambda Function.
 
-<Figure src="/images/api-gateway-rest-api-lambda-proxy-lambda-environment-variable.jpg" caption="### Configuring Lambda Policies Based on Environment" />
+<ImageCard src="/content/images/api-gateway-rest-api-lambda-proxy-lambda-environment-variable.jpg" alt="Add environment variable for the Lambda Function from the AWS Console." />
+
+### Configuring Lambda Policies Based on Environment
 
 Now that the Lambda Function connects to the appropriate DynamoDB table based on the Environment variable settle, it also needs to be given the relevant IAM policies to talk to.
 
@@ -130,7 +124,7 @@ Navigate to the Lambda Function in AWS Console, under Configuration → Permissi
 
 This opens the IAM Role, where you can Add additional Permissions to the role.
 
-![Update the Lambda IAM Role to provider permissions to talk to the Stage-specific DynamoDB table. Explicitly select the required permissions and the Resources the Lambda function needs access to.](/images/api-gateway-rest-api-lambda-proxy-lambda-iam-role-stage.jpg)
+<ImageCard src="/content/images/api-gateway-rest-api-lambda-proxy-lambda-iam-role-stage.jpg" alt="Update the Lambda IAM Role to provider permissions to talk to the Stage-specific DynamoDB table. Explicitly select the required permissions and the Resources the Lambda function needs access to." />
 
 I’ve added the same set of permissions that we provided when setting up the first Lambda Function [in the previous post](/blog/amazon-api-gateway-rest-api-lambda-proxy-integration/), but to the stage-specific DynamoDB table.
 
@@ -146,7 +140,9 @@ Below, the Source ARN specifies the endpoint ARN details that require access. In
 
 TDK star notation details
 
-<Figure src="/images/api-gateway-rest-api-lambda-stage-permission.jpg" caption="## Managing API Deployments" />
+<ImageCard src="/content/images/api-gateway-rest-api-lambda-stage-permission.jpg" alt="Add a resource-based policy to provide the API Gateway permission to invoke the Lambda Function. The Source ARN specifies the endpoint ARN details that require access. In this case, all HTTP Methods under the user resource is given access to invoke the Lambda function. " />
+
+## Managing API Deployments
 
 We have successfully configured the different services and resources to connect based on the Stage it’s running on.
 
@@ -160,7 +156,7 @@ Under the Deployment History tab for a Stage, you can see all the deployments ma
 
 It shows the current stage with a checkmark against it. Selecting a different deployment allows changing the deployment to that version.
 
-![Curernt and previous deployment history under API Gateway Stages. Select a different version and deploy that version.](/images/api-gateway-rest-api-deployment-history.jpg)
+<ImageCard src="/content/images/api-gateway-rest-api-deployment-history.jpg" alt="Curernt and previous deployment history under API Gateway Stages. Select a different version and deploy that version." />
 
 This allows easy rollback to a previous deployment when needed. But note that this only rollbacks the API Gateway part of the code. If your deployment includes related backend resource changes, you will need to roll them back separately.
 

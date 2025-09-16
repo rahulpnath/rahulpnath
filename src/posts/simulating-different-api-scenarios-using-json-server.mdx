@@ -1,10 +1,7 @@
 ---
-title: "Simulating Different Scenarios Using Fake JSON Server API"
+title: Simulating Different Scenarios Using Fake JSON Server API
 slug: simulating-different-api-scenarios-using-json-server
-date: 2020-04-21T00:00:00.000Z
-excerpt: >-
-  How many times have you had to update the API code to return an empty list or
-  throw an error to test edge case scenarios?  How do you demo...
+date: '2020-04-21'
 tags:
   - Testing
 ---
@@ -16,7 +13,7 @@ The pages and components of our application have different states. Most of these
 
 Let's take an example of a simple list page of Quotes. Some of the scenarios for this endpoint are - no quotes available, some quotes available, request to server errors, and more. The 'happy path scenario' here is some quotes existing, and most of our development and testing will be against that. It will be good if we can simulate different application scenarios using a [FAKE JSON Server API](/blog/setting-up-a-fake-rest-api-using-json-server/). It will allow us to simulate any use case or scenario that we want, allowing us to write code for it. Not to mention that testing, demoing, and writing automated tests all becomes easier.
 
-<iframe src="https://www.youtube.com/embed/eUDi-DjU2Ko" />
+<EmbedCard src="https://www.youtube.com/embed/eUDi-DjU2Ko" />
 
   
 
@@ -205,9 +202,7 @@ router.render = (req, res) => {
 When requesting the API, pass the scenarios header to activate the different scenarios. Based on the values in the scenarios header, JSON Server will filter out the response data. Below is a sample request made with 'draft' in scenarios header, and it returns only quotes that have the 'draft' scenarios applied to it.
 
 ```http
-
 GET http://localhost:5000/api/quotes HTTP/1.1
-
 Host: localhost:5000
 scenarios: draft
 

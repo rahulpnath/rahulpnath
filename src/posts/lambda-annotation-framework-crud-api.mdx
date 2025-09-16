@@ -1,13 +1,15 @@
 ---
-title: "Serverless API Development Made Easy: Using AWS Lambda Annotations for CRUD"
+title: 'Serverless API Development Made Easy: Using AWS Lambda Annotations for CRUD'
 slug: lambda-annotation-framework-crud-api
-date: 2023-08-30
-feature_image: /images/Lambda-Annotation-Framework---CRUD.png
-excerpt: >-
-  Learn how to create a CRUD API Endpoint using AWS Lambda, API Gateway and the Annotations Framework. See how the Lambda Annotations framework does all the heavy lifting for us, and makes it easier to develop APIs.
+date: '2023-08-30'
+feature_image: /content/images/2023/08/Lambda-Annotation-Framework---CRUD.png
 tags:
   - AWS
   - Lambda
+excerpt: >-
+  Learn how to create a CRUD API Endpoint using AWS Lambda, API Gateway and the
+  Annotations Framework. See how the Lambda Annotations framework does all the
+  heavy lifting for us, and makes it easier to develop APIs.
 ---
 The [Lambda Annotations Framework](/blog/aws-lambda-annotation-framework/) is a programming model that makes it easier to build AWS Lambda Functions using .NET.
 
@@ -15,7 +17,7 @@ The framework uses C# custom attributes and Source Generators to translate annot
 
 In a [previous post](/blog/aws-lambda-annotation-framework/), we learned how to get started with using the Annotations Framework and how it compares to using the default Lambda Programming model. The Annotations Framework removes boilerplate code required to integrate with API Gateway.
 
-<iframe src="https://www.youtube.com/embed/Zx6JpVKUoLQ?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/Zx6JpVKUoLQ?feature=oembed" title="SERVERLESS CRUD API | Lambda Annotations Framework |  .NET ON AWS | Serverless | Amazon" />
 
 In this post, let’s learn how to set up a basic CRUD (Create, Read, Update, and Delete) Order API Endpoint using the Lambda Annotation Framework.
 
@@ -60,15 +62,7 @@ public class Order
 
 Using the `DynamoDBContext` we can save the `Order` into the table. If you are new to DynamoDB I highly recommend checking the below blog post to get started.
 
-<BlogLink
-  href="/blog/amazon-dynamodb-dotnet-developer"
-  title="Amazon DynamoDB For The .NET Developer"
-  description="This blog post is a collection of other posts that covers various aspects of Amazon DynamoDB and other services you can integrate with when building serverless applications."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/Amazon-DynamoDB.png"
-/>
+<BookmarkCard href="/blog/amazon-dynamodb-dotnet-developer" title="Amazon DynamoDB For The .NET Developer" description="This blog post is a collection of other posts that covers various aspects of Amazon DynamoDB and other services you can integrate with when building serverless applications." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 For the DynamoDBContext save to work, we need to make sure the Table is set up and the Lambda Function has appropriate access to the table.
 
@@ -102,7 +96,6 @@ To set up the Order DynamoDB table, let's add the below to the Resources section
     "BillingMode": "PAY_PER_REQUEST"
   }
 }
-
 ```
 
 It sets up the DynamoDB table with a specific name and also the Keys for the table.
@@ -149,7 +142,6 @@ It sets up full access to DynamoDB Order Table. Note I am using the CloudFormati
     ]
   }
 }
-
 ```
 
 The `LambdaFunction` attribute specifies the `Role` property to use the new IAM role that we just created above.
@@ -191,7 +183,6 @@ This generates the below section to the CloudFormation template for the Lambda F
     }
   }
 }
-
 ```
 
 You can deploy the template from the IDE or using the AWS CLI, which will create the Lambda Function, the IAM Role, the API Endpoint and wire up the integration for the route to the Lambda Function on the API Gateway.
@@ -207,7 +198,6 @@ public async Task<Order> GetOrder(string orderId, ILambdaContext context)
 {
     return await _dynamodbContext.LoadAsync<Order>(orderId);
 }
-
 ```
 
 The function takes in the `orderId` as the parameter, which is bound from the path parameter in the request URL.
@@ -227,7 +217,6 @@ public async Task DeleteOrder(string orderId, ILambdaContext context)
 {
     await _dynamodbContext.DeleteAsync<Order>(orderId);
 }
-
 ```
 
 It takes the `orderId` from the Path parameter and uses that to delete the item from the DynamoDB table.
@@ -238,7 +227,7 @@ The Lambda Annotations Framework uses .NET Source Generators to generate the boi
 
 Below is a screenshot of the DLL from [JetBrains dotPeek application](https://www.jetbrains.com/decompiler/whatsnew/?ref=rahulpnath.com), showing the generated code.
 
-<Figure src="/images/image-1.png" caption="Lambda Annotations Framework generated code using Source Generator." />
+<ImageCard src="/content/images/2023/08/image-1.png" alt="Lambda Annotations Framework generated code using Source Generator." caption="Lambda Annotations Framework generated code using Source Generator." />
 
 As you can see, for each of the functions attributed with `LambdaFunction` it creates a new class, that wraps around the original function and adds the boilerplate code to talk with API Gateway.
 

@@ -1,10 +1,11 @@
 ---
-title: "Using Repository Pattern for Abstracting Data Access from a Cache and Data Store"
-slug: using-repository-pattern-for-abstracting-data-access-from-a-cache-and-data-store
-date: 2014-11-22
-feature_image: /images/RepositoryPattern.PNG
-excerpt: >-
-  > A Repository abstracts the persistence logic from the core business logic and allows the data to be accessed as it would have been from an in-memory object collection. ...
+title: >-
+  Using Repository Pattern for Abstracting Data Access from a Cache and Data
+  Store
+slug: >-
+  using-repository-pattern-for-abstracting-data-access-from-a-cache-and-data-store
+date: '2014-11-22'
+feature_image: /content/images/RepositoryPattern.PNG
 tags:
   - Programming
 ---
@@ -16,7 +17,9 @@ With large scale applications it is very common to have an external cache, to op
 
 > In this blog post we will be seeing how to keep our Repositories clean and separate from the actual providers and provide a persistence ignorant data access to your business layer.
 
-<Figure src="/images/RepositoryPattern.PNG" caption="### Creating the Repository" />
+<ImageCard src="/content/images/RepositoryPattern.PNG" alt="Repository Pattern Class Diagram" />
+
+### Creating the Repository
 
 At the bare minimum a repository should be able to provide CRUD (Create Read Update Delete) options, for which we will have a generic interface defined and have implementation of which will be inherited from, for specific repositories.
 
@@ -50,7 +53,6 @@ public interface ICacheStrategy<T> where T : IIdentifiable
 }
 
 ```
-
 ```csharp
 public interface IDataStoreStrategy<T> : IRepository<T> where T : IIdentifiable
 {
@@ -209,7 +211,7 @@ public interface IDataStoreContext : IDisposable
     Task<int> SaveChangesAsync();
 }
 
-public class SqlDataStoreContext : DbContext, IDataStoreContext"
+public class SqlDataStoreContext : DbContext, IDataStoreContext
 {
     public DbSet<Blog> Blogs { get; set; }
 

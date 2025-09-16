@@ -1,23 +1,24 @@
 ---
-title: ".Net Core Web App and Azure AD Security Groups Role Based Access"
+title: .Net Core Web App and Azure AD Security Groups Role Based Access
 slug: dot-net-core-api-and-azure-ad-groups-based-access
-date: 2018-12-11
-feature_image: /images/azure_ad_Groups.png
-excerpt: >-
-  Use Azure AD groups to enable/disable functionality for your users based on their Roles.
+date: '2018-12-11'
+feature_image: /content/images/azure_ad_Groups.png
 tags:
-  - Dotnet
   - Azure
+  - Dotnet
+excerpt: >-
+  Use Azure AD groups to enable/disable functionality for your users based on
+  their Roles.
 ---
 Getting your application to provide capabilities based on the role of the User using the system is a common thing. When using Azure Active Directory (AD), the Security Groups feature allows organizing users of your system into different roles. In the applications that we build, the group information can be used to enable/disable functionality. For, e.g., if your application has the functionality to add new users you might want to restrict this to only users belonging to the administrator role.
 
-<iframe src="https://www.youtube.com/embed/FTpAgSHfu8o" />
+<EmbedCard src="https://www.youtube.com/embed/FTpAgSHfu8o" />
 
   
 
 [Adding new groups](https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-groups-create-azure-portal) can be done using the Azure portal. Select Group Type, _Security_ as it is intended to provide permissions based on roles.
 
-![Azure AD Add Group](/images/azure_ad_Groups.png)
+<ImageCard src="/content/images/azure_ad_Groups.png" alt="Azure AD Add Group" />
 
 For the Groups to be returned as part of the claims, the _groupMembershipClaims_ property in application manifest needs to be updated. Setting it to _SecurityGroup_ will return all SecurityGroups of the user.
 

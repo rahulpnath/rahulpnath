@@ -1,17 +1,15 @@
 ---
-title: "Could Not Load Assembly msshrtmi.dll?"
+title: Could Not Load Assembly msshrtmi.dll?
 slug: could-not-load-assembly-msshrtmi-dll
-date: 2016-06-19
-feature_image: /images/msshrtmi_load_error.png
-excerpt: >-
-  While migrating a few Azure Cloud Services to Web Jobs, we started facing the error, Could not load assembly ... /msshrtmi.dll,for just one of the projects. The error provides the...
+date: '2016-06-19'
+feature_image: /content/images/msshrtmi_load_error.png
 tags:
   - Dotnet
   - Azure
 ---
 While migrating a few Azure Cloud Services to Web Jobs, we started facing the error, _Could not load assembly ... /msshrtmi.dll_,for just one of the projects. The error provides the exact path from where it is trying to load the DLL and is the same path from which the process is running. But the location does have the _msshrtmi.dll_, which for some reason the process is not able to load.
 
-![msshrtmi dll load error](/images/msshrtmi_load_error.png)
+<ImageCard src="/content/images/msshrtmi_load_error.png" alt="msshrtmi dll load error" />
 
 **TL;DR** This error occurred due to an attribute - _<Prefer32Bit>false</Prefer32Bit>_ - in the csproj file, while the referred msshrtmi dll was 32-bit version. This might not be applicable to you, but since it has happened once it's very likely to happen again.
 
@@ -23,50 +21,35 @@ One useful tool to help diagnose why the .NET framework cannot locate assemblies
 
 Running _fuslogvw_ with the application shows the assembly binding error, double clicking which gives a details error information, as shown below. This error message gives more details and tells us that the assembly platform or ContentType is invalid.
 
-![LOG: Assembly Name is: msshrtmi, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35
-
+<ImageCard src="/content/images/msshrtmi_fuslogvw.png" alt="LOG: Assembly Name is: msshrtmi, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35
 ERR: Invalid assembly platform or ContentType in file (hr = 0x8007000b).
-
 ERR: Run-from-source setup phase failed with hr = 0x8007000b.
-
-ERR: Failed to complete setup of assembly (hr = 0x8007000b). Probing terminated.](/images/msshrtmi_fuslogvw.png)
+ERR: Failed to complete setup of assembly (hr = 0x8007000b). Probing terminated." />
 
 In the Task Manager, the worker with the assembly loading error (last _worker_ in the image below) shows as a 64-bit process, while the others as 32-bit. Since the referred msshrtmi DLL is 32-bit, it explains why it was unable to find the correct platform matching msshrtmi assembly.
 
-![msshrtmi task manager](/images/msshrtmi_task_manager.png)
+<ImageCard src="/content/images/msshrtmi_task_manager.png" alt="msshrtmi task manager" />
 
 \[CorFlags.exe\](https://msdn.microsoft.com/en-us/library/ms164699(v=vs.110).aspx) is used to determine whether an .exe file or .dll file is meant to run only on a specific platform or under WOW64. Running the _corflags_ on all the workers produces the below two results:
 
 corflags Problematic\_Worker.exe  
-
 Version : v4.0.30319  
-
 CLR Header: 2.5  
-
 PE : PE32  
-
 CorFlags : 0x1  
-
 ILONLY : 1  
 32BITREQ : 0  
 32BITPREF : 0  
-
 Signed : 0
 
 corflags Worker.exe  
-
 Version : v4.0.30319  
-
 CLR Header: 2.5  
-
 PE : PE32  
-
 CorFlags : 0x20003  
-
 ILONLY : 1  
 32BITREQ : 0  
 32BITPREF : 1  
-
 Signed : 0
 
 The _32BITPREF_ flag is '0' for the worker that shows the error, whereas for the rest shows 1. The \[_32BITPREF_\](https://msdn.microsoft.com/en-us/library/ms164699(v=vs.110).aspx) flag indicates that the application runs as a 32 bit process even on 64-bit platforms. This explains why the problematic worker was running as 64-bit process since the flag is turned off.
@@ -79,7 +62,7 @@ The _32BITPREF_ flag is '0' for the worker that shows the error, whereas for the
 
 All the projects are getting built using the same build scripts, and we are not explicitly turning off/on this compiler option. So the next possible place where any setting for this flag is specified is the _csproj_ file. On the properties of the worker project file (the one that shows error), I see that '_Prefer 32-bit_' option is not checked and the csproj file has it explicitly set to false (as shown below). For other projects, this option is checked in Visual Studio and has no entry in the csproj file, which means the flag defaults to true.
 
-![msshrtmi prefer 32bit csproj](/images/msshrtmi_prefer32bit.png)
+<ImageCard src="/content/images/msshrtmi_prefer32bit.png" alt="msshrtmi prefer 32bit csproj" />
 
 **_Deleting the Prefer32Bit attribute from the csproj and building fixed the assembly loading issue of msshrtmi!_**
 

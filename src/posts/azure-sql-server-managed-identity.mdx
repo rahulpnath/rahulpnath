@@ -1,13 +1,13 @@
 ---
-title: "Let Azure Manage The Username and Password Of Your SQL Connection String"
+title: Let Azure Manage The Username and Password Of Your SQL Connection String
 slug: azure-sql-server-managed-identity
-date: 2020-04-16T00:00:00.000Z
-feature_image: /images/azure_sql_azure_ad_admin.jpg
+date: '2020-04-16'
+feature_image: /content/images/azure_sql_azure_ad_admin.jpg
+tags:
+  - Azure
 excerpt: >-
   Use Azure Managed Identities feature to connect to Azure SQL. One less
   sensitive information to manage.
-tags:
-  - Azure
 ---
 To connect to a SQL database, we usually use a connection string that has a username and password. We ensure that the connection string is [stored and distributed securely](/blog/keeping-sensitive-configuration-data-out-of-source-control/).
 
@@ -19,14 +19,15 @@ To connect to a SQL database, we usually use a connection string that has a user
   }
 
 ```
-
-<iframe src="https://www.youtube.com/embed/FFBaw-ug2-I" />
+<EmbedCard src="https://www.youtube.com/embed/FFBaw-ug2-I" />
 
 Azure SQL supports Azure AD authentication, which means it also supports the [Managed Identity](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview) feature of Azure AD. With Managed Identity, we no longer need the User Id and Password to connect. The credential is managed automatically by Azure and allows us to connect to resources that support Azure AD authentication.
 
 In this post, let us look at how we can use Manage Service Identity to connect to Azure SQL from a web application running in Azure. Once set up, all we need is the database server details and the database name to connect to the database
 
-[<Figure src="/images/asp_net_core_banner.png)](https://www.youtube.com/playlist?list=PL59L9XrzUa-nqfCHIKazYMFRKapPNI4sP" caption="## Using Azure AD Token to Connect to SQL" />
+<ImageCard src="/content/images/asp_net_core_banner.png" alt="" />
+
+## Using Azure AD Token to Connect to SQL
 
 Using the [DefaultAzureCredential from Azure Identity SDK we can retrieve token from Azure AD](/blog/defaultazurecredential-from-azure-sdk/). SqlConnection uses this token for authentication. Below is a sample code where the AccessToken property of the SqlConnection is the Azure AD token.
 
@@ -64,20 +65,15 @@ public QuoteContext(DbContextOptions options) : base(options)
 
 To manage Azure SQL for AD identities, we need to connect to SQL under the Azure user context. To do this, let us set up an Azure AD user as a SQL admin. It can be done from the Azure Portal under the Azure Directory Admin option for the database server, as shown below.
 
-![](/images/azure_sql_azure_ad_admin.jpg)
+<ImageCard src="/content/images/azure_sql_azure_ad_admin.jpg" alt="" />
 
 Using the SQL AD Admin credentials, you can connect via [SQL Server Management Studio](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver15) or [sqlcmd](https://docs.microsoft.com/en-us/sql/tools/sqlcmd-utility?view=sql-server-ver15) and grant other AD identities access. The below script grants the user 'db\_datareader, db\_datawriter, and db\_ddladmin' access.
 
 ```sql
-
 CREATE USER [<identity-name>] FROM EXTERNAL PROVIDER;
-
 ALTER ROLE db_datareader ADD MEMBER [<identity-name>];
-
 ALTER ROLE db_datawriter ADD MEMBER [<identity-name>];
-
 ALTER ROLE db_ddladmin ADD MEMBER [<identity-name>];
-
 GO
 
 ```

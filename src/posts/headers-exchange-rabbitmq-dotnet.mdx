@@ -1,15 +1,15 @@
 ---
-title: "RabbitMQ Headers Exchange Explained"
+title: RabbitMQ Headers Exchange Explained
 slug: headers-exchange-rabbitmq-dotnet
-date: 2024-04-05T00:00:00.000Z
-feature_image: /images/RABBITMQ-1.png
+date: '2024-04-05'
+feature_image: /content/images/2024/04/RABBITMQ-1.png
+tags:
+  - RabbitMQ
+  - AWS
 excerpt: >-
   Headers Exchange in RabbitMQ routes messages using message headers to route
   messages.  Let’s explore how Header Exchanges work in RabbitMQ, underlying
   concepts and see it in action from a .NET application.
-tags:
-  - AWS
-  - RabbitMQ
 ---
 Headers Exchange in RabbitMQ routes messages using message headers to route messages.
 
@@ -21,7 +21,7 @@ In this post, let’s explore
 -   Underlying Concepts of Headers Exchange
 -   Headers Exchange in action from a .NET application.
 
-<iframe src="https://www.youtube.com/embed/2x2nHN8V0cg?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/2x2nHN8V0cg?feature=oembed" title="HEADERS EXCHANGE in RabbitMQ | RabbitMQ from DOTNET | Amazon MQ" />
 
 I use [Amazon MQ](https://aws.amazon.com/amazon-mq/?ref=rahulpnath.com), a managed message broker service that supports ActiveMQ and RabbitMQ engine types, to host my RabbitMQ instance. However, you can use [one of the various options that RabbitMQ provides](https://www.rabbitmq.com/download.html?ref=rahulpnath.com) to host your instance.
 
@@ -39,7 +39,7 @@ With Headers Exchange, we are not limited to one routing key but use multiple he
 
 When a message is sent, the Sender also populates header attributes.
 
-<Figure src="/images/image.png" caption="Sender specifies the header attributes and associated values when sending messages to the Exchange." />
+<ImageCard src="/content/images/2024/04/image.png" alt="Sender specifies the header attributes and associated values when sending messages to the Exchange." caption="Sender specifies the header attributes and associated values when sending messages to the Exchange." />
 
 _The headers property is a key/value table allowing user-defined keys and values._
 
@@ -49,9 +49,7 @@ The Receiver sets up the Queue and the associated Bindings on the Queue.
 
 The Binding can be set up to match all or any one of the Header attributes on the message. This means that the message is considered a match only when all the header attributes are an exact match or any one of the attributes matches.
 
-![](/images/image-1.png)
-
-x-match binding argument specifies whether all header attributes must match or any one of the header attributes must match.
+<ImageCard src="/content/images/2024/04/image-1.png" alt="x-match binding argument specifies whether all header attributes must match or any one of the header attributes must match." caption="x-match binding argument specifies whether all header attributes must match or any one of the header attributes must match." />
 
 The `x-match` attribute on the Binding is used to specify this.
 
@@ -64,7 +62,7 @@ When a message is sent to the Headers exchange it inspects the header attributes
 
 Depending on the `x-match` binding attribute, it either compares all the header attributes and any one of the attributes to create a match.
 
-![](/images/image-2.png)
+<ImageCard src="/content/images/2024/04/image-2.png" alt="" />
 
 In the above scenario, the message has two header attributes `location` and `temperature` with values of 'sydney' and 25.
 
@@ -80,15 +78,7 @@ We will use a NuGet package, [RabbitMQ.Client](https://www.nuget.org/packages/R
 
 If you are new to building RabbitMQ from .NET applications, check out the Getting Started article below.
 
-<BlogLink
-  href="/blog/amazon-mq-rabbitmq-dotnet/"
-  title="Amazon MQ RabbitMQ: A Reliable Messaging Solution for Your .NET Projects"
-  description="RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let’s learn how to get started using RabbitMQ on Amazon MQ from .NET application."
-  authorImage="/images/logo-512x512.png"
-  authorName="Rahul Nath"
-  authorTitle="Rahul Pulikkot Nath"
-  featureImage="/images/rabbit-mq-dotnet.png"
-/>
+<BookmarkCard href="/blog/amazon-mq-rabbitmq-dotnet/" title="Amazon MQ RabbitMQ: A Reliable Messaging Solution for Your .NET Projects" description="RabbitMQ is a powerful open-source message broker facilitating communication between systems or applications. Let’s learn how to get started using RabbitMQ on Amazon MQ from .NET application." icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
 ### Create and Send Messages to Headers Exchange From .NET
 
@@ -110,7 +100,6 @@ using var channel = connection.CreateModel();
 
 var exchangeName = "weather_headers";
 channel.ExchangeDeclare(exchangeName, ExchangeType.Headers);
-
 ```
 
 When sending a message, the sender specifies the Exchange, message body, and message headers.
@@ -123,7 +112,6 @@ basicProps.Headers = new Dictionary<string, object>()
     {"temperature", temperature}
 };
 channel.BasicPublish(exchangeName, routingKey, basicProps, body);
-
 ```
 
 The above code uses the `CreateBasicProperties` method on the channel to construct the instance to add in the Headers.
@@ -159,7 +147,6 @@ if (!string.IsNullOrEmpty(temperature))
     bindingHeaders.Add("temperature", temperature);
 
 channel.QueueBind(queueName, "weather_headers", routingKey:string.Empty, bindingHeaders);
-
 ```
 
 The above code sets up the Binding using the `QueeuBind` method on the channel passing in the `queueName`, `exchangeName` and also the binding headers.
@@ -168,6 +155,6 @@ Once the Sender and Receiver applications are running, you can see the Exchange 
 
 Below is the snapshot of the `weather_headers` exchange, with three Bindings set up and the associated binding headers set up.
 
-<Figure src="/images/image-3.png" caption="RabbitMQ Management Console showing the Headers Exchange, Queues and Bindings set up." />
+<ImageCard src="/content/images/2024/04/image-3.png" alt="RabbitMQ Management Console showing the Headers Exchange, Queues and Bindings set up." caption="RabbitMQ Management Console showing the Headers Exchange, Queues and Bindings set up." />
 
 You can find the complete source code for this blog post sample [here.](https://github.com/rahulpnath/youtube-samples/tree/main/rabbit-mq/07%20exchange-headers)

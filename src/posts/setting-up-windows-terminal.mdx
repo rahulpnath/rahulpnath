@@ -1,13 +1,8 @@
 ---
-title: "Setting Up The Windows Terminal"
+title: Setting Up The Windows Terminal
 slug: setting-up-windows-terminal
-date: 2019-12-06T00:00:00.000Z
-feature_image: /images/windows_terminal.jpg
-excerpt: >-
-  For a long time, I have been using the
-  Cmder(GHOSTURL/blog/cmder-portable-console-emulator-for-windows/) as my
-  command line. It was mostly for the ability to copy-paste, open multiple tabs,
-  and the ability to add...
+date: '2019-12-06'
+feature_image: /content/images/windows_terminal.jpg
 tags:
   - Tools
 ---
@@ -15,7 +10,7 @@ For a long time, I have been using the [Cmder](/blog/cmder-portable-console-emul
 
 > [Windows Terminal](https://github.com/microsoft/terminal) is a new, modern, feature-rich, productive terminal application for command-line users. It includes many of the features most frequently requested by the Windows command-line community, including support for tabs, rich text, globalization, configurability, theming & styling, and more.
 
-![Windows Terminal](/images/windows_terminal.jpg)
+<ImageCard src="/content/images/windows_terminal.jpg" alt="Windows Terminal" />
 
 You can install using the [command line](https://github.com/microsoft/terminal#installing-and-running-windows-terminal) itself or get it from the [Windows Store](https://www.microsoft.com/en-us/p/windows-terminal-preview/9n0dx20hk701#activetab=pivot:overviewtab). I prefer the Windows Store version as it gets automatically updated.
 
@@ -23,7 +18,7 @@ You can install using the [command line](https://github.com/microsoft/terminal#i
 
 Pressing WIN Key + # (the position of the app on the taskbar) works as [toggle](https://www.itprotoday.com/access-taskbar-keyboard-shortcuts). If the app is open and selected, it will minimize, if not, it will bring to the front and selects it. If the app is not running, it will start the app.
 
-![](/images/windows_terminal_toggle.jpg)
+<ImageCard src="/content/images/windows_terminal_toggle.jpg" alt="" />
 
 In my case, _Windows Key + 1_ launches Terminal, _Windows Key + 2_ launches Chrome, _Windows Key + 3_ launches Visual Studio and so on.
 
@@ -32,21 +27,16 @@ In my case, _Windows Key + 1_ launches Terminal, _Windows Key + 2_ launches Chro
 To theme the terminal, you need to [install two PowerShell modules](https://github.com/JanDeDobbeleer/oh-my-posh?WT.mc_id=-blog-scottha#installation).
 
 ```powershell
-
 Install-Module posh-git -Scope CurrentUser
-
 Install-Module oh-my-posh -Scope CurrentUser
 
 ```
 
-To load these modules by default on launching PowerShell, update the PowerShell [profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-6#the-profile-variable). For this run 'notepad $PROFILE' from a PowerShell command line. Add the below lines to the end of the file and save. You can choose an [existing theme](https://github.com/JanDeDobbeleer/oh-my-posh?WT.mc_id=-blog-scottha#themes) or [even make a custom one](https://github.com/JanDeDobbeleer/oh-my-posh?WT.mc_id=-blog-scottha#creating-your-own-theme). You can further customize this as you want. Here is a [great example](https://bradwilson.io/blog/prompt/powershell#windowsterminal) to get started. I use the _Paradox_ theme currently."
+To load these modules by default on launching PowerShell, update the PowerShell [profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-6#the-profile-variable). For this run 'notepad $PROFILE' from a PowerShell command line. Add the below lines to the end of the file and save. You can choose an [existing theme](https://github.com/JanDeDobbeleer/oh-my-posh?WT.mc_id=-blog-scottha#themes) or [even make a custom one](https://github.com/JanDeDobbeleer/oh-my-posh?WT.mc_id=-blog-scottha#creating-your-own-theme). You can further customize this as you want. Here is a [great example](https://bradwilson.io/blog/prompt/powershell#windowsterminal) to get started. I use the _Paradox_ theme currently.
 
 ```powershell
-
 Import-Module posh-git
-
 Import-Module oh-my-posh
-
 Set-Theme Paradox
 
 ```

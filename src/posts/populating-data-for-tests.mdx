@@ -1,11 +1,11 @@
 ---
-title: "Populating Data for Tests"
+title: Populating Data for Tests
 slug: populating-data-for-tests
-date: 2017-03-07T00:00:00.000Z
-feature_image: /images/test_data.jpg
-excerpt: Different scenarios of test data generation.
+date: '2017-03-07'
+feature_image: /content/images/test_data.jpg
 tags:
   - Testing
+excerpt: Different scenarios of test data generation.
 ---
 Populating data for tests usually makes tests more coupled with the code it is testing.
 
@@ -13,11 +13,13 @@ Coupling makes tests more fragile and makes refactoring code harder because it b
 
 Let's examine a few options for populating test data and constructing object graphs (chains of objects branched off from the root object).
 
-<iframe src="https://www.youtube.com/embed/videoseries?list=PL59L9XrzUa-mItWClbGuMEK5oQpU2onCq" />
+<EmbedCard src="https://www.youtube.com/embed/videoseries?list=PL59L9XrzUa-mItWClbGuMEK5oQpU2onCq" />
 
 I use [xUnit.net](https://xunit.github.io/) as my test framework, but you can use these techniques in your choice of framework.
 
-[<Figure src="/images/test_data.jpg)](http://xunitpatterns.com/Data-Driven%20Test.html" caption="Let's start with some simple tests on a Customer class shown below." />
+<ImageCard src="/content/images/test_data.jpg" alt="Populating Test Data" />
+
+Let's start with some simple tests on a Customer class shown below.
 
 ```csharp
 public class Customer
@@ -38,6 +40,7 @@ public class Customer
 Let's say we need to test that the FullName property returns as expected. We will use a _Theory_ type tests for testing different combinations of first and last name. xUnit.net includes support for two different major types of unit tests: facts and theories
 
 > _Facts are tests which are always true. They test invariant conditions._
+
 > _Theories are tests which are only true for a particular set of data._
 
 Theories allow us to create parameterized tests with which we can run a given test with different parameter options. Like in this example we need to test the Customer class with different set of First and Last Name combinations. As you can see below the test is attributed with Theory Attribute, and we use the InlineData attribute to pass static values to the test. Using these parameters we are now able to test for different combinations of first and last names. The test populates only the required properties on Customer object for testing FullName.
@@ -92,7 +95,6 @@ public void CustomerFullNameReturnsExpected(string firstName, string lastName, s
 }
 
 ```
-
 ```csharp
 // Using Injected Object
 [Theory]
@@ -120,6 +122,7 @@ In both cases, we explicitly set the required properties. The above test is simi
 When using immutable types or properties with private setters, we cannot set the property value after it is created.
 
 > _AutoFixture was originally build as a tool for Test-Driven Development (TDD), and TDD is all about feedback. In the spirit of GOOS, you should listen to your tests. If the tests are hard to write, you should consider your API design. AutoFixture tends to amplify that sort of feedback._
+
 > \-[_Mark Seemann_](http://stackoverflow.com/a/20816487/1948745) _(creator of AutoFixture)_
 
 In these cases, the suggested approach is something closer to the manual [Test Data Builder](http://www.natpryce.com/articles/000714.html) we saw in the [refactoring example](/blog/refactoring-test-code-removing-constructor-dependency/). We can either have an explicit test data builder class or define extension methods on the immutable type such that it changes just the specified property and returns all other values same, as shown below.
@@ -182,7 +185,6 @@ public class DateRange
 }
 
 ```
-
 ```csharp
 public class DateRangeCustomization : ICustomization
 {
@@ -227,7 +229,6 @@ public HttpResponseMessage Get(Guid id)
 }
 
 ```
-
 ```csharp
 [Theory]
 [InlineAutoMoqData]

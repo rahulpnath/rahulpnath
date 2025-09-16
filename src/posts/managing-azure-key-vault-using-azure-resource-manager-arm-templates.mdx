@@ -1,14 +1,7 @@
 ---
-title: "Managing Azure Key Vault using Azure Resource Manager (ARM) Templates"
+title: Managing Azure Key Vault using Azure Resource Manager (ARM) Templates
 slug: managing-azure-key-vault-using-azure-resource-manager-arm-templates
-date: 2016-06-05T00:00:00.000Z
-excerpt: >-
-  Creating and managing Azure Key Vault was mostly supported through PowerShell
-  cmdlets initially(GHOSTURL/blog/getting-started-with-azure-key-vault/), but
-  there are multiple ways of achieving this now - REST
-  API(GHOSTURL/blog/managing-azure-key-vault-over-the-rest-api/),
-  PowerShell(GHOSTURL/blog/how-the-deprecation-of-switch-azuremode-affects-azure-key-vault/),
-  CLI or ARM templates....
+date: '2016-06-05'
 tags:
   - Azure
 ---
@@ -20,7 +13,7 @@ Simply put, the [Azure Resource Manager](https://azure.microsoft.com/en-us/docum
 
 > _Within the ARM template, you define the infrastructure for your app, how to configure that infrastructure, and how to publish your app code to that infrastructure._
 
-You can [export a template from existing resources](https://azure.microsoft.com/en-us/documentation/articles/resource-manager-export-template/) for a starting point and then work off that. But in this post, I will start with an empty template as it helps to understand all the template parts. A template is nothing but a JSON file with a specific [schema](http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#). All templates have the below format where a few of the elements are not mandatory. If you are not familiar with the template format and the different elements that make it, I'll wait while you read more about the [Template format](https://azure.microsoft.com/en-us/documentation/articles/resource-group-authoring-templates/#template-format)"
+You can [export a template from existing resources](https://azure.microsoft.com/en-us/documentation/articles/resource-manager-export-template/) for a starting point and then work off that. But in this post, I will start with an empty template as it helps to understand all the template parts. A template is nothing but a JSON file with a specific [schema](http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#). All templates have the below format where a few of the elements are not mandatory. If you are not familiar with the template format and the different elements that make it, I'll wait while you read more about the [Template format](https://azure.microsoft.com/en-us/documentation/articles/resource-group-authoring-templates/#template-format)
 
 ```json
 {
@@ -47,7 +40,6 @@ Create a new JSON file with any name you like (_azuredeploy.json_) and copy the 
 Let's see a few of the different parameter types that we use in this template. The _keyVaultName_ parameter is a simple string value and is required to be passed in as it does not have a default value specified, where as the _enableVaultForVolumeEncryption_ is an optional parameter and defaults to false. The parameters _accessPolicies_ and _secrets_ are of type _array_ and takes in any valid JSON array. But in this specific case, I want it to be in a specific format but I am yet not sure if I can specify a format structure for the JSON input. Sound off in the comments if you know of a way.
 
 ```
-
 "parameters": {
     "keyVaultName": {
         "type": "string",
@@ -173,10 +165,8 @@ Parameters can be passed in individually or as a [Parameter File](https://azure.
 The ARM template along with the parameter file can be deployed in different ways - [PowerShell, Azure CLI, REST API, Visual Studio or from Azure Portal](https://azure.microsoft.com/en-us/documentation/articles/resource-group-template-deploy/). Using PowerShell we can deploy as below. The _[Test-AzureRmResourceGroupDeployment](https://msdn.microsoft.com/en-us/library/mt679014.aspx)_ cmdlet tests if the template file and parameter file are in correct format. This is mostly useful when authoring the template. _[New-AzureRmResourceGroupDeployment](https://msdn.microsoft.com/en-us/library/mt603823.aspx)_ deploys using the given template file and parameters.
 
 ```powershell
-
 Test-AzureRmResourceGroupDeployment -ResourceGroupName SharedGroup -TemplateFile .\azuredeploy.json
         -TemplateParameterFile .\azuredeploy.parameters.json -Verbose
-
 New-AzureRmResourceGroupDeployment -ResourceGroupName SharedGroup -TemplateFile .\azuredeploy.json
          -TemplateParameterFile .\azuredeploy.parameters.json -Verbose
 

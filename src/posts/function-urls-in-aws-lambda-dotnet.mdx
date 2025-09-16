@@ -1,14 +1,14 @@
 ---
-title: "Function URLs - Quick and Easy way to Invoke AWS Lambda Functions over HTTP"
+title: Function URLs - Quick and Easy way to Invoke AWS Lambda Functions over HTTP
 slug: function-urls-in-aws-lambda-dotnet
-date: 2022-10-25T00:00:00.000Z
-feature_image: /images/AWS-Lambda-Function-URLs.png
-excerpt: >-
-  A Function URL is a dedicated endpoint for your Lambda function. Learn how to
-  enable Function URLs and build an API using .NET Lambda Function.
+date: '2022-10-25'
+feature_image: /content/images/2022/10/AWS-Lambda-Function-URLs.png
 tags:
   - AWS
   - Lambda
+excerpt: >-
+  A Function URL is a dedicated endpoint for your Lambda function. Learn how to
+  enable Function URLs and build an API using .NET Lambda Function.
 ---
 _This article is sponsored by AWS and is part of my [AWS Series](/blog/category/aws/)._
 
@@ -16,7 +16,7 @@ A Function URL is a dedicated HTTP(S) endpoint for your Lambda function.
 
 When enabling Function URLs, Lambda automatically generates a unique URL endpoint. Once you create a function URL, its URL endpoint never changes.
 
-<iframe src="https://www.youtube.com/embed/KMM_q-Uta0Y?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/KMM_q-Uta0Y?feature=oembed" title="AWS Lambda - FUNCTION URLs | .NET ON AWS | AWS Serverless | Amazon" />
 
 Function URLs are a good choice for a single-function microservice with a public endpoint that doesn’t require the advanced functionality of API Gateway.
 
@@ -55,13 +55,13 @@ To publish the Lambda function to an AWS account, you can use the Publish to AWS
 
 I prefer to set up an automated build/deploy pipeline to publish to your AWS Account for real-world applications. Check out the below for an example of how to set up a Lambda Function deployment pipeline from GitHub Actions.
 
-<iframe src="https://www.youtube.com/embed/U96230YlSJA?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/U96230YlSJA?feature=oembed" title="AWS CLOUDFORMATION - Build Deploy Pipeline Using GITHUB ACTIONS | .NET ON AWS" />
 
 ### Enable Function URL for AWS Lambda
 
 Once deployed, we can enable Function URLs on our Lambda Function. Under Configuration, navigate to the Function URL section.
 
-![](/images/image.png)
+<ImageCard src="/content/images/2022/10/image.png" alt="" />
 
 Click on Create function URL button to create a new Function URL for the Lambda function. This prompts a new window to select the Authenticate type for the Function URL.
 
@@ -69,11 +69,11 @@ Function URLs support two Auth types -> AWS\_IAM and NONE. For this post, we wil
 
 In a future post, we will cover how to enable AWS\_IAM authentication on Function URLs and protect the Lambda function.
 
-![](/images/image-2.png)
+<ImageCard src="/content/images/2022/10/image-2.png" alt="" />
 
 Once enabled and saved, the Lambda environment automatically generates a new URL. This URL can be used to invoke the Lambda Function.
 
-![](/images/image-1.png)
+<ImageCard src="/content/images/2022/10/image-1.png" alt="" />
 
 To test the integration, make a `POST` request to the Function URL with some random text in the body. It will return the text in upper case.
 
@@ -116,7 +116,6 @@ The above Lambda Function handler extracts `userId` from  `QueryStringParameter
 ## Build an API using Function URL in .NET
 
 The above version of the Lambda function returns the appropriate response no matter which HTTP Verb is used.  
-
 But when building HTTP APIs, we need to use the HTTP Verbs to determine what action to perform.
 
 For example, for a `GET` request, we can return the User corresponding the `userId`. For a `POST` request, we can take the `User` information from the request body, and create a new User in our data store, and so on.
@@ -149,7 +148,6 @@ private APIGatewayHttpApiV2ProxyResponse HandlePostRequest(
         Body = user.Id.ToString()
     };
 }
-
 ```
 
 The above version of the Lambda Function handles `GET` and `POST` requests and handles them appropriately to return or create a new User.

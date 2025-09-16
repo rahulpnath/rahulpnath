@@ -1,20 +1,23 @@
 ---
-title: "AWS RDS and .NET: Step-by-Step Guide for SQL Server Setup"
+title: 'AWS RDS and .NET: Step-by-Step Guide for SQL Server Setup'
 slug: aws-rds-sql-server-dotnet
-date: 2024-08-08
-feature_image: /images/RDS-SQL-Server--1-.png
-excerpt: >-
-  Amazon Relational Database Service (RDS) is a managed database service on AWS Cloud. RDS provides different database engines; in this post, we will focus on SQL Server. We will set up a Microsoft SQL Server database on RDS and connect to it from a .NET application.
+date: '2024-08-08'
+feature_image: /content/images/2024/08/RDS-SQL-Server--1-.png
 tags:
   - AWS
+excerpt: >-
+  Amazon Relational Database Service (RDS) is a managed database service on AWS
+  Cloud. RDS provides different database engines; in this post, we will focus on
+  SQL Server. We will set up a Microsoft SQL Server database on RDS and connect
+  to it from a .NET application.
 ---
-Amazon Relational Database Service ([RDS](https://aws.amazon.com/rds/)) is a managed database service on AWS Cloud."
+Amazon Relational Database Service ([RDS](https://aws.amazon.com/rds/)) is a managed database service on AWS Cloud.
 
 RDS provides different database engines; this post will focus on SQL Server.
 
 We will set up a Microsoft SQL Server database on RDS and connect to it from a .NET application.
 
-<iframe src="https://www.youtube.com/embed/GDPenK6EJco?feature=oembed" />
+<EmbedCard src="https://www.youtube.com/embed/GDPenK6EJco?feature=oembed" title="AWS RDS For SQL Server | Amazon | SQL For Developers" />
 
 RDS for SQL Server makes setting up, operating, and scaling SQL Server deployments in AWS easy.
 
@@ -26,13 +29,13 @@ Let's create our first RDS instance running SQL Server.
 
 In the Amazon Console, navigate to the RDS section and select the 'Create database' button.
 
-<Figure src="/images/image.png" caption="Create a database from AWS Console under the RDS" />
+<ImageCard src="/content/images/2024/08/image.png" alt="Create a database from AWS Console under the RDS" caption="Create a database from AWS Console under the RDS" />
 
 The Create database takes you to a new page where you can configure the details of the RDS instance.
 
 Let's choose the Microsoft SQL Server as our Database Engine.
 
-![](/images/image-2.png)
+<ImageCard src="/content/images/2024/08/image-2.png" alt="" />
 
 The Standard option gives you full control over setting up the options, the SQL Server version, instance size, and other details.
 
@@ -40,11 +43,11 @@ The Easy option requires lesser manual configuration and uses recommended best-p
 
 It automatically suggests two database instance sizes depending on the workloads you are running—Production or Dev/Test.
 
-![](/images/image-3.png)
+<ImageCard src="/content/images/2024/08/image-3.png" alt="" />
 
 Under Settings provide the DB instance identifier and the master credentials required to connect to the SQL instance.
 
-<Figure src="/images/image-4.png" caption="AWS RDS SQL Server Settings and master credentials." />
+<ImageCard src="/content/images/2024/08/image-4.png" alt="AWS RDS SQL Server Settings and master credentials." caption="AWS RDS SQL Server Settings and master credentials." />
 
 You can manage the credentials in AWS Secrets Manager or self-manage.
 
@@ -56,13 +59,17 @@ __You can change the master password anytime by Modifying the instance once it's
 
 The Standard Create option lets you choose the Instance machine and storage configurations.
 
-<Figure src="/images/image-5.png" caption="You can choose the instance size and the amount of storage required based on your application needs." />
+<ImageCard src="/content/images/2024/08/image-5.png" alt="" />
+
+You can choose the instance size and the amount of storage required based on your application needs.
 
 You can [increase the DB instance storage](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PIOPS.StorageTypes.html#USER_PIOPS.ModifyingExisting) if you need additional storage.
 
 The Connectivity section lets you choose the VPC configuration and firewall rules and controls access to the instance.
 
-<Figure src="/images/image-6.png" caption="⚠️" />
+<ImageCard src="/content/images/2024/08/image-6.png" alt="" />
+
+⚠️
 
 __You cannot change the VPC after the database is created.__
 
@@ -70,13 +77,13 @@ For production workloads, you should restrict access to your database instance t
 
 For this post, I will set the public access to 'Yes' since I need to connect to it from a .NET application running outside the VPC.
 
-<Figure src="/images/image-7.png" caption="Public access to RDS SQL Server instance assigns a public IP address to the database." />
+<ImageCard src="/content/images/2024/08/image-7.png" alt="Public access to RDS SQL Server instance assigns a public IP address to the database." caption="Public access to RDS SQL Server instance assigns a public IP address to the database." />
 
 This covers the main settings you must know when creating an RDS SQL Server instance.
 
 Create the database!
 
-<Figure src="/images/image-8.png" caption="RDS SQL Server database" />
+<ImageCard src="/content/images/2024/08/image-8.png" alt="RDS SQL Server database" caption="RDS SQL Server database" />
 
 ## Connecting To AWS RDS SQL Server using Azure Data Studio
 
@@ -84,11 +91,11 @@ To interact with RDS SQL Server instance you can use various IDEs, such as [SSMS
 
 You can use the server connection details from the RDS instance in the AWS Console.
 
-<Figure src="/images/image-10-1.png" caption="RDS SQL Server Instance details in AWS Console." />
+<ImageCard src="/content/images/2024/08/image-10-1.png" alt="RDS SQL Server Instance details in AWS Console." caption="RDS SQL Server Instance details in AWS Console." />
 
 Below, I am using Azure Data Studio to connect to it, and here's how adding a new connection looks.
 
-<Figure src="/images/image-9.png" caption="Azure Data Studio connect to RDS SQL Server" />
+<ImageCard src="/content/images/2024/08/image-9.png" alt="Azure Data Studio connect to RDS SQL Server" caption="Azure Data Studio connect to RDS SQL Server" />
 
 ## Connecting to AWS RDS SQL Server from .NET Application
 
@@ -112,7 +119,6 @@ app.MapGet("/weatherforecast", async () =>
     })
     .WithName("GetWeatherForecast")
     .WithOpenApi();
-
 ```
 
 _I created a database and a table with some dummy weather forecast data for this to work!_

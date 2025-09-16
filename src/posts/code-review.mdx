@@ -1,23 +1,26 @@
 ---
-title: "Making Code Reviews Effective"
+title: Making Code Reviews Effective
 slug: code-review
-date: 2017-01-03T00:00:00.000Z
-feature_image: /images/codereview_friendly.png
-excerpt: This post highlights on some learning and practices involved in Code Reviews.
+date: '2017-01-03'
+feature_image: /content/images/codereview_friendly.png
 tags:
-  - Thoughts
   - Programming
+  - Thoughts
+excerpt: This post highlights on some learning and practices involved in Code Reviews.
 ---
 Code review is an essential practice of the development life cycle. It helps improve the code quality, unify team practices, share knowledge, mentoring etc. over a longer period of time. It helps find mistakes that are overlooked while developing and helps improve the overall quality of the software. This helps accelerate the deployment process as changes are more likely to pass through testing.
 
 > _Peer review—an activity in which people other than the author of a software deliverable examine it for defects and improvement opportunities—is one of the most powerful software quality tools available. Peer review methods include inspections, walkthroughs, peer desk checks, and other similar activities._
+
 > \-[\*\* Karl E. Wiegers\*\*](http://www.processimpact.com/articles/humanizing_reviews.html)
 
-<Figure src="/images/codereview_friendly.png" caption="Below are some of my thoughts on the various aspects involved in a Code Review." />
+<ImageCard src="/content/images/codereview_friendly.png" alt="Posts per month - 2016" />
+
+Below are some of my thoughts on the various aspects involved in a Code Review.
 
 ## Sending a Review
 
-Before sending for a code review make sure that only the necessary files for the change are added in the review. Often it happens that when we write code there are remains of things that we tried and discarded, like new files, packages, changes to project metadata files etc. Double check and make sure that the changes are what are just required. Ensure that the code builds successfully. If there are any build scripts that your team uses, make sure that those are run and passes successfully. When submitting a code review make sure that you reference the associated work item - be it a bug, story, task etc. Add [tests](/blog/tag/testing/). Add in a description detailing the change and any reasoning behind it to add in more context. This will help the reviewer understand the code much faster. Add in relevant people for the review and submit a request. Check out [some great tips for a better-looking review request](http://blog.ploeh.dk/2015/01/15/10-tips-for-better-pull-requests/)."
+Before sending for a code review make sure that only the necessary files for the change are added in the review. Often it happens that when we write code there are remains of things that we tried and discarded, like new files, packages, changes to project metadata files etc. Double check and make sure that the changes are what are just required. Ensure that the code builds successfully. If there are any build scripts that your team uses, make sure that those are run and passes successfully. When submitting a code review make sure that you reference the associated work item - be it a bug, story, task etc. Add [tests](/tag/testing/). Add in a description detailing the change and any reasoning behind it to add in more context. This will help the reviewer understand the code much faster. Add in relevant people for the review and submit a request. Check out [some great tips for a better-looking review request](http://blog.ploeh.dk/2015/01/15/10-tips-for-better-pull-requests/).
 
 ## Handling Review Comments
 
@@ -58,11 +61,12 @@ There might be a lot of practices that is being followed over the period of time
 
 ## Handling Conflicts
 
-![Posts per month - 2016](/images/codereview_wtf.png)
+<ImageCard src="/content/images/codereview_wtf.png" alt="Posts per month - 2016" />
 
 Foster environments where you don't curb discussions or other people's ideas but encourage everyone to actively participate and throw around even the stupidest of an idea.
 
 > _Psychological safety is a “shared belief, held by members of a team, that the group is a safe place for taking risks.” It is “a sense of confidence that the team will not embarrass, reject, or punish someone for speaking up,” Edmondson wrote in a 1999 paper. “It describes a team climate characterized by interpersonal trust and mutual respect in which people are comfortable being themselves._
+
 > [**\- Charles Duhigg**, _What Google Learned From Its Quest to Build the Perfect Team_](https://www.linkedin.com/pulse/what-google-learned-from-its-quest-build-perfect-team-charles-duhigg)
 
 Code reviews should also be seen as a way to incorporate better practices from fellow developers and as a learning mechanism. Don't take comments personal, but look at it for what they are. When you have a conflicting opinion you can reply to the comment with your thoughts and cross check with the reviewer. Rarely it can happen that you have conflicting opinions on code review comments and you are not able to solve it among the people involved. Walk up to the person (if you are co-located) or have a conversation over your teams messaging application. But make sure that it stays healthy. In case the discussion is not going the intended way you can involve senior team members or other fellow team members to seek their opinions too. If such kinds of conflicts are happening more often then the team needs to analyze the nature of review comments that these occur on, if it's between specific groups of people or any visible patterns and try to address them.

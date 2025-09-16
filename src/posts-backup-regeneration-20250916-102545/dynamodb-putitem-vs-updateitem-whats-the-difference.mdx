@@ -1,0 +1,171 @@
+---
+title: DynamoDB UpdateItem vs. PutItem in .NET - Which One Should You Use?
+slug: dynamodb-putitem-vs-updateitem-whats-the-difference
+date: '2023-06-07'
+feature_image: /images/DynamoDB-UpdateItem-vs-Put.png
+---
+_This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
+
+DynamoDB provides two primary methods to write/modify data in a table: `PutItem` and `UpdateItem`.
+
+PutItem is used to insert new items and overwrite existing ones with the same primary key. On the other hand, UpdateItem allows for targeted attribute modifications within existing items and creates new items.
+
+Understanding these distinctions is crucial for effectively managing data and optimizing performance in DynamoDB.
+
+<iframe src="https://www.youtube.com/embed/VXNEaYZ1EXs?feature=oembed" />
+
+In this blog post, let's learn more about `PutItem` and `UpdateItem` requests in DynamoDB. We will learn how to use them, how they affect existing data in the table and things to keep in mind while using these methods to write/modify items.
+
+_The sample code below is on the `WeatherForecast` table, which has `CityName` and `Date` as the hash and range key, respectively._
+
+If you are new to DynamoDB, I highly recommend checking out my Getting Started with AWS DynamoDB For the .NET Developer blog post below, where I also show you how to set up the table used in this blog post.
+
+<PostCard 
+  title="AWS DynamoDB For The .NET Developer: How To Easily Get Started"
+  description="Learn how to get started with AWS DynamoDB with .NET Core by updating the default ASP NET Web API template to use DynamoDB as it’s data store. We will learn to do basic Creat, Read, Update and Delete operations from the API."
+  slug="aws-dynamodb-net-core/"
+  image="/images/aws_dynamodb.jpg"
+/>
+
+## DynamoDB PutItem
+
+The `PutItem` [method](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html) creates a new item or replaces an existing item. If an item already exists with the same key, it replaces the whole item.
+
+The `PutItem` method takes an `PuteItemRequest` object with the below properties. Only the `TableName` and `Item` are required properties, others are optional.
+
+-   **Item** → A dictionary map of <`string`, `AttributeValue`\> pair for each property stored in the table object. The primary key attributes (hash & range) are required.
+-   **TableName** → Name of the Table to write the item.
+-   **ConditionExpression** → A condition that must be satisfied for the operation to proceed in the DynamoDB Server.
+-   **ExpressionAttributeNames** & **ExpressionAttributeValues** → substitution tokens and values for the `ConditionExpression`
+-   **ReturnValues** → Values to be returned after the request completes. Accepted values are `NONE` | `ALL_OLD` | `UPDATED_OLD` | `ALL_NEW` | `UPDATED_NEW`. For eg, if `ALL_OLD` is specified, the content of the item before the PutItemRequest is returned.
+-   **ReturnItemCollectionMetrics** → Specifies whether the item collection metrics are returned or not. Accepts values `SIZE` | `NONE`
+-   **ReturnConsumedCapacity** → Level of detail on the consumption to return. `INDEXES` | `TOTAL` | `NONE`
+
+You can find more details on each of these [request parameters here](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html#API_PutItem_RequestParameters).
+
+### DynamoDB PutItem Example
+
+The below code shows a simple example of `PutItemRequest` to add or replace an item. It sets the TableName and Item properties on the request.
+
+I am using the `Document.FromJson` helper method from the DynamoDB Document model to create the Item from a `JSON` string.
+
+```csharp
+[HttpPost("put-item-request")]
+public async Task PutItemRequest(WeatherForecast data)
+{
+    var item = Document.FromJson(JsonSerializer.Serialize(data));
+
+    await _amazonDynamoDbClient.PutItemAsync(new PutItemRequest()
+    {
+        TableName = nameof(WeatherForecast),
+        Item = item.ToAttributeMap(),
+    });
+}
+```
+
+With the above code, if I send the below `WeatherForecast` information for the city of Brisbane for 06 Jun 2023, it creates a new record if an item with that key does not exist.
+
+```json
+{
+  "cityName": "Brisbane",
+  "date": "2023-06-06T19:46:27.810Z",
+  "lastUpdated": "2023-06-06T19:46:27.810Z",
+  "temperatureC": 20,
+  "summary": "Warm sunny day"
+}
+```
+
+Below is the snapshot of the item in DynamoDB.
+
+![](/images/image.png)
+
+Snapshot of the item in DynamoDB showing all the properties that are set for the request just made.
+
+Let's make a  new request with the same primary key with one of the properties removed - `Summary`, as shown below.
+
+```json
+{
+  "cityName": "Brisbane",
+  "date": "2023-06-07",
+  "lastUpdated": "2023-06-06T19:46:27.810Z",
+  "temperatureC": 30
+}
+```
+
+Below is the snapshot of the item in DynamoDB. The `Summary` property is no longer part of the object, and the entire is replaced in the table, with the keys remaining the same.
+
+![](/images/image-1.png)
+
+_The `Summary` property was also removed from the .NET class `WeatherForecast`. Otherwise, it would have still shown in the DynamoDB, with the value of `NULL`._
+
+💡
+
+The `PutItem` method replaces the entire contents of an existing item with the new item in the request. This makes using the Put Item request straightforward. 
+
+However, you need to have the whole item every time you make a `PuteItem` request. You also need to be sure that you are not accidentally overriding any information that other users working on the same item concurrently might have updated.
+
+You can use Condition Expressions or the DynamoDBVersion tag to ensure data consistency when updating data in DynamoDB. Check out the below two blog posts for more details on that.
+
+-   [How to Implement Optimistic Locking in .NET for Amazon DynamoDB](/blog/dynamodb-optimistic-locking/)
+-   [How to Ensure Data Consistency with DynamoDB Condition Expressions From .NET Applications](/blog/dynamodb-condition-expressions-dotnet/)
+
+## DynamoDB UpdateItem
+
+The [UpdateItem method](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html) is used to update selective properties of an existing item or add a new item to the table if it does not already exists.
+
+The `UpdateItem` method takes an `UpdateItemRequest` object that has the below properties. Only the `TableName` and `Key` are required properties, others are optional.
+
+-   **Key** → Primary key of the item to be updated.
+-   **TableName** → Name of the table.
+-   **UpdateExpression** → An expression that defines one or more attributes to be updated, the action to perform, and the new values. The allowed set of action values are `SET` | `REMOVE` | `ADD` | `DELETE`
+-   **ConditionExpression** → A condition that must be satisfied for the operation to proceed in the DynamoDB Server.
+-   **ExpressionAttributeNames** & **ExpressionAttributeValues** → substitution tokens and values for the `ConditionExpression`
+-   **ReturnValues** → Values to be returned after the request completes. Accepted values are `NONE` | `ALL_OLD` | `UPDATED_OLD` | `ALL_NEW` | `UPDATED_NEW`. For e.g., if `ALL_OLD` is specified, the content of the item before the PutItemRequest is returned.
+-   **ReturnItemCollectionMetrics** → Specifies whether the item collection metrics are returned or not. Accepts values `SIZE` | `NONE`
+-   **ReturnConsumedCapacity** → Level of detail on the consumption to return. `INDEXES` | `TOTAL` | `NONE`
+
+You can find more details on each of these [request parameters here](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html#API_UpdateItem_RequestParameters).
+
+### DynamoDB UpdateItem Example
+
+The below code shows a simple example of `UpdateItem` request. The `UpdateExpression` sets up the `Summary` property.
+
+```csharp
+[HttpPost("update-item-request")]
+public async Task UpdateIfLatest(string cityName, string dateTime, string summary)
+{
+    await _amazonDynamoDbClient.UpdateItemAsync(new UpdateItemRequest()
+    {
+        TableName = nameof(WeatherForecast),
+        Key = new Dictionary<string, AttributeValue>()
+        {
+            {nameof(WeatherForecast.CityName), new AttributeValue(cityName) },
+            {nameof(WeatherForecast.Date), new AttributeValue (dateTime)}
+        },
+
+        UpdateExpression = "SET Summary = :summary",
+        ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+        {
+            { ":summary", new AttributeValue(summary) },
+        }
+    });
+}
+```
+
+For any request if an item does not exist with the given `CityName` and `Date` it creates a new item and also sets the `Summary` property on it, as shown below.
+
+![](/images/image-2.png)
+
+Snapshot of DynamoDB table item showing a new item created by the UpdateItem request with just the Summary property and the CityName and Date primary keys.
+
+If an item already exists, it will add the Summary property if that's missing or overwrite the value of the property it item already exists.
+
+💡
+
+The `UpdateItem` operation is beneficial when you selectively update specific properties on an item. This goes well with Task-based UIs and if you are affecting particular properties on the whole item. 
+
+You'll still need to ensure that the task/operation is working based on the latest copy of the data. Ensuring data consistency and item updates are happening on the desired object state might be helpful.
+
+`UpdateItem` can also be used when you want to migrate DynamoDB items and add new properties to existing items.
+
+Have a great rest of the day 👋

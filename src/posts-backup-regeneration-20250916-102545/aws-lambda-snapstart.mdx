@@ -1,0 +1,326 @@
+---
+title: 'Getting Started with AWS Lambda SnapStart: A Beginner’s Guide'
+slug: aws-lambda-snapstart
+date: '2025-02-03'
+feature_image: /images/Lambda-SnapStart.png
+excerpt: >-
+  AWS Lambda SnapStart is a performance optimization that speeds up startup
+  times for Lambda Functions, typically with no changes to your function code.
+  Let's learn how to enable it on your existing functions, how it works under
+  the hood and make sure your Lambda Functions are SnapStart ready.
+---
+One of the biggest concerns around AWS Lambda is—well, or rather has been—cold starts.
+
+A cold start is the initial delay when a Lambda function is first invoked or after a period of inactivity.
+
+<iframe src="https://www.youtube.com/embed/VGyxP4Sff2I?feature=oembed" />
+
+💡
+
+__AWS__ [__Lambda SnapStart__](https://docs.aws.amazon.com/lambda/latest/dg/snapstart.html) __is a performance optimization that speeds up startup times for Lambda Functions, typically with no changes to your function code.__
+
+In this post, we will learn more about AWS Lambda SnapStart and how to set it up for your existing Lambda Functions.
+
+We will also explore how AWS Lambda SnapStart works, how to make your function SnapStart ready, and how to use Runtime hooks along with SnapStart.
+
+Thanks to AWS for sponsoring this article in my [AWS Lambda Series.](/blog/tag/lambda/)
+
+## Existing Lambda Function Walkthrough
+
+In this first section, I will walk you through the sample Lambda Function, Lambda Lifecycle, and Init Duration/Cold Start.
+
+If you are already familiar with it, jump to the [next section](#enabling-aws-lambda-snapstart).
+
+Below is a simple function that tries to mimic a real-world Lambda Function. It does the following:
+
+-   Initialize some state in the constructor code (setting the `constructorId`)
+-   Perform some async operation by reading a configuration from S3
+-   Simulate some real computational/IO work by invoking a `Task.Delay`
+-   Logs the different `Guid` values to help observe object states and lifecycles across multiple Lambda invocations.
+
+```csharp
+public class Function
+{
+    private Guid _constructorId;
+    private readonly string _configuration;
+
+    public Function()
+    {
+        _constructorId = Guid.NewGuid();
+        _configuration = ReadConfigFromS3();
+
+    }
+
+    public async Task<string> FunctionHandler(string input, ILambdaContext context)
+    {
+        await SimulateWork();
+
+        var message = $"Constructor Id - {_constructorId}. Function Id - {Guid.NewGuid()}. {_configuration}. Function Input {input}";
+        context.Logger.LogInformation(message);
+
+        return message;
+    }
+
+    private string ReadConfigFromS3()
+    {
+        var s3Client = new AmazonS3Client();
+        var configurationObject = s3Client.GetObjectAsync("myapp-data-files", "configuration.txt").Result;
+        using var reader = new StreamReader(configurationObject.ResponseStream);
+        return reader.ReadToEnd();
+    }
+
+    private async Task SimulateWork()
+    {
+        await Task.Delay(TimeSpan.FromSeconds(2));
+    }
+}
+```
+
+### Invoking Lambda Function Sequentially from Console UI
+
+The easiest way to invoke this Lambda function is from the AWS Console. However, invocations from the UI (from the same browser tab) are sequential.
+
+![](/images/image-2.png)
+
+Invoking Lambda Function from the AWS Console, under the Test tab.
+
+Below is a snapshot of the CloudWatch logs after two invocations from the UI.
+
+It highlights the `Init Duration` component that occurs only once, the first time the Lambda function is invoked. This duration is what is referred to as cold start times.
+
+Init duration, or cold start time, is the time to initialize the Lambda runtime environments and the Function handler class.
+
+![](/images/image-3.png)
+
+CloudWatch logs snapshot after two sequential invocations of the Lambda Function. It highlights the Init duration which happens only once in this scenario.
+
+A subsequent call from the UI is handled by the same Lambda instance created in the previous request. Hence, the subsequent request does not have an init duration in its log.
+
+Also the `_constructorId` value is the same for all the logs within this log stream.
+
+To understand this better, check out my Lambda lifecycles article.
+
+<PostCard 
+  title="Why Should You Care About Lambda Lifecycle As A .NET Developer?"
+  description="The Lambda Lifecycle affects the way we write out Function code. Learn some of the dos and don’ts when building Lambda Functions in .NET because of how Lambda initializes the Function classes."
+  slug="lambda-lifecycle-and-net/"
+  image="/images/Lambda-Lifecycle-2.png"
+/>
+
+### Invoking Lambda Function Parallely from the Command line
+
+You can also invoke the same Lambda function from the command line using 'aws cli'.
+
+I have written a custom script `invoke-lambda-function-parallel` that takes in a `FunctionName` and the `invocationCount` as parameters, invoking the Lambda function in parallel the specified number of times.
+
+```powershell
+.\invoke-lambda-function-parallel.ps1 -FunctionName "lambda-snap-start"
+ -InvocationCount 5
+```
+
+This invokes the Lambda Function in parallel, which forces the infrastructure to create multiple instances of the Lambda Function to serve the requests at the same time.
+
+You can tell that quickly by looking at the Log stream records created in CloudWatch, as shown below.
+
+![](/images/image-4.png)
+
+CloudWatch LogStreams showing multiple log streams, one per instance of Lambda Function created.
+
+Each log stream record is associated with one instance of Lambda Function.
+
+Navigating into the log stream, you will notice that each will have its own InitDuration and that the `_constructorId` is different for each of them, showing that it's a different instance of the Lambda Function.
+
+## Enabling AWS Lambda SnapStart
+
+On average, our function takes ~520ms to start up and initialize across all the Lambda function invocations we performed above.
+
+Depending on your Lambda function and what happens in the initialization phase, you will see different numbers for it.
+
+Suppose these numbers are sufficiently high, and these longer initialization times affect the use case performed on your Lambda production functions.
+
+In that case, you can enable Lambda SnapStart to speed things up automagically.
+
+You can enable SnapStart on a Lambda function under Configuration → General Configuration section.
+
+Set the SnapStart option to PublishedVersions to enable SnapStart on your Lambda Function.
+
+![](/images/image-5.png)
+
+Enable Lambda SnapStart under the General Configuration of the Lambda Function.
+
+Once enabled, you can see this in the General configuration as shown below.
+
+![](/images/image-6.png)
+
+Lambda Function with SnapStart enabled by setting it to PublishedVersions.
+
+### Publishing AWS Lambda SnapStart Enabled Version
+
+AWS Lambda [Function versions](https://docs.aws.amazon.com/lambda/latest/dg/configuration-versions.html) are used to manage the deployment of your Lambda functions.
+
+After you publish a function version, its code, runtime, architecture, memory, layers, and most other configuration settings are immutable.
+
+> Lambda SnapStart is applied only to a Lambda version and does not apply to the unpublished version ($LATEST).
+
+To publish a version and see SnapStart in action, navigate to the Versions tab and 'Publish new version.'
+
+![](/images/image-7.png)
+
+This creates a new version of the Lambda Function from the $LATEST version of the function code.
+
+With Lambda SnapStart enabled, creating a new version takes a few minutes.
+
+AWS Lambda initializes the Function when you publish a version.
+
+![](/images/image-9.png)
+
+When the published Lambda version with SnapStart enabled is invoked, the logs no longer have the initialization phase, so they do not show the Init Duration.
+
+However, it does show a 'Restore Duration' now, which we will explore shortly.
+
+## How Does AWS Lambda SnapStart Work?
+
+Now that we have Lambda SnapStart enabled and running let's understand how Lambda SnapStart works under the hood.
+
+_Lambda takes a Firecracker microVM snapshot of the initialized execution environment's memory and disk state, encrypts the snapshot, and intelligently caches it to optimize retrieval latency._
+
+AWS Lambda does this when you publish a Lambda version with SnapStart enabled.
+
+Any time you publish a new version with SnapStart enabled, you can see this in the CloudWatch logs.
+
+![](/images/image-10.png)
+
+AWS CloudWatch logs for initialization of AWS Lambda SnapStart enabled version.
+
+The Init Duration is in the above logs, which is why there is a slight delay in publishing the version.
+
+### Restore Duration in AWS Lambda SnapStart
+
+When the Lambda Function version is invoked, Lambda restores new execution environments from the cached snapshot rather than initializing them from scratch, enhancing startup performance.
+
+> _**Restore Duration** is the time Lambda requires to resume an execution environment from a cached snapshot._
+
+Restore duration includes:
+
+-   **Restoring the snapshot** – Reloading execution environment from the cache.
+-   **Loading the runtime** – Initializing the language runtime.
+-   **Executing afterRestore hooks** – Running any defined post-restore logic.
+
+You are not billed for snapshot restoration, but the time taken to load the runtime and execute after restoring hooks and signal readiness are included in the billed function duration.
+
+The billed duration is shown as the 'Billed Restore Duration.'
+
+### AWS Lambda SnapStart Lifecycle
+
+With SnapStart enabled Lambda Functions, the Lifecycle differs from a [normal Lambda Function](/blog/lambda-lifecycle-and-net/).
+
+You can find the comparison in the Lifecycle in the diagram below.
+
+[![](/images/image-11.png)](https://aws.amazon.com/blogs/compute/starting-up-faster-with-aws-lambda-snapstart/)
+
+AWS Lambda Lifecycle compared between SnapStart and non-SnapStart Lambda Functions.
+
+With SnapStart, the function's initialization time—typically the main cause of high startup latency—is replaced by a faster resume phase.
+
+## Making Your Lambda Function SnapStart Ready
+
+Enabling Lambda SnapStart is simple and requires no code changes.
+
+However, you must follow certain best practices to ensure your function works correctly with SnapStart.
+
+With SnapStart, Lambda Function uses the same snapshot for all the instances it creates. This means that for .NET Functions, the constructor code only runs once when the version is published.
+
+💡
+
+__For SnapStart-enabled .NET Lambda Functions, the constructor code is only executed once, when the version is published.__
+
+Before using SnapStart, check if your function’s **initialization phase** includes any of the following:
+
+-   **Unique Data:** IDs, secrets, or randomness generated during initialization may be reused. Instead, generate them in the function handler.
+-   **Network Connections:** Connections from initialization may not persist. Revalidate or re-establish them as needed.
+-   **Temporary Data:** Cached timestamps or temporary credentials should be refreshed in the function handler.
+
+In our Function, we generate a new `ConstructorGuid` property in the function constructor code.
+
+Below is the snapshot of the logs running on the non-SnapStart Lambda Function.
+
+![](/images/image-15.png)
+
+Logs showing unique data generated in the constructor code for a non-SnapStart Lambda Function
+
+You can see the \`Constructor Id' logged in each of the statements (for a different instance of the Lambda Function) is different.
+
+In this case, the Lambda Function is created new by invoking the Function constructor whenever the existing instance(s) is busy and cannot handle an incoming request.
+
+However, with SnapStart-enabled Lambda Functions, the constructor code is only invoked once when publishing the version.
+
+![](/images/image-14.png)
+
+Logs showing unique data generated in the constructor code for a SnapStart enabled Lambda Function
+
+This means the 'Constructor Id' is only generated once and remains the same for all function invocations.
+
+In the above log snapshot, the 'Constructor Id' is the same across all log statements.
+
+So, let's learn about Runtime Hooks and how to use them to solve these problems.
+
+### AWS Lambda SnapStart Runtime Hooks
+
+Runtime hooks allow you to run code **before** and **after** restoring a snapshot.
+
+They are helpful for:
+
+-   **Cleanup & Initialization** – Release resources before restoring and reinitialize them after restoration.
+-   **Dynamic Configuration** – Update settings or metadata to adapt to runtime changes.
+-   **External Integrations** – Notify services or update external state during checkpointing.
+-   **Performance Tuning** – Optimize startup by preloading dependencies.
+
+The `SnapshotRestore` class from `Amazon.Lambda.Core` package provides two methods to add runtime hooks.
+
+-   `RegisterBeforeSnapshot()`: Executed in the reverse order of registration
+-   `RegisterAfterSnapshot()`: Executed in the order of registration
+
+You can register multiple hooks for your Function, and their execution order differs, as indicated above.
+
+Let's add Runtime Hooks to make our 'ConstructurId' unique again over multiple instances.
+
+All we need to do is invoke the `RegisterAfterRestore` method on the `SnapshotRestore` helper class within the constructor code.
+
+```csharp
+public Function()
+{
+    _configuration = ReadConfigFromS3();
+
+    SnapshotRestore.RegisterAfterRestore(() =>
+    {
+        _constructorId = Guid.NewGuid();
+        return ValueTask.CompletedTask;
+    });
+
+    Task.Delay(TimeSpan.FromSeconds(5)).Wait();
+}
+```
+
+When the Lambda environment restores a function, these methods will be invoked before/after restoration.
+
+The below logs, with the SnapStart on, show the 'Constructor Id' is unique again across multiple lambda instances after using Runtime Hooks to set the value.
+
+![](/images/image-17.png)
+
+Logs showing data generated in the Runtime hooks for a SnapStart enabled Lambda Function
+
+We could also move the code retrieving data from S3 into the Hooks to get the latest data from the S3 file whenever a new instance is created.
+
+## Don't Forget to Delete Lambda SnapStart Versions
+
+For .NET workloads using SnapStart, a cost is attached.
+
+_You are charged for caching a snapshot over the period that your function version is active, for a minimum of 3 hours and per millisecond thereafter. The price depends on the amount of memory you allocate to your function._
+
+Make sure to check the SnapStart pricing [here](https://docs.aws.amazon.com/lambda/latest/dg/snapstart.html#snapstart-pricing) for more details.
+
+Since the pricing is on every Lambda Function version you publish, delete any old unused versions to save on cost.
+
+![](/images/image-16.png)
+
+The complete source code and the Powershell scripts are available [here](https://github.com/rahulpnath/youtube-samples/tree/main/lambda-snap-start).

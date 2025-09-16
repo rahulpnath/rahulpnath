@@ -1,12 +1,12 @@
 ---
-title: "Automatic Deployment of Future Posts With Octopress"
+title: Automatic Deployment of Future Posts With Octopress
 slug: automatic-deployment-of-future-posts-with-octopress
-date: 2016-09-12T00:00:00.000Z
-feature_image: /images/blog_scheduled.png
-excerpt: Scheduling posts in the future and automatically deploy them in Octopress.
+date: '2016-09-12'
+feature_image: /content/images/blog_scheduled.png
 tags:
-  - Blogging
   - DevOps
+  - Blogging
+excerpt: Scheduling posts in the future and automatically deploy them in Octopress.
 ---
 Since the start of this year, I have been trying to blog to a schedule and publish posts more often. The goal that I have set myself with is to post four posts a month, preferably one each week. I have been sticking to it till now, and I hope it continues. Initially, I did not have this upper limit on the number of posts in a month. In the month of March 2016, I went a bit aggressive and published nine articles. It made me think more about setting an upper limit on the number of posts so that I don't end up having higher expectations out of myself.
 
@@ -29,7 +29,6 @@ publishDate = DateTime.parse(publishDateString)
 ...
 dest = "#{source_dir}/#{posts_dir}/#{publishDate.strftime('%Y-%m-%d')}-#{filename}"
 puts "Publishing post to: #{dest}"
-
 File.open(source) { |source_file|
 contents = source_file.read
 contents.gsub!(/^thisIsStillADraft:$/, "date: #{publishDate.strftime('%Y-%m-%d')}\ncompletedDate: #{DateTime.now.strftime('%Y-%m-%d %H:%M:%S %z')}")
@@ -43,7 +42,7 @@ The rake script appends the publish date to the post file name and also the yaml
 
 I have the [deployment of my blog automated via Travis CI](/blog/continuos-delivery-of-octopress-blog-using-travisci-and-docker/), which builds and deploys the site when committing to the [GitHub repository](https://github.com/rahulpnath/rahulpnath.com). For future posts since there might not be a commit on the publish date, I need to trigger the build on those days, to publish the posts scheduled. The [Azure Scheduler](https://azure.microsoft.com/en-us/services/scheduler/) enables scheduling requests and also provides out of the box support to invoke web service endpoints over HTTP/HTTPS. [Travis CI exposes an API](https://docs.travis-ci.com/api) to interact with the build system and is the same API that the official Web interface uses. The API supports [triggering builds](https://docs.travis-ci.com/user/triggering-builds) by making a POST request with an API token and the build details. The API has [an existing bug](https://github.com/travis-ci/travis-ci/issues/5101) that requires the slash separating username and repository name in the trigger URL be encoded(%2F). Azure, however, does not like this and treats it as an invalid URL with the bellow error.
 
-![Azure Scheduler Encoded URL error](/images/blogtrigger_scheduler_url_error.png)
+<ImageCard src="/content/images/blogtrigger_scheduler_url_error.png" alt="Azure Scheduler Encoded URL error" />
 
 The only way now is to have to custom write this code and have it scheduled. I chose the one with the least work involved - Azure Automation. [Azure Automation](https://azure.microsoft.com/en-us/services/automation/) allows to create Run books and automatically trigger it on a schedule. The Azure Automation has a [pricing plan with 500 minutes free](https://azure.microsoft.com/en-us/pricing/details/automation/) Job run time in a month, which meets my requirements. I created a [PowerShell script](https://azure.microsoft.com/en-us/documentation/articles/automation-runbook-types/#powershell-runbooks) and added in the token (_TravisToken_) and the build URL (_TravisBuildUrl_) as [parameters to the script](https://azure.microsoft.com/en-us/documentation/articles/automation-runbook-input-parameters/).
 
@@ -65,9 +64,7 @@ Invoke-WebRequest -Method Post $travisBlogTriggerApiUrl -Body $body -Headers $he
 
 The script runs on a schedule every day and triggers the Travis CI build. It deploys the latest generated site to Azure WebApp that hosts the site. Any posts scheduled for the current date gets picked up by Jekyll and included in the site generation.
 
-![Automatic Deployment of Future Posts With Octopress](/images/blog_scheduled.png)
-
-_Scheduler triggers TravisCI build. For details on how TravisCI is set up check [Continuos Delivery of Octopress Blog Using TravisCI and Docker](/blog/continuos-delivery-of-octopress-blog-using-travisci-and-docker/)_
+<ImageCard src="/content/images/blog_scheduled.png" alt="Automatic Deployment of Future Posts With Octopress" caption="Scheduler triggers TravisCI build. For details on how TravisCI is set up check Continuos Delivery of Octopress Blog Using TravisCI and Docker" />
 
 ## Post to Social Media
 
@@ -75,7 +72,7 @@ With the posts getting deployed automatically, I want to update all my social ne
 
 [IFTTT](https://ifttt.com/recipes)('_If This Then That_') is a service that helps connect different apps and devices together based on a trigger. As the name says, you can trigger an action based on a trigger. IFTTT has many [Channels](https://ifttt.com/channels) that can act as a source of the trigger. In my case, the trigger is a post getting published and I can hook into that event using the [Feed Channel](https://ifttt.com/feed). The feed channel has an option to trigger when a [new item is available](https://ifttt.com/channels/feed/triggers/5-new-feed-item) on the feed. I use this to trigger an update to Buffer. [Buffer](https://ifttt.com/buffer) is available as a channel on IFTTT but allows only update to one of the connected accounts in Buffer, which requires me to setup a recipe per social media account. I chose to use [update via email feature](https://buffer.com/guides/email) in Buffer. It allows me to have just one recipe in IFTTT to update to all of my connected profiles in Buffer.
 
-![Trigger Buffer Email When New Post is Published](/images/blog_ifttt.png)
+<ImageCard src="/content/images/blog_ifttt.png" alt="Trigger Buffer Email When New Post is Published" />
 
 With the Automated publishing of posts and ability to schedule them, I can concentrate more on just the writing part. I no longer have to push out posts manually. I had never thought that I would be scheduling posts in the future. But now that it is happening it's a great feeling when there are posts for a few weeks ahead all ready to go.
 

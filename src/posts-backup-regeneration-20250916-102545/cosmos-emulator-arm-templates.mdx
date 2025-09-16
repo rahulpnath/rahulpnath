@@ -1,0 +1,169 @@
+---
+title: How To Automatically Deploy ARM Templates To Azure Cosmos Emulator
+slug: cosmos-emulator-arm-templates
+date: '2020-11-12'
+feature_image: /images/build_automation.jpg
+excerpt: >-
+  Azure Cosmos Emulator does not support ARM templates. Learn how you can
+  automatically create Database and Containers from an ARM Template to support a
+  seamless development experience.
+---
+The [Azure Cosmos Emulator](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator?tabs=cli%2Cssl-netstd21&WT.mc_id=AZ-MVP-5003875)provides a local environment that emulates the Cosmos DB service. Having the Emulator running on your local development machine helps to develop and test your application easily. You no longer need to create an Azure subscription or incur any costs for your local development. If you haven't downloaded it before, you can \[download the [Azure Cosmos emulator](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator?tabs=cli%2Cssl-netstd21#download-the-emulator&WT.mc_id=AZ-MVP-5003875) here. There are a few differences between the Emulator and the cloud service, and you can [read about it in detail here](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator?tabs=cli%2Cssl-netstd21#differences-between-the-emulator-and-the-cloud-service&WT.mc_id=AZ-MVP-5003875). Currently, the Emulator can run only on Windows. If you are using Linux or Mac, you will have to either use the Azure Cosmos DB or run the Emulator in a [Windows Virtual machine](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator?tabs=cli%2Cssl-netstd21#run-on-linux-macos&WT.mc_id=AZ-MVP-5003875)
+
+<iframe src="https://www.youtube.com/embed/p_vySBLni00" />
+
+## ARM Templates and Multiple Containers
+
+I showed you [how to set up Azure ARM templates to deploy Cosmos DB](/blog/cosmos-arm-template/) in an earlier post.
+
+> ARM Template is a JSON file that defines infrastructure using a declarative syntax and helps automate creating Azure resources.
+
+Using the template, we were able to add containers to the Cosmos DB throughout the application development lifecycle. Every time we needed a new Container for the application, we add it to the ARM template parameter file, specifying the container name and the partition key (and any other properties if need be, by extending the template). Deploying the template will automatically add the new Containers to the Azure Cosmos DB instance.
+
+[
+
+How To Create An ARM Template For Cosmos DB
+
+Learn how to create an ARM template to deploy Azure Cosmos DB with dynamic containers. With this template you can keep adding containers as you build the application.
+
+![](/favicon.ico)Rahul NathRahul Pulikkot Nath
+
+![](/images/arm_template.png)
+
+](/blog/cosmos-arm-template)
+
+The above works well when working with Cosmos DB on Azure!
+
+But wait.
+
+## Cosmos Emulator and ARM Templates
+
+Azure Cosmos Emulator [does not support ARM templates.](https://feedback.azure.com/forums/263030-azure-cosmos-db/suggestions/39781150-allow-databases-containers-to-be-created-in-the) At least not using the existing PowerShell or azure CLI or any of the other ways you can run an ARM template.
+
+> Having to create the Containers on the Cosmos Emulator manually leaves a broken development experience.
+
+Every time I need a new Cosmos Container for the application, I need to
+
+-   Create it manually in my local Emulator
+-   Add the container name and partition key to the ARM template
+
+A new starter to the team has to create the Database and all the Containers manually looking at the ARM template.
+
+### Custom Library To Setup Cosmos Emulator
+
+The Azure Cosmos Emulator allows programmatically creating Containers and Databases.
+
+_To me, the ideal development experience would be if I had to specify a new container only once, preferably in the ARM template parameters file; and it would automatically create the Containers in the local Emulator as well, the next time I build the application._
+
+Let’s see how we can achieve this.
+
+To start with, let’s create a new DOT NET Console application. We will use this application to setup Cosmos Emulator from the ARM template.
+
+The application uses the below NuGet packages to access the configuration file and interact with the Cosmos Emulator.
+
+```powershell
+Install-Package Azure.Cosmos -Version 4.0.0-preview3
+Install-Package Microsoft.Extensions.Configuration
+Install-Package Microsoft.Extensions.Configuration.Json
+Install-Package Microsoft.Extensions.Configuration.Binder
+
+```
+
+Below is the [gist of the application](https://github.com/rahulpnath/Blog/blob/master/CosmosEmulator/src/CosmosEmulator.ArmTemplate/Program.cs)
+
+-   It reads the Containers parameters from the [ARM template parameter file](https://github.com/rahulpnath/Blog/blob/master/CosmosEmulator/deploy/azuredeploy.parameters.json)
+-   Reads the Cosmos Configuration from the [config file](https://github.com/rahulpnath/Blog/blob/master/CosmosEmulator/src/CosmosEmulator.ArmTemplate/appsettings.json) (expects a specific format for the configuration, which you can change to match your needs)
+-   Uses the `CosmosClient` to create the Database (if not exists) and the Containers from the ARM template file by specifying the name and partition key (if you need more properties, you can add that to the ARM template parameters and extend the code.)
+
+```csharp
+static async Task Main(string[] args)
+{
+    / Get all Containers defined in ARM Template
+    var containers = await GetContainersFromTemplate(@"deploy\azuredeploy.parameters.json");
+
+    / Connect to local cosmos emulator from the configuration and create database
+    var cosmosConfig = GetCosmosConfig();
+    var cosmosClient = new CosmosClient(
+        cosmosConfig.EndpointUrl,
+        cosmosConfig.PrimaryKey,
+        new CosmosClientOptions());
+    await cosmosClient.CreateDatabaseIfNotExistsAsync(cosmosConfig.DatabaseName);
+    var database = cosmosClient.GetDatabase(cosmosConfig.DatabaseName);
+    foreach (var container in containers)
+        await database.CreateContainerIfNotExistsAsync(container.Name, container.PartitionKey);
+}
+
+```
+
+The application required access to the ARM template parameter file `azuredeploy.parameters.json`.
+
+The ARM template and the parameter file is under a folder named `deploy` under the source folder. I like to keep them separate from the source code.
+
+To make sure the application has access to the ARM parameter file, I have added the file as a Link. Below I have added both the ARM template file (`azuredeploy.json`) and the Parameters file (`azuredeploy.parameters.json`).
+
+However, we need only the parameters file, which has `CopyToOutputDirectory` enabled.
+
+```xml
+<ItemGroup>
+    <Content Include="..\..\deploy\azuredeploy.json">
+        <Link>deploy\azuredeploy.json</Link>
+    </Content>
+    <Content Include="..\..\deploy\azuredeploy.parameters.json">
+        <Link>deploy\azuredeploy.parameters.json</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+</ItemGroup>
+
+```
+
+It looks like below in Visual Studio Solution Explorer (Note the file icon is different, indicating it is a linked file).
+
+![Linked ARM Template files in Visual Studio Solution Explorer](/images/cosmos_emulator_linked_files.jpg)
+
+The `appsettings.json` has the below configuration for Cosmos Emulator. The Emulator supports a [single fixed account and a well-known authentication key as it's primary key.](https://docs.microsoft.com/bs-latn-ba/Azure/cosmos-db/local-emulator?tabs=cli%2Cssl-netstd21&WT.mc_id=AZ-MVP-5003875#authenticate-requests). By default, it runs on `localhost:8081`
+
+```json
+{
+  "Cosmos": {
+    "EndpointUrl": "https://localhost:8081",
+    "PrimaryKey": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+    "DatabaseName": "MyDatabase"
+  }
+}
+
+```
+
+If your application uses a different style configuration, update the `GetCosmosConfig` method to match the configuration style.
+
+### Setup Cosmos Emulator on Application Build
+
+Now that we have the code to create the container from the ARM template parameter file, let’s get it to run when we build the application. We can do this using [MSBuild Exec task](https://docs.microsoft.com/en-us/visualstudio/msbuild/exec-task?view=vs-2019&WT.mc_id=AZ-MVP-5003875).
+
+> The Exec task runs the specified program or command
+
+To add a new build task open the [csproj file](https://github.com/rahulpnath/Blog/blob/master/CosmosEmulator/src/CosmosEmulator.Api/CosmosEmulator.Api.csproj) of your host application. In this example, I have an [API application](https://github.com/rahulpnath/Blog/tree/master/CosmosEmulator/src/CosmosEmulator.Api) that uses Cosmos DB.
+
+Add the below Target to the csproj file. It runs after `Build` only when running in `Debug` configuration. It runs the console application we created above using the `dotnet` command and runs it in that directory.
+
+Depending on your code setup, you will have to adjust the `WorkingDirectory` path.
+
+```csharp
+<Target Name="CosmosLocalSetup" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">
+    <Exec
+            Command="dotnet CosmosEmulator.ArmTemplate.dll"
+            WorkingDirectory="..\CosmosEmulator.ArmTemplate\bin\Debug\netcoreapp3.1"/>
+</Target>
+
+```
+
+On application build, the above target gets executed. It will run the console app, which will connect to the Local Emulator (or the appropriate Cosmos DB based on the configuration) and create the Containers.
+
+Make sure to have your Cosmos Emulator running; if not, you will run into the below error (or for any other reason the custom code is not able to create containers)
+
+![Build error when not running Cosmos Emulator](/images/cosmos_emulator_build_error.jpg)
+
+To add a new Container, all you need to do is add it to the ARM template parameter file and build your application. It will automatically create it in the Cosmos Emulator. Once you check in to source control, the build/deploy pipeline will automatically create the containers to your Azure Cosmos DB.
+
+Full Source code and demo [available here](https://github.com/rahulpnath/Blog/tree/master/CosmosEmulator).
+
+I hope this helps you set up a seamless development experience with Cosmos DB.
