@@ -16,6 +16,9 @@
 @tailwind utilities; */
 @import "tailwindcss";
 
+/* Import Prism.js theme for syntax highlighting */
+@import "../styles/prism-theme.css";
+
 /* :root {
   --background: #ffffff;
   --foreground: #171717;

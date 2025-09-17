@@ -8,25 +8,10 @@ import EmbedCard from "./components/EmbedCard";
 import ImageCard from "./components/ImageCard";
 import TableOfContents from "./components/TableOfContents";
 import Search from "./components/Search";
+import CodeBlock from "./components/CodeBlock";
 import Image from "next/image";
 
 // Custom components for better MDX styling
-const CodeBlock = ({ className, children, ...props }: any) => {
-  const language = className?.replace(/language-/, '') || '';
-  
-  return (
-    <div className="relative group">
-      {language && (
-        <div className="absolute top-3 right-3 px-2 py-1 text-xs font-mono text-gray-400 bg-gray-800 rounded z-10">
-          {language}
-        </div>
-      )}
-      <pre className={`${className} bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto border border-gray-200 relative`} {...props}>
-        <code>{children}</code>
-      </pre>
-    </div>
-  );
-};
 
 const Callout = ({ type = 'info', children }: { type?: 'info' | 'warning' | 'success' | 'error', children: React.ReactNode }) => {
   const styles = {

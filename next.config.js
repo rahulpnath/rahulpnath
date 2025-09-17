@@ -5,6 +5,7 @@ const withMDX = require('@next/mdx')({
   options: {
     providerImportSource: "./src/mdx-components", // 👈 point to your file
     remarkPlugins: [remarkBlogCards],
+    // Using prism-react-renderer instead of rehype-prism-plus
   },
 });
 
