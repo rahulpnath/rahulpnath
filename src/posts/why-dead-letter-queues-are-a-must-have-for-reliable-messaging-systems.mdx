@@ -69,9 +69,9 @@ Once the message timeout expires, the message is put back into the source SQS Qu
 
 This behavior is useful when the error is due to a transient one.
 
-💡
-
-__A Transient error, also known as a transient fault or soft error, is a temporary error in a system or network that resolves itself quickly.__
+<Callout type="tip">
+  **A Transient error, also known as a transient fault or soft error, is a temporary error in a system or network that resolves itself quickly.**
+</Callout>
 
 In cases where the error is transient, the handler is likely to succeed in the subsequent try to process the message and remove it from the queue.
 
@@ -98,9 +98,9 @@ Depending on the Queue and the settings, these error messages might also be comp
 
 ## Advantages of Having a Dead Letter Queue
 
-💡
-
-__A__ _****Dead Letter Queue (DLQ)****_ __is a special queue that handles messages that cannot be successfully processed or delivered to their intended destination.__
+<Callout type="tip">
+  **A** *****Dead Letter Queue (DLQ)***** **is a special queue that handles messages that cannot be successfully processed or delivered to their intended destination.**
+</Callout>
 
 Messages are sent to the DLQ after exceeding a retry threshold or encountering errors, allowing you to isolate and inspect problematic messages without disrupting the main application flow.
 

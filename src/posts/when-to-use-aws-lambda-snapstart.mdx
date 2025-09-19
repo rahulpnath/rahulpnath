@@ -32,9 +32,9 @@ If you are entirely new to AWS Lambda SnapStart, I highly recommend checking out
 
 _AWS_ [_Lambda SnapStart_](https://docs.aws.amazon.com/lambda/latest/dg/snapstart.html) _is a performance optimization that speeds up startup times for Lambda Functions, typically with no changes to your function code._
 
-ℹ️
-
-__Lambda takes a Firecracker microVM snapshot of the initialized execution environment's memory and disk state, encrypts the snapshot, and intelligently caches it to optimize retrieval latency.__
+<Callout type="info">
+  **Lambda takes a Firecracker microVM snapshot of the initialized execution environment's memory and disk state, encrypts the snapshot, and intelligently caches it to optimize retrieval latency.**
+</Callout>
 
 AWS Lambda creates the VM snapshot and sets up everything when you publish a Lambda version with SnapStart enabled.
 
@@ -56,9 +56,9 @@ If the cold start times/init duration are already in the range of milliseconds, 
 
 In such cases, the overhead introduced by restoring the execution state might not justify using SnapStart.
 
-💡
-
-__SnapStart is ideal for functions with Init Duration in seconds. For millisecond cold starts, it may add overhead instead of improving performance.__
+<Callout type="tip">
+  **SnapStart is ideal for functions with Init Duration in seconds. For millisecond cold starts, it may add overhead instead of improving performance.**
+</Callout>
 
 However, when the Init Duration is in seconds, the benefit of using SnapStart becomes more apparent.
 
@@ -82,9 +82,9 @@ After enabling SnapStart, the Restore Duration averages around the same and some
 
 Enabling SnapStart in these scenarios where the Init duration is already in the milliseconds does not yield much gain to us.
 
-⚠️
-
-__Enabling SnapStart on a Function when the Init Duration is already in milliseconds does not benefit us. In fact, it might hurt us more.__
+<Callout type="warning">
+  **Enabling SnapStart on a Function when the Init Duration is already in milliseconds does not benefit us. In fact, it might hurt us more.**
+</Callout>
 
 I modified the same function to introduce a further delay in the constructor to simulate a more significant Init Duration.
 
@@ -105,9 +105,9 @@ public Function()
 }
 ```
 
-⚠️
-
-__Don't block on async calls using__ _`Wait`_ __as shown above - This is done purely for demonstration purposes.__
+<Callout type="warning">
+  **Don't block on async calls using** *`Wait`* **as shown above - This is done purely for demonstration purposes.**
+</Callout>
 
 In this case, before enabling SnapStart, the Init Duration shows 5550ms in the logs below.
 

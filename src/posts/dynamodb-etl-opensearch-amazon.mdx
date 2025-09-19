@@ -49,9 +49,9 @@ Before setting up the plugin, ensure that you have
 
 The plugin loads the initial data snapshot (using PITR) into an Amazon S3 bucket, which is then imported into OpenSearch. This is to get existing data in the table to OpenSearch.
 
-💡
-
-__The DynamoDB Zero ETL plugin does not perform read/write operations on the table directly, so it is safe to use without affecting production traffic.__
+<Callout type="tip">
+  **The DynamoDB Zero ETL plugin does not perform read/write operations on the table directly, so it is safe to use without affecting production traffic.**
+</Callout>
 
 For syncing real-time changes to items in the DynamoDB table, the plugin uses DynammoDB Streams to get notified of data changes and sync them to OpenSearch.
 

@@ -81,9 +81,9 @@ Choose the `Create index` button for the same dialog to create the GSI on an exi
 
 <ImageCard src="/content/images/2023/06/image-6.png" alt="Create GSI popup with the same required details as when creating on a new table." />
 
-❌
-
-_Once a Secondary Index is created, you cannot modify it. You need to delete and recreate it._
+<Callout type="error">
+  *Once a Secondary Index is created, you cannot modify it. You need to delete and recreate it.*
+</Callout>
 
 ### Phases of Index Creation
 
@@ -104,9 +104,9 @@ We learned more about that in How to Optimize Your DynamoDB Queries With Project
 
 <BookmarkCard href="/blog/dynamodb-projection-expressions/" title="How to Optimize Your DynamoDB Queries With Projection Expressions in .NET" description="When reading data from a DynamoDB table, by default, it returns all of the attributes of the items. However, in some application scenarios, you might only require a subset of the attributes of the items. In these scenarios, you can use a ProjectionExpression to limit the item attributes returned a…" icon="/content/images/size/w256h256/2022/10/logo-512x512.png" />
 
-💡
-
-_You can query or scan the GSI just like you would query or scan a table._
+<Callout type="tip">
+  *You can query or scan the GSI just like you would query or scan a table.*
+</Callout>
 
 ### Querying using AWS Console
 

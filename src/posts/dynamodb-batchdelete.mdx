@@ -35,9 +35,9 @@ The `BatchWriteItem` operation can insert/remove multiple items in one or more D
 
 A `BatchWriteItem` call can send up to 16MB of data over the network, consisting of up to 25 items put or delete operations.
 
-💡
-
-_You can perform both Write and Delete operations in the same batch._
+<Callout type="tip">
+  *You can perform both Write and Delete operations in the same batch.*
+</Callout>
 
 DynamoDB `BatchWriteItem` can be performed using the High-Level API (using the `DynamoDBContext` instance) and also the Low-Level API (using the `AmazonDynamoDBClient` instance).
 

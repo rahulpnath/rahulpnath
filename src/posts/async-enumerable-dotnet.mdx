@@ -94,9 +94,9 @@ The `GetAllRatings` method gets the entire list of objects from S3 bucket into t
 
 The main function in `Program.cs` then filters this final `Ratings` list by the objects that have 3-star ratings, takes 50 of them, and prints it to the console.
 
-⚠️
-
-Looping through paged data results over I/O operations is one scenario where IAsyncEnumerable can help.
+<Callout type="warning">
+  Looping through paged data results over I/O operations is one scenario where IAsyncEnumerable can help.
+</Callout>
 
 ### Problems with the Current Code
 
@@ -113,9 +113,9 @@ Now that you've given it some thought, let's discuss:
 
 Let's see how we can fix some issues by introducing AsyncEnumerables.
 
-💡
-
-__Async enumerable is a way to work with collections of data that arrive over time, rather than all at once.__
+<Callout type="tip">
+  **Async enumerable is a way to work with collections of data that arrive over time, rather than all at once.**
+</Callout>
 
 AsyncEnumerables are particularly useful when:
 

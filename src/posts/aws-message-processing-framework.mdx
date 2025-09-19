@@ -20,9 +20,9 @@ This framework makes publishing and processing messages simpler and faster.
 
 Let's explore how to get started using the AWS Message Processing Framework for .NET by using it to send and receive messages from Amazon SQS.
 
-⚠️
-
-__This framework is currently in pre-release, and some of its functionalities may change.__
+<Callout type="warning">
+  **This framework is currently in pre-release, and some of its functionalities may change.**
+</Callout>
 
 Thanks to AWS for sponsoring this post in my [.NET on AWS Series](/blog/tag/aws/)
 
@@ -32,9 +32,9 @@ We will use a default ASP NET Core Web API application to send and receive messa
 
 As with everything, we first need to add a NuGet package to use the framework -_AWS.Messaging_ [_🔗_](https://github.com/awslabs/aws-dotnet-messaging)
 
-💡
-
-__While there are powerful libraries like MassTransit, NServiceBus etc, for building Message Driven Applications, the AWS Message Processing Framework aims to provide a lighter abstraction over existing low-level APIs and takes a hard dependency on AWS Services.__
+<Callout type="tip">
+  **While there are powerful libraries like MassTransit, NServiceBus etc, for building Message Driven Applications, the AWS Message Processing Framework aims to provide a lighter abstraction over existing low-level APIs and takes a hard dependency on AWS Services.**
+</Callout>
 
 Once installed, we can send and receive messages using the library from SQS.
 

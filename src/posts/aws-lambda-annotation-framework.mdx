@@ -77,9 +77,9 @@ If the numbers are valid integer values, it returns the sum of them as a `OkResu
 
 The Function code is verbose and tied to the API Gateway Request/Response models.
 
-⚠️
-
- _The actual logic that we are interested in is only one line (adding the two numbers) and the rest of it is purely boilerplate code._
+<Callout type="warning">
+  *The actual logic that we are interested in is only one line (adding the two numbers) and the rest of it is purely boilerplate code.*
+</Callout>
 
 ## API Endpoint Using Lambda Annotations Framework
 
@@ -87,9 +87,9 @@ Lambda Annotations Framework simplifies the default Lambda programming model and
 
 It removes the boilerplate code required to integrate with API Gateway.
 
-💡
-
-_The Annotations Framework uses C# Source Generators to generate the boilerplate code at compile time._ 
+<Callout type="tip">
+  *The Annotations Framework uses C# Source Generators to generate the boilerplate code at compile time.*
+</Callout>
 
 _Since this happens at compile time, there is no performance overhead in using Lambda Annotations Framework to build Lambda Functions._
 

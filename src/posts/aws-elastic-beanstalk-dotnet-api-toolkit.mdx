@@ -82,9 +82,9 @@ We can choose between the default Kestrel webserver, or use a nginx reverse prox
 
 Once deployed, Beanstalk forwards traffic by default to port 5000.
 
-⚠️
-
-__If you are using the Kestrel based option, you should make sure that the API starts up on port 5000 by using one of the different methods that ASP NET provides to configure application URLs.__
+<Callout type="warning">
+  **If you are using the Kestrel based option, you should make sure that the API starts up on port 5000 by using one of the different methods that ASP NET provides to configure application URLs.**
+</Callout>
 
 The configuraion also allows to specify the EC2 instance size, the memory, permissions, Environment Variables, VPC details etc. I am leaving everything as default.
 

@@ -97,9 +97,9 @@ If the record is older than the current time, it marks the item as expired.
 
 A second background process scans for expired items and deletes them. These processes happen automatically and do not affect read or write traffic to the Table.
 
-⚠️
-
-TTL typically deletes expired items within a few days, depending on the size and activity level of the Table.
+<Callout type="warning">
+  TTL typically deletes expired items within a few days, depending on the size and activity level of the Table.
+</Callout>
 
 ## Querying Items and Time to Live
 

@@ -67,9 +67,9 @@ The important properties required when creating an LSI on a DynamoDB Table, are 
 
 <ImageCard src="/content/images/2023/06/image-10.png" alt="LSI creation dialog prompts for the Sort Key, the Index name and also the type of attributes to be projected to the Index." />
 
-❌
-
-_Once a Secondary Index is created, you cannot modify it. You need to delete and recreate it._
+<Callout type="error">
+  *Once a Secondary Index is created, you cannot modify it. You need to delete and recreate it.*
+</Callout>
 
 #### Attribute Projections
 
@@ -95,9 +95,9 @@ Consider projecting the attributes for a read-heavy index. If you query the inde
 
 Once the DynamoDB table is created and the Index is ready, you can use it to query data using the alternate set of keys.
 
-💡
-
-_You can query or scan the GSI just like you would query or scan a table._
+<Callout type="tip">
+  *You can query or scan the GSI just like you would query or scan a table.*
+</Callout>
 
 ### Querying using AWS Console
 

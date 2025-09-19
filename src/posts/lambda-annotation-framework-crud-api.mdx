@@ -37,9 +37,9 @@ We have a simple `Order` class with the `OrderId` as it's primary key.
 
 To bind the `Order` item from the requests body, we can use the `FromBody` attribute on the function parameter. This is very similar to how we do when building ASP.NET Core APIs.
 
-⚠️
-
-Make sure the template path does not have a leading slash on it.
+<Callout type="warning">
+  Make sure the template path does not have a leading slash on it.
+</Callout>
 
 We also have specified a custom IAM Role Name as part of the `Role` parameter in the `LambdaFunction` attribute. More on this later.
 

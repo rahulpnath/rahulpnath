@@ -134,9 +134,9 @@ For this, we can set the `ASPNETCORE_ENVIRONMENT` (or `DOTNET_ENVIRONMENT`) to s
 
 We can use CDK Context to pass in additional parameter when running on local development machine to set the appropriate environment value.
 
-💡
-
-[__Context__](https://docs.aws.amazon.com/cdk/v2/guide/context.html) __values are key-value pairs that can be associated with an app, stack, or construct. They may be supplied to your app from a file (usually either__ _`cdk.json`_ __or__ _`cdk.context.json`_ __in your project directory) or on the command line.__
+<Callout type="tip">
+  [**Context**](https://docs.aws.amazon.com/cdk/v2/guide/context.html) **values are key-value pairs that can be associated with an app, stack, or construct. They may be supplied to your app from a file (usually either** *`cdk.json`* **or** *`cdk.context.json`* **in your project directory) or on the command line.**
+</Callout>
 
 The below CDK code looks for the `ASPNETCORE_ENVIRONMENT` in the context, and if one exists, it adds that value to the Environment Variable for the lambda function.
 

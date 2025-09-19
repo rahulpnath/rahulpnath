@@ -186,9 +186,9 @@ If a valid customer does not exists it will throw an exception and the whole tra
 
 You can make a `TransactWriteItems` call idempotent by including a client token.
 
-💡
-
-__Idempotency means an operation can be performed multiple times without changing the result beyond the initial application.__
+<Callout type="tip">
+  **Idempotency means an operation can be performed multiple times without changing the result beyond the initial application.**
+</Callout>
 
 This helps prevent application errors if the same operation is submitted multiple times due to issues like connection time-outs.
 

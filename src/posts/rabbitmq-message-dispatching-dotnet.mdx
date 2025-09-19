@@ -92,9 +92,9 @@ Instead of blindly dispatching every n-th message to the n-th consumer, Fair dis
 
 To enable Fair dispatching, when registering the consumer with RabbitMQ we need to specify the number of unacknowledged messages that the consumer can hold.
 
-💡
-
-Prefetch count in RabbitMQ limits the number of unacknowledged (not handled) messages in a consumer.
+<Callout type="tip">
+  Prefetch count in RabbitMQ limits the number of unacknowledged (not handled) messages in a consumer.
+</Callout>
 
 This is easily done using the `BasicQos` method on the channel and specifying the `prefetchCount` property.
 

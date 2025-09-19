@@ -55,9 +55,9 @@ You can find more information on Index Creation in the below two blog posts.
 
 Based on the application and the query that you are optimizing for, choose the keys such that only the items required are copied over and available in the Index.
 
-💡
-
-_In a DynamoDB table, each key value must be unique. However, the key values in a Global Secondary Index do not need to be unique._
+<Callout type="tip">
+  *In a DynamoDB table, each key value must be unique. However, the key values in a Global Secondary Index do not need to be unique.*
+</Callout>
 
 For example, the below Index on the `WeatherForecast` table uses the Date as the partition key and the `IsExtermeWeatherConditions` flag on the item as its sort key.
 

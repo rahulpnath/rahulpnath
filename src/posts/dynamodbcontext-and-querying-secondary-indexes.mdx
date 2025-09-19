@@ -67,9 +67,9 @@ Even though the method syntax supports passing in the same `DynamoDBOperationCon
 
 The primary key values must be unique on a DynamoDB table. However, within an Index, the key values can be duplicated.
 
-💡
-
-_In a DynamoDB table, each key value must be unique. However, the key values in a Global Secondary Index do not need to be unique_
+<Callout type="tip">
+  *In a DynamoDB table, each key value must be unique. However, the key values in a Global Secondary Index do not need to be unique*
+</Callout>
 
 Trying to load a specific item given a set of keys, does not make sense on an Index for this same reason. Since you can get back more than one item
 

@@ -105,9 +105,9 @@ However, this is dependent on the lifecycle of the Lambda Functions.
 
 The Lambda Function class is created only once, during the Init phase of the Lambda lifecycle. Once the instance is created it is reused for the same calls handled by the Lambda instance.
 
-💡
-
-_The Lambda Function class is instantiated only once when a new Lambda instance is created. The same class instance is reused to call the function entry point on the same Lambda instance._
+<Callout type="tip">
+  *The Lambda Function class is instantiated only once when a new Lambda instance is created. The same class instance is reused to call the function entry point on the same Lambda instance.*
+</Callout>
 
 It's up to the AWS Lambda infrastructure to decide when to create a new Lambda instance. When the function is just deployed, the Lambda runtime wipes out all existing instances and creates new instances for subsequent requests.
 
@@ -119,9 +119,9 @@ The lifetime scope of the dependencies injected via the Service collection is de
 
 For example, a singleton instance is only singleton in the context of one Lambda instance. If you have multiple parallel calls coming to your API Gateway, Lambda might decide to spin up multiple Lambda instances and each of them will have its own Singleton instance.
 
-💡
-
-Avoid depending on Singleton instances to maintain state or share data across multiple invocations.
+<Callout type="tip">
+  Avoid depending on Singleton instances to maintain state or share data across multiple invocations.
+</Callout>
 
 All application state information must be managed outside of Lambda - like in a database or an external Cache service etc.
 

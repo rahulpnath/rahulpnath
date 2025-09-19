@@ -37,9 +37,9 @@ Buckets can be in one of the three states:
 -   Versioning-enabled
 -   Versioning-suspended.
 
-⚠️
-
-__Once versioning is enabled on a bucket, it can never return to an unversioned state.__
+<Callout type="warning">
+  **Once versioning is enabled on a bucket, it can never return to an unversioned state.**
+</Callout>
 
 When enabling versioning in a bucket, all new objects are versioned and given a unique version ID. Objects existing in the bucket will get a version ID only when future requests modify them.
 
@@ -74,9 +74,9 @@ app.MapPost("/upload-file", async (
 
 The code uses the `PutObjectAsync` method and passes a `PutObjectRequest` with the appropriate bucket details, object name, and contents to upload the file.
 
-💡
-
-__Every object written to an S3 bucket has an associated__ [_`VersionId`_](https://docs.aws.amazon.com/AmazonS3/latest/userguide/versioning-workflows.html#version-ids)__. For a non-versioned bucket, this is set to null by default.__
+<Callout type="tip">
+  **Every object written to an S3 bucket has an associated** [*`VersionId`*](https://docs.aws.amazon.com/AmazonS3/latest/userguide/versioning-workflows.html#version-ids)**. For a non-versioned bucket, this is set to null by default.**
+</Callout>
 
 When a bucket is versioned, S3 auto-generates a unique VersionId.
 
@@ -177,9 +177,9 @@ Performing a `GET` Object request when the current version is a delete marker re
 
 However, you can pass in a specific versionId to retrieve a previous version of the file before it was deleted.
 
-💡
-
-__To permanently delete an object in a version-enabled S3 bucket, you must pass the key along with the version id.__
+<Callout type="tip">
+  **To permanently delete an object in a version-enabled S3 bucket, you must pass the key along with the version id.**
+</Callout>
 
 If you call delete on a file multiple times, it'll insert a new delete marker each time you call the function.
 

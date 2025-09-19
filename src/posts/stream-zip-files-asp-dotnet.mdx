@@ -76,9 +76,9 @@ zipStream.Seek(0, SeekOrigin.Begin);
 
 Once all the files are written into the `ZipArchive` we can dispose of the instance and use the underlying `MemoryStream` instance for the Zip archive contents.
 
-💡
-
-It's important to call the __Dispose__ method on the ZipArchive, which will also flush all its contents to the underlying Stream. If not you can run into scenarios where the ZipArchive is created with no files inside it.
+<Callout type="tip">
+  It's important to call the **Dispose** method on the ZipArchive, which will also flush all its contents to the underlying Stream. If not you can run into scenarios where the ZipArchive is created with no files inside it.
+</Callout>
 
 ## Send Zip Archive Using Memory Stream in ASP NET
 

@@ -94,9 +94,9 @@ Below is the snapshot of the item in DynamoDB. The `Summary` property is no long
 
 _The `Summary` property was also removed from the .NET class `WeatherForecast`. Otherwise, it would have still shown in the DynamoDB, with the value of `NULL`._
 
-💡
-
-The `PutItem` method replaces the entire contents of an existing item with the new item in the request. This makes using the Put Item request straightforward. 
+<Callout type="tip">
+  The `PutItem` method replaces the entire contents of an existing item with the new item in the request. This makes using the Put Item request straightforward.
+</Callout>
 
 However, you need to have the whole item every time you make a `PuteItem` request. You also need to be sure that you are not accidentally overriding any information that other users working on the same item concurrently might have updated.
 
@@ -154,9 +154,9 @@ For any request if an item does not exist with the given `CityName` and `Date` i
 
 If an item already exists, it will add the Summary property if that's missing or overwrite the value of the property it item already exists.
 
-💡
-
-The `UpdateItem` operation is beneficial when you selectively update specific properties on an item. This goes well with Task-based UIs and if you are affecting particular properties on the whole item. 
+<Callout type="tip">
+  The `UpdateItem` operation is beneficial when you selectively update specific properties on an item. This goes well with Task-based UIs and if you are affecting particular properties on the whole item.
+</Callout>
 
 You'll still need to ensure that the task/operation is working based on the latest copy of the data. Ensuring data consistency and item updates are happening on the desired object state might be helpful.
 

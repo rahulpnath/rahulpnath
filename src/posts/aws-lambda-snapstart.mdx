@@ -18,9 +18,9 @@ A cold start is the initial delay when a Lambda function is first invoked or af
 
 <EmbedCard src="https://www.youtube.com/embed/VGyxP4Sff2I?feature=oembed" title="AWS LAMBDA SNAPSTART |  Getting Started | AWS LAMBDA SERIES | .NET" />
 
-💡
-
-__AWS__ [__Lambda SnapStart__](https://docs.aws.amazon.com/lambda/latest/dg/snapstart.html) __is a performance optimization that speeds up startup times for Lambda Functions, typically with no changes to your function code.__
+<Callout type="tip">
+  **AWS** [**Lambda SnapStart**](https://docs.aws.amazon.com/lambda/latest/dg/snapstart.html) **is a performance optimization that speeds up startup times for Lambda Functions, typically with no changes to your function code.**
+</Callout>
 
 In this post, we will learn more about AWS Lambda SnapStart and how to set it up for your existing Lambda Functions.
 
@@ -214,9 +214,9 @@ However, you must follow certain best practices to ensure your function works co
 
 With SnapStart, Lambda Function uses the same snapshot for all the instances it creates. This means that for .NET Functions, the constructor code only runs once when the version is published.
 
-💡
-
-__For SnapStart-enabled .NET Lambda Functions, the constructor code is only executed once, when the version is published.__
+<Callout type="tip">
+  **For SnapStart-enabled .NET Lambda Functions, the constructor code is only executed once, when the version is published.**
+</Callout>
 
 Before using SnapStart, check if your function’s **initialization phase** includes any of the following:
 
