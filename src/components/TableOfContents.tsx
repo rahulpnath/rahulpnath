@@ -161,85 +161,84 @@ export default function TableOfContents({ content, className = '' }: TableOfCont
 
   return (
     <div className={className}>
-      {/* Header */}
-      <h3 className="font-medium text-gray-900 text-sm mb-4">In this article</h3>
-
-      {/* TOC Items */}
-      <nav className="border-l-2 border-gray-200 pl-4">
-        <ul className="space-y-2">
-          {tocItems.map((item) => (
-            <li key={item.id} className="flex items-start">
-              <span className={`mr-2 text-base mt-0.5 transition-colors duration-200 font-bold ${
-                activeId === item.id 
-                  ? 'text-[#823EB7]' 
-                  : 'text-gray-400'
-              }`}>›</span>
-              <a
-                href={`#${item.id}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToHeading(item.id);
-                }}
-                className={`
-                  block text-sm py-1 transition-colors duration-200
-                  hover:text-gray-800 hover:underline
-                  ${activeId === item.id 
-                    ? 'text-gray-800 font-medium' 
-                    : 'text-gray-600'
-                  }
-                `}
-                style={{ 
-                  paddingLeft: `${(item.level - 2) * 1}rem`
-                }}
-              >
-                {item.text}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      {/* Reading Progress Bar */}
-      <div className="mt-6">
-        <ReadingProgressBar />
+      <style jsx>{`
+        .ez-toc-counter ul {
+          list-style: none;
+          padding-left: 30px;
+        }
+        .ez-toc-counter ul li {
+          margin-bottom: 0.5rem;
+          font-size: 0.875rem;
+          position: relative;
+        }
+        .ez-toc-counter ul li::after {
+          content: "";
+          display: block;
+          position: absolute;
+          width: 16px;
+          height: 16px;
+          top: 3px;
+          left: -28px;
+          background: url('/chevron-right-orange.png');
+          background-repeat: no-repeat;
+          background-size: contain;
+          filter: hue-rotate(280deg) saturate(1.5) brightness(0.7);
+          transition: all 0.2s ease-out;
+          transform: scale(1);
+          opacity: 0.7;
+        }
+        .ez-toc-counter ul li:hover::after {
+          transform: scale(1.15);
+          filter: hue-rotate(280deg) saturate(1.8) brightness(0.6);
+        }
+        .ez-toc-counter ul li.active::after {
+          filter: hue-rotate(280deg) saturate(1.8) brightness(0.6);
+          opacity: 1;
+        }
+      `}</style>
+      
+      {/* TOC Items - Ali Abdaal exact styling with header inside */}
+      <div 
+        className="ez-toc-counter"
+        style={{
+          marginTop: '2rem',
+          borderLeft: '2px solid #e5e7eb',
+          paddingLeft: '1rem',
+          paddingTop: '8px'
+        }}
+      >
+        {/* Header inside the bordered area */}
+        <div className="mb-4">
+          <p className="font-medium text-gray-900">In this article:</p>
+        </div>
+        <nav>
+          <ul className="list-disc ml-4">
+            {tocItems.map((item) => (
+              <li key={item.id} className={`ez-toc-page-1 ${activeId === item.id ? 'active' : ''}`}>
+                <a
+                  href={`#${item.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToHeading(item.id);
+                  }}
+                  className={`
+                    ez-toc-link transition-colors duration-200
+                    ${activeId === item.id 
+                      ? 'font-medium' 
+                      : 'text-gray-600 hover:text-gray-900'
+                    }
+                  `}
+                  style={{ 
+                    color: activeId === item.id ? '#823EB7' : undefined
+                  }}
+                >
+                  {item.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
     </div>
   );
-}
-
-// Reading Progress Bar Component
-function ReadingProgressBar() {
-  const progress = useReadingProgress();
-  
-  return (
-    <>
-      <div className="w-full bg-gray-200 rounded-full h-1">
-        <div 
-          className="bg-[#823EB7] h-1 rounded-full transition-all duration-300"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
-      <p className="text-xs text-gray-500 mt-2 text-center">Reading Progress</p>
-    </>
-  );
-}
-
-// Hook for reading progress (can be used separately)
-export function useReadingProgress() {
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    const updateProgress = () => {
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrolled = (window.scrollY / scrollHeight) * 100;
-      setProgress(Math.min(100, Math.max(0, scrolled)));
-    };
-
-    window.addEventListener('scroll', updateProgress, { passive: true });
-    updateProgress(); // Initial call
-
-    return () => window.removeEventListener('scroll', updateProgress);
-  }, []);
-
-  return progress;
 }

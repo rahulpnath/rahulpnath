@@ -39,9 +39,9 @@ export default function EmbedCard({ src, title, type }: EmbedCardProps) {
 
   return (
     <div className="my-8">
-      {title && (
+      {/* {title && (
         <h3 className="text-lg font-medium text-gray-900 mb-4">{title}</h3>
-      )}
+      )} */}
       <div className="relative overflow-hidden rounded-lg bg-gray-100">
         <iframe
           src={src}

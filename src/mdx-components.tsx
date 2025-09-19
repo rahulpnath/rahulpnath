@@ -13,16 +13,18 @@ import Image from "next/image";
 
 // Custom components for better MDX styling
 
-const Callout = ({ type = 'info', children }: { type?: 'info' | 'warning' | 'success' | 'error', children: React.ReactNode }) => {
+const Callout = ({ type = 'info', icon, children }: { type?: 'info' | 'warning' | 'success' | 'error' | 'tip', icon?: string, children: React.ReactNode }) => {
   const styles = {
-    info: 'bg-blue-50 border-blue-200 text-blue-800',
-    warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-    success: 'bg-green-50 border-green-200 text-green-800',
-    error: 'bg-red-50 border-red-200 text-red-800'
+    info: 'bg-gray-50 border-gray-400 text-gray-900',
+    tip: 'bg-blue-50 border-blue-400 text-blue-900',
+    warning: 'bg-yellow-50 border-yellow-400 text-yellow-900',
+    success: 'bg-green-50 border-green-400 text-green-900',
+    error: 'bg-red-50 border-red-400 text-red-900'
   };
 
   const icons = {
-    info: '💡',
+    info: 'ℹ️',
+    tip: '💡',
     warning: '⚠️',
     success: '✅',
     error: '❌'
@@ -30,10 +32,7 @@ const Callout = ({ type = 'info', children }: { type?: 'info' | 'warning' | 'suc
 
   return (
     <div className={`p-4 border-l-4 rounded-r-lg ${styles[type]} my-6`}>
-      <div className="flex items-start gap-3">
-        <span className="text-lg">{icons[type]}</span>
-        <div className="flex-1">{children}</div>
-      </div>
+      <div className="flex-1">{children}</div>
     </div>
   );
 };
@@ -218,7 +217,7 @@ export const mdxComponents: MDXComponents = {
     return (
       <a
         {...props}
-        className="text-[#823EB7] hover:text-purple-700 underline decoration-purple-300 hover:decoration-purple-500 transition-colors font-medium"
+        className="text-[#823EB7] hover:text-purple-700 transition-colors font-medium"
         {...(isExternal && {
           target: '_blank',
           rel: 'noopener noreferrer'

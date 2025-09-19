@@ -51,12 +51,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               [&_p]:text-lg [&_p]:my-6 [&_p]:font-sans
 
               /* Links */
-              prose-a:text-[#823EB7] prose-a:no-underline hover:prose-a:underline prose-a:transition-all
+              prose-a:text-[#823EB7] prose-a:no-underline prose-a:transition-all
               prose-a:font-medium
 
               /* Lists */
-              prose-ul:list-disc prose-ol:list-decimal prose-ul:my-6 prose-ol:my-6
-              prose-li:mb-2 prose-li:text-lg prose-li:leading-relaxed
+              prose-ul:list-disc prose-ol:list-decimal prose-ul:my-6 prose-ol:my-6 prose-ul:ml-6 prose-ol:ml-6
+              prose-li:mb-2 prose-li:text-lg prose-li:leading-relaxed prose-li:list-item
 
               /* Blockquotes */
               prose-blockquote:border-l-4 prose-blockquote:border-[#823EB7] prose-blockquote:pl-6
