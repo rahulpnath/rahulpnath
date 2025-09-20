@@ -65,7 +65,7 @@ All config builders have the options of setting a [mode](https://github.com/aspn
 
 -   _Greedy_ - This mode is closely related to Strict mode, but instead of being limited to keys that already exist in the original configuration, the config builders will dump all key/value pairs from the external source into the resulting config section.
 
--   _Expand_ - This last mode operates on the raw XML before it gets parsed into a config section object. It can be thought of as a simple expansion of tokens in a string. Any part of the raw XML string that matches the pattern ${token} is a candidate for token expansion. If no corresponding value is found in the external source, then the token is left alone.
+-   _Expand_ - This last mode operates on the raw XML before it gets parsed into a config section object. It can be thought of as a simple expansion of tokens in a string. Any part of the raw XML string that matches the pattern `${token}` is a candidate for token expansion. If no corresponding value is found in the external source, then the token is left alone.
 
 In short when set to _Strict_ it matches the names in configuration file to Secrets in the Vault's configured. If it does not find corresponding Secret it ignores that key. When set to _Greedy_, irrespective of what keys are there in the configuration file, it makes all the secrets available in the Vaults specified via Configuration. **This to me sounds like magic and would not prefer to do in an application that I build.**
 

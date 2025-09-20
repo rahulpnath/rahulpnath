@@ -30,7 +30,7 @@ var personVM = {
 
 Declaring the property as an observable, makes any changes to the property immediately reflect on the bound UI elements, just like it happens on a property of a class that implements INotifyPropertyChanged.
 
-{% codepen CuIfK rahulpnath js %}
+
 
 **2\. DataContext**
 
@@ -44,7 +44,7 @@ Binding the data to the UI in XAML is done declaratively using the \[Binding\](h
 
 In XAML updates to a collection is usually handled using an \[ObservableCollection\](http://msdn.microsoft.com/en-us/library/ms668604(v=vs.110).aspx), which notifies the UI whenever an item is added/removed to the collection. Similarly in KO you can use _observableArray_, which behaves the same as ObservableCollection. It notifies the bound UI elements whenever an element is added/removed from the array. Updates or changes to individual properties on the actual objects in the array is notified to the UI only if the property is an \_observable, \_as in XAML. In the below sample, you can try adding an observable item or a non-observable item to the list. As soon as you add an item it reflects in the list. But selecting and editing an item will reflect in the list only if you are editing an observable item.
 
-{% codepen FreIv rahulpnath js %}
+
 
 **5\. Dependent Properties**
 
@@ -90,11 +90,11 @@ Commanding is how user interactions are bound to actions/functions on ViewModel,
 
 ```
 
-\*\*7. Value Converters \*\*
+**7. Value Converters
 
 The \[IValueConverter\](http://msdn.microsoft.com/en-us/library/system.windows.data.ivalueconverter(v=vs.110).aspx) interface is to create a converter that can be applied on a Binding to provide custom logic on the data that gets bounded to the UI element. For a similar functionality in KO, there is [writable computed observable](http://knockoutjs.com/documentation/computedObservables.html) to convert to and from a specific format of data. The read and write function on the computed observable, corresponds to the Convert and ConvertBack functions on IValueConverter on XAML.
 
-{% codepen dJhLm rahulpnath js %}
+
 
 There are a lot of useful resources on the web that are freely available to get started with KnockoutJS. Some of them are listed below
 

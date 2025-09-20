@@ -31,7 +31,7 @@ The `PutItem` [method](https://docs.aws.amazon.com/amazondynamodb/latest/APIRefe
 
 The `PutItem` method takes an `PuteItemRequest` object with the below properties. Only the `TableName` and `Item` are required properties, others are optional.
 
--   **Item** → A dictionary map of <`string`, `AttributeValue`\> pair for each property stored in the table object. The primary key attributes (hash & range) are required.
+-   **Item** → A dictionary map of `<string, AttributeValue>` pair for each property stored in the table object. The primary key attributes (hash & range) are required.
 -   **TableName** → Name of the Table to write the item.
 -   **ConditionExpression** → A condition that must be satisfied for the operation to proceed in the DynamoDB Server.
 -   **ExpressionAttributeNames** & **ExpressionAttributeValues** → substitution tokens and values for the `ConditionExpression`

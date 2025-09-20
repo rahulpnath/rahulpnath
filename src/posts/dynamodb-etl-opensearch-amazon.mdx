@@ -155,72 +155,72 @@ You can find more details on the IAM Role configuration for the source [here](ht
 
 The IAM role also requires access to connect to OpenSeach and write data. The configuration for the sink role is more detailed [here](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/pipeline-domain-access.html).
 
-Here's the full policy I used
+Here's the full policy I used:
 
-#### Here's the full policy I used
-
-{  
-"Version": "2012-10-17",  
-"Statement": \[  
-{  
-"Effect": "Allow",  
-"Action": "es:DescribeDomain",  
-"Resource": "arn:aws:es:ap-southeast-2:123456789012:domain/__"__  
-__},__  
-__{__  
-__"Effect": "Allow",__  
-__"Action": "es:ESHttp__",  
-"Resource": "arn:aws:es:ap-southeast-2:123456789012:domain/myyoutubedoman/__"__  
-__},__  
-__{__  
-__"Sid": "allowRunExportJob",__  
-__"Effect": "Allow",__  
-__"Action": \[__  
-__"dynamodb:DescribeTable",__  
-__"dynamodb:DescribeContinuousBackups",__  
-__"dynamodb:ExportTableToPointInTime"__  
-__\],__  
-__"Resource": \[__  
-__"arn:aws:dynamodb:ap-southeast-2:123456789012:table/Event"__  
-__\]__  
-__},__  
-__{__  
-__"Sid": "allowCheckExportjob",__  
-__"Effect": "Allow",__  
-__"Action": \[__  
-__"dynamodb:DescribeExport"__  
-__\],__  
-__"Resource": \[__  
-__"arn:aws:dynamodb:ap-southeast-2:123456789012:table/Event/export/__"  
-\]  
-},  
-{  
-"Sid": "allowReadFromStream",  
-"Effect": "Allow",  
-"Action": \[  
-"dynamodb:DescribeStream",  
-"dynamodb:GetRecords",  
-"dynamodb:GetShardIterator"  
-\],  
-"Resource": \[  
-"arn:aws:dynamodb:ap-southeast-2:123456789012:table/Event/stream/__"__  
-__\]__  
-__},__  
-__{__  
-__"Sid": "allowReadAndWriteToS3ForExport",__  
-__"Effect": "Allow",__  
-__"Action": \[__  
-__"s3:GetObject",__  
-__"s3:AbortMultipartUpload",__  
-__"s3:PutObject",__  
-__"s3:PutObjectAcl"__  
-__\],__  
-__"Resource": \[__  
-__"arn:aws:s3:::event-data-ingestion/__"  
-\]  
-}  
-\]  
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "es:DescribeDomain",
+      "Resource": "arn:aws:es:ap-southeast-2:123456789012:domain/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "es:ESHttp*",
+      "Resource": "arn:aws:es:ap-southeast-2:123456789012:domain/myyoutubedoman/*"
+    },
+    {
+      "Sid": "allowRunExportJob",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:DescribeTable",
+        "dynamodb:DescribeContinuousBackups",
+        "dynamodb:ExportTableToPointInTime"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:ap-southeast-2:123456789012:table/Event"
+      ]
+    },
+    {
+      "Sid": "allowCheckExportjob",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:DescribeExport"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:ap-southeast-2:123456789012:table/Event/export/*"
+      ]
+    },
+    {
+      "Sid": "allowReadFromStream",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:DescribeStream",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:ap-southeast-2:123456789012:table/Event/stream/*"
+      ]
+    },
+    {
+      "Sid": "allowReadAndWriteToS3ForExport",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:AbortMultipartUpload",
+        "s3:PutObject",
+        "s3:PutObjectAcl"
+      ],
+      "Resource": [
+        "arn:aws:s3:::event-data-ingestion/*"
+      ]
+    }
+  ]
 }
+```
 
 Once the pipeline configuration is done - click Create - which will create and setup the data ingestion pipeline.
 

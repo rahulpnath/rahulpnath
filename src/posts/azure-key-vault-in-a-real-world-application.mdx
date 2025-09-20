@@ -17,7 +17,7 @@ Over the last couple of posts we have seen how to [Get Started with Azure Key Va
 
 Objects are uniquely identified within Azure Key Vault using a URL such that no two objects in the system, regardless of geo-location, have the same URL. The complete URL to an object is called the Object Identifier and consists of a prefix portion that identifies the Key Vault, the object type, a user provided Object Name, and an Object Version. The _object-name_ is case-insensitive and immutable. When an object is first created it is given a unique version identifier and is marked as the current version of the object. Creation of a new instance with the same object name gives the new object a unique version identifier and causes it to become the current version. When querying for an object _object-version_ is optional and if not provided will point to the current version of the given object-name.
 
-> https://keyvault-name.vault.azure.net/{object-type}/{object-name}/{object-version}
+> https://keyvault-name.vault.azure.net/`{object-type}`/`{object-name}`/`{object-version}`
 
 From a client application all we need to have is to the configuration for the key vault url, and configurations to identify key/secret name which can include the version if required. This could be saved in the application's configuration file as shown below.
 

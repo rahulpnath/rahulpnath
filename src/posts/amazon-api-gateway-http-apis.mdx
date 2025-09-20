@@ -13,7 +13,7 @@ excerpt: >-
 ---
 _This article is sponsored by AWS and is part of my [AWS Series](/tag/aws/)._
 
-Amazon API Gateway is a fully managed service that helps developers build and maintain APIs at any scale. The Gateway act as a ‘front door’ to your business data and backend services.
+Amazon API Gateway is a fully managed service that helps developers build and maintain APIs at any scale. The Gateway act as a `front door` to your business data and backend services.
 
 API Gateway is often mentioned along with Serverless technologies, especially AWS Lambda since it makes it very easy to expose the Function over an HTTP endpoint.
 
@@ -92,7 +92,7 @@ Once deployed to the AWS account, we can use this Function to serve our API Gate
 
 It consists of the HTTP Method and the resource path. This combination is used to map what backend service or integration the route gets matched to. The HTTP method is any HTTP verb or _ANY,_ which matches all methods.
 
-You can also add in _$default_ route, which acts as a fallback route for requests that don’t match any other requests.
+You can also add in `$default` route, which acts as a fallback route for requests that don’t match any other requests.
 
 ### GET Endpoint
 
@@ -204,7 +204,7 @@ Once set up, we can successfully send POST requests to the new endpoint and see 
 
 Stages in API Gateway are a logical reference to the lifecycle of your API. You can use this to differentiate between different development lifecycle (dev, test, staging, prod, etc.).
 
-When creating the API Gateway, a _$default_ stage is automatically created. This stage is served from the base of the APIs URL. For a new stage, it will have the base URL followed by the stage name - _https://{api\_id}.execute-api.{region}.amazonaws.com/{stageName}_
+When creating the API Gateway, a _$default_ stage is automatically created. This stage is served from the base of the APIs URL. For a new stage, it will have the base URL followed by the stage name - `https://{api\_id}.execute-api.{region}.amazonaws.com/{stageName}`
 
 Under Deploy → Stages, you can create a new stage for the API.
 
@@ -228,7 +228,7 @@ We can use this new stage variable when defining integration. Edit the existing 
 
 In the below example, I have used the following format to pick the appropriate `get-weather-forecast` lambda function based on the stage.
 
-_arn:aws:lambda:ap-southeast-2:aws-account-id:function:get-weather-forecast${stageVariables.env}_
+`arn:aws:lambda:ap-southeast-2:aws-account-id:function:get-weather-forecast${stageVariables.env}`
 
 In our example, since we have the `env` variable set to ‘_\-test_’ for the test stage, it will pick up the _get-weather-forecast-dev_ lambda function for that stage. Since there is no _env_ variable for the default stage, it will pick up the _get-weather-forecast_ lambda.
 
@@ -240,7 +240,9 @@ Navigate to the Lambda function; choose Add Permission under Configuration → P
 
 The Source ARN needs the API Gateway endpoint details that will be accessing this lambda function. Based on the stage and the Action type, you can specify it as below.
 
-_arn:aws:execute-api:ap-southeast-2:AWS-ACCOUNT-ID:API-ID/_/_/weather-forecast/{cityName}_
+
+`arn:aws:execute-api:ap-southeast-2:AWS-ACCOUNT-ID:API-ID/_/_/weather-forecast/{cityName}`
+
 
 The first wildcard \* stands for stage and the second for the HTTP VERB.
 

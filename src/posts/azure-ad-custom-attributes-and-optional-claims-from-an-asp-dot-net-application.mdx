@@ -31,7 +31,7 @@ POST https://graph.windows.net/contoso.onmicrosoft.com/applications/
 
 ```
 
-The response gives back the fully-qualified extension property name, which is used to write values to the property. Usually the name is of the format _extension\_<adApplicationIdWithoutDashes>\_extensionPropertyName_
+The response gives back the fully-qualified extension property name, which is used to write values to the property. Usually the name is of the format _extension\_`<adApplicationIdWithoutDashes>`\_extensionPropertyName_
 
 If you have multiple environments (like Dev, Test, UAT, Prod) all pointing to the same Active Directory, it is a good idea to append the environment name to the extension property. It avoids any bad data issues between environments as all these properties get written to the same User object. You can automate the above step using any scripting language of your choice if required.
 

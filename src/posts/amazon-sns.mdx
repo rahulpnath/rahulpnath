@@ -29,8 +29,8 @@ To get started, let’s first create an SNS. The straightforward way to create a
 
 Amazon SNS supports two types of Topics
 
--   **Standard** → Provides best-effort message ordering and guarantees at-least once message delivery. These are better suited for use cases that require higher message publish and delivery throughput rates. Supports SQS, Lambda, HTTP, SMS, email, and mobile application endpoints as the subscription protocols.
--   **FIFO** (first-in, first-out) → Guarantees message ordering and exactly-once message delivery. Supports only SQS subscription protocol.
+-   **Standard** - Provides best-effort message ordering and guarantees at-least once message delivery. These are better suited for use cases that require higher message publish and delivery throughput rates. Supports SQS, Lambda, HTTP, SMS, email, and mobile application endpoints as the subscription protocols.
+-   **FIFO** (first-in, first-out) - Guarantees message ordering and exactly-once message delivery. Supports only SQS subscription protocol.
 
 For this article, we will create a Standard SNS Topic, by specifying the name and leaving all other options to default.
 
@@ -77,7 +77,7 @@ public async Task Post(WeatherForecast data)
 
 ```
 
-## Subscriber → Receive Message
+## Subscriber - Receive Message
 
 The published messages are of no use having no subscribers.
 
@@ -184,9 +184,9 @@ Specifying the below policy filters out only the messages which have the Month p
 
 Filter Policies JSON structure supports different filtering capabilities
 
--   **Exact Matching** → Attribute matches one or more values _”Month” : \[”February”\]_
--   **Prefix Matching →** Attribute includes the keyword _prefix_ and it matches the specified prefix. Below matches _March_ and _May”Month” : \[{”prefix”: “Ma”}\]_
--   **Anything-but Matching →** This does an exclusion match. Below matches all months other than February and March. _"Month": \[{"anything-but": \["February", “March”\]}\]_
+-   **Exact Matching** → Attribute matches one or more values `"Month" : ["February"]`
+-   **Prefix Matching →** Attribute includes the keyword _prefix_ and it matches the specified prefix. Below matches _March_ and _May_ `"Month" : [{"prefix": "Ma"}]`
+-   **Anything-but Matching →** This does an exclusion match. Below matches all months other than February and March. `"Month": [{"anything-but": ["February", "March"]}]`
 
 ## Retries & Dead-letter Queues
 

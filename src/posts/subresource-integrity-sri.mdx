@@ -61,7 +61,7 @@ For application specific javascript files, you need to generate the hash everyti
 
 _The [integrity](https://html.spec.whatwg.org/multipage/scripting.html#attr-script-integrity) attribute must not be specified when embedding a module script or when the src attribute is not specified._ This means that SRI cannot be used for inline javascript. Even though inline javascript should be avoided, there still are scenarios where you might use that or have dynamically generated javascript. In these cases, we can use [nonce](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src) attribute on script tag and whitelist that nonce in the [CSP Headers](/blog/http-content-security-policy-csp/).
 
-> **nonce-<base64-value>**  
+> **nonce-`<base64-value>`**  
 > _A whitelist for specific inline scripts using a cryptographic nonce (number used once). The server must generate a unique nonce value each time it transmits a policy. It is critical to provide an unguessable nonce, as bypassing a resource’s policy is otherwise trivial. See unsafe inline script for example. Specifying nonce makes a modern browser ignore 'unsafe-inline' which could still be set for older browsers without nonce support._
 
 For the jquery fallback above we need a nonce attribute since this is loaded inline.
