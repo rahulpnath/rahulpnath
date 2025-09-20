@@ -7,7 +7,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        // Serif font for headings (Ali's style)
+        // Serif font for headings
         serif: ['var(--font-playfair)', 'Playfair Display', 'Georgia', 'Times New Roman', 'serif'],
         // Clean sans-serif for headings alternative
         clash: ['var(--font-clash)', 'Inter', 'system-ui', 'sans-serif'],
