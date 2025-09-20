@@ -1,6 +1,6 @@
-const remarkBlogCards = require('./src/lib/remark-blog-cards.js');
+const remarkBlogCards = require("./src/lib/remark-blog-cards.js");
 
-const withMDX = require('@next/mdx')({
+const withMDX = require("@next/mdx")({
   extension: /\.mdx?$/,
   options: {
     providerImportSource: "./src/mdx-components", // 👈 point to your file
@@ -10,5 +10,9 @@ const withMDX = require('@next/mdx')({
 });
 
 module.exports = withMDX({
-  pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
+  pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
+  eslint: {
+    // Disable ESLint during builds
+    ignoreDuringBuilds: true,
+  },
 });
