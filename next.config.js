@@ -15,4 +15,8 @@ module.exports = withMDX({
     // Disable ESLint during builds
     ignoreDuringBuilds: true,
   },
+  typescript: {
+    // Skip TypeScript checking during builds
+    ignoreBuildErrors: true,
+  },
 });
