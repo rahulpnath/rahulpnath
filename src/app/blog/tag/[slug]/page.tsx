@@ -1,33 +1,37 @@
-import { getAllPosts } from '@/lib/posts'
-import BlogWithPagination from '@/app/blog/BlogWithPagination'
-import { Metadata } from 'next'
+import BlogWithPagination from "@/app/blog/BlogWithPagination";
+import { getAllPosts } from "@/lib/posts";
+import { Metadata } from "next";
 
 interface TagPageProps {
-  params: {
-    slug: string
-  }
+  readonly params: Promise<{
+    slug: string;
+  }>;
 }
 
-export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
-  const tagName = params.slug.replace(/-/g, ' ')
-  
+export async function generateMetadata({
+  params,
+}: TagPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const tagName = slug.replace(/-/g, " ");
+
   return {
     title: `Posts tagged with "${tagName}" | Rahul Nath`,
     description: `All blog posts tagged with ${tagName}`,
-  }
+  };
 }
 
 export default async function TagPage({ params }: TagPageProps) {
-  const allPosts = await getAllPosts()
-  
-  // Filter posts by tag
-  const taggedPosts = allPosts.filter(post => 
-    post.tags?.some(tag => 
-      tag.toLowerCase().replace(/\s+/g, '-') === params.slug.toLowerCase()
-    )
-  )
+  const { slug } = await params;
+  const allPosts = await getAllPosts();
 
-  const tagName = params.slug.replace(/-/g, ' ')
+  // Filter posts by tag
+  const taggedPosts = allPosts.filter((post) =>
+    post.tags?.some(
+      (tag) => tag.toLowerCase().replace(/\s+/g, "-") === slug.toLowerCase()
+    )
+  );
+
+  const tagName = slug.replace(/-/g, " ");
 
   return (
     <div className="min-h-screen bg-black text-gray-200">
@@ -38,28 +42,29 @@ export default async function TagPage({ params }: TagPageProps) {
             Posts tagged with "{tagName}"
           </h1>
           <p className="text-gray-300 mb-8">
-            Found {taggedPosts.length} post{taggedPosts.length !== 1 ? 's' : ''} with this tag.
+            Found {taggedPosts.length} post{taggedPosts.length !== 1 ? "s" : ""}{" "}
+            with this tag.
           </p>
         </div>
       </div>
 
       <BlogWithPagination posts={taggedPosts} />
     </div>
-  )
+  );
 }
 
 // Generate static params for all tags
 export async function generateStaticParams() {
-  const allPosts = await getAllPosts()
-  const tags = new Set<string>()
-  
-  allPosts.forEach(post => {
-    post.tags?.forEach(tag => {
-      tags.add(tag.toLowerCase().replace(/\s+/g, '-'))
-    })
-  })
-  
-  return Array.from(tags).map(tag => ({
+  const allPosts = await getAllPosts();
+  const tags = new Set<string>();
+
+  allPosts.forEach((post) => {
+    post.tags?.forEach((tag) => {
+      tags.add(tag.toLowerCase().replace(/\s+/g, "-"));
+    });
+  });
+
+  return Array.from(tags).map((tag) => ({
     slug: tag,
-  }))
+  }));
 }

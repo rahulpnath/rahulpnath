@@ -1,13 +1,13 @@
-import { getPostBySlug, getAllPosts } from '@/lib/posts';
-import { notFound } from 'next/navigation';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-import Image from 'next/image';
-import { mdxComponents } from '@/mdx-components';
-import TableOfContents from '@/components/TableOfContents';
-import AuthorCard from '@/components/AuthorCard';
+import AuthorCard from "@/components/AuthorCard";
+import TableOfContents from "@/components/TableOfContents";
+import { getAllPosts, getPostBySlug } from "@/lib/posts";
+import { mdxComponents } from "@/mdx-components";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import Image from "next/image";
+import { notFound } from "next/navigation";
 
 interface BlogPostPageProps {
-  params: Promise<{
+  readonly params: Promise<{
     slug: string;
   }>;
 }
@@ -34,7 +34,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main Content */}
           <main className="flex-1 lg:max-w-4xl">
-            <article className="
+            <article
+              className="
               prose prose-lg prose-slate max-w-none font-sans
               leading-relaxed
 
@@ -86,69 +87,72 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
               /* Strong/Bold */
               prose-strong:font-semibold prose-strong:text-gray-900
-            ">
-          {/* Article Header */}
-          <header className="mb-12 not-prose">
-            <h1 className="font-serif text-5xl font-semibold text-gray-900 mb-6 leading-tight tracking-tight">
-              {post.title}
-            </h1>
-            
-            <div className="flex items-center gap-6 text-sm text-gray-500 mb-8 font-medium">
-              <time dateTime={post.publishedAt}>
-                {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </time>
-              
-              {post.readingTime && (
-                <>
-                  <span>•</span>
-                  <span>{post.readingTime}</span>
-                </>
+            "
+            >
+              {/* Article Header */}
+              <header className="mb-12 not-prose">
+                <h1 className="font-serif text-5xl font-semibold text-gray-900 mb-6 leading-tight tracking-tight">
+                  {post.title}
+                </h1>
+
+                <div className="flex items-center gap-6 text-sm text-gray-500 mb-8 font-medium">
+                  <time dateTime={post.publishedAt}>
+                    {new Date(post.publishedAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </time>
+
+                  {post.readingTime && (
+                    <>
+                      <span>•</span>
+                      <span>{post.readingTime}</span>
+                    </>
+                  )}
+                </div>
+
+                {post.description && (
+                  <p className="font-sans text-xl text-gray-600 mb-8 leading-relaxed max-w-3xl font-medium">
+                    {post.description}
+                  </p>
+                )}
+
+                {post.coverImage && (
+                  <div className="my-8">
+                    <Image
+                      src={post.coverImage}
+                      alt={post.title}
+                      width={800}
+                      height={400}
+                      className="w-full h-auto rounded-xl"
+                      sizes="800px"
+                      priority
+                    />
+                  </div>
+                )}
+              </header>
+
+              {/* Article Content */}
+              <MDXRemote source={post.content} components={mdxComponents} />
+              {/* Tags Section - Minimal */}
+              {post.tags && post.tags.length > 0 && (
+                <div className="mt-20 pt-12 border-t border-gray-100 not-prose">
+                  <div className="flex flex-wrap gap-3">
+                    {post.tags.map((tag) => (
+                      <a
+                        key={tag}
+                        href={`/blog/tag/${tag
+                          .toLowerCase()
+                          .replace(/\s+/g, "-")}`}
+                        className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-[#823EB7] hover:text-white transition-all duration-200"
+                      >
+                        {tag}
+                      </a>
+                    ))}
+                  </div>
+                </div>
               )}
-            </div>
-
-            {post.description && (
-              <p className="font-sans text-xl text-gray-600 mb-8 leading-relaxed max-w-3xl font-medium">
-                {post.description}
-              </p>
-            )}
-
-            {post.coverImage && (
-              <div className="my-8">
-                <Image
-                  src={post.coverImage}
-                  alt={post.title}
-                  width={800}
-                  height={400}
-                  className="w-full h-auto rounded-xl"
-                  sizes="800px"
-                  priority
-                />
-              </div>
-            )}
-          </header>
-
-          {/* Article Content */}
-          <MDXRemote source={post.content} components={mdxComponents} />
-          {/* Tags Section - Minimal */}
-          {post.tags && post.tags.length > 0 && (
-            <div className="mt-20 pt-12 border-t border-gray-100 not-prose">
-              <div className="flex flex-wrap gap-3">
-                {post.tags.map((tag) => (
-                  <a
-                    key={tag}
-                    href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
-                    className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-[#823EB7] hover:text-white transition-all duration-200"
-                  >
-                    {tag}
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
 
               {/* Footer Navigation - Clean */}
               <footer className="mt-20 pt-12 border-t border-gray-100 not-prose">
@@ -156,8 +160,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   href="/blog"
                   className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#823EB7] transition-colors group"
                 >
-                  <svg className="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  <svg
+                    className="w-4 h-4 transition-transform group-hover:-translate-x-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
                   </svg>
                   Back to Blog
                 </a>
