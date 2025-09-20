@@ -51,12 +51,9 @@ function BlogPostCard({ post }: { post: BlogPost }) {
         <div className="z-[1] mt-4 flex items-center justify-between px-5 pb-5 md:px-6 md:pb-6">
           <div className="flex items-center gap-3">
             {post.author?.name && (
-              <Link
-                href={post.author?.url ?? "#"}
-                className="text-[13px] uppercase text-[#9BF6FF] font-medium leading-[1.2]"
-              >
+              <span className="text-[13px] uppercase text-[#9BF6FF] font-medium leading-[1.2]">
                 {post.author.name}
-              </Link>
+              </span>
             )}
 
             {post.publishedAt && (
