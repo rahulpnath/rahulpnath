@@ -118,7 +118,7 @@ export default function CodeBlock({ children, className }: CodeBlockProps) {
   };
 
   const code = getCodeString(children).trim();
-
+  
   return (
     <div className="my-6 rounded-lg overflow-hidden">
       <Highlight theme={customTheme} code={code} language={mappedLanguage}>

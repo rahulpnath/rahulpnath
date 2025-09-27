@@ -17,6 +17,6 @@ module.exports = withMDX({
   },
   typescript: {
     // Skip TypeScript checking during builds
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
 });

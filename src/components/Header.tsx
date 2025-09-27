@@ -3,8 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import Search from './Search';
+import { Search, Moon, Sun } from 'lucide-react';
+import SearchComponent from './Search';
 import { BlogPost } from '@/types/blog';
+import Image from 'next/image';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface HeaderProps {
   posts?: BlogPost[];
@@ -13,7 +16,9 @@ interface HeaderProps {
 export default function Header({ posts = [] }: HeaderProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { theme, toggleTheme, mounted } = useTheme();
   const pathname = usePathname();
+
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -33,92 +38,86 @@ export default function Header({ posts = [] }: HeaderProps) {
     return pathname.startsWith(href);
   };
 
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/80">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center">
+    <>
+      <header className="bg-background/75 backdrop-blur border-b border-gray-200 dark:border-gray-800 -mb-px sticky top-0 z-50">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl flex items-center justify-between h-24 gap-0">
+          
+          {/* Logo/Brand - Left side with flex-1 */}
+          <div className="lg:flex-1 flex items-center gap-1.5">
             <Link 
               href="/" 
-              className="text-xl font-bold text-gray-900 hover:text-blue-600 transition-colors dark:text-white dark:hover:text-blue-400"
+              className="flex-shrink-0 font-bold flex gap-1.5 text-lg sm:text-2xl items-center text-theme-text"
+              aria-label="Rahul Nath"
             >
+              <span className="relative inline-flex items-center justify-center flex-shrink-0 rounded-full h-8 w-8 text-sm sm:w-10 sm:h-10">
+                <Image
+                  src="/rahul-logo.png"
+                  alt="Picture of Rahul Nath"
+                  width={40}
+                  height={40}
+                  className="rounded-full h-8 w-8 text-sm"
+                />
+              </span>
               Rahul Nath
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <ul className="flex items-center gap-x-8">
             {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
-                  isActive(item.href)
-                    ? 'text-blue-600 dark:text-blue-400'
-                    : 'text-gray-600 dark:text-gray-300'
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Search and Mobile Menu */}
-          <div className="flex items-center space-x-4">
-            {/* Desktop Search */}
-            <div className="hidden md:block">
-              {posts.length > 0 ? (
-                <div className="relative">
-                  <button
-                    onClick={() => setIsSearchOpen(!isSearchOpen)}
-                    className="flex items-center space-x-2 rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                  >
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    <span className="hidden lg:inline">Search...</span>
-                    <kbd className="hidden lg:inline-flex h-5 select-none items-center gap-1 rounded border border-gray-300 bg-gray-100 px-1.5 font-mono text-[10px] font-medium text-gray-600 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300">
-                      ⌘K
-                    </kbd>
-                  </button>
-
-                  {/* Search Overlay */}
-                  {isSearchOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-96 z-50">
-                      <Search 
-                        posts={posts} 
-                        placeholder="Search articles..."
-                        className="w-full"
-                      />
-                    </div>
-                  )}
-                </div>
-              ) : (
+              <li key={item.name} className="relative">
                 <Link
-                  href="/search"
-                  className="flex items-center space-x-2 rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                  href={item.href}
+                  className={`text-xl font-semibold items-center gap-1 hidden lg:flex transition-colors ${
+                    isActive(item.href) ? 'text-primary-500' : 'hover:text-primary-500'
+                  }`}
                 >
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  <span className="hidden lg:inline">Search</span>
+                  {item.name}
                 </Link>
-              )}
+              </li>
+            ))}
+          </ul>
+
+          {/* Right Side Icons */}
+          <div className="flex items-center justify-end lg:flex-1 gap-1.5">
+            {/* Search Icon */}
+            <div className="relative inline-flex">
+              <button
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                className="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 font-medium rounded-full text-base gap-x-2.5 p-2.5 text-theme-text-secondary hover:text-theme-text hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 inline-flex items-center"
+                aria-label="Search"
+              >
+                <Search className="flex-shrink-0 h-6 w-6" />
+              </button>
             </div>
+            
+            {/* Theme Toggle */}
+            {mounted && (
+              <div className="relative inline-flex">
+                <button
+                  onClick={toggleTheme}
+                  className="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 font-medium rounded-full text-base gap-x-2.5 p-2.5 text-theme-text-secondary hover:text-theme-text hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 inline-flex items-center"
+                  aria-label={theme === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
+                >
+                  {theme === 'dark' ? <Moon className="flex-shrink-0 h-6 w-6" /> : <Sun className="flex-shrink-0 h-6 w-6" />}
+                </button>
+              </div>
+            )}
 
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden rounded-lg p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
+              className="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 font-medium rounded-full text-sm gap-x-2 p-2 text-theme-text-secondary hover:text-theme-text hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 inline-flex items-center lg:hidden"
+              aria-label="Open Menu"
             >
-              <span className="sr-only">Open main menu</span>
               {isMobileMenuOpen ? (
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               ) : (
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               )}
@@ -128,47 +127,42 @@ export default function Header({ posts = [] }: HeaderProps) {
 
         {/* Mobile menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 bg-white py-4 dark:border-gray-800 dark:bg-gray-900">
-            <div className="space-y-1">
+          <div className="lg:hidden">
+            <div className="space-y-1 px-4 pb-3 pt-2">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`block rounded-lg px-3 py-2 text-base font-medium transition-colors ${
-                    isActive(item.href)
-                      ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'
-                  }`}
+                  className="block rounded-md px-3 py-2 text-base font-medium text-theme-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-theme-text"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.name}
                 </Link>
               ))}
-              
-              {/* Mobile Search Link */}
-              <Link
-                href="/search"
-                className="flex items-center space-x-2 rounded-lg px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <span>Search Articles</span>
-              </Link>
             </div>
           </div>
         )}
-      </div>
+      </header>
 
-      {/* Search overlay backdrop */}
+      {/* Search overlay */}
       {isSearchOpen && (
-        <div 
-          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm md:hidden" 
-          onClick={() => setIsSearchOpen(false)}
-        />
+        <>
+          <div 
+            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm" 
+            onClick={() => setIsSearchOpen(false)}
+          />
+          <div className="fixed inset-0 z-50 flex items-start justify-center pt-32 px-4 sm:px-6 lg:px-8" onClick={() => setIsSearchOpen(false)}>
+            <div className="relative text-left flex flex-col bg-white dark:bg-gray-900 shadow-xl w-full sm:max-w-3xl h-dvh sm:h-[20rem] rounded-none sm:rounded-lg" onClick={(e) => e.stopPropagation()}>
+              <SearchComponent 
+                posts={posts} 
+                placeholder="Search..."
+                onClose={() => setIsSearchOpen(false)}
+              />
+            </div>
+          </div>
+        </>
       )}
-    </header>
+    </>
   );
 }
 
