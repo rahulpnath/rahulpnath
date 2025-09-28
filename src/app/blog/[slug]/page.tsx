@@ -28,7 +28,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className="min-h-screen bg-theme-bg text-theme-text">
       {/* Main Layout with Sidebar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
@@ -41,14 +41,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
               /* Headings - Use Serif for elegant typography */
               prose-headings:font-serif prose-headings:font-medium 
-              prose-headings:tracking-tight prose-headings:text-gray-900
+              prose-headings:tracking-tight prose-headings:text-theme-text-high-contrast
               prose-h1:text-4xl prose-h1:mt-0 prose-h1:mb-6 prose-h1:leading-tight prose-h1:font-semibold
               prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:leading-tight prose-h2:font-medium
               prose-h3:text-2xl prose-h3:mt-10 prose-h3:mb-4 prose-h3:leading-tight prose-h3:font-medium
               prose-h4:text-xl prose-h4:mt-8 prose-h4:mb-3 prose-h4:leading-tight prose-h4:font-medium
 
               /* Paragraphs - Use Inter with medium weight */
-              prose-p:text-lg prose-p:leading-relaxed prose-p:text-gray-800 prose-p:font-medium
+              prose-p:text-lg prose-p:leading-relaxed prose-p:text-theme-text prose-p:font-medium
               [&_p]:text-lg [&_p]:my-6 [&_p]:font-sans
 
               /* Links */
@@ -61,13 +61,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
               /* Blockquotes */
               prose-blockquote:border-l-4 prose-blockquote:border-[#823EB7] prose-blockquote:pl-6
-              prose-blockquote:italic prose-blockquote:text-gray-700 prose-blockquote:my-8
+              prose-blockquote:italic prose-blockquote:text-theme-text-secondary prose-blockquote:my-8
               prose-blockquote:text-xl prose-blockquote:leading-relaxed
 
               /* Inline code */
-              prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1
+              prose-code:bg-theme-bg-muted prose-code:px-2 prose-code:py-1
               prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
-              prose-code:font-mono prose-code:text-gray-800
+              prose-code:font-mono prose-code:text-theme-text
 
               /* Code blocks */
               prose-pre:bg-gray-900 prose-pre:text-gray-100
@@ -86,16 +86,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               prose-hr:my-12 prose-hr:border-gray-200
 
               /* Strong/Bold */
-              prose-strong:font-semibold prose-strong:text-gray-900
+              prose-strong:font-semibold prose-strong:text-theme-text-high-contrast
             "
             >
               {/* Article Header */}
               <header className="mb-12 not-prose">
-                <h1 className="font-serif text-5xl font-semibold text-gray-900 mb-6 leading-tight tracking-tight">
+                <h1 className="font-serif text-5xl font-semibold text-theme-text-high-contrast mb-6 leading-tight tracking-tight">
                   {post.title}
                 </h1>
 
-                <div className="flex items-center gap-6 text-sm text-gray-500 mb-8 font-medium">
+                <div className="flex items-center gap-6 text-sm text-theme-text-secondary mb-8 font-medium">
                   <time dateTime={post.publishedAt}>
                     {new Date(post.publishedAt).toLocaleDateString("en-US", {
                       year: "numeric",
@@ -113,7 +113,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 </div>
 
                 {post.description && (
-                  <p className="font-sans text-xl text-gray-600 mb-8 leading-relaxed max-w-3xl font-medium">
+                  <p className="font-sans text-xl text-theme-text-secondary mb-8 leading-relaxed max-w-3xl font-medium">
                     {post.description}
                   </p>
                 )}
@@ -137,7 +137,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <MDXRemote source={post.content} components={mdxComponents} />
               {/* Tags Section - Minimal */}
               {post.tags && post.tags.length > 0 && (
-                <div className="mt-20 pt-12 border-t border-gray-100 not-prose">
+                <div className="mt-20 pt-12 border-t border-theme-border-light not-prose">
                   <div className="flex flex-wrap gap-3">
                     {post.tags.map((tag) => (
                       <a
@@ -145,7 +145,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         href={`/blog/tag/${tag
                           .toLowerCase()
                           .replace(/\s+/g, "-")}`}
-                        className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-[#823EB7] hover:text-white transition-all duration-200"
+                        className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-theme-bg-muted text-theme-text-secondary hover:bg-primary-500 hover:text-white transition-all duration-200"
                       >
                         {tag}
                       </a>
@@ -155,10 +155,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               )}
 
               {/* Footer Navigation - Clean */}
-              <footer className="mt-20 pt-12 border-t border-gray-100 not-prose">
+              <footer className="mt-20 pt-12 border-t border-theme-border-light not-prose">
                 <a
                   href="/blog"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#823EB7] transition-colors group"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-theme-text-secondary hover:text-primary-500 transition-colors group"
                 >
                   <svg
                     className="w-4 h-4 transition-transform group-hover:-translate-x-1"

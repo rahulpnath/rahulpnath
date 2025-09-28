@@ -10,8 +10,8 @@
 --color-primary-200: #d7b5eb;
 --color-primary-300: #b985df;
 --color-primary-400: #823eb6; /* your base */
---color-primary-500: #6e33a0;
---color-primary-600: #592985;
+--color-primary-500: 110 51 160;
+--color-primary-600: 89 41 133;
 --color-primary-700: #47216b;
 --color-primary-800: #351852;
 --color-primary-900: #240f38;
@@ -34,12 +34,22 @@
 
 
   /* Text Colors - LIGHT MODE */
-  --text-primary: #111827;
+  --text-primary: #374151;
   --text-secondary: #6b7280;
+  --text-high-contrast: #111827;
+  --text-hover: #4b5563;
+  --text-muted: #4b5563;
+  --text-light: #9ca3af;
   
   /* bg Colors - LIGHT MODE */
   --bg-primary: #ffffff;
   --bg-secondary: rgba(255, 255, 255, 0.6);
+  --bg-muted: #f9fafb;
+  --bg-card: #ffffff;
+  
+  /* Border Colors - LIGHT MODE */
+  --border-light: #e5e7eb;
+  --border-muted: #d1d5db;
 
   /* Typography System - DM Sans + JetBrains Mono */
   --font-primary: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
@@ -96,12 +106,22 @@
   
 
   /* Text Colors - DARK MODE */
-  --text-primary: #f9fafb;
-  --text-secondary: #d1d5db;
+  --text-primary: #E5E7EB;
+  --text-secondary: #9CA3AF;
+  --text-high-contrast: #ffffff;
+  --text-hover: #d1d5db;
+  --text-muted: #6b7280;
+  --text-light: #6b7280;
   
   /* bg Colors - DARK MODE */
   --bg-primary: #111827;
   --bg-secondary: rgba(17, 24, 39, 0.6);
+  --bg-muted: #1f2937;
+  --bg-card: #1f2937;
+  
+  /* Border Colors - DARK MODE */
+  --border-light: #374151;
+  --border-muted: #4b5563;
   
 
   --ui-background: var(--color-gray-900);
@@ -122,8 +142,8 @@
   --color-primary-200: #d7b5eb;
   --color-primary-300: #b985df;
   --color-primary-400: #823eb6;
-  --color-primary-500: #6e33a0;
-  --color-primary-600: #592985;
+  --color-primary-500: 110 51 160;
+  --color-primary-600: 89 41 133;
   --color-primary-700: #47216b;
   --color-primary-800: #351852;
   --color-primary-900: #240f38;
@@ -146,6 +166,14 @@
   --color-theme-bg-secondary: var(--bg-secondary);
   --color-theme-text: var(--text-primary);
   --color-theme-text-secondary: var(--text-secondary);
+  --color-theme-text-high-contrast: var(--text-high-contrast);
+  --color-theme-text-hover: var(--text-hover);
+  --color-theme-text-muted: var(--text-muted);
+  --color-theme-text-light: var(--text-light);
+  --color-theme-bg-muted: var(--bg-muted);
+  --color-theme-bg-card: var(--bg-card);
+  --color-theme-border-light: var(--border-light);
+  --color-theme-border-muted: var(--border-muted);
   --color-theme-accent: var(--color-primary-500);
 }
 
@@ -172,9 +200,7 @@
     -moz-tab-size: 4;
     -o-tab-size: 4;
        tab-size: 4;
-    font-family: ui-sans-serif, system-ui, sans-serif,
-                 "Apple Color Emoji", "Segoe UI Emoji",
-                 "Segoe UI Symbol", "Noto Color Emoji";
+   font-family: DM Sans, "DM Sans Fallback: Arial", ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
     font-feature-settings: normal;
     font-variation-settings: normal;
     -webkit-tap-highlight-color: transparent;
@@ -182,15 +208,15 @@
 
   body {
     @apply m-0;
-    font-family: var(--font-inter), Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: DM Sans, "DM Sans Fallback: Arial", ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
     font-size: 1rem;  /* 16px base */
-    font-weight: 400;
-    line-height: 1.625;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    transition: background-color 0.3s ease, color 0.3s ease;
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--ui-background) / var(--tw-bg-opacity, 1));
+    --tw-text-opacity: 1;
+    color: rgb(var(--ui-foreground) / var(--tw-text-opacity, 1));
+    /* transition: background-color 0.3s ease, color 0.3s ease; */
   }
 
   /* Profile image styles */
@@ -379,6 +405,33 @@
 
 /* Utility classes */
 @layer utilities {
+  /* Primary background colors with opacity system */
+  .bg-primary-500 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(110 51 160 / var(--tw-bg-opacity, 1));
+  }
+  
+  .bg-primary-600 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(89 41 133 / var(--tw-bg-opacity, 1));
+  }
+  
+  .hover\:bg-primary-600:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgb(89 41 133 / var(--tw-bg-opacity, 1));
+  }
+  
+  /* Primary text colors with opacity system */
+  .text-primary-500 {
+    --tw-text-opacity: 1;
+    color: rgb(110 51 160 / var(--tw-text-opacity, 1));
+  }
+  
+  .hover\:text-primary-500:hover {
+    --tw-text-opacity: 1;
+    color: rgb(110 51 160 / var(--tw-text-opacity, 1));
+  }
+
   /* Text clamping */
   .line-clamp-1 {
     overflow: hidden;

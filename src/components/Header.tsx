@@ -41,14 +41,14 @@ export default function Header({ posts = [] }: HeaderProps) {
 
   return (
     <>
-      <header className="bg-background/75 backdrop-blur border-b border-gray-200 dark:border-gray-800 -mb-px sticky top-0 z-50">
+      <header className="bg-background/75 backdrop-blur border-b border-theme-border-light -mb-px sticky top-0 z-50">
         <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl flex items-center justify-between h-24 gap-0">
           
           {/* Logo/Brand - Left side with flex-1 */}
           <div className="lg:flex-1 flex items-center gap-1.5">
             <Link 
               href="/" 
-              className="flex-shrink-0 font-bold flex gap-1.5 text-lg sm:text-2xl items-center text-theme-text"
+              className="flex-shrink-0 font-bold flex gap-1.5 text-lg sm:text-2xl items-center text-theme-text-high-contrast"
               aria-label="Rahul Nath"
             >
               <span className="relative inline-flex items-center justify-center flex-shrink-0 rounded-full h-8 w-8 text-sm sm:w-10 sm:h-10">
@@ -71,7 +71,7 @@ export default function Header({ posts = [] }: HeaderProps) {
                 <Link
                   href={item.href}
                   className={`text-xl font-semibold items-center gap-1 hidden lg:flex transition-colors ${
-                    isActive(item.href) ? 'text-primary-500' : 'hover:text-primary-500'
+                    isActive(item.href) ? 'text-primary-500' : 'text-theme-text hover:text-primary-500'
                   }`}
                 >
                   {item.name}
@@ -86,7 +86,7 @@ export default function Header({ posts = [] }: HeaderProps) {
             <div className="relative inline-flex">
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 font-medium rounded-full text-base gap-x-2.5 p-2.5 text-theme-text-secondary hover:text-theme-text hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 inline-flex items-center"
+                className="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 font-medium rounded-full text-base gap-x-2.5 p-2.5 text-theme-text-secondary hover:text-theme-text hover:bg-theme-bg-muted focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 inline-flex items-center"
                 aria-label="Search"
               >
                 <Search className="flex-shrink-0 h-6 w-6" />
@@ -98,7 +98,7 @@ export default function Header({ posts = [] }: HeaderProps) {
               <div className="relative inline-flex">
                 <button
                   onClick={toggleTheme}
-                  className="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 font-medium rounded-full text-base gap-x-2.5 p-2.5 text-theme-text-secondary hover:text-theme-text hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 inline-flex items-center"
+                  className="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 font-medium rounded-full text-base gap-x-2.5 p-2.5 text-theme-text-secondary hover:text-theme-text hover:bg-theme-bg-muted focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 inline-flex items-center"
                   aria-label={theme === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
                 >
                   {theme === 'dark' ? <Moon className="flex-shrink-0 h-6 w-6" /> : <Sun className="flex-shrink-0 h-6 w-6" />}
@@ -109,7 +109,7 @@ export default function Header({ posts = [] }: HeaderProps) {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 font-medium rounded-full text-sm gap-x-2 p-2 text-theme-text-secondary hover:text-theme-text hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 inline-flex items-center lg:hidden"
+              className="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 font-medium rounded-full text-sm gap-x-2 p-2 text-theme-text-secondary hover:text-theme-text hover:bg-theme-bg-muted focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 inline-flex items-center lg:hidden"
               aria-label="Open Menu"
             >
               {isMobileMenuOpen ? (

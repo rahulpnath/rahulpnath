@@ -34,21 +34,31 @@ export default async function TagPage({ params }: TagPageProps) {
   const tagName = slug.replace(/-/g, " ");
 
   return (
-    <div className="min-h-screen bg-black text-gray-200">
-      {/* Header */}
-      <div className="mx-auto max-w-[1345px] px-4 md:px-8 lg:px-16 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold mb-8 capitalize text-white">
-            Posts tagged with "{tagName}"
-          </h1>
-          <p className="text-gray-300 mb-8">
-            Found {taggedPosts.length} post{taggedPosts.length !== 1 ? "s" : ""}{" "}
-            with this tag.
-          </p>
+    <div className="min-h-screen blog-container">
+      <main className="min-h-[calc(100vh-var(--header-height))]">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+          <div className="flex flex-col lg:grid lg:grid-cols-10 lg:gap-8">
+            <div className="lg:col-span-10">
+              <div className="relative border-b border-theme-border-light py-8">
+                <div className="flex flex-col lg:flex-row items-start gap-6">
+                  <div className="flex-1">
+                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                      <h1 className="text-3xl sm:text-4xl font-bold text-theme-text-high-contrast tracking-tight capitalize">
+                        Posts tagged with "{tagName}"
+                      </h1>
+                    </div>
+                    <div className="mt-4 text-lg text-theme-text-secondary">
+                      Found {taggedPosts.length} post{taggedPosts.length !== 1 ? "s" : ""} with this tag.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <BlogWithPagination posts={taggedPosts} />
+        <BlogWithPagination posts={taggedPosts} showHeader={false} />
+      </main>
     </div>
   );
 }
