@@ -145,7 +145,7 @@ export default function SubscribePage() {
                   <input type="text" name="b_YOUR_BOT_PROTECTION_CODE" tabIndex={-1} value="" />
                 </div>
                 <div className="clear">
-                  <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" className="button bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700" />
+                  <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" className="bg-primary-500 text-white py-2 px-4 rounded-md hover:bg-primary-600 focus:bg-primary-700 active:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 transition-colors duration-200" />
                 </div>
               </div>
             </form>

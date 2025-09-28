@@ -22,7 +22,6 @@ export default async function SearchPage() {
             <Search 
               posts={posts} 
               placeholder="Search articles, tags, or topics..."
-              className="w-full"
             />
           </div>
         </div>

@@ -1,8 +1,9 @@
 import './globals.css';
 import localFont from "next/font/local";
-import { Inter, Playfair_Display } from 'next/font/google';
-import Header from '@/components/Header';
+import { Inter, Playfair_Display, DM_Sans } from 'next/font/google';
+import ClientHeader from '@/components/ClientHeader';
 import { getAllPosts } from '@/lib/posts';
+import ThemeWrapper from '@/components/ThemeWrapper';
 
 const clashGrotesk = localFont({
   src: "../fonts/ClashGrotesk-Variable.woff2", // path is from /public
@@ -23,6 +24,12 @@ const playfairDisplay = Playfair_Display({
   display: 'swap',
 });
 
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  variable: '--font-dm-sans',
+  display: 'swap',
+});
+
 export const metadata = {
   title: 'Rahul Nath - Developer Blog',
   description: 'Thoughts, tutorials, and insights on web development, AWS, and modern technologies.',
@@ -37,10 +44,14 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const posts = await getAllPosts();
 
   return (
-    <html lang="en" className={`${clashGrotesk.variable} ${inter.variable} ${playfairDisplay.variable}`}>
-      <body className="font-sans antialiased text-gray-900 bg-white">
-        <Header posts={posts} />
-        {children}
+    <html lang="en" className={`${clashGrotesk.variable} ${inter.variable} ${playfairDisplay.variable} ${dmSans.variable}`}>
+      <body className={`${dmSans.className} antialiased`} suppressHydrationWarning>
+        <ThemeWrapper>
+          <div className="min-h-screen bg-theme-bg text-theme-text transition-colors">
+            <ClientHeader posts={posts} />
+            {children}
+          </div>
+        </ThemeWrapper>
       </body>
     </html>
   );

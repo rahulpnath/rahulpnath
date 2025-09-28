@@ -22,6 +22,31 @@ export interface BlogPost {
   coverImage?: string;
   tags?: string[];
   readingTime?: string;
+  
+  // Enhanced educator-focused properties
+  contentType?: 'blog' | 'video' | 'tutorial-series' | 'guide';
+  technologies?: Technology[];
+  difficulty?: 'beginner' | 'intermediate' | 'advanced';
+  youtubeUrl?: string;
+  githubUrl?: string;
+  estimatedTime?: string;
+  whyThisMatters?: string;
+  videoChapters?: VideoChapter[];
+  featured?: boolean;
+}
+
+export interface Technology {
+  name: string;
+  color: string;
+  icon?: string;
+  category: 'frontend' | 'backend' | 'cloud' | 'devops' | 'tools';
+}
+
+export interface VideoChapter {
+  title: string;
+  timestamp: string;
+  url: string;
+  description?: string;
 }
 
 export interface BlogMetadata {
