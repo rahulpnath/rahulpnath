@@ -3,6 +3,37 @@ import { mdxComponents } from "@/mdx-components";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'About | Rahul Nath',
+  description: 'Learn about Rahul Nath - Developer, Blogger, YouTuber, and Teacher. Discover my journey in web development, AWS, .NET, and software engineering.',
+  keywords: ['Rahul Nath', 'About', 'Developer', 'AWS', '.NET', 'Software Engineer', 'Biography'],
+  openGraph: {
+    title: 'About | Rahul Nath',
+    description: 'Learn about Rahul Nath - Developer, Blogger, YouTuber, and Teacher. Discover my journey in web development, AWS, .NET, and software engineering.',
+    type: 'profile',
+    url: 'https://www.rahulpnath.com/about',
+    images: [
+      {
+        url: '/rahul-logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'About Rahul Nath',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About | Rahul Nath',
+    description: 'Learn about Rahul Nath - Developer, Blogger, YouTuber, and Teacher. Discover my journey in web development, AWS, .NET, and software engineering.',
+    creator: '@rahulpnath',
+    images: ['/rahul-logo.png'],
+  },
+  alternates: {
+    canonical: 'https://www.rahulpnath.com/about',
+  },
+};
 
 export default async function AboutPage() {
   const aboutPost = await getPostBySlug("about");

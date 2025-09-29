@@ -19,4 +19,42 @@ module.exports = withMDX({
     // Skip TypeScript checking during builds
     ignoreBuildErrors: false,
   },
+  // Security headers
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on'
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY'
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin'
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), magnetometer=(), accelerometer=(), gyroscope=()'
+          }
+        ],
+      },
+    ]
+  },
+  // Remove X-Powered-By header
+  poweredByHeader: false,
+  
+  // Compress responses
+  compress: true,
+  
+  // Enable React strict mode for better development
+  reactStrictMode: true,
 });

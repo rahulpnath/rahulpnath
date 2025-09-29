@@ -1,341 +1,428 @@
-
-// app/page.tsx
 import { Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Metadata } from 'next';
 import { BlogPost } from '@/types/blog';
 import { getAllPosts } from '@/lib/posts';
+import { getLatestYouTubeVideos, YouTubeVideo } from '@/lib/youtube';
+
+export const metadata: Metadata = {
+  title: 'Rahul Nath - Developer Blog',
+  description: 'Hey, I\'m Rahul Nath! Coder, Blogger, YouTuber, Teacher. Explore my thoughts, tutorials, and insights on web development, AWS, .NET, and modern technologies.',
+  keywords: ['Rahul Nath', 'Developer', 'Blog', 'AWS', '.NET', 'Web Development', 'YouTube', 'Teaching', 'Software Engineering'],
+  openGraph: {
+    title: 'Rahul Nath - Developer Blog',
+    description: 'Hey, I\'m Rahul Nath! Coder, Blogger, YouTuber, Teacher. Explore my thoughts, tutorials, and insights on web development, AWS, .NET, and modern technologies.',
+    type: 'website',
+    url: 'https://www.rahulpnath.com',
+    images: [
+      {
+        url: '/rahul-logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'Rahul Nath - Developer Blog',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Rahul Nath - Developer Blog',
+    description: 'Hey, I\'m Rahul Nath! Coder, Blogger, YouTuber, Teacher. Explore my thoughts, tutorials, and insights on web development, AWS, .NET, and modern technologies.',
+    creator: '@rahulpnath',
+    images: ['/rahul-logo.png'],
+  },
+  alternates: {
+    canonical: 'https://www.rahulpnath.com',
+    types: {
+      'application/rss+xml': [
+        { url: '/feed.xml', title: 'Rahul Nath Blog RSS Feed' },
+      ],
+    },
+  },
+};
 
 // Hero Section Component
 function HeroSection() {
   return (
-    <section className="hero-section py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-4xl">
-          {/* Hero Section with Profile Photo */}
-          <div className="flex flex-col md:flex-row items-center gap-8">
-            {/* Profile Image */}
-            <div className="flex-shrink-0">
-              <Image
-                src="/rahul-logo.png"
-                alt="Rahul Nath"
-                width={120}
-                height={120}
-                className="profile-image rounded-full"
-                priority
-              />
-            </div>
-            
-            {/* Text Content */}
-            <div className="flex-1 text-center md:text-left">
-              {/* Greeting */}
-              <h1 className="text-4xl md:text-6xl font-bold text-theme-text mb-4">
-                Hey, I'm Rahul Nath 👋
-              </h1>
-              
-              {/* Role Tagline */}
-              <p className="text-xl md:text-2xl font-medium text-primary-500 mb-6">
-                Web Developer. Blogger. Mentor. Runner.
-              </p>
-              
-              {/* Description */}
-              <p className="text-lg md:text-xl text-theme-text-secondary leading-relaxed max-w-2xl mb-8">
-                I build modern web applications and share practical development insights. From AWS tutorials to career advice, I help developers write better code and grow their skills.
-              </p>
-
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                <a
-                  href="mailto:hello@rahulpnath.com"
-                  className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-white bg-primary-500 hover:bg-primary-600 focus:bg-primary-700 active:bg-primary-800 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2"
-                >
-                  Get In Touch
-                </a>
-                <Link
-                  href="/blog"
-                  className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-theme-text-secondary border-2 border-transparent hover:border-primary-500 hover:text-primary-600 focus:border-primary-600 focus:text-primary-700 active:border-primary-700 active:text-primary-800 rounded-lg transition-colors duration-200"
-                >
-                  Read My Blog
-                </Link>
-              </div>
-            </div>
+    <section 
+      className="relative bg-theme-bg py-24 sm:py-32 overflow-hidden"
+      aria-labelledby="hero-heading"
+      role="banner"
+    >
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary-50 to-transparent opacity-50" aria-hidden="true"></div>
+      
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl text-center">
+          {/* Main headline */}
+          <h1 
+            id="hero-heading"
+            className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 text-theme-text-high-contrast"
+          >
+            Hey, I'm Rahul Nath <span role="img" aria-label="waving hand">👋</span>
+          </h1>
+          
+          {/* Subtitle */}
+          <p className="text-xl md:text-2xl text-primary-500 max-w-3xl mx-auto mb-6 leading-relaxed">
+            Coder. Blogger. YouTuber. Teacher.
+          </p>
+          
+          <p className="text-lg md:text-xl text-theme-text-secondary max-w-3xl mx-auto mb-12 leading-relaxed">
+            I enjoy running. Blogs are usually technical and about life in general.
+          </p>
+          
+          {/* Single prominent CTA */}
+          <div className="flex justify-center">
+            <Link
+              href="/blog"
+              className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-primary-500 hover:bg-primary-600 focus:bg-primary-700 active:bg-primary-800 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 hover:scale-105 transform focus:ring-offset-theme-bg"
+              aria-describedby="cta-description"
+            >
+              <span>Start Reading</span>
+              <svg 
+                className="ml-2 h-5 w-5" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
           </div>
+          <p id="cta-description" className="sr-only">
+            Navigate to the blog section to read articles about web development, tutorials, and insights
+          </p>
         </div>
       </div>
     </section>
   );
 }
 
-// Blog Post Card Component
-interface BlogPostCardProps {
-  post: BlogPost;
+// Latest on YouTube Section
+interface LatestYouTubeSectionProps {
+  videos: YouTubeVideo[];
 }
 
-function EnhancedBlogPostCard({ post }: BlogPostCardProps) {
-  // Mock enhanced data for demonstration (in real app, this would come from your CMS)
-  const mockPost = {
-    ...post,
-    contentType: 'tutorial-series' as const,
-    technologies: [
-      { name: 'Azure', color: 'text-brand', category: 'cloud' as const },
-      { name: 'DevOps', color: 'text-brand-secondary', category: 'devops' as const }
-    ],
-    difficulty: 'intermediate' as const,
-    youtubeUrl: 'https://youtube.com/watch?v=example',
-    githubUrl: 'https://github.com/rahulpnath/azure-devops-sample',
-    whyThisMatters: 'Understanding Azure DevOps pipelines is crucial for modern cloud deployment strategies.',
-    estimatedTime: '15 min read'
-  };
+function LatestYouTubeSection({ videos }: LatestYouTubeSectionProps) {
+  const featuredVideo = videos[0];
+  const recentVideos = videos.slice(1, 4);
 
-  const getContentTypeIcon = (type: string) => {
-    switch (type) {
-      case 'video':
-        return (
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M8 5v14l11-7z"/>
-          </svg>
-        );
-      case 'tutorial-series':
-        return (
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
-        );
-      case 'guide':
-        return (
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
-        );
-      default:
-        return (
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-          </svg>
-        );
-    }
-  };
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'beginner': return 'text-green-600 bg-green-50';
-      case 'intermediate': return 'text-yellow-600 bg-yellow-50';
-      case 'advanced': return 'text-red-600 bg-red-50';
-      default: return 'text-gray-600 bg-gray-100';
-    }
-  };
+  if (!featuredVideo) {
+    return (
+      <section className="py-16 sm:py-24 bg-theme-bg" aria-labelledby="youtube-heading">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="text-center">
+            <h2 id="youtube-heading" className="text-3xl md:text-4xl font-bold text-theme-text mb-4">
+              Latest on YouTube
+            </h2>
+            <p className="text-lg text-theme-text-secondary">Loading videos...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <article className="group relative flex flex-col bg-white rounded-2xl shadow-brand ring-1 ring-gray-200 hover:shadow-brand-lg hover:ring-gray-300 transition-all duration-300 hover:-translate-y-1">
-      {post.coverImage && (
-        <div className="relative aspect-[16/9] overflow-hidden rounded-t-2xl">
-          <Image
-            src={post.coverImage}
-            alt={post.title}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          
-          {/* Content Type Badge */}
-          <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded-full bg-white/90 backdrop-blur-sm text-xs font-medium">
-            {getContentTypeIcon(mockPost.contentType)}
-            <span className="capitalize">{mockPost.contentType.replace('-', ' ')}</span>
-          </div>
-          
-          {/* Difficulty Badge */}
-          <div className={`absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(mockPost.difficulty)}`}>
-            {mockPost.difficulty}
-          </div>
-        </div>
-      )}
-      
-      <div className="flex flex-1 flex-col p-6">
-        {/* Meta Information */}
-        <div className="flex items-center justify-between text-xs mb-3">
-          <div className="flex items-center gap-x-4">
-            <time dateTime={post.publishedAt} className="text-theme-text-secondary">
-              {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-              })}
-            </time>
-            <span className="text-theme-text-secondary">{mockPost.estimatedTime}</span>
-          </div>
-        </div>
-
-        {/* Technology Stack */}
-        {mockPost.technologies && mockPost.technologies.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-3">
-            {mockPost.technologies.map((tech) => (
-              <span
-                key={tech.name}
-                className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${tech.color} bg-gray-100 ring-1 ring-inset ring-gray-200`}
-              >
-                {tech.name}
-              </span>
-            ))}
-          </div>
-        )}
-        
-        {/* Title and Description */}
-        <div className="group relative flex-1">
-          <h3 className="text-lg font-semibold leading-6 text-theme-text group-hover:text-primary-600 transition-colors duration-200">
-            <Link href={`/blog/${post.slug}`}>
-              <span className="absolute inset-0" />
-              {post.title}
-            </Link>
-          </h3>
-          <p className="mt-3 text-sm leading-6 text-theme-text-secondary line-clamp-2">
-            {post.description}
+    <section 
+      className="py-16 sm:py-24 bg-theme-bg"
+      aria-labelledby="youtube-heading"
+      role="region"
+    >
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        {/* Section header */}
+        <div className="text-center mb-16">
+          <h2 id="youtube-heading" className="text-3xl md:text-4xl font-bold text-theme-text mb-4">
+            Latest on YouTube
+          </h2>
+          <p className="text-lg text-theme-text-secondary max-w-2xl mx-auto">
+            Watch in-depth tutorials and coding sessions where I build real applications and explain complex concepts step by step.
           </p>
-          
-          {/* Why This Matters */}
-          {mockPost.whyThisMatters && (
-            <div className="mt-3 p-3 bg-primary-light rounded-lg">
-              <p className="text-xs text-brand font-medium mb-1">Why this matters:</p>
-              <p className="text-xs text-theme-text-secondary line-clamp-2">{mockPost.whyThisMatters}</p>
-            </div>
-          )}
         </div>
 
-        {/* Cross-Platform Links */}
-        <div className="mt-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {mockPost.youtubeUrl && (
-              <a
-                href={mockPost.youtubeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 px-3 py-1 rounded-full bg-red-50 text-red-600 text-xs font-medium hover:bg-red-100 transition-colors"
-              >
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                </svg>
-                Watch
-              </a>
-            )}
-            {mockPost.githubUrl && (
-              <a
-                href={mockPost.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-50 text-gray-600 text-xs font-medium hover:bg-gray-100 transition-colors"
-              >
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                </svg>
-                Code
-              </a>
-            )}
+        {/* Video grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Featured video - spans 2 columns on desktop */}
+          <div className="lg:col-span-2">
+            <a
+              href={featuredVideo.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block relative bg-theme-bg-card rounded-2xl overflow-hidden border border-theme-border-light hover:border-primary-300 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-bg"
+              aria-describedby={`featured-video-${featuredVideo.id}`}
+            >
+              {/* Video thumbnail */}
+              <div className="relative aspect-video overflow-hidden">
+                <Image
+                  src={featuredVideo.thumbnail}
+                  alt={`Video thumbnail for: ${featuredVideo.title}`}
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  sizes="(min-width: 1024px) 66vw, 100vw"
+                />
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300" aria-hidden="true"></div>
+                
+                {/* Play button */}
+                <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
+                  <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                    <svg 
+                      className="w-6 h-6 text-white ml-1" 
+                      fill="currentColor" 
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </div>
+                </div>
+                
+                {/* Duration badge */}
+                <div className="absolute bottom-3 right-3 bg-black/80 text-white text-sm px-2 py-1 rounded" aria-label={`Video duration: ${featuredVideo.duration}`}>
+                  {featuredVideo.duration}
+                </div>
+              </div>
+              
+              {/* Video info */}
+              <div className="p-6">
+                <h3 className="text-xl font-semibold text-theme-text mb-2 group-hover:text-primary-600 transition-colors">
+                  {featuredVideo.title}
+                </h3>
+                <p className="text-theme-text-secondary text-sm mb-3 line-clamp-2">
+                  {featuredVideo.description}
+                </p>
+                <div className="flex items-center text-sm text-theme-text-light space-x-3">
+                  <span aria-label={`${featuredVideo.viewCount} views`}>{featuredVideo.viewCount}</span>
+                  <span aria-hidden="true">•</span>
+                  <span>{featuredVideo.publishedAt}</span>
+                </div>
+              </div>
+              
+              {/* Screen reader description */}
+              <div id={`featured-video-${featuredVideo.id}`} className="sr-only">
+                Featured video: {featuredVideo.title}. Duration: {featuredVideo.duration}. 
+                {featuredVideo.viewCount}. Published {featuredVideo.publishedAt}. 
+                Click to watch on YouTube.
+              </div>
+            </a>
           </div>
-          
-          <div className="flex items-center gap-x-2">
-            <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-              <span className="text-xs font-medium text-gray-600">
-                {post.author.name.charAt(0)}
-              </span>
+
+          {/* Recent videos sidebar */}
+          <aside className="space-y-4" aria-labelledby="recent-videos-heading">
+            <h3 id="recent-videos-heading" className="text-lg font-semibold text-theme-text mb-4">Recent Videos</h3>
+            <ul className="space-y-4" role="list">
+              {recentVideos.map((video) => (
+                <li key={video.id}>
+                  <a
+                    href={video.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex space-x-3 p-3 rounded-xl hover:bg-theme-bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-bg"
+                    aria-describedby={`video-${video.id}`}
+                  >
+                    {/* Thumbnail */}
+                    <div className="relative w-24 h-16 flex-shrink-0 rounded-lg overflow-hidden">
+                      <Image
+                        src={video.thumbnail}
+                        alt={`Thumbnail for: ${video.title}`}
+                        fill
+                        className="object-cover"
+                        sizes="96px"
+                      />
+                      <div className="absolute bottom-1 right-1 bg-black/80 text-white text-xs px-1 rounded" aria-label={`Duration: ${video.duration}`}>
+                        {video.duration}
+                      </div>
+                    </div>
+                    
+                    {/* Video info */}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-medium text-theme-text line-clamp-2 group-hover:text-primary-600 transition-colors">
+                        {video.title}
+                      </h4>
+                      <p className="text-xs text-theme-text-light mt-1">
+                        {video.publishedAt}
+                      </p>
+                    </div>
+                    
+                    {/* Screen reader description */}
+                    <div id={`video-${video.id}`} className="sr-only">
+                      {video.title}. Duration: {video.duration}. Published {video.publishedAt}. Click to watch on YouTube.
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            
+            {/* View all videos link */}
+            <div className="pt-2">
+              <a
+                href="https://youtube.com/@rahulpnath"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 focus:text-primary-700 transition-colors focus:outline-none focus:underline"
+                aria-label="View all videos on Rahul Nath's YouTube channel"
+              >
+                View all videos
+                <svg 
+                  className="ml-1 h-4 w-4" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
             </div>
-          </div>
+          </aside>
         </div>
       </div>
-    </article>
+    </section>
   );
 }
 
-
-
-// Featured Posts Section
-interface FeaturedPostsProps {
+// Recent Articles Section
+interface RecentArticlesProps {
   posts: BlogPost[];
 }
 
-function FeaturedPosts({ posts }: FeaturedPostsProps) {
-  const featuredPost = posts[0];
+function RecentArticlesSection({ posts }: RecentArticlesProps) {
+  const recentPosts = posts.slice(0, 6);
 
   return (
-    <section className="bg-transparent">
-      <div className="w-full">
-        {/* Featured Article */}
-        {featuredPost && (
-          <Link 
-            href={`/blog/${featuredPost.slug}`}
-            className="relative grid grid-cols-1 lg:grid-cols-2 gap-6 group rounded-lg p-6 bg-gray-50 border-2 border-transparent hover:border-purple-600 transition-all duration-300 hover:shadow-lg hover:shadow-purple-100 cursor-pointer mb-12"
-          >
-            {/* Content */}
-            <div className="flex flex-col justify-between">
-              <div>
-                <h2 className="text-lg font-medium text-theme-text-secondary mb-4">Featured article</h2>
-                <h3 className="text-2xl md:text-3xl font-bold text-theme-text mb-4">
-                  {featuredPost.title}
-                </h3>
-                {featuredPost.publishedAt && (
-                  <div className="text-sm text-theme-text-secondary mb-4">
-                    {new Date(featuredPost.publishedAt).toLocaleDateString('en-US', {
-                      month: 'long',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })} — 5 min read
+    <section 
+      className="py-16 sm:py-24 bg-theme-bg-muted"
+      aria-labelledby="articles-heading"
+      role="region"
+    >
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        {/* Section header */}
+        <div className="text-center mb-16">
+          <h2 id="articles-heading" className="text-3xl md:text-4xl font-bold text-theme-text mb-4">
+            Recent Articles
+          </h2>
+          <p className="text-lg text-theme-text-secondary max-w-2xl mx-auto">
+            Deep dives into web development, cloud architecture, and building better software.
+          </p>
+        </div>
+
+        {/* Articles grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" role="list">
+          {recentPosts.map((post, index) => (
+            <Link 
+              key={post.slug} 
+              href={`/blog/${post.slug}`} 
+              className="group block focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-bg-muted rounded-2xl"
+              aria-describedby={`article-${post.slug}`}
+            >
+              <article 
+                className="bg-theme-bg-card rounded-2xl overflow-hidden border border-theme-border-light hover:border-primary-300 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full"
+                role="listitem"
+              >
+                {/* Article image */}
+                {post.coverImage && (
+                  <div className="relative aspect-[16/9] overflow-hidden">
+                    <Image
+                      src={post.coverImage}
+                      alt={`Cover image for article: ${post.title}`}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true"></div>
                   </div>
                 )}
-                {featuredPost.description && (
-                  <p className="text-theme-text-secondary">
-                    {featuredPost.description}
+                
+                {/* Article content */}
+                <div className="p-6">
+                  {/* Meta info */}
+                  <div className="flex items-center text-sm text-theme-text-light mb-3">
+                    <time 
+                      dateTime={post.publishedAt}
+                      aria-label={`Published on ${new Date(post.publishedAt).toLocaleDateString('en-US', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}`}
+                    >
+                      {new Date(post.publishedAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </time>
+                    <span className="mx-2" aria-hidden="true">•</span>
+                    <span aria-label={`Estimated reading time: ${post.readingTime || '5 minutes'}`}>
+                      {post.readingTime || '5 min read'}
+                    </span>
+                  </div>
+                  
+                  {/* Title */}
+                  <h3 className="text-xl font-semibold text-theme-text mb-3 group-hover:text-primary-600 transition-colors line-clamp-2">
+                    {post.title}
+                  </h3>
+                  
+                  {/* Excerpt */}
+                  <p className="text-theme-text-secondary text-sm line-clamp-3 mb-4">
+                    {post.description}
                   </p>
-                )}
-              </div>
-              <div className="mt-6">
-                <span className="inline-flex items-center text-[#823EB7] font-medium hover:text-[#6B2D9E] transition-colors">
-                  Read full article →
-                </span>
-              </div>
-            </div>
-            
-            {/* Image */}
-            {featuredPost.coverImage && (
-              <div className="relative">
-                <div className="relative overflow-hidden rounded-xl">
-                  <Image
-                    src={featuredPost.coverImage}
-                    alt={featuredPost.title}
-                    width={400}
-                    height={300}
-                    className="w-full h-48 lg:h-full object-cover transition-transform duration-300 hover:scale-105"
-                    sizes="(max-width: 1023px) 100vw, 400px"
-                    quality={95}
-                    priority
-                  />
+                  
+                  {/* Tags */}
+                  {post.tags && post.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2" role="list" aria-label="Article tags">
+                      {post.tags.slice(0, 2).map((tag) => (
+                        <span
+                          key={tag}
+                          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200"
+                          role="listitem"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                      {post.tags.length > 2 && (
+                        <span 
+                          className="text-xs text-theme-text-light"
+                          aria-label={`${post.tags.length - 2} more tags`}
+                        >
+                          +{post.tags.length - 2} more
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
-          </Link>
-        )}
-
-        {/* Enhanced Blog Cards Grid */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold text-center mb-8 text-gray-900">
-            Latest Articles & Tutorials
-          </h2>
-          {posts.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {posts.slice(0, 6).map((post) => (
-                <EnhancedBlogPostCard key={post.slug} post={post} />
-              ))}
-            </div>
-          )}
+                
+                {/* Screen reader description */}
+                <div id={`article-${post.slug}`} className="sr-only">
+                  Article: {post.title}. {post.description}. 
+                  Published {new Date(post.publishedAt).toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}. 
+                  Reading time: {post.readingTime || '5 minutes'}. 
+                  {post.tags && post.tags.length > 0 && `Tagged as: ${post.tags.join(', ')}.`}
+                  Click to read the full article.
+                </div>
+              </article>
+            </Link>
+          ))}
         </div>
-        
-        <div className="mt-12 flex justify-center">
+
+        {/* View all articles link */}
+        <div className="text-center mt-12">
           <Link
             href="/blog"
-            className="inline-flex items-center justify-center space-x-2 px-11 py-6 rounded-full border border-primary-500 text-sm font-medium text-primary-500 hover:bg-primary-500 hover:text-white focus:bg-primary-600 focus:text-white active:bg-primary-700 active:text-white transition-all duration-200"
+            className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-theme-text-high-contrast bg-theme-bg-muted hover:bg-theme-bg-card disabled:bg-theme-bg-muted border-2 border-gray-200 hover:border-primary-400 focus:border-primary-100 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-bg-muted"
+            aria-label="View all blog articles"
           >
-            <span>Load more articles</span>
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 17L17 7"></path>
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 7h10v10"></path>
+            <span>View all articles</span>
+            <svg 
+              className="ml-2 h-5 w-5" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
           </Link>
         </div>
@@ -344,62 +431,214 @@ function FeaturedPosts({ posts }: FeaturedPostsProps) {
   );
 }
 
-// Newsletter Section
-function NewsletterSection() {
+// Footer Component
+function Footer() {
+  const socialLinks = [
+    {
+      name: 'YouTube',
+      href: 'https://youtube.com/@rahulpnath',
+      ariaLabel: 'Visit Rahul Nath\'s YouTube channel',
+      icon: (
+        <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+        </svg>
+      )
+    },
+    {
+      name: 'Twitter',
+      href: 'https://twitter.com/rahulpnath',
+      ariaLabel: 'Follow Rahul Nath on Twitter',
+      icon: (
+        <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+      )
+    },
+    {
+      name: 'GitHub',
+      href: 'https://github.com/rahulpnath',
+      ariaLabel: 'View Rahul Nath\'s projects on GitHub',
+      icon: (
+        <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+      )
+    },
+    {
+      name: 'LinkedIn',
+      href: 'https://linkedin.com/in/rahulpnath',
+      ariaLabel: 'Connect with Rahul Nath on LinkedIn',
+      icon: (
+        <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+      )
+    }
+  ];
+
   return (
-    <section className="bg-gray-50 /50 py-16 sm:py-24">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900  sm:text-4xl">
-            Stay Updated
-          </h2>
-          <p className="mt-4 text-lg leading-8 text-gray-600 ">
-            Get the latest articles and insights delivered directly to your inbox
+    <footer 
+      className="bg-theme-bg border-t border-theme-border-light"
+      role="contentinfo"
+      aria-label="Site footer"
+    >
+      <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
+        <div className="text-center">
+          {/* Social links */}
+          <nav aria-label="Social media links">
+            <ul className="flex justify-center space-x-6 mb-8" role="list">
+              {socialLinks.map((item) => (
+                <li key={item.name}>
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-theme-text-light hover:text-primary-600 focus:text-primary-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-bg rounded-lg p-2"
+                    aria-label={item.ariaLabel}
+                  >
+                    {item.icon}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          
+          {/* Copyright */}
+          <p className="text-theme-text-secondary text-sm">
+            © {new Date().getFullYear()} Rahul Nath. All rights reserved.
           </p>
-          <form className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="min-w-0 flex-auto rounded-lg border-0 bg-white  px-4 py-3 text-gray-900  shadow-sm ring-1 ring-inset ring-gray-300  placeholder:text-gray-400  focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6"
-            />
-            <button
-              type="submit"
-              className="flex-none rounded-lg px-6 py-3 text-sm font-semibold bg-primary-500 text-white hover:bg-primary-600 focus:bg-primary-700 active:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 transition-all duration-200"
-            >
-              Subscribe
-            </button>
-          </form>
         </div>
       </div>
-    </section>
+    </footer>
   );
 }
 
 // Main Homepage Component
 export default async function HomePage() {
-  const allPosts = await getAllPosts();
-  const featuredPosts = allPosts.slice(0, 6); // Show latest 6 posts
+  const [allPosts, youtubeVideos] = await Promise.all([
+    getAllPosts(),
+    getLatestYouTubeVideos(6) // Get 6 videos (1 featured + 5 recent)
+  ]);
+
+  // Structured data for the website and person
+  const websiteStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Rahul Nath - Developer Blog',
+    url: 'https://www.rahulpnath.com',
+    description: 'Thoughts, tutorials, and insights on web development, AWS, .NET, and modern technologies by Rahul Nath.',
+    inLanguage: 'en-US',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://www.rahulpnath.com/search?q={search_term_string}',
+      'query-input': 'required name=search_term_string'
+    },
+    publisher: {
+      '@type': 'Person',
+      name: 'Rahul Nath',
+      url: 'https://www.rahulpnath.com',
+      sameAs: [
+        'https://twitter.com/rahulpnath',
+        'https://www.youtube.com/rahulnathp',
+        'https://github.com/rahulpnath',
+        'https://www.linkedin.com/in/rahulpnath'
+      ]
+    }
+  };
+
+  const personStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Rahul Nath',
+    jobTitle: 'Software Engineer',
+    description: 'Coder, Blogger, YouTuber, Teacher. Passionate about web development, AWS, .NET, and modern technologies.',
+    url: 'https://www.rahulpnath.com',
+    image: 'https://www.rahulpnath.com/rahul-logo.png',
+    sameAs: [
+      'https://twitter.com/rahulpnath',
+      'https://www.youtube.com/rahulnathp',
+      'https://github.com/rahulpnath',
+      'https://www.linkedin.com/in/rahulpnath'
+    ],
+    knowsAbout: [
+      'Web Development',
+      'AWS',
+      '.NET',
+      'Software Engineering',
+      'React',
+      'Next.js',
+      'TypeScript',
+      'Azure',
+      'DynamoDB',
+      'Lambda'
+    ],
+    worksFor: {
+      '@type': 'Organization',
+      name: 'Independent'
+    }
+  };
 
   return (
-    <main className="min-h-screen">
-      {/* Hero Section - Full Width */}
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteStructuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personStructuredData) }}
+      />
+    <main 
+      className="min-h-screen bg-theme-bg"
+      id="main-content"
+      role="main"
+    >
+      {/* Skip to main content link for screen readers */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary-600 text-white px-4 py-2 rounded-md text-sm font-medium z-50 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2"
+      >
+        Skip to main content
+      </a>
+      
+      {/* Hero Section */}
       <HeroSection />
       
-      {/* Main Content Area */}
-      <div className="mx-auto max-w-7xl px-6 lg:px-8 py-16">
-        <Suspense fallback={
-          <div className="flex items-center justify-center py-24">
-            <div className="animate-pulse text-gray-600">
-              Loading posts...
-            </div>
+      {/* Latest on YouTube Section */}
+      <Suspense fallback={
+        <div 
+          className="flex items-center justify-center py-24"
+          role="status"
+          aria-live="polite"
+          aria-label="Loading videos"
+        >
+          <div className="animate-pulse text-theme-text-secondary">
+            Loading videos...
           </div>
-        }>
-          <FeaturedPosts posts={featuredPosts} />
-        </Suspense>
-      </div>
+        </div>
+      }>
+        <LatestYouTubeSection videos={youtubeVideos} />
+      </Suspense>
       
-      {/* Newsletter Section - Full Width */}
-      <NewsletterSection />
+      {/* Recent Articles Section */}
+      <Suspense fallback={
+        <div 
+          className="flex items-center justify-center py-24"
+          role="status"
+          aria-live="polite"
+          aria-label="Loading articles"
+        >
+          <div className="animate-pulse text-theme-text-secondary">
+            Loading articles...
+          </div>
+        </div>
+      }>
+        <RecentArticlesSection posts={allPosts} />
+      </Suspense>
+      
+      {/* Footer */}
+      <Footer />
     </main>
+    </>
   );
 }

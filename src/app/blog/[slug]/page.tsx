@@ -5,6 +5,7 @@ import { mdxComponents } from "@/mdx-components";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
 interface BlogPostPageProps {
   readonly params: Promise<{
@@ -19,6 +20,68 @@ export async function generateStaticParams() {
   }));
 }
 
+export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
+
+  if (!post) {
+    return {
+      title: 'Post Not Found',
+      description: 'The requested blog post could not be found.',
+    };
+  }
+
+  const publishedTime = new Date(post.publishedAt).toISOString();
+  const modifiedTime = publishedTime;
+  const url = `https://www.rahulpnath.com/blog/${slug}`;
+  const imageUrl = post.coverImage || '/rahul-logo.png';
+
+  return {
+    title: post.title,
+    description: post.description || `Read about ${post.title} by Rahul Nath. Learn about web development, AWS, .NET, and software engineering best practices.`,
+    keywords: post.tags || ['Web Development', 'Programming', 'Software Engineering'],
+    authors: [{ name: 'Rahul Nath', url: 'https://www.rahulpnath.com' }],
+    creator: 'Rahul Nath',
+    publisher: 'Rahul Nath',
+    openGraph: {
+      title: post.title,
+      description: post.description || `Read about ${post.title} by Rahul Nath`,
+      type: 'article',
+      url,
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+      publishedTime,
+      modifiedTime,
+      authors: ['Rahul Nath'],
+      section: 'Technology',
+      tags: post.tags,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.description || `Read about ${post.title} by Rahul Nath`,
+      creator: '@rahulpnath',
+      images: [imageUrl],
+    },
+    alternates: {
+      canonical: url,
+    },
+    other: {
+      'article:author': 'Rahul Nath',
+      'article:published_time': publishedTime,
+      'article:modified_time': modifiedTime,
+      'article:section': 'Technology',
+      'article:tag': post.tags?.join(', ') || '',
+    },
+  };
+}
+
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
@@ -27,13 +90,72 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     notFound();
   }
 
+  const publishedTime = new Date(post.publishedAt).toISOString();
+  const url = `https://www.rahulpnath.com/blog/${slug}`;
+  const imageUrl = post.coverImage || '/rahul-logo.png';
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.description,
+    image: [imageUrl],
+    datePublished: publishedTime,
+    dateModified: publishedTime,
+    author: {
+      '@type': 'Person',
+      name: 'Rahul Nath',
+      url: 'https://www.rahulpnath.com',
+      sameAs: [
+        'https://twitter.com/rahulpnath',
+        'https://www.youtube.com/rahulnathp',
+        'https://github.com/rahulpnath',
+        'https://www.linkedin.com/in/rahulpnath'
+      ]
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Rahul Nath',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://www.rahulpnath.com/rahul-logo.png'
+      }
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': url
+    },
+    keywords: post.tags?.join(', '),
+    articleSection: 'Technology',
+    inLanguage: 'en-US',
+    url
+  };
+
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="min-h-screen bg-theme-bg text-theme-text">
+        {/* Skip to main content link */}
+        <a 
+          href="#main-content" 
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary-600 text-white px-4 py-2 rounded-md text-sm font-medium z-50 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2"
+        >
+          Skip to main content
+        </a>
+      
       {/* Main Layout with Sidebar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main Content */}
-          <main className="flex-1 lg:max-w-4xl">
+          <main 
+            id="main-content" 
+            className="flex-1 lg:max-w-4xl" 
+            role="main" 
+            aria-labelledby="article-title"
+          >
             <article
               className="
               prose prose-lg prose-slate max-w-none font-sans
@@ -88,15 +210,29 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               /* Strong/Bold */
               prose-strong:font-semibold prose-strong:text-theme-text-high-contrast
             "
+            itemScope
+            itemType="https://schema.org/BlogPosting"
             >
               {/* Article Header */}
               <header className="mb-12 not-prose">
-                <h1 className="font-serif text-5xl font-semibold text-theme-text-high-contrast mb-6 leading-tight tracking-tight">
+                <h1 
+                  id="article-title" 
+                  className="font-serif text-5xl font-semibold text-theme-text-high-contrast mb-6 leading-tight tracking-tight"
+                  itemProp="headline"
+                >
                   {post.title}
                 </h1>
 
                 <div className="flex items-center gap-6 text-sm text-theme-text-secondary mb-8 font-medium">
-                  <time dateTime={post.publishedAt}>
+                  <time 
+                    dateTime={post.publishedAt}
+                    itemProp="datePublished"
+                    aria-label={`Published on ${new Date(post.publishedAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}`}
+                  >
                     {new Date(post.publishedAt).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
@@ -106,14 +242,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
                   {post.readingTime && (
                     <>
-                      <span>•</span>
-                      <span>{post.readingTime}</span>
+                      <span aria-hidden="true">•</span>
+                      <span aria-label={`Estimated reading time: ${post.readingTime}`}>
+                        {post.readingTime}
+                      </span>
                     </>
                   )}
                 </div>
 
                 {post.description && (
-                  <p className="font-sans text-xl text-theme-text-secondary mb-8 leading-relaxed max-w-3xl font-medium">
+                  <p 
+                    className="font-sans text-xl text-theme-text-secondary mb-8 leading-relaxed max-w-3xl font-medium"
+                    itemProp="description"
+                  >
                     {post.description}
                   </p>
                 )}
@@ -122,30 +263,36 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   <div className="my-8">
                     <Image
                       src={post.coverImage}
-                      alt={post.title}
+                      alt={`Cover image for article: ${post.title}`}
                       width={800}
                       height={400}
                       className="w-full h-auto rounded-xl"
                       sizes="800px"
                       priority
+                      itemProp="image"
                     />
                   </div>
                 )}
               </header>
 
               {/* Article Content */}
-              <MDXRemote source={post.content} components={mdxComponents} />
+              <div itemProp="articleBody">
+                <MDXRemote source={post.content} components={mdxComponents} />
+              </div>
               {/* Tags Section - Minimal */}
               {post.tags && post.tags.length > 0 && (
                 <div className="mt-20 pt-12 border-t border-theme-border-light not-prose">
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-3" role="list" aria-label="Article tags">
                     {post.tags.map((tag) => (
                       <a
                         key={tag}
                         href={`/blog/tag/${tag
                           .toLowerCase()
                           .replace(/\s+/g, "-")}`}
-                        className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-theme-bg-muted text-theme-text-secondary hover:bg-primary-500 hover:text-white transition-all duration-200"
+                        className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-theme-bg-muted text-theme-text-secondary hover:bg-primary-500 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-bg"
+                        role="listitem"
+                        aria-label={`View articles tagged as ${tag}`}
+                        itemProp="keywords"
                       >
                         {tag}
                       </a>
@@ -156,42 +303,53 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
               {/* Footer Navigation - Clean */}
               <footer className="mt-20 pt-12 border-t border-theme-border-light not-prose">
-                <a
-                  href="/blog"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-theme-text-secondary hover:text-primary-500 transition-colors group"
-                >
-                  <svg
-                    className="w-4 h-4 transition-transform group-hover:-translate-x-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                <nav aria-label="Blog navigation">
+                  <a
+                    href="/blog"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-theme-text-secondary hover:text-primary-500 transition-colors group focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-bg rounded-md"
+                    aria-label="Return to blog article listing"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
-                  Back to Blog
-                </a>
+                    <svg
+                      className="w-4 h-4 transition-transform group-hover:-translate-x-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                    Back to Blog
+                  </a>
+                </nav>
               </footer>
             </article>
           </main>
 
           {/* Sidebar with Table of Contents */}
-          <aside className="lg:w-80 lg:flex-shrink-0">
+          <aside 
+            className="lg:w-80 lg:flex-shrink-0" 
+            role="complementary" 
+            aria-labelledby="toc-heading"
+          >
             <div className="sticky top-20">
+              <h2 id="toc-heading" className="sr-only">Table of contents</h2>
               <TableOfContents content={post.content} />
             </div>
           </aside>
         </div>
 
         {/* Author Card - Spans full width including TOC area */}
-        <div className="mt-12">
+        <section className="mt-12" aria-labelledby="author-info">
+          <h2 id="author-info" className="sr-only">About the author</h2>
           <AuthorCard author={post.author} />
-        </div>
+        </section>
       </div>
     </div>
+    </>
   );
 }

@@ -152,7 +152,7 @@ export default function Search({ posts, placeholder = "Search articles...", onCl
   }, [query]);
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 bg-theme-bg divide-y divide-gray-100 dark:divide-gray-800">
+    <div className="flex flex-col flex-1 min-h-0 bg-theme-bg divide-y divide-gray-100 dark:divide-gray-800" role="search" aria-label="Article search">
       {/* Search Input */}
       <div className="relative flex items-center">
         {/* Close Button */}
@@ -196,14 +196,29 @@ export default function Search({ posts, placeholder = "Search articles...", onCl
           onFocus={() => setIsOpen(true)}
           placeholder={placeholder}
           className="w-full placeholder-gray-400 dark:placeholder-gray-500 bg-transparent border-0 text-theme-text focus:ring-0 focus:outline-none sm:text-sm h-12 px-4 ps-11 pe-12"
-          aria-label="Search..."
+          aria-label="Search articles"
+          aria-describedby="search-instructions"
           autoComplete="off"
+          role="searchbox"
+          aria-expanded={isOpen && searchResults.length > 0}
+          aria-haspopup="listbox"
+          aria-owns="search-results"
         />
+        <div id="search-instructions" className="sr-only">
+          Type to search articles. Use arrow keys to navigate results, Enter to select, Escape to close.
+        </div>
 
       </div>
 
       {/* Search Results */}
-      <div className="relative flex-1 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800 scroll-py-10 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-gray-600" role="listbox" aria-multiselectable="true" aria-label="Commands">
+      <div 
+        id="search-results"
+        className="relative flex-1 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800 scroll-py-10 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-gray-600" 
+        role="listbox" 
+        aria-label="Search results"
+        aria-live="polite"
+        aria-atomic="false"
+      >
         {query.trim() && query.trim().length >= 2 ? (
           <div className="p-2">
             <div className="text-sm text-theme-text">

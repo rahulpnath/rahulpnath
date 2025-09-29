@@ -1,13 +1,118 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+// Rate limiting map (in production, use Redis or similar)
+const rateLimitMap = new Map<string, { count: number; timestamp: number }>()
+
+// Email validation regex
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+// Content validation function
+function validateInput(input: string): boolean {
+  // Check for basic XSS patterns
+  const xssPatterns = [
+    /<script/i,
+    /javascript:/i,
+    /on\w+\s*=/i,
+    /<iframe/i,
+    /<object/i,
+    /<embed/i,
+    /data:text\/html/i
+  ]
+  
+  return !xssPatterns.some(pattern => pattern.test(input))
+}
+
+// Rate limiting function
+function isRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const windowMs = 15 * 60 * 1000 // 15 minutes
+  const maxRequests = 5 // Max 5 requests per 15 minutes
+  
+  const userLimit = rateLimitMap.get(ip)
+  
+  if (!userLimit) {
+    rateLimitMap.set(ip, { count: 1, timestamp: now })
+    return false
+  }
+  
+  // Reset window if expired
+  if (now - userLimit.timestamp > windowMs) {
+    rateLimitMap.set(ip, { count: 1, timestamp: now })
+    return false
+  }
+  
+  // Check if limit exceeded
+  if (userLimit.count >= maxRequests) {
+    return true
+  }
+  
+  // Increment count
+  userLimit.count++
+  return false
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const { email, name } = await request.json()
+    // Get client IP for rate limiting
+    const ip = request.headers.get('x-forwarded-for') || 
+              request.headers.get('x-real-ip') || 
+              'unknown'
     
-    // Validate email
-    if (!email || !email.includes('@')) {
+    // Rate limiting
+    if (isRateLimited(ip)) {
       return NextResponse.json(
-        { error: 'Valid email is required' },
+        { error: 'Too many subscription attempts. Please try again later.' },
+        { status: 429 }
+      )
+    }
+    
+    const body = await request.json()
+    const { email, name } = body
+    
+    // Validate email format
+    if (!email || !emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: 'Valid email address is required' },
+        { status: 400 }
+      )
+    }
+    
+    // Validate email length
+    if (email.length > 320) { // RFC 5321 limit
+      return NextResponse.json(
+        { error: 'Email address is too long' },
+        { status: 400 }
+      )
+    }
+    
+    // Validate name if provided
+    if (name && (typeof name !== 'string' || name.length > 100)) {
+      return NextResponse.json(
+        { error: 'Name must be a string and less than 100 characters' },
+        { status: 400 }
+      )
+    }
+    
+    // Validate for XSS attempts
+    if (!validateInput(email) || (name && !validateInput(name))) {
+      return NextResponse.json(
+        { error: 'Invalid input detected' },
+        { status: 400 }
+      )
+    }
+    
+    // Check for suspicious patterns (common spam emails)
+    const suspiciousPatterns = [
+      /test@test\.com/i,
+      /admin@admin\.com/i,
+      /noreply@/i,
+      /abuse@/i,
+      /postmaster@/i
+    ]
+    
+    if (suspiciousPatterns.some(pattern => pattern.test(email))) {
+      return NextResponse.json(
+        { error: 'Please use a valid email address' },
         { status: 400 }
       )
     }

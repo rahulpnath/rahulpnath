@@ -1,9 +1,11 @@
 import './globals.css';
+import '../styles/accessibility.css';
 import localFont from "next/font/local";
 import { Inter, Playfair_Display, DM_Sans } from 'next/font/google';
 import ClientHeader from '@/components/ClientHeader';
 import { getAllPosts } from '@/lib/posts';
 import ThemeWrapper from '@/components/ThemeWrapper';
+import { Metadata } from 'next';
 
 const clashGrotesk = localFont({
   src: "../fonts/ClashGrotesk-Variable.woff2", // path is from /public
@@ -30,9 +32,65 @@ const dmSans = DM_Sans({
   display: 'swap',
 });
 
-export const metadata = {
-  title: 'Rahul Nath - Developer Blog',
-  description: 'Thoughts, tutorials, and insights on web development, AWS, and modern technologies.',
+export const metadata: Metadata = {
+  metadataBase: new URL('https://www.rahulpnath.com'),
+  title: {
+    default: 'Rahul Nath - Developer Blog',
+    template: '%s | Rahul Nath'
+  },
+  description: 'Thoughts, tutorials, and insights on web development, AWS, modern technologies. Learn about .NET, Azure, Lambda, and software engineering best practices.',
+  keywords: ['Rahul Nath', 'Web Development', 'AWS', 'Azure', '.NET', 'Software Engineering', 'Lambda', 'DynamoDB', 'React', 'Next.js', 'TypeScript'],
+  authors: [{ name: 'Rahul Nath', url: 'https://www.rahulpnath.com' }],
+  creator: 'Rahul Nath',
+  publisher: 'Rahul Nath',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://www.rahulpnath.com',
+    siteName: 'Rahul Nath - Developer Blog',
+    title: 'Rahul Nath - Developer Blog',
+    description: 'Thoughts, tutorials, and insights on web development, AWS, modern technologies. Learn about .NET, Azure, Lambda, and software engineering best practices.',
+    images: [
+      {
+        url: '/rahul-logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'Rahul Nath - Developer Blog',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Rahul Nath - Developer Blog',
+    description: 'Thoughts, tutorials, and insights on web development, AWS, modern technologies. Learn about .NET, Azure, Lambda, and software engineering best practices.',
+    creator: '@rahulpnath',
+    images: ['/rahul-logo.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  manifest: '/manifest.json',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon-16x16.png',
+    apple: '/apple-touch-icon.png',
+  },
+  verification: {
+    google: 'your-google-verification-code',
+  },
 };
 
 interface RootLayoutProps {
