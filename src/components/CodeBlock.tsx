@@ -132,7 +132,7 @@ export default function CodeBlock({ children, className }: CodeBlockProps) {
               fontSize: "14px",
               lineHeight: "1.5",
               fontFamily:
-                'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                '"Cartograph CF", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
             }}
             data-lang={mappedLanguage}
           >

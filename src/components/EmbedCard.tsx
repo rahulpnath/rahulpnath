@@ -48,7 +48,7 @@ export default function EmbedCard({ src, title, type }: EmbedCardProps) {
           title={title || 'Embedded content'}
           frameBorder="0"
           {...getEmbedProps()}
-        />w
+        />
       </div>
     </div>
   );
