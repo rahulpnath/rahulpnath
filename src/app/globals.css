@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
 :root {
   /* Layout Variables */
   --header-height: 6rem;
@@ -54,6 +56,7 @@
   /* Typography System - DM Sans + JetBrains Mono */
   --font-primary: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
   --font-secondary: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-sans: 'DM Sans', "DM Sans Fallback: Arial", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
   
   /* Font Weights */
@@ -204,6 +207,7 @@
     font-feature-settings: normal;
     font-variation-settings: normal;
     -webkit-tap-highlight-color: transparent;
+    height: 100%;
   }
 
   body {
@@ -212,6 +216,7 @@
     font-size: 1rem;  /* 16px base */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    min-height: 100%;
     --tw-bg-opacity: 1;
     background-color: rgb(var(--ui-background) / var(--tw-bg-opacity, 1));
     --tw-text-opacity: 1;
@@ -369,22 +374,45 @@
 
 /* Override Tailwind's list reset for prose content */
 @layer base {
-  .prose ul {
-    list-style-type: disc !important;
-    margin-left: 1.5rem !important;
-    padding-left: 0 !important;
+  .prose :where(ul):not(:where([class~=not-prose],[class~=not-prose] *, .ez-toc-counter *, .ez-toc-counter)) {
+    list-style-type: disc;
+    margin-bottom: 1.25em;
+    margin-top: 1.25em;
+    padding-inline-start: 1.625em;
   }
   
-  .prose ol {
-    list-style-type: decimal !important;
-    margin-left: 1.5rem !important;
-    padding-left: 0 !important;
+  menu, ol, ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
   
-  .prose li {
-    display: list-item !important;
+  .prose :where(ul>li):not(:where([class~=not-prose],[class~=not-prose] *, .ez-toc-counter *, .ez-toc-counter)) {
+    padding-inline-start: .375em;
+  }
+  
+  .prose :where(li):not(:where([class~=not-prose],[class~=not-prose] *, .ez-toc-counter *, .ez-toc-counter)) {
+    margin-bottom: .5em;
+    margin-top: .5em;
+    font-size: 1.125rem;
+    line-height: 1.7777778;
+  }
+  
+  /* Ensure TOC keeps its original styled-jsx styling */
+  .ez-toc-counter ul {
+    list-style: none !important;
+    padding-left: 30px !important;
+    margin: 0 !important;
+  }
+  
+  .ez-toc-counter ul li {
+    margin-bottom: 0.5rem !important;
+    font-size: 0.875rem !important;
+    position: relative !important;
+    margin-top: 0 !important;
     margin-left: 0 !important;
-    margin-bottom: 0.75rem !important;
+    padding-left: 0 !important;
+    line-height: normal !important;
   }
 }
 

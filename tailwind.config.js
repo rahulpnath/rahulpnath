@@ -9,6 +9,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
+        sans: ['DM Sans', '"DM Sans Fallback: Arial"', 'ui-sans-serif', 'system-ui', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'],
         mono: ['"Cartograph CF"', 'monospace'],
       },
     },
