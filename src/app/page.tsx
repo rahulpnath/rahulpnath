@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Metadata } from 'next';
 import { BlogPost } from '@/types/blog';
 import { getAllPosts } from '@/lib/posts';
-import { getLatestYouTubeVideos, YouTubeVideo } from '@/lib/youtube';
+// import { getLatestYouTubeVideos, YouTubeVideo } from '@/lib/youtube'; // COMMENTED OUT
 
 export const metadata: Metadata = {
   title: 'Rahul Nath - Developer Blog',
@@ -99,186 +99,7 @@ function HeroSection() {
   );
 }
 
-// Latest on YouTube Section
-interface LatestYouTubeSectionProps {
-  videos: YouTubeVideo[];
-}
-
-function LatestYouTubeSection({ videos }: LatestYouTubeSectionProps) {
-  const featuredVideo = videos[0];
-  const recentVideos = videos.slice(1, 4);
-
-  if (!featuredVideo) {
-    return (
-      <section className="py-16 sm:py-24 bg-theme-bg" aria-labelledby="youtube-heading">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="text-center">
-            <h2 id="youtube-heading" className="text-3xl md:text-4xl font-bold text-theme-text mb-4">
-              Latest on YouTube
-            </h2>
-            <p className="text-lg text-theme-text-secondary">Loading videos...</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  return (
-    <section 
-      className="py-16 sm:py-24 bg-theme-bg"
-      aria-labelledby="youtube-heading"
-      role="region"
-    >
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        {/* Section header */}
-        <div className="text-center mb-16">
-          <h2 id="youtube-heading" className="text-3xl md:text-4xl font-bold text-theme-text mb-4">
-            Latest on YouTube
-          </h2>
-          <p className="text-lg text-theme-text-secondary max-w-2xl mx-auto">
-            Watch in-depth tutorials and coding sessions where I build real applications and explain complex concepts step by step.
-          </p>
-        </div>
-
-        {/* Video grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Featured video - spans 2 columns on desktop */}
-          <div className="lg:col-span-2">
-            <a
-              href={featuredVideo.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group block relative bg-theme-bg-card rounded-2xl overflow-hidden border border-theme-border-light hover:border-primary-300 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-bg"
-              aria-describedby={`featured-video-${featuredVideo.id}`}
-            >
-              {/* Video thumbnail */}
-              <div className="relative aspect-video overflow-hidden">
-                <Image
-                  src={featuredVideo.thumbnail}
-                  alt={`Video thumbnail for: ${featuredVideo.title}`}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  sizes="(min-width: 1024px) 66vw, 100vw"
-                />
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300" aria-hidden="true"></div>
-                
-                {/* Play button */}
-                <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
-                  <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-                    <svg 
-                      className="w-6 h-6 text-white ml-1" 
-                      fill="currentColor" 
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path d="M8 5v14l11-7z"/>
-                    </svg>
-                  </div>
-                </div>
-                
-                {/* Duration badge */}
-                <div className="absolute bottom-3 right-3 bg-black/80 text-white text-sm px-2 py-1 rounded" aria-label={`Video duration: ${featuredVideo.duration}`}>
-                  {featuredVideo.duration}
-                </div>
-              </div>
-              
-              {/* Video info */}
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-theme-text mb-2 group-hover:text-primary-600 transition-colors">
-                  {featuredVideo.title}
-                </h3>
-                <p className="text-theme-text-secondary text-sm mb-3 line-clamp-2">
-                  {featuredVideo.description}
-                </p>
-                <div className="flex items-center text-sm text-theme-text-light space-x-3">
-                  <span aria-label={`${featuredVideo.viewCount} views`}>{featuredVideo.viewCount}</span>
-                  <span aria-hidden="true">•</span>
-                  <span>{featuredVideo.publishedAt}</span>
-                </div>
-              </div>
-              
-              {/* Screen reader description */}
-              <div id={`featured-video-${featuredVideo.id}`} className="sr-only">
-                Featured video: {featuredVideo.title}. Duration: {featuredVideo.duration}. 
-                {featuredVideo.viewCount}. Published {featuredVideo.publishedAt}. 
-                Click to watch on YouTube.
-              </div>
-            </a>
-          </div>
-
-          {/* Recent videos sidebar */}
-          <aside className="space-y-4" aria-labelledby="recent-videos-heading">
-            <h3 id="recent-videos-heading" className="text-lg font-semibold text-theme-text mb-4">Recent Videos</h3>
-            <ul className="space-y-4" role="list">
-              {recentVideos.map((video) => (
-                <li key={video.id}>
-                  <a
-                    href={video.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex space-x-3 p-3 rounded-xl hover:bg-theme-bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-bg"
-                    aria-describedby={`video-${video.id}`}
-                  >
-                    {/* Thumbnail */}
-                    <div className="relative w-24 h-16 flex-shrink-0 rounded-lg overflow-hidden">
-                      <Image
-                        src={video.thumbnail}
-                        alt={`Thumbnail for: ${video.title}`}
-                        fill
-                        className="object-cover"
-                        sizes="96px"
-                      />
-                      <div className="absolute bottom-1 right-1 bg-black/80 text-white text-xs px-1 rounded" aria-label={`Duration: ${video.duration}`}>
-                        {video.duration}
-                      </div>
-                    </div>
-                    
-                    {/* Video info */}
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-medium text-theme-text line-clamp-2 group-hover:text-primary-600 transition-colors">
-                        {video.title}
-                      </h4>
-                      <p className="text-xs text-theme-text-light mt-1">
-                        {video.publishedAt}
-                      </p>
-                    </div>
-                    
-                    {/* Screen reader description */}
-                    <div id={`video-${video.id}`} className="sr-only">
-                      {video.title}. Duration: {video.duration}. Published {video.publishedAt}. Click to watch on YouTube.
-                    </div>
-                  </a>
-                </li>
-              ))}
-            </ul>
-            
-            {/* View all videos link */}
-            <div className="pt-2">
-              <a
-                href="https://youtube.com/@rahulpnath"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 focus:text-primary-700 transition-colors focus:outline-none focus:underline"
-                aria-label="View all videos on Rahul Nath's YouTube channel"
-              >
-                View all videos
-                <svg 
-                  className="ml-1 h-4 w-4" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-              </a>
-            </div>
-          </aside>
-        </div>
-      </div>
-    </section>
-  );
-}
+// Latest on YouTube Section - REMOVED
 
 // Recent Articles Section
 interface RecentArticlesProps {
@@ -515,9 +336,9 @@ function Footer() {
 
 // Main Homepage Component
 export default async function HomePage() {
-  const [allPosts, youtubeVideos] = await Promise.all([
-    getAllPosts(),
-    getLatestYouTubeVideos(6) // Get 6 videos (1 featured + 5 recent)
+  const [allPosts] = await Promise.all([
+    getAllPosts()
+    // getLatestYouTubeVideos(6) // Get 6 videos (1 featured + 5 recent) - COMMENTED OUT
   ]);
 
   // Structured data for the website and person
@@ -604,21 +425,7 @@ export default async function HomePage() {
       {/* Hero Section */}
       <HeroSection />
       
-      {/* Latest on YouTube Section */}
-      <Suspense fallback={
-        <div 
-          className="flex items-center justify-center py-24"
-          role="status"
-          aria-live="polite"
-          aria-label="Loading videos"
-        >
-          <div className="animate-pulse text-theme-text-secondary">
-            Loading videos...
-          </div>
-        </div>
-      }>
-        <LatestYouTubeSection videos={youtubeVideos} />
-      </Suspense>
+      {/* Latest on YouTube Section - REMOVED */}
       
       {/* Recent Articles Section */}
       <Suspense fallback={
