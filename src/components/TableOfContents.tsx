@@ -160,7 +160,7 @@ export default function TableOfContents({ content, className = '' }: TableOfCont
   }
 
   return (
-    <div className={`hidden lg:block ${className}`}>
+    <div className={className}>
       <style jsx>{`
         .ez-toc-counter ul {
           list-style: none;

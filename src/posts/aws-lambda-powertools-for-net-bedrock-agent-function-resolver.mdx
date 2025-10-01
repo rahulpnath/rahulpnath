@@ -31,7 +31,7 @@ Lambda Powertools includes a core set of utilities—tracing, structured logging
 
 To create an agent running in a Lambda Function, first create an empty Lambda Function using the AWS Toolkit.
 
-<BookmarkCard href="/blog/aws-lambda-dotnet-developer/" title="AWS Lambda For The .NET Developer" description="This blog post is a collection of other posts that covers various aspects of AWS Lambda and other services you can integrate with when building serverless applications on Lambda." icon="/images/icon/logo-512x512-24.png" />
+<BookmarkCard href="/blog/aws-lambda-dotnet-developer/" title="AWS Lambda For The .NET Developer" description="This blog post is a collection of other posts that covers various aspects of AWS Lambda and other services you can integrate with when building serverless applications on Lambda." icon="/content/images/icon/logo-512x512-24.png" />
 
 Add the [BedrockAgentFunction](https:/www.nuget.org/packages/AWS.Lambda.Powertools.EventHandler.Resolvers.BedrockAgentFunction) nuget package to the Lambda Function
 
@@ -82,7 +82,7 @@ All we need to do is pass on the request to the `Resolve` method on the `Bedrock
 
 The `BedrockAgentFunctionResolver` is instantiated in the constructor of the Lambda Function, which means the instance will live as long as the Lambda instance lives.
 
-<BookmarkCard href="/blog/lambda-lifecycle-and-net/" title="Why Should You Care About Lambda Lifecycle As A .NET Developer?" description="The Lambda Lifecycle affects the way we write out Function code. Learn some of the dos and don’ts when building Lambda Functions in .NET because of how Lambda initializes the Function classes." icon="/images/icon/logo-512x512-25.png" />
+<BookmarkCard href="/blog/lambda-lifecycle-and-net/" title="Why Should You Care About Lambda Lifecycle As A .NET Developer?" description="The Lambda Lifecycle affects the way we write out Function code. Learn some of the dos and don'ts when building Lambda Functions in .NET because of how Lambda initializes the Function classes." icon="/content/images/icon/logo-512x512-25.png" />
 
 The tools supported can be registered in the `BedrockAgentFunctionResolver` instance using the `Tool` function, passing in the tool name and the function delegate.
 

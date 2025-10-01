@@ -217,7 +217,6 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100%;
-    overflow-x: hidden;
     --tw-bg-opacity: 1;
     background-color: rgb(var(--ui-background) / var(--tw-bg-opacity, 1));
     --tw-text-opacity: 1;
