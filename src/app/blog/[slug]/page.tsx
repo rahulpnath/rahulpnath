@@ -147,7 +147,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </a>
       
       {/* Main Layout with Sidebar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-x-hidden">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main Content */}
           <main 
@@ -158,7 +158,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           >
             <article
               className="
-              prose prose-lg prose-slate max-w-none font-sans
+              prose prose-lg prose-slate max-w-4xl font-sans
               leading-relaxed
 
               /* Headings - Use Serif for elegant typography */
@@ -266,7 +266,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                       alt={`Cover image for article: ${post.title}`}
                       width={800}
                       height={400}
-                      className="w-full h-auto rounded-xl"
+                      className="w-full max-w-full h-auto rounded-xl"
                       sizes="800px"
                       priority
                       itemProp="image"
@@ -332,7 +332,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
           {/* Sidebar with Table of Contents */}
           <aside 
-            className="lg:w-80 lg:flex-shrink-0" 
+            className="hidden lg:block lg:w-80 lg:flex-shrink-0" 
             role="complementary" 
             aria-labelledby="toc-heading"
           >

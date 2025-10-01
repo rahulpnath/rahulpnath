@@ -65,12 +65,12 @@ export default function Header({ posts = [] }: HeaderProps) {
           </div>
 
           {/* Desktop Navigation */}
-          <ul className="flex items-center gap-x-8">
+          <ul className="hidden lg:flex items-center gap-x-8">
             {navigation.map((item) => (
               <li key={item.name} className="relative">
                 <Link
                   href={item.href}
-                  className={`text-xl font-semibold items-center gap-1 hidden lg:flex transition-colors ${
+                  className={`text-xl font-semibold flex items-center gap-1 transition-colors ${
                     isActive(item.href) ? 'text-primary-500' : 'text-theme-text hover:text-primary-500'
                   }`}
                 >

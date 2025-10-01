@@ -105,7 +105,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     <html lang="en" className={`${clashGrotesk.variable} ${inter.variable} ${playfairDisplay.variable} ${dmSans.variable}`}>
       <body className={`${dmSans.className} antialiased`} suppressHydrationWarning>
         <ThemeWrapper>
-          <div className="min-h-screen bg-theme-bg text-theme-text transition-colors">
+          <div className="min-h-screen bg-theme-bg text-theme-text transition-colors overflow-x-hidden">
             <ClientHeader posts={posts} />
             {children}
           </div>
