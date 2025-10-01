@@ -83,7 +83,7 @@ var sortedList = Sort(list.ToList());
 
 ```
 
-The above solution does not imply that every time we need to pass in a list to a function we should defensively copy it (using ToList). _It depends_. Within a development team, there can be a convention that it sticks to CQS principle. In case of exceptions, make sure that it is communicated to everyone. Communication to developers is done best by naming the function to reflect that or adding a comment that shows up in the IDE intellisense (if any). For code that you consume from third parties or open sources make sure you understand well how the library behaves and check the documentation before using it. Ensure you have [unit tests](/tag/tdd/) asserting the assumptions and behavior in all cases.
+The above solution does not imply that every time we need to pass in a list to a function we should defensively copy it (using ToList). _It depends_. Within a development team, there can be a convention that it sticks to CQS principle. In case of exceptions, make sure that it is communicated to everyone. Communication to developers is done best by naming the function to reflect that or adding a comment that shows up in the IDE intellisense (if any). For code that you consume from third parties or open sources make sure you understand well how the library behaves and check the documentation before using it. Ensure you have [unit tests](/blog/tag/tdd/) asserting the assumptions and behavior in all cases.
 
 ### **Returning Mutable Values**
 

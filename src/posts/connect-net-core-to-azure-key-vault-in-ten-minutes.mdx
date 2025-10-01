@@ -9,7 +9,7 @@ excerpt: >-
   Access secrets in Azure Key Vault from .Net Core and learn how to elegantly
   handle when rotating secrets.
 ---
-Azure Key Vault is a cloud-hosted service for managing cryptographic keys and secrets like connection strings, API keys, and similar sensitive information. Key Vault provides centralized storage for application secrets. Check out my [posts on Key Vault](/tag/azure-key-vault/) if you are new to Azure Key Vault and want to learn more.
+Azure Key Vault is a cloud-hosted service for managing cryptographic keys and secrets like connection strings, API keys, and similar sensitive information. Key Vault provides centralized storage for application secrets. Check out my [posts on Key Vault](/blog/tag/azure-key-vault/) if you are new to Azure Key Vault and want to learn more.
 
 In this post, I will walk-through how to access Secrets in an Azure Key Vault from a .Net Core Web application. The Web Application has an API endpoint that drops a message to Azure Storage Queue. It uses a connection string in Azure Key Vault to connect to Azure Storage Queue. The application also gracefully handles rotating Secrets, retiring the old connection string, and replacing with a new one, without needing to restart the application.
 

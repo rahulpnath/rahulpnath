@@ -13,7 +13,7 @@ I have been playing around with SpecFlow for writing tests at one of my recent c
 
 The [Getting Started section](https://specflow.org/getting-started/) in the official documentation helped me set up the SpecFlow test project and get started with my first tests.
 
-Populating data is an integral part of writing tests. Most of the time, we are forced to set up much more data than we care about for a test. This might be because of validation on an API endpoint, a [constructor forcing you to give valid values for all the properties](/blog/constructor-and-constraints/). Setting up these unnecessary data pollutes the tests, makes writing tests less enjoyable. It also makes the tests tightly coupled and [hard to refactor](/tag/refactoring/).
+Populating data is an integral part of writing tests. Most of the time, we are forced to set up much more data than we care about for a test. This might be because of validation on an API endpoint, a [constructor forcing you to give valid values for all the properties](/blog/constructor-and-constraints/). Setting up these unnecessary data pollutes the tests, makes writing tests less enjoyable. It also makes the tests tightly coupled and [hard to refactor](/blog/tag/refactoring/).
 
 In this post, let's look at a simple test written in SpecFlow and how we can progressively improve it by removing explicit test data set up.
 
