@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { BlogPost } from '@/types/blog';
 import Link from 'next/link';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface SearchProps {
   posts: BlogPost[];
@@ -21,6 +22,7 @@ export default function Search({ posts, placeholder = "Search articles...", onCl
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [visibleResults, setVisibleResults] = useState(10);
+  const { theme, toggleTheme, mounted } = useTheme();
 
   // Create search index with content for better matching
   const searchIndex = useMemo(() => {
@@ -154,7 +156,7 @@ export default function Search({ posts, placeholder = "Search articles...", onCl
   return (
     <div className="flex flex-col flex-1 min-h-0 bg-theme-bg divide-y divide-gray-100 dark:divide-gray-800" role="search" aria-label="Article search">
       {/* Search Input */}
-      <div className="relative flex items-center">
+      <div className="relative flex items-center search-input-border">
         {/* Close Button */}
         <button
           onClick={() => {
@@ -195,7 +197,7 @@ export default function Search({ posts, placeholder = "Search articles...", onCl
           }}
           onFocus={() => setIsOpen(true)}
           placeholder={placeholder}
-          className="w-full placeholder-gray-400 dark:placeholder-gray-500 bg-transparent border-0 text-theme-text focus:ring-0 focus:outline-none sm:text-sm h-12 px-4 ps-11 pe-12"
+          className="w-full placeholder-theme-text-light bg-transparent border-0 text-theme-text focus:ring-0 focus:outline-none sm:text-sm h-12 px-4 ps-11 pe-12"
           aria-label="Search articles"
           aria-describedby="search-instructions"
           autoComplete="off"
@@ -213,24 +215,27 @@ export default function Search({ posts, placeholder = "Search articles...", onCl
       {/* Search Results */}
       <div 
         id="search-results"
-        className="relative flex-1 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800 scroll-py-10 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-gray-600" 
+        className="relative flex-1 overflow-y-auto divide-y divide-theme-border-light scroll-py-10 search-scrollbar" 
         role="listbox" 
         aria-label="Search results"
         aria-live="polite"
         aria-atomic="false"
       >
         {query.trim() && query.trim().length >= 2 ? (
-          <div className="p-2">
-            <div className="text-sm text-theme-text">
-              {searchResults.length > 0 ? (
-                <>
+          searchResults.length > 0 ? (
+            <div className="p-2" role="none">
+              <h2 className="px-2.5 my-2 text-xs font-semibold text-theme-text" role="none">Blog</h2>
+              <div className="text-sm text-theme-text" aria-label="Blog" role="none">
                 {searchResults.slice(0, visibleResults).map((result, index) => (
                   <Link
                     key={result.slug}
                     href={`/blog/${result.slug}`}
-                    className={`flex justify-between select-none items-center rounded-md px-2.5 py-1.5 gap-2 relative cursor-pointer hover:bg-gray-100/50 dark:hover:bg-gray-800/50 transition-colors ${
-                      index === selectedIndex ? 'bg-gray-100 dark:bg-gray-800 text-theme-text' : ''
+                    className={`flex justify-between select-none items-center rounded-md px-2.5 py-1.5 gap-2 relative cursor-pointer hover:bg-theme-bg-muted transition-colors ${
+                      index === selectedIndex ? 'bg-theme-bg-muted text-theme-text' : ''
                     }`}
+                    role="option"
+                    tabIndex={-1}
+                    aria-selected={index === selectedIndex}
                     onClick={() => {
                       setIsOpen(false);
                       setQuery('');
@@ -252,22 +257,17 @@ export default function Search({ posts, placeholder = "Search articles...", onCl
                       </svg>
                       
                       <div className="flex items-center gap-1.5 min-w-0">
-                        {/* Article title as breadcrumb */}
+                        {/* Article title */}
                         <span 
-                          className="flex-shrink-0 text-theme-text after:content-['_>']"
+                          className="truncate flex-none text-theme-text"
                           dangerouslySetInnerHTML={{ __html: result.highlightedTitle || result.title }}
                         />
                         
-                        {/* Section or subtitle */}
-                        <span className="truncate flex-none text-theme-text">
-                          {result.tags && result.tags.length > 0 ? result.tags[0] : 'Article'}
-                        </span>
-                        
                         {/* Description */}
-                        {result.highlightedDescription && (
+                        {(result.highlightedDescription || result.description) && (
                           <span 
                             className="truncate text-theme-text-secondary"
-                            dangerouslySetInnerHTML={{ __html: result.highlightedDescription }}
+                            dangerouslySetInnerHTML={{ __html: result.highlightedDescription || result.description }}
                           />
                         )}
                       </div>
@@ -279,7 +279,7 @@ export default function Search({ posts, placeholder = "Search articles...", onCl
                 {visibleResults < searchResults.length && (
                   <button
                     onClick={() => setVisibleResults(prev => prev + 10)}
-                    className="w-full flex justify-center items-center px-2.5 py-2 mt-2 text-sm text-theme-text-secondary hover:text-theme-text hover:bg-gray-100/50 dark:hover:bg-gray-800/50 rounded-md transition-colors"
+                    className="w-full flex justify-center items-center px-2.5 py-2 mt-2 text-sm text-theme-text-secondary hover:text-theme-text hover:bg-theme-bg-muted rounded-md transition-colors"
                   >
                     Show more results
                     <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -287,29 +287,32 @@ export default function Search({ posts, placeholder = "Search articles...", onCl
                     </svg>
                   </button>
                 )}
-                </>
-              ) : (
-                <div className="px-2.5 py-8 text-center text-theme-text-secondary">
-                  <svg className="w-8 h-8 mx-auto mb-2 text-theme-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  <p className="text-sm">No articles found for "{query}"</p>
-                  <p className="text-xs text-theme-text-secondary mt-1">Try different keywords or check spelling</p>
-                </div>
-              )}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="px-2.5 py-8 text-center text-theme-text-secondary">
+              <svg className="w-8 h-8 mx-auto mb-2 text-theme-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <p className="text-sm">No articles found for "{query}"</p>
+              <p className="text-xs text-theme-text-secondary mt-1">Try different keywords or check spelling</p>
+            </div>
+          )
         ) : (
           // Default state - show all posts when no search query
-          <div className="p-2">
-            <div className="text-sm text-theme-text">
+          <div className="p-2" role="none">
+            <h2 className="px-2.5 my-2 text-xs font-semibold text-theme-text" role="none">Blog</h2>
+            <div className="text-sm text-theme-text" aria-label="Blog" role="none">
               {posts.slice(0, 12).map((post, index) => (
                 <Link
                   key={post.slug}
                   href={`/blog/${post.slug}`}
-                  className={`flex justify-between select-none items-center rounded-md px-2.5 py-1.5 gap-2 relative cursor-pointer hover:bg-gray-100/50 dark:hover:bg-gray-800/50 transition-colors ${
-                    index === selectedIndex ? 'bg-gray-100 dark:bg-gray-800 text-theme-text' : ''
+                  className={`flex justify-between select-none items-center rounded-md px-2.5 py-1.5 gap-2 relative cursor-pointer hover:bg-theme-bg-muted transition-colors ${
+                    index === selectedIndex ? 'bg-theme-bg-muted text-theme-text' : ''
                   }`}
+                  role="option"
+                  tabIndex={-1}
+                  aria-selected={index === selectedIndex}
                   onClick={() => {
                     setIsOpen(false);
                     setQuery('');
@@ -346,6 +349,84 @@ export default function Search({ posts, placeholder = "Search articles...", onCl
                   </div>
                 </Link>
               ))}
+            </div>
+          </div>
+        )}
+        
+        {/* Theme Section - Always visible */}
+        {mounted && (
+          <div className="p-2" role="none">
+            <h2 className="px-2.5 my-2 text-xs font-semibold text-theme-text" role="none">Theme</h2>
+            <div className="text-sm text-theme-text" aria-label="Theme" role="none">
+              {/* Light Theme Option */}
+              <button
+                onClick={() => {
+                  if (theme !== 'light') {
+                    toggleTheme();
+                  }
+                }}
+                className={`flex justify-between select-none items-center rounded-md px-2.5 py-1.5 gap-2 relative w-full text-left transition-colors ${
+                  theme === 'light' 
+                    ? 'cursor-not-allowed opacity-50' 
+                    : 'cursor-pointer hover:bg-theme-bg-muted'
+                }`}
+                role="option"
+                tabIndex={-1}
+                aria-selected={theme === 'light'}
+                aria-disabled={theme === 'light'}
+              >
+                <div className="flex items-center gap-1.5 min-w-0">
+                  {/* Sun Icon */}
+                  <svg 
+                    className="flex-shrink-0 w-5 h-5 text-theme-text-secondary"
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                  
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <span className="truncate">Light</span>
+                  </div>
+                </div>
+              </button>
+              
+              {/* Dark Theme Option */}
+              <button
+                onClick={() => {
+                  if (theme !== 'dark') {
+                    toggleTheme();
+                  }
+                }}
+                className={`flex justify-between select-none items-center rounded-md px-2.5 py-1.5 gap-2 relative w-full text-left transition-colors ${
+                  theme === 'dark' 
+                    ? 'cursor-not-allowed opacity-50' 
+                    : 'cursor-pointer hover:bg-theme-bg-muted'
+                }`}
+                role="option"
+                tabIndex={-1}
+                aria-selected={theme === 'dark'}
+                aria-disabled={theme === 'dark'}
+              >
+                <div className="flex items-center gap-1.5 min-w-0">
+                  {/* Moon Icon */}
+                  <svg 
+                    className="flex-shrink-0 w-5 h-5 text-theme-text-secondary"
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                  </svg>
+                  
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <span className="truncate">Dark</span>
+                  </div>
+                </div>
+              </button>
             </div>
           </div>
         )}

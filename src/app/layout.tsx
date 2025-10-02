@@ -5,7 +5,7 @@ import { Inter, Playfair_Display, DM_Sans } from 'next/font/google';
 import ClientHeader from '@/components/ClientHeader';
 import { getAllPosts } from '@/lib/posts';
 import ThemeWrapper from '@/components/ThemeWrapper';
-import { Metadata } from 'next';
+import { Metadata, Viewport } from 'next';
 
 const clashGrotesk = localFont({
   src: "../fonts/ClashGrotesk-Variable.woff2", // path is from /public
@@ -31,6 +31,11 @@ const dmSans = DM_Sans({
   variable: '--font-dm-sans',
   display: 'swap',
 });
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.rahulpnath.com'),

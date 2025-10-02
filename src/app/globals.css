@@ -60,21 +60,13 @@
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
   
   /* Font Weights */
-  --font-light: 300;
-  --font-regular: 400;
   --font-medium: 500;
   --font-semibold: 600;
   --font-bold: 700;
   --font-extrabold: 800;
-  --font-black: 900;
   
   /* Font Sizes - Refined scale */
-  --font-size-meta: 0.75rem;        /* 12px - Small meta text */
-  --font-size-small: 0.875rem;      /* 14px - Small text */
   --font-size-body: 1rem;           /* 16px - Body text */
-  --font-size-body-lg: 1.125rem;    /* 18px - Large body text */
-  --font-size-h5: 1rem;             /* 16px - Minor headings */
-  --font-size-h4: 1.125rem;         /* 18px */
   --font-size-h3: 1.375rem;         /* 22px */
   --font-size-h2: 2rem;             /* 32px */
   --font-size-h1: 2.5rem;           /* 40px */
@@ -86,10 +78,8 @@
   
   /* Line Heights - Optimized for readability */
   --leading-tight: 1.2;
-  --leading-snug: 1.3;
   --leading-normal: 1.5;
   --leading-relaxed: 1.7;    /* Better for body text */
-  --leading-loose: 2;
 }
 
 /* Dark Mode Variable Overrides */
@@ -110,17 +100,17 @@
 
   /* Text Colors - DARK MODE */
   --text-primary: #E5E7EB;
-  --text-secondary: #9CA3AF;
+  --text-secondary: #D1D5DB;
   --text-high-contrast: #ffffff;
   --text-hover: #d1d5db;
-  --text-muted: #6b7280;
-  --text-light: #6b7280;
+  --text-muted: #9CA3AF;
+  --text-light: #9CA3AF;
   
   /* bg Colors - DARK MODE */
   --bg-primary: #111827;
   --bg-secondary: rgba(17, 24, 39, 0.6);
   --bg-muted: #1f2937;
-  --bg-card: #1f2937;
+  --bg-card: #111827;
   
   /* Border Colors - DARK MODE */
   --border-light: #374151;
@@ -131,12 +121,6 @@
   --ui-foreground: var(--color-gray-200);
 }
 
-@font-face {
-  font-family: 'Clash Grotesk';
-  src: url('/fonts/ClashGrotesk-Variable.woff2') format('woff2');
-  font-weight: 100 900;
-  font-display: swap;
-}
 @import "tailwindcss";
 
 @theme {
@@ -272,14 +256,14 @@
   }
   
   h4 {
-    font-size: var(--font-size-h4);     /* 18px */
+    font-size: 1.125rem;                /* 18px */
     font-weight: var(--font-semibold);  /* 600 */
     margin-bottom: 0.5rem;
     margin-top: 1.5rem;
   }
   
   h5 {
-    font-size: var(--font-size-h5);     /* 16px */
+    font-size: 1rem;                    /* 16px */
     font-weight: var(--font-medium);    /* 500 */
     margin-bottom: 0.5rem;
     margin-top: 1rem;
@@ -294,7 +278,7 @@
   }
   
   .prose a:hover {
-    color: var(--accent);
+    color: rgb(110 51 160);
   }
 
   /* Bold text */
@@ -308,7 +292,7 @@
     font-feature-settings: normal;
     font-variation-settings: normal;
     font-size: 0.9em;
-    font-weight: var(--font-regular);
+    font-weight: 400;
   }
 
   /* Small text */
@@ -350,25 +334,56 @@
   }
 }
 
-/* Responsive Typography - Mobile adjustments */
+/* Responsive Typography - Mobile adjustments with fluid scaling */
 @media (max-width: 768px) {
   h1 {
-    font-size: var(--font-size-h1-mobile); /* 32px on mobile */
-    margin-bottom: 0;
+    font-size: clamp(1.75rem, 5vw, 2rem); /* Fluid between 28px-32px */
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
   }
   
   h2 {
-    font-size: var(--font-size-h2-mobile); /* 28px on mobile */
+    font-size: clamp(1.5rem, 4vw, 1.75rem); /* Fluid between 24px-28px */
+    line-height: 1.3;
     margin-top: 2rem;
+    margin-bottom: 0.75rem;
   }
   
   h3 {
-    font-size: var(--font-size-h3-mobile); /* 20px on mobile */
+    font-size: clamp(1.25rem, 3vw, 1.375rem); /* Fluid between 20px-22px */
+    line-height: 1.3;
     margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  h4 {
+    font-size: 1.125rem; /* 18px */
+    margin-bottom: 0.5rem;
+    margin-top: 1.25rem;
+  }
+  
+  h5 {
+    font-size: 1rem; /* 16px */
+    margin-bottom: 0.5rem;
+    margin-top: 1rem;
+  }
+  
+  p, .prose p {
+    font-size: 1rem; /* 16px - maintain readability */
+    line-height: 1.6; /* Improved readability on mobile */
+    margin-bottom: 1rem;
   }
   
   body {
-    font-size: var(--font-size-body);      /* 16px on mobile for better performance */
+    font-size: 1rem; /* 16px base for mobile */
+    line-height: 1.5;
+  }
+  
+  /* Reduce margins for tighter mobile layout */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
 
@@ -482,115 +497,15 @@
     -webkit-line-clamp: 3;
   }
 
-  /* Circle progress animation */
-  .group:hover .circle-progress {
-    stroke-dashoffset: 0 !important;
-  }
 
-  /* Interactive Animations */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes pulse-glow {
-    0%, 100% {
-      box-shadow: 0 0 0 0 rgba(130, 62, 183, 0.4);
-    }
-    50% {
-      box-shadow: 0 0 0 10px rgba(130, 62, 183, 0);
-    }
-  }
-
-  @keyframes float {
-    0%, 100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
-  }
-
-  @keyframes slideInRight {
-    from {
-      opacity: 0;
-      transform: translateX(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  .animate-fade-in-up {
-    animation: fadeInUp 0.6s ease-out forwards;
-  }
-
-  .animate-pulse-glow {
-    animation: pulse-glow 2s infinite;
-  }
-
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-
-  .animate-slide-in-right {
-    animation: slideInRight 0.5s ease-out;
-  }
-
-  /* Smooth transitions for reveal elements */
-  .reveal-on-scroll {
-    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
-  }
-
-  /* Enhanced hover effects */
-  .hover-lift {
-    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-  }
-
-  .hover-lift:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 25px -3px rgba(130, 62, 183, 0.1), 0 4px 6px -2px rgba(130, 62, 183, 0.05);
-  }
-
-  /* Technology icons floating effect */
-  .tech-icon-float {
-    animation: float 4s ease-in-out infinite;
-  }
-
-  .tech-icon-float:nth-child(2) {
-    animation-delay: -1s;
-  }
-
-  .tech-icon-float:nth-child(3) {
-    animation-delay: -2s;
-  }
-
-  .tech-icon-float:nth-child(4) {
-    animation-delay: -3s;
-  }
 
   /* Brand-tinted shadows */
   .shadow-brand {
     box-shadow: 0 4px 6px -1px rgba(130, 62, 183, 0.1), 0 2px 4px -1px rgba(130, 62, 183, 0.06);
   }
 
-  .shadow-brand-sm {
-    box-shadow: 0 1px 2px 0 rgba(130, 62, 183, 0.05);
-  }
-
   .shadow-brand-lg {
     box-shadow: 0 10px 15px -3px rgba(130, 62, 183, 0.1), 0 4px 6px -2px rgba(130, 62, 183, 0.05);
-  }
-
-  .shadow-secondary {
-    box-shadow: 0 4px 6px -1px rgba(62, 130, 183, 0.1), 0 2px 4px -1px rgba(62, 130, 183, 0.06);
   }
 
   .hover\:shadow-brand:hover {
@@ -601,9 +516,6 @@
     box-shadow: 0 10px 15px -3px rgba(130, 62, 183, 0.1), 0 4px 6px -2px rgba(130, 62, 183, 0.05);
   }
 
-  .hover\:shadow-secondary:hover {
-    box-shadow: 0 4px 6px -1px rgba(62, 130, 183, 0.1), 0 2px 4px -1px rgba(62, 130, 183, 0.06);
-  }
 }
 
 /* Ghost CMS Bookmark Card Styles - Using Tailwind approach */
@@ -669,5 +581,59 @@
   
   .kg-bookmark-content {
     @apply p-4;
+  }
+}
+
+/* Mobile code block optimizations */
+.mobile-code-block {
+  /* Base styles moved from inline */
+  padding: 1rem;
+  font-size: 14px;
+  line-height: 1.5;
+  
+  /* Overflow handling */
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: pre;  /* Keep this - code shouldn't wrap */
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  
+  /* Better scrollbar for mobile */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
+}
+
+.mobile-code-block::-webkit-scrollbar {
+  height: 6px;
+}
+
+.mobile-code-block::-webkit-scrollbar-thumb {
+  background: rgba(155, 155, 155, 0.5);
+  border-radius: 3px;
+}
+
+.mobile-code-block::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+  .mobile-code-block {
+    font-size: 13px;
+    padding: 0.75rem;
+    line-height: 1.5;
+  }
+  
+  .mobile-code-block pre {
+    max-width: calc(100vw - 3rem); /* Account for page padding */
+  }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+  .mobile-code-block {
+    font-size: 12px;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
   }
 }

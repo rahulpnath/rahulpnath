@@ -120,17 +120,14 @@ export default function CodeBlock({ children, className }: CodeBlockProps) {
   const code = getCodeString(children).trim();
   
   return (
-    <div className="my-6 rounded-lg overflow-hidden">
+    <div className="my-6 rounded-lg overflow-hidden max-w-full">
       <Highlight theme={customTheme} code={code} language={mappedLanguage}>
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
           <pre
-            className={className}
+            className={`${className} mobile-code-block`}
             style={{
               ...style,
               margin: 0,
-              padding: "1rem",
-              fontSize: "14px",
-              lineHeight: "1.5",
               fontFamily:
                 '"Cartograph CF", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
             }}

@@ -19,6 +19,23 @@ module.exports = withMDX({
     // Skip TypeScript checking during builds
     ignoreBuildErrors: false,
   },
+  
+  // Compiler options for better browser compatibility
+  compiler: {
+    // Remove console.log in production but keep error tracking
+    removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
+  },
+  
+  // Image optimization settings for better performance
+  images: {
+    // AVIF first for best compression, WebP as fallback
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
+    // Faster dev builds - disable optimization in development
+    unoptimized: process.env.NODE_ENV === 'development',
+  },
   // Security headers
   async headers() {
     return [

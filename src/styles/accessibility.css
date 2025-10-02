@@ -66,29 +66,6 @@
   }
 }
 
-/* Print styles for accessibility */
-@media print {
-  .sr-only {
-    position: static !important;
-    width: auto !important;
-    height: auto !important;
-    padding: inherit !important;
-    margin: inherit !important;
-    overflow: visible !important;
-    clip: auto !important;
-    white-space: normal !important;
-  }
-  
-  a[href]:after {
-    content: " (" attr(href) ")";
-    font-size: 0.8em;
-    color: #666;
-  }
-  
-  .no-print {
-    display: none !important;
-  }
-}
 
 /* Basic keyboard navigation */
 a:focus-visible,
@@ -97,57 +74,9 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-/* Skip link styling */
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 6px;
-  background: var(--color-primary-600);
-  color: white;
-  padding: 8px;
-  text-decoration: none;
-  border-radius: 4px;
-  z-index: 1000;
-  font-weight: 600;
-}
 
-.skip-link:focus {
-  top: 6px;
-}
 
-/* Loading state accessibility */
-[role="status"][aria-live="polite"] {
-  position: relative;
-}
-
-[role="status"][aria-live="polite"]:before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--color-primary-200);
-  border-top: 2px solid var(--color-primary-600);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [role="status"][aria-live="polite"]:before {
-    animation: none;
-    border: 2px solid var(--color-primary-600);
-    border-radius: 2px;
-  }
-}
-
-/* Touch target size improvements */
+/* Touch target size improvements - WCAG guidelines */
 @media (pointer: coarse) {
   a, button, [role="button"] {
     min-height: 44px;
@@ -156,4 +85,199 @@ button:focus-visible {
     align-items: center;
     justify-content: center;
   }
+  
+  /* Ensure proper spacing between touch targets */
+  .mobile-nav a,
+  .mobile-nav button {
+    min-height: 48px; /* Slightly larger for better UX */
+    padding: 0.75rem 1rem;
+    margin: 0.25rem 0; /* Adequate spacing */
+  }
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  /* Prevent horizontal scroll */
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+  
+  /* Ensure all content respects boundaries */
+  * {
+    max-width: 100%;
+  }
+  
+  /* Images should never overflow */
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+  
+  /* Better mobile spacing for containers */
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    max-width: 100% !important;
+  }
+  
+  /* Mobile-friendly blog cards */
+  .blog-card {
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Tighter mobile navigation */
+  .mobile-nav ul {
+    flex-direction: column;
+    gap: 0.25rem;
+    width: 100%;
+  }
+  
+  .mobile-nav a {
+    display: block;
+    padding: 0.875rem 1rem;
+    width: 100%;
+    text-align: left;
+  }
+}
+
+/* Remove hover effects on touch devices - Tailwind-friendly */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove problematic hover transforms */
+  .hover\:scale-105:hover,
+  .group-hover\:scale-105,
+  .group-hover\:scale-110 {
+    transform: none;
+  }
+  
+  .hover\:shadow-brand-lg:hover {
+    box-shadow: inherit;
+  }
+  
+  /* Add active states for touch feedback */
+  button:active,
+  .btn:active,
+  .blog-card:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+  
+  /* Touch-friendly link active states */
+  a:active {
+    opacity: 0.7;
+    transition: opacity 0.1s ease;
+  }
+}
+
+/* Navigation adjustments for consistent breakpoints */
+@media (max-width: 768px) {
+  /* Ensure mobile menu has proper layout */
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 50;
+  }
+  
+  .mobile-menu-content {
+    background: white;
+    width: 100%;
+    max-width: 320px;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 1rem;
+  }
+  
+  /* Dark mode support for mobile menu */
+  .dark .mobile-menu-content {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+  }
+}
+
+/* Safari iOS Search Modal Compatibility */
+.safe-area-modal {
+  /* Fallback for browsers that don't support env() */
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  
+  /* Safe area support for notched devices */
+  padding-top: max(1rem, env(safe-area-inset-top));
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  .safe-area-modal {
+    /* Ensure content is always visible above iOS Safari UI */
+    min-height: calc(100vh - 200px); /* Account for Safari UI */
+    max-height: calc(100vh - 64px);  /* Leave room for navigation */
+  }
+}
+
+/* Viewport height fallbacks for older Safari */
+@media screen and (max-width: 640px) {
+  .safe-area-modal {
+    /* Fallback height for Safari < 16 that doesn't support dvh */
+    height: 100vh !important;
+    height: calc(100vh - 64px) !important; /* Account for header */
+    
+    /* Modern browsers that support dvh */
+    height: calc(100dvh - 64px) !important;
+  }
+}
+
+/* Note: Keyboard avoidance removed due to input jumping issue
+   The dynamic viewport height calculation in JavaScript handles
+   keyboard overlap more effectively */
+
+/* Custom search input border - match divider color */
+.search-input-border {
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* Custom scrollbar styles for search modal */
+.search-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af #f3f4f6; /* thumb track */
+}
+
+.search-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.search-scrollbar::-webkit-scrollbar-track {
+  background: #f3f4f6; /* gray-100 */
+  border-radius: 3px;
+}
+
+.search-scrollbar::-webkit-scrollbar-thumb {
+  background: #9ca3af; /* gray-400 */
+  border-radius: 3px;
+}
+
+.search-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #6b7280; /* gray-500 */
+}
+
+/* Dark mode scrollbar */
+.dark .search-scrollbar {
+  scrollbar-color: #4b5563 #1f2937; /* thumb track */
+}
+
+.dark .search-scrollbar::-webkit-scrollbar-track {
+  background: #1f2937; /* gray-800 */
+}
+
+.dark .search-scrollbar::-webkit-scrollbar-thumb {
+  background: #4b5563; /* gray-600 */
+}
+
+.dark .search-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #6b7280; /* gray-500 */
 }

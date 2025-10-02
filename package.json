@@ -40,6 +40,8 @@
     "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
     "@eslint/eslintrc": "^3",
     "@playwright/test": "^1.55.0",
     "@tailwindcss/postcss": "^4.1.12",
@@ -51,6 +53,7 @@
     "@types/react-dom": "^19",
     "@types/turndown": "^5.0.5",
     "autoprefixer": "^10.4.21",
+    "core-js": "^3.45.1",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
     "postcss": "^8.5.6",

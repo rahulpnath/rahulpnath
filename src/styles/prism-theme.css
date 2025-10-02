@@ -127,44 +127,6 @@ pre[class*="language-"] .token.variable {
   cursor: help;
 }
 
-/* Language-specific styling */
-.language-javascript .token.keyword.module,
-.language-typescript .token.keyword.module {
-  color: #f7768e;
-}
-
-.language-css .token.property {
-  color: #7dcfff;
-}
-
-.language-json .token.property {
-  color: #7dcfff;
-}
-
-.language-json .token.string {
-  color: #9ece6a;
-}
-
-.language-json .token.number {
-  color: #ff9e64;
-}
-
-.language-sql .token.keyword {
-  color: #bb9af7;
-  text-transform: uppercase;
-}
-
-.language-sql .token.string {
-  color: #9ece6a;
-}
-
-.language-bash .token.function {
-  color: #7dcfff;
-}
-
-.language-bash .token.parameter {
-  color: #e0af68;
-}
 
 /* Inline code styling - similar to your requirements */
 code:not(pre > code):not(a > code) {
@@ -181,19 +143,6 @@ code:not(pre > code):not(a > code) {
   font-size: 0.8888889em;
 }
 
-/* Line highlighting */
-.line-highlight {
-  position: absolute;
-  left: 0;
-  right: 0;
-  padding: inherit 0;
-  margin-top: 1em;
-  background: rgba(158, 206, 106, 0.08);
-  background: linear-gradient(to right, rgba(158, 206, 106, 0.1) 70%, rgba(158, 206, 106, 0));
-  pointer-events: none;
-  line-height: inherit;
-  white-space: pre;
-}
 
 /* Selection */
 pre[class*="language-"]::-moz-selection,
@@ -233,22 +182,4 @@ pre[class*="language-"]::-webkit-scrollbar-thumb:hover {
 pre[class*="language-"]:focus {
   outline: 2px solid #7dcfff;
   outline-offset: 2px;
-}
-
-/* Command line plugin styling */
-.command-line-prompt > span:before {
-  color: #565f89;
-  content: " ";
-}
-
-.command-line-prompt > span[data-user]:before {
-  content: "[" attr(data-user) "@" attr(data-host) "] $";
-}
-
-.command-line-prompt > span[data-user="root"]:before {
-  content: "[" attr(data-user) "@" attr(data-host) "] #";
-}
-
-.command-line-prompt > span[data-prompt]:before {
-  content: attr(data-prompt);
 }

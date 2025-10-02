@@ -16,8 +16,40 @@ interface HeaderProps {
 export default function Header({ posts = [] }: HeaderProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [viewportHeight, setViewportHeight] = useState<number>(0);
   const { theme, toggleTheme, mounted } = useTheme();
   const pathname = usePathname();
+
+  // Dynamic viewport height calculation for iOS Safari compatibility
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
+    const updateViewportHeight = () => {
+      // Use the actual viewport height, accounting for iOS Safari address bar
+      const vh = window.innerHeight;
+      
+      // Debounce updates to prevent jumping during keyboard events
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setViewportHeight(vh);
+      }, 100);
+    };
+
+    // Set initial height immediately
+    const vh = window.innerHeight;
+    setViewportHeight(vh);
+
+    // Update on resize (iOS Safari address bar show/hide)
+    // Don't update on every resize to prevent jumping when keyboard appears
+    window.addEventListener('resize', updateViewportHeight);
+    window.addEventListener('orientationchange', updateViewportHeight);
+
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', updateViewportHeight);
+      window.removeEventListener('orientationchange', updateViewportHeight);
+    };
+  }, []);
 
 
   // Close mobile menu on route change
@@ -148,11 +180,25 @@ export default function Header({ posts = [] }: HeaderProps) {
       {isSearchOpen && (
         <>
           <div 
-            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm" 
+            className="fixed inset-0 z-50 transition-opacity bg-gray-200/75 dark:bg-gray-800/75 backdrop-blur-sm" 
             onClick={() => setIsSearchOpen(false)}
           />
-          <div className="fixed inset-0 z-50 flex items-start justify-center pt-32 px-4 sm:px-6 lg:px-8" onClick={() => setIsSearchOpen(false)}>
-            <div className="relative text-left flex flex-col bg-white dark:bg-gray-900 shadow-xl w-full sm:max-w-3xl h-dvh sm:h-[20rem] rounded-none sm:rounded-lg" onClick={(e) => e.stopPropagation()}>
+          <div className="fixed inset-0 z-60 flex items-start justify-center pt-4 sm:pt-32 px-4 sm:px-6 lg:px-8" onClick={() => setIsSearchOpen(false)}>
+            <div 
+              className="relative text-left flex flex-col bg-theme-bg-card shadow-xl w-full sm:max-w-3xl rounded-none sm:rounded-lg safe-area-modal"
+              style={{
+                // Dynamic height for iOS Safari compatibility
+                height: typeof window !== 'undefined' && window.innerWidth >= 640 
+                  ? '36rem' 
+                  : viewportHeight > 0 
+                    ? `${viewportHeight - 32}px` 
+                    : 'calc(100vh - 64px)',
+                maxHeight: viewportHeight > 0 
+                  ? `${viewportHeight - 32}px` 
+                  : 'calc(100vh - 64px)',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
               <SearchComponent 
                 posts={posts} 
                 placeholder="Search..."

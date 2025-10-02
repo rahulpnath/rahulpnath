@@ -199,17 +199,11 @@ export default function TableOfContents({ content, className = '' }: TableOfCont
       
       {/* TOC Items - Ali Abdaal exact styling with header inside */}
       <div 
-        className="ez-toc-counter"
-        style={{
-          marginTop: '2rem',
-          borderLeft: '2px solid #e5e7eb',
-          paddingLeft: '1rem',
-          paddingTop: '8px'
-        }}
+        className="ez-toc-counter mt-8 border-l-2 border-theme-border-light pl-4 pt-2"
       >
         {/* Header inside the bordered area */}
         <div className="mb-4">
-          <p className="font-medium text-gray-900">In this article:</p>
+          <p className="font-medium text-theme-text">In this article:</p>
         </div>
         <nav>
           <ul className="list-disc ml-4">
@@ -225,7 +219,7 @@ export default function TableOfContents({ content, className = '' }: TableOfCont
                     ez-toc-link transition-colors duration-200
                     ${activeId === item.id 
                       ? 'font-medium' 
-                      : 'text-gray-600 hover:text-gray-900'
+                      : 'text-theme-text-secondary hover:text-theme-text'
                     }
                   `}
                   style={{ 
