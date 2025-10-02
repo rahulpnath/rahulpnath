@@ -584,20 +584,22 @@
   }
 }
 
-/* Mobile code block optimizations */
+/* Mobile code block optimizations - UPDATED FOR WRAPPING */
 .mobile-code-block {
   /* Base styles moved from inline */
   padding: 1rem;
   font-size: 14px;
   line-height: 1.5;
-  
-  /* Overflow handling */
+
+  /* NEW: Responsive overflow handling - wrap instead of scroll */
   overflow-x: auto;
   overflow-y: hidden;
-  white-space: pre;  /* Keep this - code shouldn't wrap */
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
   -webkit-overflow-scrolling: touch;
   max-width: 100%;
-  
+
   /* Better scrollbar for mobile */
   scrollbar-width: thin;
   scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
@@ -622,10 +624,19 @@
     font-size: 13px;
     padding: 0.75rem;
     line-height: 1.5;
+    /* Enhanced wrapping for mobile */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .mobile-code-block pre {
+    max-width: 100%;
   }
   
-  .mobile-code-block pre {
-    max-width: calc(100vw - 3rem); /* Account for page padding */
+  /* Ensure code lines wrap properly */
+  .codeblock-line {
+    white-space: pre-wrap;
+    word-break: break-word;
   }
 }
 
@@ -635,5 +646,14 @@
     font-size: 12px;
     padding: 0.5rem;
     border-radius: 0.5rem;
+    white-space: pre-wrap;
+  }
+}
+
+/* RECOMMENDED: Hybrid approach - scroll on desktop, wrap on mobile */
+@media (min-width: 769px) {
+  .mobile-code-block {
+    white-space: pre;
+    overflow-x: auto;
   }
 }

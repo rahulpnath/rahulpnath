@@ -1,4 +1,4 @@
-/* Milan Jovanovic Style - Base16 Color Scheme */
+/*Base16 Color Scheme */
 
 :root {
   /* Base16 Night Owl Theme - Your preferred colors */
@@ -23,17 +23,19 @@
 /* Base styles for code blocks - Higher specificity */
 pre[class*="language-"],
 pre[data-lang] {
-  position: relative !important;
-  margin: 1.5rem 0 !important;
-  padding: 1rem !important;
-  overflow: auto !important;
-  background: var(--base00) !important;
-  color: var(--base05) !important;
-  font-family: "Cartograph CF", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
-  font-size: 14px !important;
-  line-height: 1.5 !important;
-  border-radius: 6px !important;
-  border: none !important;
+  position: relative;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  overflow: auto;
+  background: var(--base00);
+  color: var(--base05);
+  font-family: "Cartograph CF", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  border-radius: 6px;
+  border: none;
+  white-space: pre-wrap;
+  word-break: break-word;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -136,6 +138,12 @@ code:not(pre > code):not(a > code) {
   font-size: 0.875em;
   font-weight: 600;
   color: #1f2937;
+    /* ADD THESE FOR WRAPPING */
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  display: inline;
+  max-width: 100%;
 }
 
 /* For larger prose contexts */
@@ -182,4 +190,11 @@ pre[class*="language-"]::-webkit-scrollbar-thumb:hover {
 pre[class*="language-"]:focus {
   outline: 2px solid #7dcfff;
   outline-offset: 2px;
+}
+
+@media (min-width: 769px) {
+  pre[class*="language-"],
+  pre[data-lang] {
+    white-space: pre;
+  }
 }
