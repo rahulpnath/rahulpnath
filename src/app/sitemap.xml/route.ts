@@ -1,8 +1,8 @@
-import { getAllPosts } from '@/lib/posts';
+import { getAllPostsMetadata } from '@/lib/posts';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const posts = await getAllPosts();
+  const posts = await getAllPostsMetadata();
   const baseUrl = 'https://www.rahulpnath.com';
   
   // Get all unique tags for tag pages

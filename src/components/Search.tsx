@@ -6,12 +6,12 @@ import Link from 'next/link';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface SearchProps {
-  posts: BlogPost[];
+  posts: Omit<BlogPost, 'content'>[];
   placeholder?: string;
   onClose?: () => void;
 }
 
-interface SearchResult extends BlogPost {
+interface SearchResult extends Omit<BlogPost, 'content'> {
   matchScore: number;
   highlightedTitle?: string;
   highlightedDescription?: string;
@@ -24,16 +24,15 @@ export default function Search({ posts, placeholder = "Search articles...", onCl
   const [visibleResults, setVisibleResults] = useState(10);
   const { theme, toggleTheme, mounted } = useTheme();
 
-  // Create search index with content for better matching
+  // Create search index with metadata only (no content needed for search)
   const searchIndex = useMemo(() => {
     return posts.map(post => ({
       ...post,
       searchText: [
         post.title,
         post.description || '',
-        post.tags?.join(' ') || '',
-        // Add first 200 characters of content for context
-        post.content?.substring(0, 200) || ''
+        post.tags?.join(' ') || ''
+        // Content not available in metadata-only posts, but title/description/tags provide good search coverage
       ].join(' ').toLowerCase()
     }));
   }, [posts]);

@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { BlogPost } from '@/types/blog'
 
 interface BlogPostCardProps {
-  post: BlogPost
+  post: Omit<BlogPost, 'content'>
 }
 
 export default function BlogPostCard({ post }: BlogPostCardProps) {

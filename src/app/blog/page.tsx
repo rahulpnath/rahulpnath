@@ -18,8 +18,8 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-  const { getAllPosts } = await import('@/lib/posts');
-  const posts = await getAllPosts();
+  const { getAllPostsMetadata } = await import('@/lib/posts');
+  const posts = await getAllPostsMetadata();
 
   return (
     <div className="min-h-screen blog-container">

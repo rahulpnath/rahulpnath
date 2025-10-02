@@ -1,6 +1,6 @@
 import AuthorCard from "@/components/AuthorCard";
 import TableOfContents from "@/components/TableOfContents";
-import { getAllPosts, getPostBySlug } from "@/lib/posts";
+import { getAllPostsMetadata, getPostBySlug, getPostMetadata } from "@/lib/posts";
 import { mdxComponents } from "@/mdx-components";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Image from "next/image";
@@ -13,16 +13,26 @@ interface BlogPostPageProps {
   }>;
 }
 
+// ISR: Only generate static params for most recent posts to reduce build time
+// Other posts will be generated on-demand with revalidation
 export async function generateStaticParams() {
-  const posts = await getAllPosts();
-  return posts.map((post) => ({
+  const posts = await getAllPostsMetadata(); // Use metadata only - much faster
+  
+  // Only pre-generate the 20 most recent posts
+  // Other posts will be generated on first request (ISR)
+  return posts.slice(0, 20).map((post) => ({
     slug: post.slug,
   }));
 }
 
+// Enable ISR for better performance and reduced HTML bloat
+export const dynamicParams = true; // Allow dynamic params for posts not in generateStaticParams
+export const revalidate = 3600; // Revalidate every hour
+
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  // Use metadata-only function to avoid loading full content for SEO
+  const post = await getPostMetadata(slug);
 
   if (!post) {
     return {
@@ -84,51 +94,36 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
+  
+  // Load full content only when rendering the actual page
+  // This keeps the content out of metadata generation
   const post = await getPostBySlug(slug);
 
   if (!post) {
     notFound();
   }
 
+  // Create a smaller, optimized JSON-LD object
+  // Move non-essential structured data to reduce HTML size
   const publishedTime = new Date(post.publishedAt).toISOString();
   const url = `https://www.rahulpnath.com/blog/${slug}`;
   const imageUrl = post.coverImage || '/rahul-logo.png';
 
+  // Minimal JSON-LD for essential SEO only
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.description,
-    image: [imageUrl],
+    image: imageUrl, // Single image instead of array
     datePublished: publishedTime,
-    dateModified: publishedTime,
     author: {
       '@type': 'Person',
       name: 'Rahul Nath',
-      url: 'https://www.rahulpnath.com',
-      sameAs: [
-        'https://twitter.com/rahulpnath',
-        'https://www.youtube.com/rahulnathp',
-        'https://github.com/rahulpnath',
-        'https://www.linkedin.com/in/rahulpnath'
-      ]
+      url: 'https://www.rahulpnath.com'
     },
-    publisher: {
-      '@type': 'Organization',
-      name: 'Rahul Nath',
-      logo: {
-        '@type': 'ImageObject',
-        url: 'https://www.rahulpnath.com/rahul-logo.png'
-      }
-    },
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': url
-    },
-    keywords: post.tags?.join(', '),
-    articleSection: 'Technology',
-    inLanguage: 'en-US',
-    url
+    mainEntityOfPage: url,
+    inLanguage: 'en-US'
   };
 
   return (
@@ -275,7 +270,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 )}
               </header>
 
-              {/* Article Content */}
+              {/* Article Content - Rendered server-side, not serialized in __NEXT_DATA__ */}
               <div itemProp="articleBody">
                 <MDXRemote source={post.content} components={mdxComponents} />
               </div>

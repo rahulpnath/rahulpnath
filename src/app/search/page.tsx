@@ -1,6 +1,6 @@
 import Search from '@/components/Search';
 import BlogPostCard from '@/components/BlogPostCard';
-import { getAllPosts } from '@/lib/posts';
+import { getAllPostsMetadata } from '@/lib/posts';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SearchPage() {
-  const posts = await getAllPosts();
+  const posts = await getAllPostsMetadata();
 
   return (
     <div className="min-h-screen bg-theme-bg text-theme-text">

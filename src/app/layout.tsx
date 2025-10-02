@@ -3,7 +3,7 @@ import '../styles/accessibility.css';
 import localFont from "next/font/local";
 import { Inter, Playfair_Display, DM_Sans } from 'next/font/google';
 import ClientHeader from '@/components/ClientHeader';
-import { getAllPosts } from '@/lib/posts';
+import { getAllPostsMetadata } from '@/lib/posts';
 import ThemeWrapper from '@/components/ThemeWrapper';
 import { Metadata, Viewport } from 'next';
 
@@ -103,8 +103,8 @@ interface RootLayoutProps {
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-  // Get posts for search functionality
-  const posts = await getAllPosts();
+  // Get posts metadata for search functionality
+  const posts = await getAllPostsMetadata();
 
   return (
     <html lang="en" className={`${clashGrotesk.variable} ${inter.variable} ${playfairDisplay.variable} ${dmSans.variable}`}>

@@ -1,5 +1,5 @@
 import BlogWithPagination from "@/app/blog/BlogWithPagination";
-import { getAllPosts } from "@/lib/posts";
+import { getAllPostsMetadata } from "@/lib/posts";
 import { Metadata } from "next";
 
 interface TagPageProps {
@@ -12,7 +12,7 @@ export async function generateMetadata({
   params,
 }: TagPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const allPosts = await getAllPosts();
+  const allPosts = await getAllPostsMetadata();
   const taggedPosts = allPosts.filter((post) =>
     post.tags?.some(
       (tag) => tag.toLowerCase().replace(/\s+/g, "-") === slug.toLowerCase()
@@ -55,7 +55,7 @@ export async function generateMetadata({
 
 export default async function TagPage({ params }: TagPageProps) {
   const { slug } = await params;
-  const allPosts = await getAllPosts();
+  const allPosts = await getAllPostsMetadata();
 
   // Filter posts by tag
   const taggedPosts = allPosts.filter((post) =>
@@ -117,7 +117,7 @@ export default async function TagPage({ params }: TagPageProps) {
 
 // Generate static params for all tags
 export async function generateStaticParams() {
-  const allPosts = await getAllPosts();
+  const allPosts = await getAllPostsMetadata();
   const tags = new Set<string>();
 
   allPosts.forEach((post) => {

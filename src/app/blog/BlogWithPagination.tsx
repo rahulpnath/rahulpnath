@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { BlogPost } from '@/types/blog';
 
 
-function BlogPostCard({ post }: { post: BlogPost }) {
+function BlogPostCard({ post }: { post: Omit<BlogPost, 'content'> }) {
 
   return (
     <article className="relative group flex flex-col w-full gap-y-6">
@@ -100,7 +100,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
 }
 
 interface BlogWithPaginationProps {
-  posts: BlogPost[];
+  posts: Omit<BlogPost, 'content'>[];
   showHeader?: boolean;
 }
 

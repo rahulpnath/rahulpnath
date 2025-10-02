@@ -75,7 +75,8 @@ interface YourFrontmatter {
   excerpt: string;
 }
 
-export async function getAllPosts(): Promise<BlogPost[]> {
+// Get all posts metadata only (without content) - for listing pages
+export async function getAllPostsMetadata(): Promise<Omit<BlogPost, 'content'>[]> {
   if (!fs.existsSync(postsDirectory)) {
     return [];
   }
@@ -91,16 +92,15 @@ export async function getAllPosts(): Promise<BlogPost[]> {
 
       const frontmatter = data as YourFrontmatter;
 
-      // Map your frontmatter to the BlogPost interface
+      // Return metadata only, no content - reduces memory usage
       return {
-        slug: frontmatter.slug || slug, // Use frontmatter slug if available, fallback to filename
-        content,
+        slug: frontmatter.slug || slug,
         title: frontmatter.title,
-        description: frontmatter.excerpt, // Map excerpt to description
-        publishedAt: frontmatter.date, // Your date field
+        description: frontmatter.excerpt,
+        publishedAt: frontmatter.date,
         author: {
           name: "Rahul Nath",
-          avatar: undefined, // Add your avatar image to public/images/ when ready
+          avatar: undefined,
           bio: "Software engineer passionate about AWS, .NET, and building better developer experiences. I write about cloud architecture, productivity, and the lessons learned from over a decade in software development.",
           email: "rahulpnath@gmail.com",
           social: {
@@ -111,7 +111,55 @@ export async function getAllPosts(): Promise<BlogPost[]> {
             website: "https://rahulpnath.com"
           }
         },
-        coverImage: frontmatter.feature_image, // Map feature_image to coverImage
+        coverImage: frontmatter.feature_image,
+        tags: frontmatter.tags || [],
+        readingTime: calculateReadingTime(content), // Still need content briefly for reading time
+      };
+    })
+    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+
+  return allPosts;
+}
+
+// Backward compatibility - keep for existing imports
+export async function getAllPosts(): Promise<BlogPost[]> {
+  console.warn('getAllPosts() loads full content - use getAllPostsMetadata() for better performance');
+  
+  if (!fs.existsSync(postsDirectory)) {
+    return [];
+  }
+
+  const fileNames = fs.readdirSync(postsDirectory);
+  const allPosts = fileNames
+    .filter((name) => name.endsWith('.mdx'))
+    .map((name) => {
+      const slug = name.replace(/\.mdx$/, '');
+      const fullPath = path.join(postsDirectory, name);
+      const fileContents = fs.readFileSync(fullPath, 'utf8');
+      const { data, content } = matter(fileContents);
+
+      const frontmatter = data as YourFrontmatter;
+
+      return {
+        slug: frontmatter.slug || slug,
+        content,
+        title: frontmatter.title,
+        description: frontmatter.excerpt,
+        publishedAt: frontmatter.date,
+        author: {
+          name: "Rahul Nath",
+          avatar: undefined,
+          bio: "Software engineer passionate about AWS, .NET, and building better developer experiences. I write about cloud architecture, productivity, and the lessons learned from over a decade in software development.",
+          email: "rahulpnath@gmail.com",
+          social: {
+            twitter: "https://twitter.com/rahulpnath",
+            linkedin: "https://linkedin.com/in/rahulpnath",
+            youtube: "https://youtube.com/@RahulNath",
+            github: "https://github.com/rahulpnath",
+            website: "https://rahulpnath.com"
+          }
+        },
+        coverImage: frontmatter.feature_image,
         tags: frontmatter.tags || [],
         readingTime: calculateReadingTime(content),
       };
@@ -188,16 +236,76 @@ function calculateReadingTime(content: string): string {
   return `${readingTime} min read`;
 }
 
-// Optional: Export function to get all unique tags
+// Get metadata for a single post (for generateMetadata) - avoids loading content
+export async function getPostMetadata(slug: string): Promise<Omit<BlogPost, 'content'> | null> {
+  try {
+    const fileNames = fs.readdirSync(postsDirectory);
+    let fileName = '';
+    
+    // Find file by slug in frontmatter first
+    for (const name of fileNames) {
+      if (!name.endsWith('.mdx')) continue;
+      
+      const fullPath = path.join(postsDirectory, name);
+      const fileContents = fs.readFileSync(fullPath, 'utf8');
+      const { data } = matter(fileContents); // Only parse frontmatter, not content
+      const frontmatter = data as YourFrontmatter;
+      
+      if (frontmatter.slug === slug) {
+        fileName = name;
+        break;
+      }
+    }
+    
+    // Fallback to filename if slug not found in frontmatter
+    if (!fileName) {
+      fileName = `${slug}.mdx`;
+    }
+    
+    const fullPath = path.join(postsDirectory, fileName);
+    const fileContents = fs.readFileSync(fullPath, 'utf8');
+    const { data, content } = matter(fileContents);
+
+    const frontmatter = data as YourFrontmatter;
+
+    return {
+      slug: frontmatter.slug || slug,
+      title: frontmatter.title,
+      description: frontmatter.excerpt,
+      publishedAt: frontmatter.date,
+      author: {
+        name: "Rahul Nath",
+        avatar: undefined,
+        bio: "Software engineer passionate about AWS, .NET, and building better developer experiences. I write about cloud architecture, productivity, and the lessons learned from over a decade in software development.",
+        email: "rahulpnath@gmail.com",
+        social: {
+          twitter: "https://twitter.com/rahulpnath",
+          linkedin: "https://linkedin.com/in/rahulpnath",
+          youtube: "https://youtube.com/@RahulNath",
+          github: "https://github.com/rahulpnath",
+          website: "https://rahulpnath.com"
+        }
+      },
+      coverImage: frontmatter.feature_image,
+      tags: frontmatter.tags || [],
+      readingTime: calculateReadingTime(content), // Calculate once here
+    };
+  } catch (error) {
+    console.error('Error getting post metadata:', error);
+    return null;
+  }
+}
+
+// Export function to get all unique tags - uses metadata only
 export async function getAllTags(): Promise<string[]> {
-  const posts = await getAllPosts();
+  const posts = await getAllPostsMetadata(); // Use metadata version
   const allTags = posts.flatMap(post => post.tags || []);
   return Array.from(new Set(allTags)).sort();
 }
 
-// Optional: Export function to get posts by tag
-export async function getPostsByTag(tag: string): Promise<BlogPost[]> {
-  const posts = await getAllPosts();
+// Export function to get posts by tag - uses metadata only for performance
+export async function getPostsByTag(tag: string): Promise<Omit<BlogPost, 'content'>[]> {
+  const posts = await getAllPostsMetadata(); // Use metadata version
   return posts.filter(post => post.tags?.includes(tag));
 }
 // export type PostMeta = {

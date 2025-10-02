@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start --experimental-https",
     "lint": "next lint",
     "migrate:ghost": "node scripts/ghost-to-mdx.js",
     "migrate:ghost:images": "node scripts/ghost-to-mdx.js --download-images",

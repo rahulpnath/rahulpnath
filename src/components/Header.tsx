@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface HeaderProps {
-  posts?: BlogPost[];
+  posts?: Omit<BlogPost, 'content'>[];
 }
 
 export default function Header({ posts = [] }: HeaderProps) {

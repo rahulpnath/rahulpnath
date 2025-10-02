@@ -1,4 +1,4 @@
-import { getAllPosts } from '@/lib/posts'
+import { getAllPostsMetadata } from '@/lib/posts'
 import Link from 'next/link'
 import { Metadata } from 'next'
 
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 }
 
 export default async function TagsPage() {
-  const allPosts = await getAllPosts()
+  const allPosts = await getAllPostsMetadata()
   
   // Get all tags with post counts
   const tagCounts = new Map<string, number>()

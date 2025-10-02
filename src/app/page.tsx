@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { BlogPost } from '@/types/blog';
-import { getAllPosts } from '@/lib/posts';
+import { getAllPostsMetadata } from '@/lib/posts';
 // import { getLatestYouTubeVideos, YouTubeVideo } from '@/lib/youtube'; // COMMENTED OUT
 
 export const metadata: Metadata = {
@@ -101,9 +101,9 @@ function HeroSection() {
 
 // Latest on YouTube Section - REMOVED
 
-// Recent Articles Section
+// Recent Articles Section - Updated to use metadata-only posts
 interface RecentArticlesProps {
-  posts: BlogPost[];
+  posts: Omit<BlogPost, 'content'>[];
 }
 
 function RecentArticlesSection({ posts }: RecentArticlesProps) {
@@ -335,10 +335,11 @@ function Footer() {
   );
 }
 
-// Main Homepage Component
+// Main Homepage Component - Optimized for performance
 export default async function HomePage() {
+  // Use metadata-only function to reduce HTML bloat in __NEXT_DATA__
   const [allPosts] = await Promise.all([
-    getAllPosts()
+    getAllPostsMetadata() // Only load metadata, not full content
     // getLatestYouTubeVideos(6) // Get 6 videos (1 featured + 5 recent) - COMMENTED OUT
   ]);
 
