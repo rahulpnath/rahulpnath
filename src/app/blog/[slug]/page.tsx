@@ -1,11 +1,15 @@
 import AuthorCard from "@/components/AuthorCard";
 import TableOfContents from "@/components/TableOfContents";
-import { getAllPostsMetadata, getPostBySlug, getPostMetadata } from "@/lib/posts";
+import {
+  getAllPostsMetadata,
+  getPostBySlug,
+  getPostMetadata,
+} from "@/lib/posts";
 import { mdxComponents } from "@/mdx-components";
+import { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { Metadata } from "next";
 
 interface BlogPostPageProps {
   readonly params: Promise<{
@@ -17,7 +21,7 @@ interface BlogPostPageProps {
 // Other posts will be generated on-demand with revalidation
 export async function generateStaticParams() {
   const posts = await getAllPostsMetadata(); // Use metadata only - much faster
-  
+
   // Only pre-generate the 20 most recent posts
   // Other posts will be generated on first request (ISR)
   return posts.slice(0, 20).map((post) => ({
@@ -29,34 +33,42 @@ export async function generateStaticParams() {
 export const dynamicParams = true; // Allow dynamic params for posts not in generateStaticParams
 export const revalidate = 3600; // Revalidate every hour
 
-export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
   // Use metadata-only function to avoid loading full content for SEO
   const post = await getPostMetadata(slug);
 
   if (!post) {
     return {
-      title: 'Post Not Found',
-      description: 'The requested blog post could not be found.',
+      title: "Post Not Found",
+      description: "The requested blog post could not be found.",
     };
   }
 
   const publishedTime = new Date(post.publishedAt).toISOString();
   const modifiedTime = publishedTime;
   const url = `https://www.rahulpnath.com/blog/${slug}`;
-  const imageUrl = post.coverImage || '/rahul-logo.png';
+  const imageUrl = post.coverImage || "/rahul-logo.png";
 
   return {
     title: post.title,
-    description: post.description || `Read about ${post.title} by Rahul Nath. Learn about web development, AWS, .NET, and software engineering best practices.`,
-    keywords: post.tags || ['Web Development', 'Programming', 'Software Engineering'],
-    authors: [{ name: 'Rahul Nath', url: 'https://www.rahulpnath.com' }],
-    creator: 'Rahul Nath',
-    publisher: 'Rahul Nath',
+    description:
+      post.description ||
+      `Read about ${post.title} by Rahul Nath. Learn about web development, AWS, .NET, and software engineering best practices.`,
+    keywords: post.tags || [
+      "Web Development",
+      "Programming",
+      "Software Engineering",
+    ],
+    authors: [{ name: "Rahul Nath", url: "https://www.rahulpnath.com" }],
+    creator: "Rahul Nath",
+    publisher: "Rahul Nath",
     openGraph: {
       title: post.title,
       description: post.description || `Read about ${post.title} by Rahul Nath`,
-      type: 'article',
+      type: "article",
       url,
       images: [
         {
@@ -68,33 +80,33 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       ],
       publishedTime,
       modifiedTime,
-      authors: ['Rahul Nath'],
-      section: 'Technology',
+      authors: ["Rahul Nath"],
+      section: "Technology",
       tags: post.tags,
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: post.title,
       description: post.description || `Read about ${post.title} by Rahul Nath`,
-      creator: '@rahulpnath',
+      creator: "@rahulpnath",
       images: [imageUrl],
     },
     alternates: {
       canonical: url,
     },
     other: {
-      'article:author': 'Rahul Nath',
-      'article:published_time': publishedTime,
-      'article:modified_time': modifiedTime,
-      'article:section': 'Technology',
-      'article:tag': post.tags?.join(', ') || '',
+      "article:author": "Rahul Nath",
+      "article:published_time": publishedTime,
+      "article:modified_time": modifiedTime,
+      "article:section": "Technology",
+      "article:tag": post.tags?.join(", ") || "",
     },
   };
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  
+
   // Load full content only when rendering the actual page
   // This keeps the content out of metadata generation
   const post = await getPostBySlug(slug);
@@ -107,54 +119,55 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   // Move non-essential structured data to reduce HTML size
   const publishedTime = new Date(post.publishedAt).toISOString();
   const url = `https://www.rahulpnath.com/blog/${slug}`;
-  const imageUrl = post.coverImage || '/rahul-logo.png';
+  const imageUrl = post.coverImage || "/rahul-logo.png";
 
   // Minimal JSON-LD for essential SEO only
   const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+    "@context": "https://schema.org",
+    "@type": "Article",
     publisher: {
-      '@type': 'Organization',
-      name: 'Rahul Nath',
-      url: 'https://www.rahulpnath.com/',
+      "@type": "Organization",
+      name: "Rahul Nath",
+      url: "https://www.rahulpnath.com/",
       logo: {
-        '@type': 'ImageObject',
-        url: 'https://www.rahulpnath.com/content/images/size/w256h256/2022/10/logo-512x512.png',
+        "@type": "ImageObject",
+        url: "https://www.rahulpnath.com/content/images/size/w256h256/2022/10/logo-512x512.png",
         width: 60,
-        height: 60
-      }
+        height: 60,
+      },
     },
     author: {
-      '@type': 'Person',
-      name: 'Rahul Pulikkot Nath',
+      "@type": "Person",
+      name: "Rahul Pulikkot Nath",
       image: {
-        '@type': 'ImageObject',
-        url: 'https://www.gravatar.com/avatar/52158e6893b81b7fbcf1af52c6a5a81d?s=250&r=x&d=mp',
+        "@type": "ImageObject",
+        url: "https://www.gravatar.com/avatar/52158e6893b81b7fbcf1af52c6a5a81d?s=250&r=x&d=mp",
         width: 250,
-        height: 250
+        height: 250,
       },
-      url: 'https://www.rahulpnath.com/',
+      url: "https://www.rahulpnath.com/",
       sameAs: [
-        'https://www.youtube.com/user/rahulnathp',
-        'https://www.facebook.com/rahulpnath/',
-        'https://x.com/rahulpnath',
-        'https://github.com/rahulpnath',
-        'https://www.instagram.com/rahulpnath',
-      ]
+        "https://www.youtube.com/user/rahulnathp",
+        "https://www.facebook.com/rahulpnath/",
+        "https://x.com/rahulpnath",
+        "https://github.com/rahulpnath",
+        "https://www.linkedin.com/in/rahulpnath/",
+        "https://www.instagram.com/rahulpnath",
+      ],
     },
     headline: post.title,
     url: url,
     datePublished: publishedTime,
     dateModified: publishedTime,
     image: {
-      '@type': 'ImageObject',
+      "@type": "ImageObject",
       url: imageUrl,
       width: 1200,
-      height: 675
+      height: 675,
     },
-    keywords: post.tags?.join(', ') || '',
+    keywords: post.tags?.join(", ") || "",
     description: post.description,
-    mainEntityOfPage: url
+    mainEntityOfPage: url,
   };
 
   return (
@@ -165,25 +178,25 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       />
       <div className="min-h-screen bg-theme-bg text-theme-text">
         {/* Skip to main content link */}
-        <a 
-          href="#main-content" 
+        <a
+          href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary-600 text-white px-4 py-2 rounded-md text-sm font-medium z-50 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2"
         >
           Skip to main content
         </a>
-      
-      {/* Main Layout with Sidebar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Main Content */}
-          <main 
-            id="main-content" 
-            className="flex-1 lg:max-w-4xl" 
-            role="main" 
-            aria-labelledby="article-title"
-          >
-            <article
-              className="
+
+        {/* Main Layout with Sidebar */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Main Content */}
+            <main
+              id="main-content"
+              className="flex-1 lg:max-w-4xl"
+              role="main"
+              aria-labelledby="article-title"
+            >
+              <article
+                className="
               prose prose-lg prose-slate max-w-4xl font-sans
               leading-relaxed
 
@@ -236,139 +249,149 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               /* Strong/Bold */
               prose-strong:font-semibold prose-strong:text-theme-text-high-contrast
             "
-            >
-              {/* Article Header */}
-              <header className="mb-12 not-prose">
-                <h1
-                  id="article-title"
-                  className="font-serif text-5xl font-semibold text-theme-text-high-contrast mb-6 leading-tight tracking-tight"
-                >
-                  {post.title}
-                </h1>
-
-                <div className="flex items-center gap-6 text-sm text-theme-text-secondary mb-8 font-medium">
-                  <time
-                    dateTime={post.publishedAt}
-                    aria-label={`Published on ${new Date(post.publishedAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}`}
+              >
+                {/* Article Header */}
+                <header className="mb-12 not-prose">
+                  <h1
+                    id="article-title"
+                    className="font-serif text-5xl font-semibold text-theme-text-high-contrast mb-6 leading-tight tracking-tight"
                   >
-                    {new Date(post.publishedAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </time>
+                    {post.title}
+                  </h1>
 
-                  {post.readingTime && (
-                    <>
-                      <span aria-hidden="true">•</span>
-                      <span aria-label={`Estimated reading time: ${post.readingTime}`}>
-                        {post.readingTime}
-                      </span>
-                    </>
-                  )}
-                </div>
-
-                {post.description && (
-                  <p
-                    className="font-sans text-xl text-theme-text-secondary mb-8 leading-relaxed max-w-3xl font-medium"
-                  >
-                    {post.description}
-                  </p>
-                )}
-
-                {post.coverImage && (
-                  <div className="my-8">
-                    <Image
-                      src={post.coverImage}
-                      alt={`Cover image for article: ${post.title}`}
-                      width={800}
-                      height={400}
-                      className="w-full max-w-full h-auto rounded-xl"
-                      sizes="800px"
-                      priority
-                    />
-                  </div>
-                )}
-              </header>
-
-              {/* Article Content - Rendered server-side, not serialized in __NEXT_DATA__ */}
-              <div>
-                <MDXRemote source={post.content} components={mdxComponents} />
-              </div>
-              {/* Tags Section - Minimal */}
-              {post.tags && post.tags.length > 0 && (
-                <div className="mt-20 pt-12 border-t border-theme-border-light not-prose">
-                  <div className="flex flex-wrap gap-3" role="list" aria-label="Article tags">
-                    {post.tags.map((tag) => (
-                      <a
-                        key={tag}
-                        href={`/blog/tag/${tag
-                          .toLowerCase()
-                          .replace(/\s+/g, "-")}`}
-                        className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-theme-bg-muted text-theme-text-secondary hover:bg-primary-500 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-bg"
-                        role="listitem"
-                        aria-label={`View articles tagged as ${tag}`}
-                      >
-                        {tag}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Footer Navigation - Clean */}
-              <footer className="mt-20 pt-12 border-t border-theme-border-light not-prose">
-                <nav aria-label="Blog navigation">
-                  <a
-                    href="/blog"
-                    className="inline-flex items-center gap-2 text-sm font-medium text-theme-text-secondary hover:text-primary-500 transition-colors group focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-bg rounded-md"
-                    aria-label="Return to blog article listing"
-                  >
-                    <svg
-                      className="w-4 h-4 transition-transform group-hover:-translate-x-1"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
+                  <div className="flex items-center gap-6 text-sm text-theme-text-secondary mb-8 font-medium">
+                    <time
+                      dateTime={post.publishedAt}
+                      aria-label={`Published on ${new Date(
+                        post.publishedAt
+                      ).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}`}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 19l-7-7 7-7"
+                      {new Date(post.publishedAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </time>
+
+                    {post.readingTime && (
+                      <>
+                        <span aria-hidden="true">•</span>
+                        <span
+                          aria-label={`Estimated reading time: ${post.readingTime}`}
+                        >
+                          {post.readingTime}
+                        </span>
+                      </>
+                    )}
+                  </div>
+
+                  {post.description && (
+                    <p className="font-sans text-xl text-theme-text-secondary mb-8 leading-relaxed max-w-3xl font-medium">
+                      {post.description}
+                    </p>
+                  )}
+
+                  {post.coverImage && (
+                    <div className="my-8">
+                      <Image
+                        src={post.coverImage}
+                        alt={`Cover image for article: ${post.title}`}
+                        width={800}
+                        height={400}
+                        className="w-full max-w-full h-auto rounded-xl"
+                        sizes="800px"
+                        priority
                       />
-                    </svg>
-                    Back to Blog
-                  </a>
-                </nav>
-              </footer>
-            </article>
-          </main>
+                    </div>
+                  )}
+                </header>
 
-          {/* Sidebar with Table of Contents */}
-          <aside 
-            className="hidden lg:block lg:w-80 lg:flex-shrink-0" 
-            role="complementary" 
-            aria-labelledby="toc-heading"
-          >
-            <div className="sticky top-20">
-              <h2 id="toc-heading" className="sr-only">Table of contents</h2>
-              <TableOfContents content={post.content} />
-            </div>
-          </aside>
+                {/* Article Content - Rendered server-side, not serialized in __NEXT_DATA__ */}
+                <div>
+                  <MDXRemote source={post.content} components={mdxComponents} />
+                </div>
+                {/* Tags Section - Minimal */}
+                {post.tags && post.tags.length > 0 && (
+                  <div className="mt-20 pt-12 border-t border-theme-border-light not-prose">
+                    <div
+                      className="flex flex-wrap gap-3"
+                      role="list"
+                      aria-label="Article tags"
+                    >
+                      {post.tags.map((tag) => (
+                        <a
+                          key={tag}
+                          href={`/blog/tag/${tag
+                            .toLowerCase()
+                            .replace(/\s+/g, "-")}`}
+                          className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-theme-bg-muted text-theme-text-secondary hover:bg-primary-500 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-bg"
+                          role="listitem"
+                          aria-label={`View articles tagged as ${tag}`}
+                        >
+                          {tag}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Footer Navigation - Clean */}
+                <footer className="mt-20 pt-12 border-t border-theme-border-light not-prose">
+                  <nav aria-label="Blog navigation">
+                    <a
+                      href="/blog"
+                      className="inline-flex items-center gap-2 text-sm font-medium text-theme-text-secondary hover:text-primary-500 transition-colors group focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-bg rounded-md"
+                      aria-label="Return to blog article listing"
+                    >
+                      <svg
+                        className="w-4 h-4 transition-transform group-hover:-translate-x-1"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 19l-7-7 7-7"
+                        />
+                      </svg>
+                      Back to Blog
+                    </a>
+                  </nav>
+                </footer>
+              </article>
+            </main>
+
+            {/* Sidebar with Table of Contents */}
+            <aside
+              className="hidden lg:block lg:w-80 lg:flex-shrink-0"
+              role="complementary"
+              aria-labelledby="toc-heading"
+            >
+              <div className="sticky top-20">
+                <h2 id="toc-heading" className="sr-only">
+                  Table of contents
+                </h2>
+                <TableOfContents content={post.content} />
+              </div>
+            </aside>
+          </div>
+
+          {/* Author Card - Spans full width including TOC area */}
+          <section className="mt-12" aria-labelledby="author-info">
+            <h2 id="author-info" className="sr-only">
+              About the author
+            </h2>
+            <AuthorCard author={post.author} />
+          </section>
         </div>
-
-        {/* Author Card - Spans full width including TOC area */}
-        <section className="mt-12" aria-labelledby="author-info">
-          <h2 id="author-info" className="sr-only">About the author</h2>
-          <AuthorCard author={post.author} />
-        </section>
       </div>
-    </div>
     </>
   );
 }
