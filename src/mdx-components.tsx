@@ -1,15 +1,23 @@
 import type { MDXComponents } from "mdx/types";
+import dynamic from "next/dynamic";
 import PostCard from "./components/PostCard";
 import BlogPostCard from "./components/BlogPostCard";
 import BlogLink from "./components/BlogLink";
 import AuthorCard from "./components/AuthorCard";
-import BookmarkCard from "./components/BookmarkCard";
-import EmbedCard from "./components/EmbedCard";
 import ImageCard from "./components/ImageCard";
 import TableOfContents from "./components/TableOfContents";
 import Search from "./components/Search";
 import CodeBlock from "./components/CodeBlock";
 import Image from "next/image";
+
+// Lazy load components used in specific posts only
+const BookmarkCard = dynamic(() => import("./components/BookmarkCard"), {
+  loading: () => <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-lg h-32" />,
+});
+
+const EmbedCard = dynamic(() => import("./components/EmbedCard"), {
+  loading: () => <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-lg h-48" />,
+});
 
 // Custom components for better MDX styling
 

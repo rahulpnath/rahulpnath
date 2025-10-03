@@ -11,6 +11,7 @@ const withMDX = require("@next/mdx")({
 
 module.exports = withMDX({
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
+
   eslint: {
     // Disable ESLint during builds
     ignoreDuringBuilds: true,
@@ -19,7 +20,7 @@ module.exports = withMDX({
     // Skip TypeScript checking during builds
     ignoreBuildErrors: false,
   },
-  
+
   // Compiler options for better browser compatibility
   compiler: {
     // Remove console.log in production but keep error tracking
