@@ -112,18 +112,49 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   // Minimal JSON-LD for essential SEO only
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: post.title,
-    description: post.description,
-    image: imageUrl, // Single image instead of array
-    datePublished: publishedTime,
+    '@type': 'Article',
+    publisher: {
+      '@type': 'Organization',
+      name: 'Rahul Nath',
+      url: 'https://www.rahulpnath.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://www.rahulpnath.com/content/images/size/w256h256/2022/10/logo-512x512.png',
+        width: 60,
+        height: 60
+      }
+    },
     author: {
       '@type': 'Person',
-      name: 'Rahul Nath',
-      url: 'https://www.rahulpnath.com'
+      name: 'Rahul Pulikkot Nath',
+      image: {
+        '@type': 'ImageObject',
+        url: 'https://www.gravatar.com/avatar/52158e6893b81b7fbcf1af52c6a5a81d?s=250&r=x&d=mp',
+        width: 250,
+        height: 250
+      },
+      url: 'https://www.rahulpnath.com/',
+      sameAs: [
+        'https://www.youtube.com/user/rahulnathp',
+        'https://www.facebook.com/rahulpnath/',
+        'https://x.com/rahulpnath',
+        'https://github.com/rahulpnath',
+        'https://www.instagram.com/rahulpnath',
+      ]
     },
-    mainEntityOfPage: url,
-    inLanguage: 'en-US'
+    headline: post.title,
+    url: url,
+    datePublished: publishedTime,
+    dateModified: publishedTime,
+    image: {
+      '@type': 'ImageObject',
+      url: imageUrl,
+      width: 1200,
+      height: 675
+    },
+    keywords: post.tags?.join(', ') || '',
+    description: post.description,
+    mainEntityOfPage: url
   };
 
   return (
