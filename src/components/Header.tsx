@@ -3,11 +3,16 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { SearchIcon, MoonIcon, SunIcon } from './icons';
-import SearchComponent from './Search';
 import { BlogPost } from '@/types/blog';
 import Image from 'next/image';
 import { useTheme } from '@/contexts/ThemeContext';
+
+const SearchComponent = dynamic(() => import('./Search'), {
+  ssr: false,
+  loading: () => null,
+});
 
 interface HeaderProps {
   posts?: Omit<BlogPost, 'content'>[];

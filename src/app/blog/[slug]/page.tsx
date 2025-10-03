@@ -1,5 +1,5 @@
 import AuthorCard from "@/components/AuthorCard";
-import TableOfContents from "@/components/TableOfContents";
+import dynamic from "next/dynamic";
 import {
   getAllPostsMetadata,
   getPostBySlug,
@@ -10,6 +10,12 @@ import { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+
+const TableOfContents = dynamic(() => import("@/components/TableOfContents"), {
+  loading: () => (
+    <div className="text-sm text-gray-500 dark:text-gray-400">Loading...</div>
+  ),
+});
 
 interface BlogPostPageProps {
   readonly params: Promise<{
