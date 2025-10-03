@@ -1,29 +1,14 @@
+import '@fontsource/dm-sans/400.css';
+import '@fontsource/dm-sans/500.css';
+import '@fontsource/dm-sans/600.css';
+import '@fontsource/dm-sans/700.css';
 import './globals.css';
 import '../styles/accessibility.css';
-import { Inter, Playfair_Display, DM_Sans } from 'next/font/google';
 import ClientHeader from '@/components/ClientHeader';
 import { getAllPostsMetadata } from '@/lib/posts';
 import ThemeWrapper from '@/components/ThemeWrapper';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import { Metadata, Viewport } from 'next';
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
-const playfairDisplay = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-playfair',
-  display: 'swap',
-});
-
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  variable: '--font-dm-sans',
-  display: 'swap',
-});
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -104,9 +89,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const posts = await getAllPostsMetadata();
 
   return (
-    <html lang="en" className={`${inter.variable} ${playfairDisplay.variable} ${dmSans.variable}`}>
+    <html lang="en">
       <GoogleAnalytics />
-      <body className={`${dmSans.className} antialiased`} suppressHydrationWarning>
+      <body className="antialiased" suppressHydrationWarning>
         <ThemeWrapper>
           <div className="min-h-screen bg-theme-bg text-theme-text transition-colors">
             <ClientHeader posts={posts} />

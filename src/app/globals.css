@@ -1,6 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
-
 :root {
+  /* Self-hosted DM Sans (via @fontsource - no CDN blocking) */
+  --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-dm-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   /* Layout Variables */
   --header-height: 6rem;
   --ui-background: 255 255 255;
@@ -53,11 +54,11 @@
   --border-light: #e5e7eb;
   --border-muted: #d1d5db;
 
-  /* Typography System - DM Sans + JetBrains Mono */
-  --font-primary: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-  --font-secondary: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-  --font-sans: 'DM Sans', "DM Sans Fallback: Arial", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  /* Typography System - Self-hosted DM Sans */
+  --font-primary: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-secondary: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
   
   /* Font Weights */
   --font-medium: 500;
@@ -188,7 +189,7 @@
     -moz-tab-size: 4;
     -o-tab-size: 4;
        tab-size: 4;
-   font-family: DM Sans, "DM Sans Fallback: Arial", ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+   font-family: var(--font-sans);
     font-feature-settings: normal;
     font-variation-settings: normal;
     -webkit-tap-highlight-color: transparent;
@@ -197,7 +198,7 @@
 
   body {
     @apply m-0;
-    font-family: DM Sans, "DM Sans Fallback: Arial", ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+    font-family: var(--font-sans);
     font-size: 1rem;  /* 16px base */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

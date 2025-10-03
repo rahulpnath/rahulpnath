@@ -12,6 +12,7 @@
     "migrate:ghost:help": "node scripts/ghost-to-mdx.js --help"
   },
   "dependencies": {
+    "@fontsource/dm-sans": "^5.2.8",
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
     "@next/mdx": "^15.4.6",
