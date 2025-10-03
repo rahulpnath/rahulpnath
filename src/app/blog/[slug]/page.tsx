@@ -192,12 +192,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </a>
 
         {/* Main Layout with Sidebar */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col lg:flex-row gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-x-hidden">
+          <div className="flex flex-col lg:flex-row gap-8 w-full">
             {/* Main Content */}
             <main
               id="main-content"
-              className="flex-1 lg:max-w-4xl"
+              className="flex-1 lg:max-w-4xl min-w-0"
               role="main"
               aria-labelledby="article-title"
             >
@@ -260,12 +260,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <header className="mb-12 not-prose">
                   <h1
                     id="article-title"
-                    className="font-serif text-5xl font-semibold text-theme-text-high-contrast mb-6 leading-tight tracking-tight"
+                    className="font-serif text-5xl font-semibold text-gray-900 dark:text-white mb-6 leading-tight tracking-tight"
                   >
                     {post.title}
                   </h1>
 
-                  <div className="flex items-center gap-6 text-sm text-theme-text-secondary mb-8 font-medium">
+                  <div className="flex items-center gap-6 text-sm text-gray-500 dark:text-gray-400 mb-8 font-medium">
                     <time
                       dateTime={post.publishedAt}
                       aria-label={`Published on ${new Date(
@@ -296,7 +296,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   </div>
 
                   {post.description && (
-                    <p className="font-sans text-xl text-theme-text-secondary mb-8 leading-relaxed max-w-3xl font-medium">
+                    <p className="font-sans text-xl text-gray-500 dark:text-gray-400 mb-8 leading-relaxed max-w-3xl font-medium">
                       {post.description}
                     </p>
                   )}

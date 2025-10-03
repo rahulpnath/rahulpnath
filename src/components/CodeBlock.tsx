@@ -137,10 +137,11 @@ export default function CodeBlock({ children, className }: CodeBlockProps) {
   return (
     <div className="my-6 rounded-lg max-w-full relative group border border-gray-200 dark:border-gray-700 shadow-sm">
       <button
+        type="button"
         onClick={copyToClipboard}
-        className="absolute top-2.5 right-2.5 p-1.5 rounded bg-white dark:bg-gray-800 flex-shrink-0 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 z-10 shadow-sm border border-gray-200 dark:border-gray-600"
+        className="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 font-medium rounded-full text-xs gap-x-1.5 p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400 inline-flex items-center absolute top-2.5 right-2.5 z-10 transition-colors"
         aria-label="Copy code to clipboard"
-        title={copied ? "Copied!" : "Copy code"}
+        tabIndex={-1}
       >
         {copied ? (
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

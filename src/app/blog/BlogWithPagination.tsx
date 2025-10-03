@@ -119,7 +119,7 @@ export default function BlogWithPagination({ posts, showHeader = true }: BlogWit
   };
 
   return (
-    <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+    <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl w-full overflow-x-hidden">
         {/* Articles Header Section */}
         {showHeader && (
           <header className="py-8 sm:py-16 lg:py-24" role="banner" aria-labelledby="articles-title">

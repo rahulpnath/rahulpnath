@@ -91,9 +91,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <GoogleAnalytics />
-      <body className="antialiased" suppressHydrationWarning>
+      <body className="antialiased overflow-x-hidden" suppressHydrationWarning>
         <ThemeWrapper>
-          <div className="min-h-screen bg-theme-bg text-theme-text transition-colors">
+          <div className="min-h-screen bg-theme-bg text-theme-text transition-colors overflow-x-hidden">
             <ClientHeader posts={posts} />
             {children}
           </div>

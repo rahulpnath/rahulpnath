@@ -61,7 +61,7 @@ export default function AuthorCard({ author, className = '' }: AuthorCardProps) 
   ].filter(link => link.url);
 
   return (
-    <div className={`w-full bg-gray-50 border border-gray-200 rounded-lg ${className}`}>
+    <div className={`w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg ${className}`}>
       <div className="max-w-4xl mx-auto py-12 px-6">
         <div className="flex items-start gap-6">
           {/* Author Avatar */}
