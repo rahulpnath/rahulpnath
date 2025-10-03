@@ -12,12 +12,17 @@ export function middleware(request: NextRequest) {
   response.headers.delete('X-Powered-By');
 
   // HTTPS Redirect for production only
-  if (process.env.NODE_ENV === 'production' && request.nextUrl.protocol === 'http:') {
-    return NextResponse.redirect(
-      `https://${request.nextUrl.hostname}${request.nextUrl.pathname}${request.nextUrl.search}`,
-      301
-    );
-  }
+ if (
+  process.env.NODE_ENV === 'production' &&
+  request.nextUrl.protocol === 'http:' &&
+  request.nextUrl.hostname !== 'localhost' &&
+  request.nextUrl.hostname !== '127.0.0.1'
+) {
+  return NextResponse.redirect(
+    `https://${request.nextUrl.hostname}${request.nextUrl.pathname}${request.nextUrl.search}`,
+    301
+  )
+}
 
   return response;
 }

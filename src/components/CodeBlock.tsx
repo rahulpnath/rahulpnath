@@ -1,81 +1,86 @@
 "use client";
 
 import { Highlight, type PrismTheme } from "prism-react-renderer";
-import React from "react";
+import React, { useState } from "react";
 
 interface CodeBlockProps {
   children: React.ReactNode;
   className?: string;
 }
 
-// Custom theme based on Night Owl colors
 const customTheme: PrismTheme = {
   plain: {
-    color: "#d6deeb",
-    backgroundColor: "#011627",
+    color: "var(--code-text)",
+    backgroundColor: "var(--code-bg)",
   },
   styles: [
     {
       types: ["comment", "prolog", "doctype", "cdata"],
       style: {
-        color: "#637777",
+        color: "var(--code-comment)",
         fontStyle: "italic" as const,
       },
     },
     {
       types: ["punctuation"],
       style: {
-        color: "#d6deeb",
+        color: "var(--code-punctuation)",
       },
     },
     {
-      types: [
-        "property",
-        "tag",
-        "boolean",
-        "number",
-        "constant",
-        "symbol",
-        "deleted",
-      ],
+      types: ["property", "boolean", "number", "constant", "symbol", "deleted"],
       style: {
-        color: "#7fdbca",
+        color: "var(--code-number)",
       },
     },
     {
-      types: ["selector", "attr-name", "string", "char", "builtin", "inserted"],
+      types: ["tag", "selector"],
       style: {
-        color: "#ecc48d",
+        color: "var(--code-tag)",
+      },
+    },
+    {
+      types: ["attr-name", "string", "char", "builtin", "inserted"],
+      style: {
+        color: "var(--code-string)",
       },
     },
     {
       types: ["operator", "entity", "url"],
       style: {
-        color: "#f78c6c",
+        color: "var(--code-operator)",
       },
     },
     {
       types: ["atrule", "attr-value", "keyword"],
       style: {
-        color: "#c792ea",
+        color: "var(--code-keyword)",
       },
     },
     {
-      types: ["function", "class-name"],
+      types: ["function"],
       style: {
-        color: "#82aaff",
+        color: "var(--code-function)",
+      },
+    },
+    {
+      types: ["class-name"],
+      style: {
+        color: "var(--code-class)",
       },
     },
     {
       types: ["regex", "important", "variable"],
       style: {
-        color: "#f78c6c",
+        color: "var(--code-variable)",
       },
     },
   ],
 };
 
 export default function CodeBlock({ children, className }: CodeBlockProps) {
+  const [copied, setCopied] = useState(false);
+  
   // Extract language from className (e.g., "language-javascript" -> "javascript")
   const language = (className?.replace(/language-/, "") || "text") as any;
 
@@ -119,8 +124,34 @@ export default function CodeBlock({ children, className }: CodeBlockProps) {
 
   const code = getCodeString(children).trim();
   
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy code:", err);
+    }
+  };
+  
   return (
-    <div className="my-6 rounded-lg overflow-hidden max-w-full">
+    <div className="my-6 rounded-lg max-w-full relative group border border-gray-200 dark:border-gray-700 shadow-sm">
+      <button
+        onClick={copyToClipboard}
+        className="absolute top-2.5 right-2.5 p-1.5 rounded-full flex-shrink-0 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+        aria-label="Copy code to clipboard"
+        title={copied ? "Copied!" : "Copy code"}
+      >
+        {copied ? (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+        )}
+      </button>
       <Highlight theme={customTheme} code={code} language={mappedLanguage}>
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
           <pre

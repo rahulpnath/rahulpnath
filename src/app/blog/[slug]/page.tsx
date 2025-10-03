@@ -157,7 +157,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               leading-relaxed
 
               /* Headings - Use Serif for elegant typography */
-              prose-headings:font-serif prose-headings:font-medium 
+              prose-headings:font-serif prose-headings:font-medium
               prose-headings:tracking-tight prose-headings:text-theme-text-high-contrast
               prose-h1:text-4xl prose-h1:mt-0 prose-h1:mb-6 prose-h1:leading-tight prose-h1:font-semibold
               prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:leading-tight prose-h2:font-medium
@@ -205,23 +205,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               /* Strong/Bold */
               prose-strong:font-semibold prose-strong:text-theme-text-high-contrast
             "
-            itemScope
-            itemType="https://schema.org/BlogPosting"
             >
               {/* Article Header */}
               <header className="mb-12 not-prose">
-                <h1 
-                  id="article-title" 
+                <h1
+                  id="article-title"
                   className="font-serif text-5xl font-semibold text-theme-text-high-contrast mb-6 leading-tight tracking-tight"
-                  itemProp="headline"
                 >
                   {post.title}
                 </h1>
 
                 <div className="flex items-center gap-6 text-sm text-theme-text-secondary mb-8 font-medium">
-                  <time 
+                  <time
                     dateTime={post.publishedAt}
-                    itemProp="datePublished"
                     aria-label={`Published on ${new Date(post.publishedAt).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
@@ -246,9 +242,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 </div>
 
                 {post.description && (
-                  <p 
+                  <p
                     className="font-sans text-xl text-theme-text-secondary mb-8 leading-relaxed max-w-3xl font-medium"
-                    itemProp="description"
                   >
                     {post.description}
                   </p>
@@ -264,14 +259,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                       className="w-full max-w-full h-auto rounded-xl"
                       sizes="800px"
                       priority
-                      itemProp="image"
                     />
                   </div>
                 )}
               </header>
 
               {/* Article Content - Rendered server-side, not serialized in __NEXT_DATA__ */}
-              <div itemProp="articleBody">
+              <div>
                 <MDXRemote source={post.content} components={mdxComponents} />
               </div>
               {/* Tags Section - Minimal */}
@@ -287,7 +281,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-theme-bg-muted text-theme-text-secondary hover:bg-primary-500 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-bg"
                         role="listitem"
                         aria-label={`View articles tagged as ${tag}`}
-                        itemProp="keywords"
                       >
                         {tag}
                       </a>

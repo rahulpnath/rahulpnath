@@ -69,7 +69,7 @@ const YoutubeEmbed = ({ src, title = "YouTube video" }: { src: string, title?: s
 
   return (
     <div className="relative w-full my-8">
-      <div className="relative w-full h-0 pb-[56.25%] rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+      <div className="relative w-full h-0 pb-[56.25%] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm">
         <iframe
           src={`https://www.youtube.com/embed/${videoId}`}
           title={title}
@@ -181,7 +181,7 @@ export const mdxComponents: MDXComponents = {
     if (props.src?.includes('youtube.com')) {
       return <YoutubeEmbed src={props.src} title={props.title} />;
     }
-    return <iframe {...props} className="w-full border border-gray-200 rounded-lg" />;
+    return <iframe {...props} className="w-full border border-gray-200 dark:border-gray-700 rounded-lg" />;
   },
   img: (props: any) => (
     <Image

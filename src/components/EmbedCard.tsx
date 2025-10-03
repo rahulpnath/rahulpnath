@@ -20,19 +20,19 @@ export default function EmbedCard({ src, title, type }: EmbedCardProps) {
     switch (type) {
       case 'youtube':
         return {
-          className: "w-full aspect-video rounded-lg border border-gray-200",
+          className: "w-full aspect-video rounded-lg border border-gray-200 dark:border-gray-700",
           allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share",
           allowFullScreen: true,
           referrerPolicy: "strict-origin-when-cross-origin" as const
         };
       case 'twitter':
         return {
-          className: "w-full h-96 rounded-lg border border-gray-200",
+          className: "w-full h-96 rounded-lg border border-gray-200 dark:border-gray-700",
           allow: "autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
         };
       default:
         return {
-          className: "w-full h-96 rounded-lg border border-gray-200"
+          className: "w-full h-96 rounded-lg border border-gray-200 dark:border-gray-700"
         };
     }
   };
