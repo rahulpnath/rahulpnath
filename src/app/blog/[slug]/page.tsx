@@ -197,7 +197,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {/* Main Content */}
             <main
               id="main-content"
-              className="flex-1 lg:max-w-4xl min-w-0"
+               
               role="main"
               aria-labelledby="article-title"
             >
