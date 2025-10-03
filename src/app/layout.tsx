@@ -5,6 +5,7 @@ import { Inter, Playfair_Display, DM_Sans } from 'next/font/google';
 import ClientHeader from '@/components/ClientHeader';
 import { getAllPostsMetadata } from '@/lib/posts';
 import ThemeWrapper from '@/components/ThemeWrapper';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
 import { Metadata, Viewport } from 'next';
 
 const clashGrotesk = localFont({
@@ -108,6 +109,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
 
   return (
     <html lang="en" className={`${clashGrotesk.variable} ${inter.variable} ${playfairDisplay.variable} ${dmSans.variable}`}>
+      <GoogleAnalytics />
       <body className={`${dmSans.className} antialiased`} suppressHydrationWarning>
         <ThemeWrapper>
           <div className="min-h-screen bg-theme-bg text-theme-text transition-colors">
