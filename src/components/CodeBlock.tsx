@@ -138,7 +138,7 @@ export default function CodeBlock({ children, className }: CodeBlockProps) {
     <div className="my-6 rounded-lg max-w-full relative group border border-gray-200 dark:border-gray-700 shadow-sm">
       <button
         onClick={copyToClipboard}
-        className="absolute top-2.5 right-2.5 p-1.5 rounded-full flex-shrink-0 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+        className="absolute top-2.5 right-2.5 p-1.5 rounded bg-white dark:bg-gray-800 flex-shrink-0 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 z-10 shadow-sm border border-gray-200 dark:border-gray-600"
         aria-label="Copy code to clipboard"
         title={copied ? "Copied!" : "Copy code"}
       >

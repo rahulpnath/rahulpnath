@@ -83,12 +83,12 @@ export default function AuthorCard({ author, className = '' }: AuthorCardProps) 
 
           {/* Author Info */}
           <div className="flex-1 min-w-0">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
               {author.name}
             </h3>
-            
+
             {author.bio && (
-              <p className="text-gray-600 leading-relaxed mb-4 max-w-2xl">
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4 max-w-2xl">
                 {author.bio}
               </p>
             )}
@@ -102,7 +102,7 @@ export default function AuthorCard({ author, className = '' }: AuthorCardProps) 
                     href={link.url!}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 rounded-full hover:bg-[#823EB7] hover:text-white transition-colors text-gray-500"
+                    className="p-2 rounded-full hover:bg-[#823EB7] hover:text-white transition-colors text-gray-500 dark:text-gray-400"
                     aria-label={`Follow on ${link.name}`}
                   >
                     {link.icon}

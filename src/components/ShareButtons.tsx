@@ -51,7 +51,7 @@ export default function ShareButtons({ url, title }: ShareButtonsProps) {
       </a>
       <button
         onClick={handleCopyLink}
-        className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-500 text-white hover:bg-gray-600 transition-colors"
+        className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-500 dark:bg-gray-600 text-white hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors"
         aria-label="Copy link"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

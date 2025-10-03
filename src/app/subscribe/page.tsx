@@ -174,7 +174,7 @@ export default function SubscribePage() {
             <form action="YOUR_MAILCHIMP_ACTION_URL" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" className="validate" target="_blank" noValidate>
               <div id="mc_embed_signup_scroll">
                 <div className="mc-field-group">
-                  <input type="email" name="EMAIL" className="required email w-full px-3 py-2 border border-gray-300 rounded-md" id="mce-EMAIL" placeholder="Email Address" required />
+                  <input type="email" name="EMAIL" className="required email w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-md" id="mce-EMAIL" placeholder="Email Address" required />
                 </div>
                 <div id="mce-responses" className="clear">
                   <div className="response" id="mce-error-response" style={{display:'none'}}></div>

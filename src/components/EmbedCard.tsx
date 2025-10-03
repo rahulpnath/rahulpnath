@@ -42,7 +42,7 @@ export default function EmbedCard({ src, title, type }: EmbedCardProps) {
       {/* {title && (
         <h3 className="text-lg font-medium text-gray-900 mb-4">{title}</h3>
       )} */}
-      <div className="relative overflow-hidden rounded-lg bg-gray-100">
+      <div className="relative overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
         <iframe
           src={src}
           title={title || 'Embedded content'}

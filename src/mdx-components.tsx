@@ -38,20 +38,20 @@ const Callout = ({ type = 'info', icon, children }: { type?: 'info' | 'warning' 
 };
 
 const HighlightBox = ({ children }: { children: React.ReactNode }) => (
-  <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl p-6 my-8 shadow-sm">
-    <div className="text-gray-800 leading-relaxed">{children}</div>
+  <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 border border-purple-200 dark:border-purple-700 rounded-xl p-6 my-8 shadow-sm">
+    <div className="text-gray-800 dark:text-gray-200 leading-relaxed">{children}</div>
   </div>
 );
 
 const StepCard = ({ step, title, children }: { step: number, title: string, children: React.ReactNode }) => (
-  <div className="bg-white border border-gray-200 rounded-xl p-6 my-8 shadow-sm hover:shadow-md transition-shadow">
+  <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 my-8 shadow-sm hover:shadow-md transition-shadow">
     <div className="flex items-center gap-4 mb-4">
       <div className="flex items-center justify-center w-10 h-10 bg-[#823EB7] text-white rounded-full text-sm font-bold shadow-sm">
         {step}
       </div>
-      <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+      <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
     </div>
-    <div className="text-gray-800 leading-relaxed">{children}</div>
+    <div className="text-gray-800 dark:text-gray-200 leading-relaxed">{children}</div>
   </div>
 );
 
@@ -102,11 +102,11 @@ const Figure = ({ src, alt, caption, ...props }: { src: string, alt?: string, ca
       alt={alt || caption || ''}
       width={800}
       height={400}
-      className="w-full h-auto rounded-lg border border-gray-200"
+      className="w-full h-auto rounded-lg border border-gray-200 dark:border-gray-700"
       {...props}
     />
     {caption && (
-      <figcaption className="text-sm text-gray-600 text-center mt-3 italic">
+      <figcaption className="text-sm text-gray-600 dark:text-gray-300 text-center mt-3 italic">
         {caption}
       </figcaption>
     )}
@@ -188,26 +188,26 @@ export const mdxComponents: MDXComponents = {
       {...props}
       width={800}
       height={400}
-      className="w-full h-auto rounded-lg border border-gray-200"
+      className="w-full h-auto rounded-lg border border-gray-200 dark:border-gray-700"
       alt={props.alt || ''}
     />
   ),
   blockquote: (props: any) => (
-    <blockquote className="border-l-4 border-[#823EB7] pl-6 py-4 my-8 italic text-gray-700 bg-purple-50 rounded-r-xl shadow-sm" {...props} />
+    <blockquote className="border-l-4 border-[#823EB7] pl-6 py-4 my-8 italic text-gray-700 dark:text-gray-300 bg-purple-50 dark:bg-purple-900/20 rounded-r-xl shadow-sm" {...props} />
   ),
   table: (props: any) => (
     <div className="overflow-x-auto my-6">
-      <table className="min-w-full border-collapse border border-gray-200 rounded-lg" {...props} />
+      <table className="min-w-full border-collapse border border-gray-200 dark:border-gray-700 rounded-lg" {...props} />
     </div>
   ),
   th: (props: any) => (
-    <th className="border border-gray-200 bg-gray-50 px-4 py-2 text-left font-semibold text-gray-900" {...props} />
+    <th className="border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100" {...props} />
   ),
   td: (props: any) => (
-    <td className="border border-gray-200 px-4 py-2 text-gray-700" {...props} />
+    <td className="border border-gray-200 dark:border-gray-700 px-4 py-2 text-gray-700 dark:text-gray-300" {...props} />
   ),
   figcaption: (props: any) => (
-    <figcaption className="text-sm text-gray-600 text-center mt-3 mb-6 italic" {...props} />
+    <figcaption className="text-sm text-gray-600 dark:text-gray-300 text-center mt-3 mb-6 italic" {...props} />
   ),
   figure: (props: any) => (
     <figure className="my-8" {...props} />

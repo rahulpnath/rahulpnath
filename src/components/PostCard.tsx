@@ -20,13 +20,13 @@ export default function PostCard({
   return (
     <a
       href={href}
-      className="block rounded-xl shadow p-4 hover:bg-gray-50 transition"
+      className="block rounded-xl shadow p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
     >
       <h3 className="text-xl font-bold mb-2">{title}</h3>
-      <p className="mb-2 text-gray-700">{description}</p>
+      <p className="mb-2 text-gray-700 dark:text-gray-300">{description}</p>
 
       {(authorImg || author) && (
-        <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-2">
           {authorImg && (
             <img
               src={authorImg}

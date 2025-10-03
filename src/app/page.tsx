@@ -233,7 +233,7 @@ function RecentArticlesSection({ posts }: RecentArticlesProps) {
         <div className="text-center mt-12">
           <Link
             href="/blog"
-            className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-theme-text-high-contrast bg-theme-bg-muted hover:bg-theme-bg-card disabled:bg-theme-bg-muted border-2 border-gray-200 hover:border-primary-400 focus:border-primary-100 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-bg-muted"
+            className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-theme-text-high-contrast bg-theme-bg-muted hover:bg-theme-bg-card disabled:bg-theme-bg-muted border-2 border-gray-200 dark:border-gray-700 hover:border-primary-400 focus:border-primary-100 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-bg-muted"
             aria-label="View all blog articles"
           >
             <span>View all articles</span>

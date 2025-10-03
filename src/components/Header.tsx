@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, Moon, Sun } from 'lucide-react';
+import { SearchIcon, MoonIcon, SunIcon } from './icons';
 import SearchComponent from './Search';
 import { BlogPost } from '@/types/blog';
 import Image from 'next/image';
@@ -121,7 +121,7 @@ export default function Header({ posts = [] }: HeaderProps) {
                 className="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 font-medium rounded-full text-base gap-x-2.5 p-2.5 text-theme-text-secondary hover:text-theme-text hover:bg-theme-bg-muted focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 inline-flex items-center"
                 aria-label="Search"
               >
-                <Search className="flex-shrink-0 h-6 w-6" />
+                <SearchIcon className="flex-shrink-0 h-6 w-6" />
               </button>
             </div>
             
@@ -133,7 +133,7 @@ export default function Header({ posts = [] }: HeaderProps) {
                   className="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 font-medium rounded-full text-base gap-x-2.5 p-2.5 text-theme-text-secondary hover:text-theme-text hover:bg-theme-bg-muted focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 inline-flex items-center"
                   aria-label={theme === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
                 >
-                  {theme === 'dark' ? <Moon className="flex-shrink-0 h-6 w-6" /> : <Sun className="flex-shrink-0 h-6 w-6" />}
+                  {theme === 'dark' ? <MoonIcon className="flex-shrink-0 h-6 w-6" /> : <SunIcon className="flex-shrink-0 h-6 w-6" />}
                 </button>
               </div>
             )}
