@@ -1,19 +1,11 @@
 import './globals.css';
 import '../styles/accessibility.css';
-import localFont from "next/font/local";
 import { Inter, Playfair_Display, DM_Sans } from 'next/font/google';
 import ClientHeader from '@/components/ClientHeader';
 import { getAllPostsMetadata } from '@/lib/posts';
 import ThemeWrapper from '@/components/ThemeWrapper';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import { Metadata, Viewport } from 'next';
-
-const clashGrotesk = localFont({
-  src: "../fonts/ClashGrotesk-Variable.woff2", // path is from /public
-  variable: "--font-clash",
-  weight: "100 700", // variable range
-  display: "swap",
-});
 
 const inter = Inter({
   subsets: ['latin'],
@@ -112,7 +104,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const posts = await getAllPostsMetadata();
 
   return (
-    <html lang="en" className={`${clashGrotesk.variable} ${inter.variable} ${playfairDisplay.variable} ${dmSans.variable}`}>
+    <html lang="en" className={`${inter.variable} ${playfairDisplay.variable} ${dmSans.variable}`}>
       <GoogleAnalytics />
       <body className={`${dmSans.className} antialiased`} suppressHydrationWarning>
         <ThemeWrapper>
