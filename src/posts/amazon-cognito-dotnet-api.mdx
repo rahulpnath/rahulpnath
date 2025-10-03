@@ -1,0 +1,105 @@
+---
+title: "How to Protect Your ASP.NET API Using JWT and Amazon Cognito"
+slug: amazon-cognito-dotnet-api
+date: "2025-08-15"
+feature_image: /content/images/cognito-dotnet-api.png
+tags:
+  - Cognito
+  - AWS
+excerpt: >-
+  In this post, you’ll learn how to secure your ASP.NET API with Amazon Cognito by setting up JWT bearer authentication, validating tokens, and locking down endpoints to keep your API safe and accessible only to authorized users.
+---
+
+In a previous article, Getting Started with Amazon Cognito: Setting Up User Pools and App Clients, we learned how to set up App Clients and User Pools in Amazon Cognito.
+
+In this article let's see how to secure an ASP NET Web API using Amazon Cognito.
+
+<EmbedCard src="https://youtube.com/embed/a7WYEOFWc3s" />
+
+We will set up the API with JWT Bearer authentication and ensure that only valid users who have an account in our Cognito User Pool are able to access the API
+
+## Setting Up Authorisation on a Minimal API Endpoint
+
+To set up authorization on a minimal API endpoint, use the RequireAuthorization extension method.
+
+This sets up authorization using the default configured policy in your application pipeline.
+
+```csharp
+app.MapGet("/weatherforecast", () =>
+    {
+        ...
+    })
+    .WithName("GetWeatherForecast")
+    .RequireAuthorization();
+```
+
+This enforces that only Users who are authenticated and authorized will be allowed to access this specific endpoint.
+
+## Authorization and Authentication Middleware
+
+Let's take a quick recap of what Authentication and Authorization means before we go and set up out application pipeline.
+
+> 🔐 Authentication confirms who the user is by verifying their identity (e.g., via a token or credentials).  
+> 🛡 Authorization determines what the user is allowed to access based on their identity.
+
+To set up Authorization and Authentication in the ASP NET application pipeline make sure to call the below two methods.
+
+```csharp
+app.UseAuthentication();
+app.UseAuthorization();
+```
+
+The order of these middleware calls is crucial. UseAuthentication() must come before UseAuthorization().
+
+First, the app identifies the user; then it checks their permissions. If this order is reversed, the app will attempt to authorize a request without knowing who the user is — leading to failed authorization, even for valid users.
+
+Remember, middleware in ASP.NET Core runs in the order it's registered. Since both authentication and authorization are middleware, maintaining the correct sequence is essential for secure and functional request handling.
+
+## Wiring up Authorization and Authentication in DI Container
+
+Now to the final part!
+
+With the application pipeline set up with the Authentication and Authorization middleware, it's time to register the required classes into the Dependency Injection container for our application.
+
+In this example, any authenticated user is considered authorised. We can achieve this simply by calling the AddAuthorizationmethod.
+
+```csharp
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        builder.Configuration.GetSection("JwtBearer").Bind(options);
+    });
+```
+
+To wire up the authentication to use our Amazon Cognito application, we need to override the JwtBearer configuration as above.
+
+I have also update the appsettings.json file to include the configuration overriders for the default JwtBearerOptions.
+
+```json
+{
+  "JwtBearer": {
+    "Authority": "https://cognito-idp.ap-southeast-2.amazonaws.com/ap-southeast-2_7XXXXXXX",
+    "TokenValidationParameters": {
+      "ValidateAudience": false
+    }
+  }
+}
+```
+
+Specify the Authority as the Cognito Application Url as shown above. Since in this case I am not using the audience, I am disabling that as well.
+
+Once you have all this set up, our API is secure.
+
+To test this API endpoint, you can get a new token using the same Postman mechanism that we used in the previous post and pass it on in the Authentication header as shown below.
+
+```text
+@CognitoApiSample_HostAddress = http://localhost:5264
+@Token = ACCESS_TOKEN
+
+GET {{CognitoApiSample_HostAddress}}/weatherforecast/
+Accept: application/json
+Authorization: Bearer {{Token}}
+```
+
+The above is the .http file that is part of the ASP NET API project.

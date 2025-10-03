@@ -20,13 +20,13 @@ In this article, let's learn about Cognito User Pools and App Clients and how to
 
 Thanks to AWS for sponsoring this blog post.
 
-Core Concepts
+## Core Concepts
 
 Amazon Cognito User Pools are managed user directories that handle sign‑up, sign‑in, and user management for your application. They store user profiles securely and support authentication via username/password, social identity providers, or SAML/OIDC providers.
 
 App Clients represent applications that connect to the user pool. They define how the app interacts with Cognito, including allowed authentication flows, callback URLs, and token lifetimes. Each app client has its own ID (and optional secret for secure server‑side apps).
 
-Setting Up User Pools and App Client
+## Setting Up User Pools and App Client
 
 To get started with setting up User Pools and App Client head over to Amazon Cognito in AWS Console and click the 'Create User Pool' button.
 
@@ -65,7 +65,7 @@ We will use this to connect to the Cognito client to get a token.
 
 <ImageCard src="/content/images/cognito-app-client-details.png" alt="" />
 
-Cognito Authorization Code Token Flow
+## Cognito Authorization Code Token Flow
 
 Since we chose 'Traditional Web Application" as our application type in Cognito when setting up the App Client, we have opted into the Authorization Code OAuth flow.
 
