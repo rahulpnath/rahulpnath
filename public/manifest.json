@@ -11,16 +11,16 @@
   "lang": "en-US",
   "icons": [
     {
-      "src": "/rahul-logo.png",
+      "src": "/web-app-manifest-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     },
     {
-      "src": "/rahul-logo.png",
+      "src": "/web-app-manifest-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ],
   "shortcuts": [
@@ -31,7 +31,7 @@
       "url": "/blog",
       "icons": [
         {
-          "src": "/rahul-logo.png",
+          "src": "/favicon-96x96.png",
           "sizes": "96x96"
         }
       ]
@@ -43,7 +43,7 @@
       "url": "/search",
       "icons": [
         {
-          "src": "/rahul-logo.png",
+          "src": "/favicon-96x96.png",
           "sizes": "96x96"
         }
       ]
