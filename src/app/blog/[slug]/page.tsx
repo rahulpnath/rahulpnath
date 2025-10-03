@@ -295,19 +295,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     </p>
                   )}
 
-                  {post.coverImage && (
-                    <div className="my-8">
-                      <Image
-                        src={post.coverImage}
-                        alt={`Cover image for article: ${post.title}`}
-                        width={800}
-                        height={400}
-                        className="w-full max-w-full h-auto rounded-xl"
-                        sizes="800px"
-                        priority
-                      />
-                    </div>
-                  )}
                 </header>
 
                 {/* Article Content - Rendered server-side, not serialized in __NEXT_DATA__ */}
